@@ -8,17 +8,18 @@ package de.fuberlin.wiwiss.ng4j.swp;
 
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
+import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPBadDigestException;
+import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPBadSignatureException;
 import de.fuberlin.wiwiss.ng4j.swp.impl.SWPAuthorityImpl;
 import de.fuberlin.wiwiss.ng4j.swp.impl.SWPNamedGraphSetImpl;
 import de.fuberlin.wiwiss.ng4j.swp.SWPAuthority;
-import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPBadDigestException;
-import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPBadSignatureException;
-import de.fuberlin.wiwiss.ng4j.swp.utils.PKCS12Utils;
+import de.fuberlin.wiwiss.ng4j.swp.util.PKCS12Utils;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP;
 
 import junit.framework.TestCase;
@@ -34,6 +35,8 @@ public class SWPNamedGraphSetTest extends TestCase
 
 	protected final static String uri1 = "http://example.org/graph1";
 	protected final static String uri2 = "http://example.org/graph2";
+	protected final static String uri3 = "http://example.org/graph3";
+	protected final static String uri4 = "http://example.org/graph4";
 	protected final static Node foo = Node.createURI("http://example.org/#foo");
 	protected final static Node bar = Node.createURI("http://example.org/#bar");
 	protected final static Node baz = Node.createURI("http://example.org/#baz");
@@ -41,6 +44,8 @@ public class SWPNamedGraphSetTest extends TestCase
 	protected final static String password = "dpuser";
 	
 	protected SWPNamedGraphSet set;
+	protected ArrayList list = new ArrayList();
+	
 	/*
 	 * @see TestCase#setUp()
 	 */
@@ -49,8 +54,14 @@ public class SWPNamedGraphSetTest extends TestCase
 		this.set = createSWPNamedGraphSet();
 		NamedGraph g1 = this.set.createGraph( uri1 );
 		NamedGraph g2 = this.set.createGraph( uri2 );
+		NamedGraph g3 = this.set.createGraph( uri3 );
+		NamedGraph g4 = this.set.createGraph( uri4 );
 		g1.add( new Triple( foo, bar, baz ) );
 		g2.add( new Triple( bar, baz, foo ) );
+		g3.add( new Triple( baz, bar, foo ) );
+		g4.add( new Triple( bar, foo, baz ) );
+		list.add( g3 );
+		list.add( g4 );
 	}
 
 	/*
@@ -128,23 +139,25 @@ public class SWPNamedGraphSetTest extends TestCase
 
 	
 	/*
-	 * 
+	 *	Class under test for boolean  
 	 */
 	public void testAssertGraphs() 
 	{
-		//TODO Implement assertGraphs().
+		assertTrue( set.assertGraphs( list, getAuthority( keystore, password ), null ) );
 	}
 
 	public void testQuoteGraphs() 
 	{
-		//TODO Implement quoteGraphs().
+		assertTrue( set.quoteGraphs( list, getAuthority( keystore, password ), null ) );
 	}
 
+	/*
 	public void testAssertGraphsWithSignature() 
 	{
 		//TODO Implement assertGraphsWithSignature().
 	}
-
+	*/
+	
 	public void testVerifyAllSignatures() 
 	{
 		assertTrue( set.verifyAllSignatures() );
