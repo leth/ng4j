@@ -24,7 +24,7 @@ public interface SWPNamedGraphSet extends NamedGraphSet
 {
     /**
      * 
-     * Given an SWP Authority, assert all graphs in the 
+     * <p>Given an SWP Authority, assert all graphs in the 
      * graphset with this Authority.
      * 
      * This will add a warrant graph asserting all
@@ -33,15 +33,16 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * The listOfAuthorityProperties contains list of properties names
      * (as nodes) describing the authority. These properties will be included
      * into the warrant graph, e.g. foaf:name, foaf:mbox
+     * </p>
+     * <ul>Example:
      * 
-     * Example:
-     * 
-     * urn:uuid:X { :G1 swp:assertedBy urn:uuid:X .
+     * <li>urn:uuid:X { :G1 swp:assertedBy urn:uuid:X .
 	 *		        :G2 swp:assertedBy urn:uuid:X .
      *              urn:uuid:X swp:assertedBy urn:uuid:X .
      *              urn:uuid:X swp:authority <http://www.bizer.de/me> .
-     *              <http://www.bizer.de/me> foaf:mbox <mailto:chris@bizer.de> }
-     * 
+     *              <http://www.bizer.de/me> foaf:mbox <mailto:chris@bizer.de> }</li>
+     * </ul>
+     * <p>
      * The new graph will be named using a UUID.
      * 
      * If the Authority doesn't have a URI, then a blank node will be used to
@@ -49,10 +50,11 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * adress of the authority will be added.
      *  
      * Return true if successful.
+     * </p>
      * 
      * @param authority 
      * @param listOfAuthorityProperties
-     * @return
+     * @return boolean
      */
     public boolean swpAssert( SWPAuthority authority, ArrayList listOfAuthorityProperties );
 
@@ -60,25 +62,28 @@ public interface SWPNamedGraphSet extends NamedGraphSet
     
     /**
      * 
-     * Given an SWP Authority, quote all graphs in the 
+     * <p>Given an SWP Authority, quote all graphs in the 
      * graphset with this Authority.
-     * 
+     * </p>
+     * <p>
      * Quotes are not as strong semantically as assertions.
      * Quotes are really used when using second hand 
      * information, i.e. the Authority is not the creator
      * of the original graph.
-     * 
+     * </p>
+     * <p>
      * The listOfAuthorityProperties contains list of properties names
      * (as nodes) describing the authority. These properties will be included
      * into the warrant graph, e.g. foaf:name, foaf:mbox,
-     * 
+     * </p>
+     * <ul>
      * Example:
      * 
-     * urn:uuid:X { :G1 swp:quotedBy urn:uuid:X .
+     * <li>urn:uuid:X { :G1 swp:quotedBy urn:uuid:X .
 	 *		        :G2 swp:quotedBy urn:uuid:X .
      *              urn:uuid:X swp:assertedBy urn:uuid:X .
      *              urn:uuid:X swp:authority <http://www.bizer.de/me> .
-     *              <http://www.bizer.de/me> foaf:mbox <mailto:chris@bizer.de> }
+     *              <http://www.bizer.de/me> foaf:mbox <mailto:chris@bizer.de> }</li>
      *  
      * Return true if successful.
      * 
@@ -244,20 +249,20 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * Returns an iterator over all SWPWarrants for a given authority.
      * 
      */
-    public ExtendedIterator getAllWarrants( SWPAuthority authority );
+    //public ExtendedIterator getAllWarrants( SWPAuthority authority );
     
 	/**
      * 
      * Returns an iterator over all named graphs asserted by a given authority.
      * 
      */
-    public ExtendedIterator getAllAssertedGraphs( SWPAuthority authority );
+    //public ExtendedIterator getAllAssertedGraphs( SWPAuthority authority );
 	/**
      * 
      * Returns an iterator over all named graphs quoted by a given authority.
      * 
      */
-    public ExtendedIterator getAllquotedGraphs( SWPAuthority authority );
+    //public ExtendedIterator getAllquotedGraphs( SWPAuthority authority );
    
 
 }

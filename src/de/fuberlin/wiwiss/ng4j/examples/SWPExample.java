@@ -1,4 +1,4 @@
-// $Id: SWPExample.java,v 1.1 2004/12/14 09:21:09 bizer Exp $
+// $Id: SWPExample.java,v 1.2 2005/02/19 18:03:47 erw Exp $
 package de.fuberlin.wiwiss.ng4j.examples;
 
 import java.io.FileOutputStream;
@@ -24,6 +24,8 @@ import de.fuberlin.wiwiss.ng4j.swp.impl.SWPNamedGraphSetImpl;
 import de.fuberlin.wiwiss.ng4j.swp.SWPAuthority;
 import de.fuberlin.wiwiss.ng4j.swp.impl.SWPAuthorityImpl;
 
+import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPBadDigestException;
+import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPBadSignatureException;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.FOAF;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP;
 
@@ -32,7 +34,7 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP;
  */
 public class SWPExample {
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, SWPBadSignatureException, SWPBadDigestException {
 		////////////////////////////////////////////////
 		//		 Do some asserting and quoting
 		////////////////////////////////////////////////
@@ -92,7 +94,7 @@ public class SWPExample {
 		//OutputStream out = new FileOutputStream("C:/graphset.trig");
 		//graphset.write(out, "TRIG");
 
-        graphset.write(System.out, "TRIX");
+        graphset.write(System.out, "TRIX", "");
         System.out.println();
         System.out.println("----------------------------------------");
         System.out.println();
@@ -125,9 +127,9 @@ public class SWPExample {
         // RowlandsPropertiestoBePublished.add(SWP.RSAKeyNode);
         // or this certificate: RowlandsPropertiestoBePublished.add(SWP.X509CertificateNode);
 
-        graphset2.assertWithSignature(rowland, SWP.SignatureMethodJjcRdfC14NRsaSha1Node, SWP.DigestMethodJjcRdfC14NSha1Node, RowlandsPropertiestoBePublished);
+        graphset2.assertWithSignature(rowland, SWP.JjcRdfC14N_rsa_sha1, SWP.JjcRdfC14N_sha1, RowlandsPropertiestoBePublished, "/home/erw01r/software/certificates/erw01r.p12", "dpuser");
 
-        graphset2.write(System.out, "TRIX");
+        graphset2.write(System.out, "TRIX", "");
 
 		// Next step would be verification
 
