@@ -244,7 +244,6 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      */
     public boolean verifyAllSignatures();
     
-    
 	/**
      * 
      * Returns an iterator over all SWPWarrants for a given authority.
