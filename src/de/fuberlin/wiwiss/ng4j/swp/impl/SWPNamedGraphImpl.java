@@ -5,20 +5,9 @@ package de.fuberlin.wiwiss.ng4j.swp.impl;
 
 import java.util.ArrayList;
 
-import com.hp.hpl.jena.graph.BulkUpdateHandler;
-import com.hp.hpl.jena.graph.Capabilities;
 import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.GraphEventManager;
 import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Reifier;
-import com.hp.hpl.jena.graph.TransactionHandler;
 import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.graph.TripleMatch;
-import com.hp.hpl.jena.graph.query.QueryHandler;
-import com.hp.hpl.jena.shared.AddDeniedException;
-import com.hp.hpl.jena.shared.DeleteDeniedException;
-import com.hp.hpl.jena.shared.PrefixMapping;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP;
 
@@ -134,7 +123,7 @@ public class SWPNamedGraphImpl extends NamedGraphImpl implements SWPNamedGraph {
 }
 
 /*
- *  (c)   Copyright 2004 Chris Bizer (chris@bizer.de) & Rowland Watkins (rowland@grid.cx)
+ *  (c)   Copyright 2004, 2005 Chris Bizer (chris@bizer.de) & Rowland Watkins (rowland@grid.cx)
  *   	  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

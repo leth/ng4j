@@ -10,7 +10,6 @@ import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.shared.AddDeniedException;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
-import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
 import java.security.PublicKey;
@@ -315,7 +314,7 @@ public class SWPAuthorityImpl implements SWPAuthority
 }
 
 /*
- *  (c)   Copyright 2004 Chris Bizer (chris@bizer.de)
+ *  (c)   Copyright 2004, 2005 Chris Bizer (chris@bizer.de)
  *   	  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
