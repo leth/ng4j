@@ -1,5 +1,5 @@
 /*
- * $Id: NamedGraphSetWriter.java,v 1.1 2004/10/23 13:31:24 cyganiak Exp $
+ * $Id: TriXWriter.java,v 1.1 2004/11/26 01:50:33 cyganiak Exp $
  */
 package de.fuberlin.wiwiss.ng4j.trix;
 
@@ -17,6 +17,7 @@ import com.hp.hpl.jena.shared.JenaException;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
+import de.fuberlin.wiwiss.ng4j.NamedGraphSetWriter;
 
 /**
  * Serializes a {@link NamedGraphSet} as a TriX file (see
@@ -25,11 +26,11 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
  * 
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
-public class NamedGraphSetWriter {
+public class TriXWriter implements NamedGraphSetWriter {
 	private String encoding = null;
 	private Writer writer;
 
-	public void write(NamedGraphSet set, Writer out) {
+	public void write(NamedGraphSet set, Writer out, String baseURI) {
 		this.writer = new BufferedWriter(out);
 		try {
 			if (this.encoding != null) {
@@ -48,10 +49,10 @@ public class NamedGraphSetWriter {
 		}
 	}
 
-	public void write(NamedGraphSet set, OutputStream out) {
+	public void write(NamedGraphSet set, OutputStream out, String baseURI) {
 		try {
 			this.encoding = "utf-8";
-			write(set, new OutputStreamWriter(out, "utf-8"));
+			write(set, new OutputStreamWriter(out, "utf-8"), baseURI);
 		} catch (UnsupportedEncodingException ueex) {
 			throw new JenaException(ueex);
 		}

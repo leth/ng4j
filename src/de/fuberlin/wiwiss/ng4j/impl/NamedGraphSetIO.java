@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetIO.java,v 1.1 2004/11/02 02:00:25 cyganiak Exp $
+// $Id: NamedGraphSetIO.java,v 1.2 2004/11/26 01:50:32 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import java.io.InputStream;
@@ -8,12 +8,16 @@ import java.io.Writer;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
-import de.fuberlin.wiwiss.ng4j.trix.NamedGraphSetWriter;
+import de.fuberlin.wiwiss.ng4j.trig.TriGWriter;
+import de.fuberlin.wiwiss.ng4j.trix.TriXWriter;
 
 /**
- * Abstract {@link NamedGraphSet} implementation providing implementations for
- * NamedGraphSet's various <tt>read</tt> and <tt>write</tt> methods. 
+ * <p>Abstract {@link NamedGraphSet} implementation providing implementations for
+ * NamedGraphSet's various <tt>read</tt> and <tt>write</tt> methods.</p> 
  *
+ * TODO: Factor out graph writing into a GraphWriterService, use that also in
+ * NamedGraphModel 
+ * 
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public abstract class NamedGraphSetIO implements NamedGraphSet {
@@ -40,9 +44,10 @@ public abstract class NamedGraphSetIO implements NamedGraphSet {
 	}
 
 	public void write(OutputStream out, String lang) {
-		// TODO: Ugly! Fix this
 		if ("TRIX".equals(lang)) {
-			new NamedGraphSetWriter().write(this, out);
+			new TriXWriter().write(this, out, null);
+		} else if ("TRIG".equals(lang)) {
+			new TriGWriter().write(this, out, null);
 		} else {
 			// can fail if no graph in set
 			NamedGraph firstGraph = (NamedGraph) listGraphs().next();
@@ -51,14 +56,14 @@ public abstract class NamedGraphSetIO implements NamedGraphSet {
 	}
 
 	public void write(Writer out, String lang) {
-		// TODO: Ugly! Fix this
 		if ("TRIX".equals(lang)) {
-			new NamedGraphSetWriter().write(this, out);
+			new TriXWriter().write(this, out, null);
+		} else if ("TRIG".equals(lang)) {
+			new TriGWriter().write(this, out, null);
 		} else {
 			// can fail if no graph in set
 			NamedGraph firstGraph = (NamedGraph) listGraphs().next();
 			asJenaModel(firstGraph.getGraphName().toString()).write(out, lang);
 		}
 	}
-
 }

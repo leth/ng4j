@@ -1,4 +1,4 @@
-// $Id: GraphReaderService.java,v 1.4 2004/11/26 00:52:09 cyganiak Exp $
+// $Id: GraphReaderService.java,v 1.5 2004/11/26 01:50:32 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import java.io.File;
@@ -31,8 +31,8 @@ import de.fuberlin.wiwiss.ng4j.trix.TriXReader;
 
 /**
  * Reads RDF graphs from external sources (URLs, InputStreams,
- * Readers, Strings). Supports all serializations supported by
- * Jena, and TriX. Supports reading of Named Graphs into
+ * Readers, Strings). Supports TriX, TriG and all serializations
+ * supported by Jena. Supports reading of Named Graphs into
  * {@link NamedGraphSet}s.
  * <p>
  * To read from a source, three steps must be performed:
