@@ -49,9 +49,9 @@ public interface SWPNamedGraph extends NamedGraph
      * 
      * @param authority
      */
-    public boolean swpAssert(SWPAuthority authority, ArrayList listOfAuthorityProperties );
+    public boolean swpAssert( SWPAuthority authority, ArrayList listOfAuthorityProperties );
 
-    public boolean swpAssert(SWPAuthority authority );
+    public boolean swpAssert( SWPAuthority authority );
 
     /**
      * 
@@ -60,9 +60,9 @@ public interface SWPNamedGraph extends NamedGraph
      *
      * @param authority
      */
-    public boolean swpQuote(SWPAuthority authority, ArrayList listOfAuthorityProperties );
+    public boolean swpQuote( SWPAuthority authority, ArrayList listOfAuthorityProperties );
 
-    public boolean swpQuote(SWPAuthority authority );
+    public boolean swpQuote( SWPAuthority authority );
     
     /**
      * 
@@ -109,7 +109,7 @@ public interface SWPNamedGraph extends NamedGraph
      * @param signatureMethod
      * @return
      */
-    public boolean assertWithSignature(SWPAuthority authority, Node signatureMethod, ArrayList listOfAuthorityProperties );
+    public boolean assertWithSignature( SWPAuthority authority, Node signatureMethod, ArrayList listOfAuthorityProperties );
 
 	// Todo: Change stuff below to iterators!
 

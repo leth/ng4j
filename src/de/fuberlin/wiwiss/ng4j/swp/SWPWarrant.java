@@ -10,13 +10,17 @@ import java.security.Signature;
 
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
+import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPCertificateException;
+import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPSignatureException;
+
 /**
  * 
  * @author chris bizer
  * @author rowland watkins
  * 
  */
-public interface SWPWarrant {
+public interface SWPWarrant 
+{
     
 	
     /**
@@ -45,14 +49,14 @@ public interface SWPWarrant {
      * 
      * @return
      */        
-    public SWPAuthority getAuthority();
+    public SWPAuthority getAuthority() throws SWPCertificateException;
 
     /**
      * Returns the signature of this warrant or null if the warrant is not signed.
      * 
      * @return
      */     
-    public Signature getSignature();
+    public Signature getSignature() throws SWPSignatureException;
 
     /**
      * Returns true if the warrant is signed.

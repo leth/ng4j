@@ -11,6 +11,7 @@ import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPBadSignatureException;
 import java.util.ArrayList;
 
 import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 /**
  * 
@@ -202,7 +203,7 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * @param authority
      * @return
      */
-	/*
+	
     public boolean assertGraphsWithSignature( ArrayList listOfGraphNames, 
     										SWPAuthority authority, 
     										Node signatureMethod, 
@@ -212,7 +213,7 @@ public interface SWPNamedGraphSet extends NamedGraphSet
     										String password ) 
     throws SWPBadSignatureException, 
     SWPBadDigestException;
-   */
+   
     /**
      * 
      * For all signature graphs in the set,
@@ -249,20 +250,20 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * Returns an iterator over all SWPWarrants for a given authority.
      * 
      */
-    //public ExtendedIterator getAllWarrants( SWPAuthority authority );
+    public ExtendedIterator getAllWarrants( SWPAuthority authority );
     
 	/**
      * 
      * Returns an iterator over all named graphs asserted by a given authority.
      * 
      */
-    //public ExtendedIterator getAllAssertedGraphs( SWPAuthority authority );
+    public ExtendedIterator getAllAssertedGraphs( SWPAuthority authority );
 	/**
      * 
      * Returns an iterator over all named graphs quoted by a given authority.
      * 
      */
-    //public ExtendedIterator getAllquotedGraphs( SWPAuthority authority );
+    public ExtendedIterator getAllQuotedGraphs( SWPAuthority authority );
    
 
 }
