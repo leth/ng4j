@@ -185,7 +185,7 @@ P.footer {
     Richard Cyganiak, Freie Universität Berlin</p>
 </div>
 <DIV class=head> 
-  <H1 id=title>NG4J - Named Graphs API for Jena V0.2</H1>
+  <H1 id=title>NG4J - Named Graphs API for Jena V0.3</H1>
   <DIV class=nav>
 <P><STRONG>Nearby:</STRONG> <A 
 href="http://www.w3.org/2004/03/trix/" target="_blank">W3C Named Graphs Webite</A> 
@@ -204,7 +204,7 @@ href="http://www.w3.org/RDF/">RDF</A> | </P>
   <P>The Named Graphs API for Jena (NG4J) is an extension to the Jena Semantic 
     Web framework for parsing, manipulating and serializing sets of Named Graphs. 
   </P>
-  <P>NG4J V0.2 extends Jena with:</P>
+  <P>NG4J V0.3 extends Jena with:</P>
   </DIV>
 <ul>
   <li> graph-centric methods for manipulating sets of Named Graphs</li>
@@ -212,30 +212,22 @@ href="http://www.w3.org/RDF/">RDF</A> | </P>
   <li>viewing graphsets as Jena models and Jena graphs</li>
   <li>provenance-enabled Jena statements</li>
   <li>querying of Named Graphs with the TriQL query language</li>
-  <li>integrated parser for the basic TriX syntax</li>
-  <li>integrated serializer for the basic TriX syntax</li>
+  <li>integrated parser and serializer for the TriX syntax including
+    XSLT syntactic extensions</li>
+  <li>integrated parser and serializer for the TriG syntax</li>
   <li>in-memory or database-persisted graphset storage</li>
   <li>directory reader for importing existing RDF files.</li>
   <li>directory writer for serializing graph sets a classic RDF files.</li>
 </ul>
-<p>For version 0.3, we plan to add:</p>
 <DIV class=status> 
-  <ul>
-    <li>a TriG parser </li>
-    <li>a TriG serializer</li>
-    <li>a TriX parser supporting XSLT transformations</li>
-    <li>a TriX serializer supporting XSLT transformations</li>
-  </ul>
-  <DIV class=status> 
-    <P>NG4J is an <strong>exerimental implementation</strong> of the new syntaxes 
-      (<a href="http://swdev.nokia.com/trix/TriX.html" target="_blank">TriX</a>, 
-      <a href="http://www.wiwiss.fu-berlin.de/suhl/bizer/TriG/" target="_blank">TriG</a>) 
-      and query language (<a href="http://www.wiwiss.fu-berlin.de/suhl/bizer/TriQL/" target="_blank">TriQL</a>) 
-      developed within the Semantic Web Interest Group. </P>
-  </DIV>
-  <HR>
-  <h2>Contents</h2>
+  <P>NG4J is an <strong>exerimental implementation</strong> of the new syntaxes 
+    (<a href="http://swdev.nokia.com/trix/TriX.html" target="_blank">TriX</a>, 
+    <a href="http://www.wiwiss.fu-berlin.de/suhl/bizer/TriG/" target="_blank">TriG</a>) 
+    and query language (<a href="http://www.wiwiss.fu-berlin.de/suhl/bizer/TriQL/" target="_blank">TriQL</a>) 
+    developed within the Semantic Web Interest Group. </P>
 </DIV>
+<HR>
+<h2>Contents</h2>
 <ol>
   <li> 
     <DIV class=status> <A 
@@ -644,7 +636,7 @@ while (it.hasNext()) {
   before executing the query. <a href="javadoc/de/fuberlin/wiwiss/ng4j/triql/TriQLQuery.html">See JavaDoc for details.</a></p>
 <p>&nbsp;</p>
 <h3><A id=Persistence name=Persistence>2.3 Using Database Persistence</A></h3>
-<p>NamedGraphSets can be stored in a relational database. As of NG4J v0.2, only 
+<p>NamedGraphSets can be stored in a relational database. As of NG4J v0.3, only 
   MySQL is supported. To create a persistent NamedGraphSet, you have to set up 
   a java.sql database connection, and create a new NamedGraphSetDB instance:</p>
 
@@ -673,7 +665,8 @@ NamedGraphSetDB.delete(connection, "myapp");</pre>
 <ul>
   <li>NG4J can be downloaded from Sourceforge: <a href="http://sourceforge.net/projects/ng4j/" target="_blank">http://sourceforge.net/projects/ng4j/ 
     </a></li>
-  <li>NG4J requires Jena 2.1. </li>
+  <li>NG4J is designed to work with Jena 2.1 and might not be 100% compatible
+    with the latest Jena CVS development version.</li>
   <li>NG4J is lisenced under the terms of the Berkeley Software Distribution (BSD) License.</li>
 </ul>
 <TABLE border=1>
@@ -682,6 +675,12 @@ NamedGraphSetDB.delete(connection, "myapp");</pre>
       <TH> Version </TH>
       <TH> Comment </TH>
       <TH>Release Date</TH>
+    </TR>
+    <TR> 
+      <TD align=middle>V0.3</TD>
+      <TD align=left>TriG support, TriX syntactic extensions support,
+        Jena CVS compatibility, bugfixes and minor improvements.</TD>
+      <TD align=middle valign="top">2004-12-14</TD>
     </TR>
     <TR> 
       <TD align=middle>V0.2</TD>
@@ -715,7 +714,7 @@ NamedGraphSetDB.delete(connection, "myapp");</pre>
   <a href="http://page.mi.fu-berlin.de/%7Ecyganiak/" target="_blank">http://page.mi.fu-berlin.de/~cyganiak/</a><br>
 </p>
 <HR title="Separator for header">
-<p>$Date: 2004/11/12 16:11:48 $<br />
-  $Id: index.html,v 1.9 2004/11/12 16:11:48 cyganiak Exp $</p>
+<p>$Date: 2004/12/13 23:14:49 $<br />
+  $Id: index.html,v 1.10 2004/12/13 23:14:49 cyganiak Exp $</p>
 </BODY>
 </HTML>
