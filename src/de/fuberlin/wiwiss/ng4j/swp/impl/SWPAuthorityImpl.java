@@ -3,17 +3,25 @@ package de.fuberlin.wiwiss.ng4j.swp.impl;
 
 import java.util.ArrayList;
 
+import com.hp.hpl.jena.datatypes.DatatypeFormatException;
+import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Triple;
+import com.hp.hpl.jena.shared.AddDeniedException;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
+import com.hp.hpl.jena.vocabulary.RDF;
+import com.hp.hpl.jena.vocabulary.RDFS;
 
-import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+
+import sun.misc.BASE64Encoder;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.swp.SWPAuthority;
+import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPMissingAuthorityPropertyException;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.FOAF;
 
@@ -25,17 +33,21 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.FOAF;
  * @author chris bizer
  *
  */
-public class SWPAuthorityImpl implements SWPAuthority {
+public class SWPAuthorityImpl implements SWPAuthority 
+{
 
     private Node id;
     private String label;
     private String email = null;
     private PublicKey publickey;
-    private PrivateKey privatekey;
 	private X509Certificate certificate;
+	private NamedGraph graph = null;
 
-     public SWPAuthorityImpl(Node id) {
-		setID(id);
+	public SWPAuthorityImpl(){}
+	
+    public SWPAuthorityImpl( Node id ) 
+    {
+    	setID( id );
 	}
 
     /**
@@ -44,10 +56,12 @@ public class SWPAuthorityImpl implements SWPAuthority {
      * Authorities can by identified using a URIref or a bNode
      * 
      */
-	public void setID(Node id) {
+	public void setID( Node id ) 
+	{
         this.id = id ;
     }
-	public Node getID() {
+	public Node getID() 
+	{
 		return this.id;
     }
 	
@@ -57,23 +71,27 @@ public class SWPAuthorityImpl implements SWPAuthority {
      * Will be serialized using rdfs:label
      * 
      */
-	public void setLabel(String label) {
+	public void setLabel( String label ) 
+	{
         this.label = label ;
     }
-	public String getLabel()  {
+	public String getLabel()  
+	{
 		return this.label;
     }
 
     /**
      * 
-     * Sets the eMail adress of the authority.
+     * Sets the eMail address of the authority.
      * Will be serialized using foaf:mbox
      * 
      */
-	public void setEmail(String email) {
+	public void setEmail( String email )
+	{
         this.email = email ;
     }
-	public String getEmail() {
+	public String getEmail() 
+	{
 		return this.email;
     }
 	
@@ -83,23 +101,14 @@ public class SWPAuthorityImpl implements SWPAuthority {
      * Will be serialized using swp:hasKey
      * 
      */
-	public void setPublicKey(PublicKey key) {
+	public void setPublicKey( PublicKey key ) 
+	{
         this.publickey = key ;
     }
-	public PublicKey getPublicKey() {
+	
+	public PublicKey getPublicKey()
+	{
 		return this.publickey;
-    }
-
-    /**
-     * 
-     * Sets the private key of the authority.
-     * 
-     */
-	public void setPrivateKey(PrivateKey key) {
-        this.privatekey = key ;
-    }
-	public PrivateKey getPrivateKey() {
-		return this.privatekey;
     }
 
     /**
@@ -107,10 +116,12 @@ public class SWPAuthorityImpl implements SWPAuthority {
      * Sets the certificate of the authority.
      * 
      */
-	public void setCertificate(X509Certificate certificate) {
+	public void setCertificate( X509Certificate certificate )
+	{
         this.certificate = certificate ;
     }
-	public X509Certificate getCertificate() {
+	public X509Certificate getCertificate() 
+	{
 		return this.certificate;
     }
 	
@@ -119,7 +130,16 @@ public class SWPAuthorityImpl implements SWPAuthority {
      * Adds an additional property of the authority.
      * 
      */
-	public void addProperty(Node predicate, Node object) {
+	public void addProperty( Node predicate, Node object ) 
+	{
+		if ( this.graph != null )
+		{
+			graph.add( new Triple( this.getID(), predicate, object ) );
+		}
+		else
+		{
+			//graph not ready!
+		}
     }
 
 	/**
@@ -127,7 +147,8 @@ public class SWPAuthorityImpl implements SWPAuthority {
      * Returns an iterator over all property values (nodes) for a given property.
      * 
      */
-	public ExtendedIterator getProperty(Node predicate){
+	public ExtendedIterator getProperty( Node predicate )
+	{
 		return null;
     }
 
@@ -137,44 +158,85 @@ public class SWPAuthorityImpl implements SWPAuthority {
      * 
      * The listOfAuthorityProperties determines which information
      * about the authority is added.
+	 * @throws SWPMissingAuthorityPropertyException 
      * 
      */
-	public boolean addDescriptionToGraph(NamedGraph graph, ArrayList listOfAuthorityProperties) {
+	public boolean addDescriptionToGraph( NamedGraph graph, ArrayList listOfAuthorityProperties ) 
+	{
 		// Add swp:authority
-		graph.add(new Triple(graph.getGraphName(), SWP.authorityNode, this.getID()));
-        // Check if the eMail adress has to be added.
-		if (this.getID().isBlank() && this.getEmail() != null) {
-             graph.add(new Triple(this.getID(), FOAF.mboxNode, Node.createURI("mailto:" + this.getEmail())));
+		graph.add( new Triple( graph.getGraphName(), SWP.authority.asNode(), this.getID() ) );
+		graph.add( new Triple( this.getID(), RDF.type.asNode(), SWP.Authority.asNode() ) );
+		
+		BASE64Encoder encoder = new BASE64Encoder();
+        // Check if the eMail address has to be added.
+		if ( this.getID().isBlank() && this.getEmail() != null ) 
+		{
+             graph.add( new Triple(this.getID(), FOAF.mbox.asNode(), Node.createURI( "mailto:" + this.getEmail() ) ) );
 		}
-		// Add authority description
-        if (listOfAuthorityProperties.contains((Object) FOAF.mboxNode)) {
-			graph.add(new Triple(this.getID(), FOAF.mboxNode, Node.createURI("mailto:" + this.getEmail())));
-        };
+		
+		if ( listOfAuthorityProperties != null)
+		{
+			// Add authority description
+			if ( listOfAuthorityProperties.contains( ( Object ) FOAF.mbox.asNode() ) ) 
+			{
+				graph.add(new Triple( this.getID(), FOAF.mbox.asNode(), Node.createURI( "mailto:" + this.getEmail() ) ) );
+			}
 
-		Node rdfsLabel = Node.createURI("http://www.w3.org/2000/01/rdf-schema#label");
-        if (listOfAuthorityProperties.contains((Object) rdfsLabel)) {
-			graph.add(new Triple(this.getID(), rdfsLabel, Node.createLiteral(this.getLabel(), null, null)));
-        };
+			//Node rdfsLabel = Node.createURI("http://www.w3.org/2000/01/rdf-schema#label");
+			//Not fatal, so won't throw exception if missing
+			if ( listOfAuthorityProperties.contains( ( Object ) RDFS.label.asNode() ) ) 
+			{
+				graph.add( new Triple( this.getID(), RDFS.label.asNode(), Node.createLiteral( this.getLabel(), null, null ) ) );
+			}
 
-        if (listOfAuthorityProperties.contains((Object) SWP.RSAKeyNode)) {
-			// We need code for publishing information about a RSA key here, using the SWP-2 and the XML-Sig vocabulary
-        };
+        
+			if ( listOfAuthorityProperties.contains( ( Object ) SWP.RSAKey.asNode() ) ) 
+        	{
+				// We need code for publishing information about a RSA key here, using the SWP-2 and the XML-Sig vocabulary
+				graph.add( new Triple( this.getID(), 
+        								SWP.RSAKey.asNode(), 
+        								Node.createLiteral( encoder.encode( this.getPublicKey().getEncoded() ), 
+        													null, 
+        													XSDDatatype.XSDbase64Binary) ) );
+        	}
 
-        if (listOfAuthorityProperties.contains((Object) SWP.X509CertificateNode)) {
-			// We need code for publishing information about a X509 certificate here, using the SWP-2 and the XML-Sig vocabulary
-        };
+			if ( listOfAuthorityProperties.contains( ( Object ) SWP.X509Certificate.asNode() ) ) 
+			{
+				// We need code for publishing information about a X509 certificate here, using the SWP-2 and the XML-Sig vocabulary
+        		try {
+        			graph.add( new Triple( this.getID(), 
+											SWP.X509Certificate.asNode(), 
+											Node.createLiteral( encoder.encode( this.getCertificate().getEncoded() ), 
+																null, 
+																XSDDatatype.XSDbase64Binary ) ) );
+        		} 
+        		catch ( AddDeniedException e ) 
+        		{
+        			return false;
+        		} 
+        		catch ( DatatypeFormatException e ) 
+        		{
+        			return false;
+        		} 
+        		catch ( CertificateEncodingException e ) 
+        		{
+        			return false;
+        		}
+			}
+		}
+        this.graph = graph;
 
         return true;
 	}
 
 	/**
      * 
-     * Returns a graph containing all information about the authorty.
-     * Excluding its private key :-)
-     * 
+     * Returns a graph containing all information about the authority.
+     *
      */
-	public Graph getGraph() {
-		return null;
+	public Graph getGraph() 
+	{
+		return this.graph;
     }
 
 }

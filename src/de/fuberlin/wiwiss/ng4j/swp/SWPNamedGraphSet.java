@@ -5,7 +5,10 @@
 package de.fuberlin.wiwiss.ng4j.swp;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
+import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPBadDigestException;
+import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPBadSignatureException;
 
+import java.security.PrivateKey;
 import java.util.ArrayList;
 
 import com.hp.hpl.jena.graph.Node;
@@ -118,7 +121,14 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * @param listOfAuthorityProperties
      * @return
      */
-    public boolean assertWithSignature( SWPAuthority authority, Node signatureMethod, Node digestMethod, ArrayList listOfAuthorityProperties );
+    public boolean assertWithSignature( SWPAuthority authority, 
+    									Node signatureMethod, 
+    									Node digestMethod, 
+    									ArrayList listOfAuthorityProperties, 
+    									String keystore, 
+    									String password ) 
+    throws SWPBadSignatureException,
+    SWPBadDigestException;
     
     /**
      * 
@@ -152,7 +162,13 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * @param listOfAuthorityProperties
      * @return
      */
-    public boolean quoteWithSignature( SWPAuthority authority, Node signatureMethod, Node digestMethod, ArrayList listOfAuthorityProperties );
+    public boolean quoteWithSignature( SWPAuthority authority, 
+    									Node signatureMethod, 
+    									Node digestMethod, 
+    									ArrayList listOfAuthorityProperties, 
+    									PrivateKey pkey ) 
+    throws SWPBadSignatureException,
+    SWPBadDigestException;
    
     /**
      * 
@@ -168,7 +184,7 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      */
     public boolean assertGraphs( ArrayList listOfGraphNames, SWPAuthority authority, ArrayList listOfAuthorityProperties );
 
-    public boolean quoteGraphs(ArrayList listOfGraphNames, SWPAuthority authority, ArrayList listOfAuthorityProperties);
+    public boolean quoteGraphs( ArrayList listOfGraphNames, SWPAuthority authority, ArrayList listOfAuthorityProperties );
 
     /**
      * 
@@ -181,7 +197,14 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * @param authority
      * @return
      */
-    public boolean assertGraphsWithSignature( ArrayList listOfGraphNames, SWPAuthority authority, Node signatureMethod, Node digestMethod, ArrayList listOfAuthorityProperties );
+    public boolean assertGraphsWithSignature( ArrayList listOfGraphNames, 
+    										SWPAuthority authority, 
+    										Node signatureMethod, 
+    										Node digestMethod, 
+    										ArrayList listOfAuthorityProperties, 
+    										PrivateKey pkey ) 
+    throws SWPBadSignatureException, 
+    SWPBadDigestException;
    
     /**
      * 

@@ -65,8 +65,8 @@ public interface SWPAuthority {
      * Sets the private key of the authority.
      * 
      */
-	public void setPrivateKey(PrivateKey key);
-	public PrivateKey getPrivateKey();	
+	//public void setPrivateKey(PrivateKey key);
+	//public PrivateKey getPrivateKey();	
 
     /**
      * 

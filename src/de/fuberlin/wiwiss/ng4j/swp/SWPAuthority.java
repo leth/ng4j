@@ -17,6 +17,7 @@ import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
+import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPMissingAuthorityPropertyException;
 
 /**
  * 
@@ -67,14 +68,6 @@ public interface SWPAuthority {
 
     /**
      * 
-     * Sets the private key of the authority.
-     * 
-     */
-	public void setPrivateKey(PrivateKey key);
-	public PrivateKey getPrivateKey();	
-
-    /**
-     * 
      * Sets the certificate of the authority.
      * 
      */
@@ -95,7 +88,7 @@ public interface SWPAuthority {
      */
 	public ExtendedIterator getProperty(Node predicate);
 
-    public boolean addDescriptionToGraph(NamedGraph graph, ArrayList listOfAuthorityProperties);
+    public boolean addDescriptionToGraph( NamedGraph graph, ArrayList listOfAuthorityProperties );
 
 	/**
      * 

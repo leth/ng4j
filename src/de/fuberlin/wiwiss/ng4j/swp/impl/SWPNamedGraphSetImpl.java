@@ -3,27 +3,19 @@
 */
 package de.fuberlin.wiwiss.ng4j.swp.impl;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
+import java.security.KeyStore;
+import java.security.PrivateKey;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
-import com.hp.hpl.jena.graph.Graph;
+import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.mem.GraphMem;
-import com.hp.hpl.jena.graph.compose.MultiUnion;
-import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
+import com.hp.hpl.jena.vocabulary.RDF;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
-import de.fuberlin.wiwiss.ng4j.NamedGraphModel;
-import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
 import de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraph;
@@ -31,7 +23,14 @@ import de.fuberlin.wiwiss.ng4j.swp.impl.SWPNamedGraphImpl;
 import de.fuberlin.wiwiss.ng4j.swp.SWPAuthority;
 import de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP;
-import de.fuberlin.wiwiss.ng4j.swp.signature.impl.SWPSignatureUtilitiesImpl;
+import de.fuberlin.wiwiss.ng4j.swp.signature.SWPSignatureUtilities;
+import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPBadDigestException;
+import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPBadSignatureException;
+import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPInvalidKeyException;
+import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPNoSuchAlgorithmException;
+import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPNoSuchDigestMethodException;
+import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPSignatureException;
+import de.fuberlin.wiwiss.ng4j.swp.signature.keystores.pkcs12.PKCS12Utils;
 
 import com.eaio.uuid.UUID;
 
@@ -47,11 +46,11 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     public boolean swpAssert(SWPAuthority authority, ArrayList listOfAuthorityProperties) {
 		// Create a new warrant graph.
 		SWPNamedGraph warrantGraph = createNewWarrantGraph();
-		// Assert all graph in the graphset.
+		// Assert all graphs in the graphset. 
         Iterator graphIterator = this.listGraphs();
         while (graphIterator.hasNext()) {
             NamedGraph currentGraph = (NamedGraph) graphIterator.next();
-            warrantGraph.add(new Triple(currentGraph.getGraphName(), SWP.assertedByNode, warrantGraph.getGraphName()));
+            warrantGraph.add(new Triple(currentGraph.getGraphName(), SWP.assertedBy.asNode(), warrantGraph.getGraphName()));
         }
         // Add a description of the authorty to the warrant graph
         authority.addDescriptionToGraph(warrantGraph, listOfAuthorityProperties);
@@ -74,7 +73,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
         Iterator graphIterator = this.listGraphs();
         while (graphIterator.hasNext()) {
             NamedGraph currentGraph = (NamedGraph) graphIterator.next();
-            warrantGraph.add(new Triple(currentGraph.getGraphName(), SWP.quotedByNode, warrantGraph.getGraphName()));
+            warrantGraph.add(new Triple(currentGraph.getGraphName(), SWP.quotedBy.asNode(), warrantGraph.getGraphName()));
         }
         // Add a description of the authorty to the warrant graph
         authority.addDescriptionToGraph(warrantGraph, listOfAuthorityProperties);
@@ -99,10 +98,12 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
         while (graphNameIterator.hasNext()) {
 			Node currentGraphName = (Node) graphNameIterator.next();
             NamedGraph currentGraph = (NamedGraph) this.getGraph(currentGraphName);
-            warrantGraph.add(new Triple(currentGraph.getGraphName(), SWP.assertedByNode, warrantGraph.getGraphName()));
+            warrantGraph.add(new Triple(currentGraph.getGraphName(), SWP.assertedBy.asNode(), warrantGraph.getGraphName()));
         }
         // Add a description of the authorty to the warrant graph
+        
         authority.addDescriptionToGraph(warrantGraph, listOfAuthorityProperties);
+		
 
 		// Add warrant graph to graphset
 		this.addGraph(warrantGraph);
@@ -112,77 +113,170 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     /* (non-Javadoc)
      * @see de.fuberlin.wiwiss.ng4j.swp.signature.SWPNamedGraphSet#assertGraphs(java.util.ArrayList, de.fuberlin.wiwiss.ng4j.swp.signature.SWPAuthority, java.util.ArrayList)
      */
-    public boolean quoteGraphs(ArrayList listOfGraphNames, SWPAuthority authority, ArrayList listOfAuthorityProperties) {
+    public boolean quoteGraphs( ArrayList listOfGraphNames, SWPAuthority authority, ArrayList listOfAuthorityProperties ) 
+    {
         // Create a new warrant graph.
 		SWPNamedGraph warrantGraph = createNewWarrantGraph();
 		// Assert all graph in the list.
         Iterator graphNameIterator = listOfGraphNames.iterator();
-        while (graphNameIterator.hasNext()) {
-			Node currentGraphName = (Node) graphNameIterator.next();
-            NamedGraph currentGraph = (NamedGraph) this.getGraph(currentGraphName);
-            warrantGraph.add(new Triple(currentGraph.getGraphName(), SWP.quotedByNode, warrantGraph.getGraphName()));
+        while ( graphNameIterator.hasNext() ) 
+        {
+			Node currentGraphName = ( Node ) graphNameIterator.next();
+            NamedGraph currentGraph = ( NamedGraph ) this.getGraph( currentGraphName );
+            warrantGraph.add( new Triple( currentGraph.getGraphName(), SWP.quotedBy.asNode(), warrantGraph.getGraphName() ) );
         }
         // Add a description of the authorty to the warrant graph
-        authority.addDescriptionToGraph(warrantGraph, listOfAuthorityProperties);
+        
+		authority.addDescriptionToGraph( warrantGraph, listOfAuthorityProperties );
+		
 
 		// Add warrant graph to graphset
-		this.addGraph(warrantGraph);
+		this.addGraph( warrantGraph );
         return true;
-    }
-
-    /* (non-Javadoc)
-     * @see de.fuberlin.wiwiss.ng4j.dsig.SWPNamedGraphSet#assertWithSignature(de.fuberlin.wiwiss.ng4j.dsig.SWPAuthority, com.hp.hpl.jena.rdf.model.Resource)
-     */
-    public boolean assertWithSignature(SWPAuthority authority, Resource signatureMethod) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    /* (non-Javadoc)
-     * @see de.fuberlin.wiwiss.ng4j.dsig.SWPNamedGraphSet#quoteWithSignature(de.fuberlin.wiwiss.ng4j.dsig.SWPAuthority, com.hp.hpl.jena.rdf.model.Resource)
-     */
-    public boolean quoteWithSignature(SWPAuthority authority, Resource signatureMethod) {
-        // TODO Auto-generated method stub
-        return false;
     }
 
     /* (non-Javadoc)
      * @see de.fuberlin.wiwiss.ng4j.swp.signature.SWPNamedGraphSet#assertWithSignature(de.fuberlin.wiwiss.ng4j.swp.signature.SWPAuthority, com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node, java.util.ArrayList)
      */
-    public boolean assertWithSignature(SWPAuthority authority, Node signatureMethod, Node digestMethod, ArrayList listOfAuthorityProperties) {
+    public boolean assertWithSignature( SWPAuthority authority, 
+    									Node signatureMethod, 
+    									Node digestMethod, 
+    									ArrayList listOfAuthorityProperties, 
+    									String keystore,
+    									String password ) throws SWPBadSignatureException, SWPBadDigestException 
+    {
 		// Create a new warrant graph.
 		SWPNamedGraph warrantGraph = createNewWarrantGraph();
-		// Assert all graph in the graphset.
+		// Assert all graphs in the graphset.
+		/*
+		String currentGraphSetDigest = null;
+		try 
+		{
+			currentGraphSetDigest = SWPSignatureUtilities.calculateDigest( this, digestMethod );
+		} 
+		catch ( SWPNoSuchDigestMethodException e )
+		{
+			return false;
+		}*/
+		
+		authority.addDescriptionToGraph( warrantGraph, listOfAuthorityProperties );
+		
         Iterator graphIterator = this.listGraphs();
-        while (graphIterator.hasNext()) {
-            NamedGraph currentGraph = (NamedGraph) graphIterator.next();
-            warrantGraph.add(new Triple(currentGraph.getGraphName(), SWP.assertedByNode, warrantGraph.getGraphName()));
-			// Add digest for the current graph
-            // Rowland: Can't we make SWPSignatureUtilitiesImpl static ?????
-            String currentGraphDigest = new SWPSignatureUtilitiesImpl().calculateDigest( currentGraph, digestMethod );
-            warrantGraph.add(new Triple(currentGraph.getGraphName(), SWP.digestNode, Node.createLiteral(currentGraphDigest, null, null)));
-            warrantGraph.add(new Triple(currentGraph.getGraphName(), SWP.digestMethodNode, digestMethod));
-        }
-        // Add a description of the authorty to the warrant graph
-        authority.addDescriptionToGraph(warrantGraph, listOfAuthorityProperties);
+        while ( graphIterator.hasNext() ) 
+        {
+        
+            NamedGraph currentGraph = ( NamedGraph ) graphIterator.next();
+            
+			try 
+			{
+				String graphDigest = SWPSignatureUtilities.calculateDigest( currentGraph, digestMethod );
+				warrantGraph.add( new Triple( currentGraph.getGraphName(), SWP.assertedBy.asNode(), warrantGraph.getGraphName() ) );
+	            warrantGraph.add( new Triple( currentGraph.getGraphName(), 
+											SWP.digest.asNode(), 
+											Node.createLiteral( graphDigest, null, XSDDatatype.XSDbase64Binary ) ) );
+	            warrantGraph.add( new Triple( currentGraph.getGraphName(), SWP.digestMethod.asNode(), digestMethod ) );
+	            //Not sure if these are needed
+	            /*
+	            warrantGraph.add( new Triple( currentGraph.getGraphName(), SWP.authority.asNode(), Node.createURI( authority.getEmail() ) ) );
+	            warrantGraph.add( new Triple( currentGraph.getGraphName(), 
+											SWP.validFrom.asNode(), 
+											Node.createLiteral( authority.getCertificate().getNotBefore().toString(), 
+																null, 
+																XSDDatatype.XSDdateTime ) ) );
+	            warrantGraph.add( new Triple( currentGraph.getGraphName(), 
+											SWP.validUntil.asNode(), 
+											Node.createLiteral( authority.getCertificate().getNotAfter().toString(), 
+																null, 
+																XSDDatatype.XSDdateTime ) ) );
+	            
+	            warrantGraph.add( new Triple( warrantGraph.getGraphName(), SWP.signatureMethod.asNode(), signatureMethod ) );
+	            
+	            String graphSetSignature = SWPSignatureUtilities.calculateSignature( this, signatureMethod, pkey );
+	        	warrantGraph.add( new Triple( currentGraph.getGraphName(), 
+											SWP.signature.asNode(), 
+											Node.createLiteral( graphSetSignature, null, XSDDatatype.XSDbase64Binary ) ) );
+											*/
+			} 
+			catch ( SWPNoSuchDigestMethodException e1 ) 
+			{
+				return false;
+			} 
+			/*
+			catch ( SWPInvalidKeyException e ) 
+			{
+				return false;
+			} 
+			catch ( SWPSignatureException e ) 
+			{
+				return false;
+			} 
+			catch ( SWPNoSuchAlgorithmException e ) 
+			{
+				return false;
+			}*/
+            
+                      
+        }  
 
+        warrantGraph.add( new Triple( warrantGraph.getGraphName(), SWP.authority.asNode(), Node.createURI( authority.getEmail() ) ) );
+        warrantGraph.add( new Triple( warrantGraph.getGraphName(), 
+									SWP.validFrom.asNode(), 
+									Node.createLiteral( authority.getCertificate().getNotBefore().toString(), 
+														null, 
+														XSDDatatype.XSDdateTime ) ) );
+        warrantGraph.add( new Triple( warrantGraph.getGraphName(), 
+									SWP.validUntil.asNode(), 
+									Node.createLiteral( authority.getCertificate().getNotAfter().toString(), 
+														null, 
+														XSDDatatype.XSDdateTime ) ) );
+        
+        
+        
+        PrivateKey pkey = null;
         // Sign the warrant graph now.
-
-        // Can't do because there are no keys.
-		// String warrantGraphSignature = new SWPSignatureUtilitiesImpl().calculateSignature( warrantGraph, signatureMethod, authority.getPrivateKey());
-        String warrantGraphSignature = "Dummy Signature";
-        warrantGraph.add(new Triple(warrantGraph.getGraphName(), SWP.signatureNode, Node.createLiteral(warrantGraphSignature, null, null)));
-		warrantGraph.add(new Triple(warrantGraph.getGraphName(), SWP.signatureMethodNode, signatureMethod));
-
+        String warrantGraphSignature = null;
+        try 
+        {
+        	pkey = PKCS12Utils.decryptPrivateKey( keystore, password );
+			warrantGraphSignature = SWPSignatureUtilities.calculateSignature( warrantGraph, signatureMethod, pkey );
+			warrantGraph.add( new Triple( warrantGraph.getGraphName(), 
+										SWP.signature.asNode(), 
+										Node.createLiteral( warrantGraphSignature, null, XSDDatatype.XSDbase64Binary ) ) );
+		} 
+        catch ( SWPInvalidKeyException e ) 
+        {
+        	//make the private key unusable
+            pkey = null;
+			return false;
+		}  
+        catch ( SWPSignatureException e ) 
+        {
+        	//make the private key unusable
+            pkey = null;
+			return false;
+		} 
+        catch ( SWPNoSuchAlgorithmException e ) 
+        {
+        	//make the private key unusable
+            pkey = null;
+			return false;
+		}
+		
+        
 		// Add warrant graph to graphset
-		this.addGraph(warrantGraph);
+		this.addGraph( warrantGraph );
         return true;
     }
 
     /* (non-Javadoc)
      * @see de.fuberlin.wiwiss.ng4j.swp.signature.SWPNamedGraphSet#quoteWithSignature(de.fuberlin.wiwiss.ng4j.swp.signature.SWPAuthority, com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node, java.util.ArrayList)
      */
-    public boolean quoteWithSignature(SWPAuthority authority, Node signatureMethod, Node digestMethod, ArrayList listOfAuthorityProperties) {
+    public boolean quoteWithSignature( SWPAuthority authority, 
+    									Node signatureMethod, 
+    									Node digestMethod, 
+    									ArrayList listOfAuthorityProperties, 
+    									PrivateKey pkey ) throws SWPBadSignatureException
+    {
         // TODO Auto-generated method stub
         return false;
     }
@@ -190,7 +284,13 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     /* (non-Javadoc)
      * @see de.fuberlin.wiwiss.ng4j.swp.signature.SWPNamedGraphSet#assertGraphsWithSignature(java.util.ArrayList, de.fuberlin.wiwiss.ng4j.swp.signature.SWPAuthority, com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node, java.util.ArrayList)
      */
-    public boolean assertGraphsWithSignature(ArrayList listOfGraphURIs, SWPAuthority authority, Node signatureMethod, Node digestMethod, ArrayList listOfAuthorityProperties) {
+    public boolean assertGraphsWithSignature( ArrayList listOfGraphURIs, 
+    										SWPAuthority authority, 
+    										Node signatureMethod, 
+    										Node digestMethod, 
+    										ArrayList listOfAuthorityProperties, 
+    										PrivateKey pkey ) throws SWPBadSignatureException
+    {
         // TODO Auto-generated method stub
         return false;
     }
@@ -231,9 +331,9 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 	}
 
     protected SWPNamedGraph createNewWarrantGraph() {
-		Node warrantGraphName = Node.createURI("urn:uuid:" + new UUID());
-		SWPNamedGraph warrantGraph = new SWPNamedGraphImpl(warrantGraphName, new GraphMem());
-		warrantGraph.add(new Triple(warrantGraphName, SWP.assertedByNode, warrantGraphName));
+		Node warrantGraphName = Node.createURI( "urn:uuid:" + new UUID() );
+		SWPNamedGraph warrantGraph = new SWPNamedGraphImpl( warrantGraphName, new GraphMem() );
+		warrantGraph.add( new Triple( warrantGraphName, SWP.assertedBy.asNode(), warrantGraphName ) );
         return warrantGraph;
     }
 

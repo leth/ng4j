@@ -27,6 +27,8 @@ import org.apache.log4j.Category;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.DataLengthException;
 
+import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP;
+
 
 import sun.misc.BASE64Decoder;
 
@@ -45,10 +47,13 @@ public class SignatureReport extends Object
         private PublicKey publicKey; //where the public key is stored
         private boolean isValid;// the result of test signature
         private String sigMethod;
+        private String digMethod;
         private String subjectDN;
         private String issuerDN;
         private X509Certificate certificate;
         private X509Certificate ca;
+        private String validFrom;
+        private String validUntil;
         
     /**
     * Build a new signature report from the given signature value, public key and data
@@ -97,12 +102,15 @@ public class SignatureReport extends Object
     {
     	this.signedData = data;
     	this.signatureValue = signature.sign( data );
-    	this.sigMethod = signature.getSigMethod();
+    	this.sigMethod = SWP.JjcRdfC14N_rsa_sha1.getURI();
+    	this.digMethod = SWP.JjcRdfC14N_sha1.getURI();
     	this.subjectDN = signature.getSubjectDN();
     	this.issuerDN = signature.getIssuerDN();
     	this.certificate = signature.getCertificate();
     	this.ca = signature.getCA();
     	this.isValid = testRSASignature( signatureValue, signature.getRSAPublicKey(), data );
+    	this.validFrom = signature.getValidFrom();
+    	this.validUntil = signature.getValidUntil();
     }
     
     public String toString()
@@ -150,6 +158,11 @@ public class SignatureReport extends Object
     	return sigMethod;
     }
     
+    public String getDigMethod()
+    {
+    	return digMethod;
+    }
+    
     public String getSubjectDN()
     {
     	return subjectDN;
@@ -168,6 +181,16 @@ public class SignatureReport extends Object
     public X509Certificate getCA()
     {
     	return ca;
+    }
+    
+    public String getValidFrom()
+    {
+    	return validFrom;
+    }
+    
+    public String getValidUntil()
+    {
+    	return validUntil;
     }
         
     /**

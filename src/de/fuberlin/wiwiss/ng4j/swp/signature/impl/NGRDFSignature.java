@@ -15,6 +15,9 @@ import java.security.Security;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 
 import org.apache.log4j.Category;
@@ -26,6 +29,7 @@ import org.bouncycastle.util.encoders.Hex;
 import sun.misc.BASE64Encoder;
 
 import com.eaio.uuid.UUID;
+import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -37,6 +41,7 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphModel;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 import de.fuberlin.wiwiss.ng4j.swp.signature.c14n.RDFC14NImpl;
+import de.fuberlin.wiwiss.ng4j.swp.vocabulary.DP;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP;
 
 public class NGRDFSignature 
@@ -50,6 +55,8 @@ public class NGRDFSignature
     protected ArrayList canonicalTripleList;  //The canonical triple list string of the clean graph
     protected String base;
     protected String currentGraphName;
+    protected String m_maker;
+    protected String m_type;
     
     /**
      * @param rdfFile - the TriX file to manipulate
@@ -102,7 +109,7 @@ public class NGRDFSignature
     	initialize();
     }
     
-    public NGRDFSignature( NamedGraphSet graphSet ) 
+    public NGRDFSignature( NamedGraphSet graphSet, String maker, String type ) 
     		throws InvalidKeyException, 
 			NoSuchAlgorithmException, 
 			SignatureException, 
@@ -112,6 +119,8 @@ public class NGRDFSignature
     {
     	currentNGSet = graphSet;
     	cleanNGSet = graphSet;
+    	m_maker = maker;
+    	m_type = type;
     	initialize();
     }
     
@@ -146,7 +155,7 @@ public class NGRDFSignature
     	 * Once we have our graph, we extract the name
     	 */
     	Iterator itr = currentNGSet.listGraphs();
-    	System.out.println( "SignSet has " + currentNGSet.countGraphs() + " graph(s)." );
+    	//System.out.println( "SignSet has " + currentNGSet.countGraphs() + " graph(s)." );
     	NamedGraph tempNG = null;
     	if ( currentNGSet.countGraphs() == 1 ) 
     	{
@@ -158,7 +167,7 @@ public class NGRDFSignature
     	else 
     	{
     		System.out.println( "Graph too large!" );
-    		currentNGSet.write( System.out, "TRIX" );
+    		currentNGSet.write( System.out, "TRIX", "" );
     	}
     	
     	/*
@@ -213,7 +222,7 @@ public class NGRDFSignature
         //System.out.println( "Clean graph: \n" );
         //cleanModel.write( System.out, "TRIX" );
         canonicalTripleList = new RDFC14NImpl( cleanModel, base ).getCanonicalStringsArray();
-        System.out.println( "Canonical triple list of Named Graph: "+'\n'+canonicalTripleList.toString() );    
+        //System.out.println( "Canonical triple list of Named Graph: "+'\n'+canonicalTripleList.toString() );    
     }
                                             
     /**
@@ -287,7 +296,7 @@ public class NGRDFSignature
     /**  With this function, this object will return and RDF with ONLY the valid signatures in the signatureList */
     public NamedGraphSet toGraphset() throws Exception 
 	{
-    	System.out.println( "Number of signature reports to add: " + signatureReportList.size() );
+    	//System.out.println( "Number of signature reports to add: " + signatureReportList.size() );
     	for(int i=0;i<signatureReportList.size();i++)
     	{
     		SignatureReport sr = ( SignatureReport )signatureReportList.get( i );
@@ -328,31 +337,40 @@ public class NGRDFSignature
 	{
     	String warrantGraphName = "urn:uuid:" + new UUID();
     	Model warrantModel = cleanNGSet.asJenaModel( warrantGraphName );
+    	GregorianCalendar date = (GregorianCalendar)Calendar.getInstance();//get date from clock
+   	    Date current = new Date(date.getTimeInMillis());//convert to milliseconds
     	
     	/*
     	 * SWP.Authority resource.
     	 */
-    	Resource authority = warrantModel.createResource( SWP.Authority );
+    	Resource authority = warrantModel.createResource( m_maker , SWP.Authority );
     	
     	/*
     	 * By default the encoded certificate is just a byte[]. I've reencoded it as a base64binary string
     	 * like that described in the SWP paper.
     	 */
     	BASE64Encoder encoder = new BASE64Encoder();
-    	authority.addProperty( SWP.certificate, encoder.encode( signatureReport.getCertificate().getEncoded() ) );
+    	authority.addProperty( SWP.certificate, warrantModel.createTypedLiteral( encoder.encode( signatureReport.getCertificate().getEncoded() ), XSDDatatype.XSDbase64Binary ) );
     	
     	Resource ca = warrantModel.createResource( SWP.CertificationAuthority );
-    	ca.addProperty( SWP.caCertificate, encoder.encode( signatureReport.getCA().getEncoded() ) );
+    	ca.addProperty( SWP.caCertificate, warrantModel.createTypedLiteral( encoder.encode( signatureReport.getCA().getEncoded() ), XSDDatatype.XSDbase64Binary ) );
     	
     	/*
     	 * SWP.Warrant resource.
     	 */
-    	Resource warrant = warrantModel.createResource( SWP.Warrant );
+    	Resource warrant = warrantModel.createResource( "urn:uuid:" + new UUID(), SWP.Warrant );
     	
     	/*
     	 * Add signature value of associated graph. It's already a base64binary string so life is easy.
     	 */
-    	warrant.addProperty( SWP.signature, signatureReport.getSignatureValue() );
+    	warrant.addProperty( SWP.signature, warrantModel.createTypedLiteral( signatureReport.getSignatureValue(), XSDDatatype.XSDbase64Binary ) );
+    	
+    	if ( m_type.equals("user") )
+    	{
+    		warrant.addProperty( DP.dateSubmitted, warrantModel.createTypedLiteral( current.toString(), XSDDatatype.XSDdateTime )  );
+    	}
+    	else 
+    		warrant.addProperty( DP.dateAccepted, warrantModel.createTypedLiteral( current.toString(), XSDDatatype.XSDdateTime )  );
     	
     	/*
     	 * Add signature method as found in the client certificate. This is either SHA1/DSA or SHA1/RSA.
@@ -360,16 +378,20 @@ public class NGRDFSignature
     	 * TODO This needs to become a literal URI, which can be dereferenced on the Web to retrieve a document
     	 * describing the method of forming the signature in detail.
     	 */
-    	warrant.addProperty( SWP.signatureMethod, signatureReport.getSigMethod() );
+    	warrant.addProperty( SWP.signatureMethod, warrantModel.createResource( signatureReport.getSigMethod() ) );
     	
+    	warrant.addProperty( SWP.digestMethod, warrantModel.createResource( signatureReport.getDigMethod() ) );
+    	
+    	warrant.addProperty( SWP.validFrom, warrantModel.createTypedLiteral( signatureReport.getValidFrom(), XSDDatatype.XSDdateTime ) );
+    	warrant.addProperty( SWP.validUntil, warrantModel.createTypedLiteral( signatureReport.getValidUntil(), XSDDatatype.XSDdateTime ) );
     	/*
     	 * Connect up the dots and add an authority to the warrant.
     	 */
-    	warrant.addProperty( SWP.authority, authority.getId() );
+    	warrant.addProperty( SWP.authority, authority );
     	
-    	warrant.addProperty( SWP.certificationAuthority, ca.getId() );
+    	warrant.addProperty( SWP.certificationAuthority, ca );
     	
-    	cleanNGSet.getGraph( currentGraphName ).add( new Triple( 
+    	cleanNGSet.getGraph( warrantGraphName ).add( new Triple( 
     													Node.createURI( currentGraphName ), 
 														Node.createURI( SWP.assertedBy.getURI() ), 
 														Node.createURI( warrantGraphName ) ) );

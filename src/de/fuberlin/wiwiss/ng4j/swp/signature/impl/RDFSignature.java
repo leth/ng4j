@@ -50,6 +50,8 @@ public class RDFSignature
     private X509Certificate certificate;
     private X509Certificate ca;
     private String issuerDN;
+    private String validFrom;
+    private String validUntil;
    
     
     /**
@@ -103,6 +105,8 @@ public class RDFSignature
         this.certificate = ( X509Certificate ) certChain[ 0 ];
         this.subjectDN = certificate.getSubjectDN().getName();
         this.issuerDN = certificate.getIssuerDN().getName();
+        this.validFrom = certificate.getNotBefore().toString();
+        this.validUntil = certificate.getNotAfter().toString();
             
         if ( certChain[ 1 ] != null )
         {
@@ -188,6 +192,16 @@ public class RDFSignature
     public X509Certificate getCA()
     {
     	return ca;
+    }
+    
+    public String getValidFrom()
+    {
+    	return validFrom;
+    }
+    
+    public String getValidUntil()
+    {
+    	return validUntil;
     }
 }
 
