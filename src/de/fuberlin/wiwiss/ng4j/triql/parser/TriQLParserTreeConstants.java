@@ -16,42 +16,43 @@ public interface TriQLParserTreeConstants
   public int JJTVAR = 9;
   public int JJTPREFIXESCLAUSE = 10;
   public int JJTPREFIXDECL = 11;
-  public int JJTLOGICALOR = 12;
-  public int JJTLOGICALAND = 13;
-  public int JJTSTRINGEQUAL = 14;
-  public int JJTSTRINGNOTEQUAL = 15;
-  public int JJTSTRINGMATCH = 16;
-  public int JJTSTRINGNOMATCH = 17;
-  public int JJTBITOR = 18;
-  public int JJTBITXOR = 19;
-  public int JJTBITAND = 20;
-  public int JJTEQUAL = 21;
-  public int JJTNOTEQUAL = 22;
-  public int JJTLESSTHAN = 23;
-  public int JJTGREATERTHAN = 24;
-  public int JJTLESSTHANOREQUAL = 25;
-  public int JJTGREATERTHANOREQUAL = 26;
-  public int JJTLEFTSHIFT = 27;
-  public int JJTRIGHTSIGNEDSHIFT = 28;
-  public int JJTRIGHTUNSIGNEDSHIFT = 29;
-  public int JJTADD = 30;
-  public int JJTSUBTRACT = 31;
-  public int JJTMULTIPLY = 32;
-  public int JJTDIVIDE = 33;
-  public int JJTMODULUS = 34;
-  public int JJTUNARYPLUS = 35;
-  public int JJTUNARYMINUS = 36;
-  public int JJTUNARYNOT = 37;
-  public int JJTMETRICEXPRESSION = 38;
-  public int JJTNUMERICLITERAL = 39;
-  public int JJTTEXTLITERAL = 40;
-  public int JJTPATTERNLITERAL = 41;
-  public int JJTBOOLEANLITERAL = 42;
-  public int JJTNULLLITERAL = 43;
-  public int JJTURL = 44;
-  public int JJTQNAME = 45;
-  public int JJTQUOTEDURI = 46;
-  public int JJTIDENTIFIER = 47;
+  public int JJTCOUNTEXPRESSION = 12;
+  public int JJTLOGICALOR = 13;
+  public int JJTLOGICALAND = 14;
+  public int JJTSTRINGEQUAL = 15;
+  public int JJTSTRINGNOTEQUAL = 16;
+  public int JJTSTRINGMATCH = 17;
+  public int JJTSTRINGNOMATCH = 18;
+  public int JJTBITOR = 19;
+  public int JJTBITXOR = 20;
+  public int JJTBITAND = 21;
+  public int JJTEQUAL = 22;
+  public int JJTNOTEQUAL = 23;
+  public int JJTLESSTHAN = 24;
+  public int JJTGREATERTHAN = 25;
+  public int JJTLESSTHANOREQUAL = 26;
+  public int JJTGREATERTHANOREQUAL = 27;
+  public int JJTLEFTSHIFT = 28;
+  public int JJTRIGHTSIGNEDSHIFT = 29;
+  public int JJTRIGHTUNSIGNEDSHIFT = 30;
+  public int JJTADD = 31;
+  public int JJTSUBTRACT = 32;
+  public int JJTMULTIPLY = 33;
+  public int JJTDIVIDE = 34;
+  public int JJTMODULUS = 35;
+  public int JJTUNARYPLUS = 36;
+  public int JJTUNARYMINUS = 37;
+  public int JJTUNARYNOT = 38;
+  public int JJTMETRICEXPRESSION = 39;
+  public int JJTNUMERICLITERAL = 40;
+  public int JJTTEXTLITERAL = 41;
+  public int JJTPATTERNLITERAL = 42;
+  public int JJTBOOLEANLITERAL = 43;
+  public int JJTNULLLITERAL = 44;
+  public int JJTURL = 45;
+  public int JJTQNAME = 46;
+  public int JJTQUOTEDURI = 47;
+  public int JJTIDENTIFIER = 48;
 
 
   public String[] jjtNodeName = {
@@ -67,6 +68,7 @@ public interface TriQLParserTreeConstants
     "Var",
     "PrefixesClause",
     "PrefixDecl",
+    "CountExpression",
     "LogicalOr",
     "LogicalAnd",
     "StringEqual",

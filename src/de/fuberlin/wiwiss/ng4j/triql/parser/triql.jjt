@@ -414,12 +414,13 @@ void CountOrExpression() #void :
   Expression()
 }
 
-void CountExpression() #void :
-{}
+void CountExpression() :
+{ Token op; }
 {
   <COUNT> <LPAREN> Var() <RPAREN>
-  ( <LT> | <EQ> | <NEQ> | <GT> | <LE> | <GE> )
-  NumericLiteral()
+  ( op = <LT> | op = <EQ> | op = <NEQ> | op = <GT> | op = <LE> | op = <GE> )
+  { jjtThis.setOperator(op.image); }
+  ( NumericLiteral() | TextLiteral() )	
 }
 
 void Expression() #void :

@@ -14,13 +14,13 @@ import de.fuberlin.wiwiss.trust.Metric;
 import de.fuberlin.wiwiss.trust.MetricException;
 import de.fuberlin.wiwiss.trust.EvaluationResult;
 import de.fuberlin.wiwiss.trust.TriQLHelper;
-import de.fuberlin.wiwiss.trust.Constraint.MetricResultCollector;
+import de.fuberlin.wiwiss.trust.ExpressionConstraint.MetricResultCollector;
 
 /**
  * A METRIC expression in TriQL.P. This is not used for vanilla TriQL.
  * The Metric instance is set from the outside after parsing has finished.
  * 
- * @version $Id: Q_MetricExpression.java,v 1.3 2005/03/22 01:01:48 cyganiak Exp $
+ * @version $Id: Q_MetricExpression.java,v 1.4 2005/03/28 22:31:23 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class Q_MetricExpression extends SimpleNode implements Expr, ExprBoolean {

@@ -694,12 +694,39 @@ void CountOrExpression()       :
   Expression()
 }
 
-void CountExpression()       :
-{}
-{
+void CountExpression() :
+{/*@bgen(jjtree) CountExpression */
+  Q_CountExpression jjtn000 = new Q_CountExpression(JJTCOUNTEXPRESSION);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/ Token op; }
+{/*@bgen(jjtree) CountExpression */
+  try {
+/*@egen*/
   <COUNT> <LPAREN> Var() <RPAREN>
-  ( <LT> | <EQ> | <NEQ> | <GT> | <LE> | <GE> )
-  NumericLiteral()
+  ( op = <LT> | op = <EQ> | op = <NEQ> | op = <GT> | op = <LE> | op = <GE> )
+  { jjtn000.setOperator(op.image); }
+  ( NumericLiteral() | TextLiteral() )/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/	
 }
 
 void Expression()       :

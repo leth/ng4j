@@ -623,35 +623,73 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
   }
 
   final public void CountExpression() throws ParseException {
-    jj_consume_token(COUNT);
-    jj_consume_token(LPAREN);
-    Var();
-    jj_consume_token(RPAREN);
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case LT:
-      jj_consume_token(LT);
-      break;
-    case EQ:
-      jj_consume_token(EQ);
-      break;
-    case NEQ:
-      jj_consume_token(NEQ);
-      break;
-    case GT:
-      jj_consume_token(GT);
-      break;
-    case LE:
-      jj_consume_token(LE);
-      break;
-    case GE:
-      jj_consume_token(GE);
-      break;
-    default:
-      jj_la1[17] = jj_gen;
-      jj_consume_token(-1);
-      throw new ParseException();
+ /*@bgen(jjtree) CountExpression */
+  Q_CountExpression jjtn000 = new Q_CountExpression(JJTCOUNTEXPRESSION);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);Token op;
+    try {
+      jj_consume_token(COUNT);
+      jj_consume_token(LPAREN);
+      Var();
+      jj_consume_token(RPAREN);
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case LT:
+        op = jj_consume_token(LT);
+        break;
+      case EQ:
+        op = jj_consume_token(EQ);
+        break;
+      case NEQ:
+        op = jj_consume_token(NEQ);
+        break;
+      case GT:
+        op = jj_consume_token(GT);
+        break;
+      case LE:
+        op = jj_consume_token(LE);
+        break;
+      case GE:
+        op = jj_consume_token(GE);
+        break;
+      default:
+        jj_la1[17] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    jjtn000.setOperator(op.image);
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case INTEGER_LITERAL:
+      case FLOATING_POINT_LITERAL:
+        NumericLiteral();
+        break;
+      case STRING_LITERAL1:
+      case STRING_LITERAL2:
+        TextLiteral();
+        break;
+      default:
+        jj_la1[18] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
     }
-    NumericLiteral();
+    if (jjte000 instanceof RuntimeException) {
+      {if (true) throw (RuntimeException)jjte000;}
+    }
+    if (jjte000 instanceof ParseException) {
+      {if (true) throw (ParseException)jjte000;}
+    }
+    {if (true) throw (Error)jjte000;}
+    } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+    }
   }
 
   final public void Expression() throws ParseException {
@@ -667,7 +705,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
         ;
         break;
       default:
-        jj_la1[18] = jj_gen;
+        jj_la1[19] = jj_gen;
         break label_7;
       }
       jj_consume_token(SC_OR);
@@ -711,7 +749,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
         ;
         break;
       default:
-        jj_la1[19] = jj_gen;
+        jj_la1[20] = jj_gen;
         break label_8;
       }
       jj_consume_token(SC_AND);
@@ -763,7 +801,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
         ;
         break;
       default:
-        jj_la1[20] = jj_gen;
+        jj_la1[21] = jj_gen;
         break label_9;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -876,7 +914,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
         }
         break;
       default:
-        jj_la1[21] = jj_gen;
+        jj_la1[22] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -897,7 +935,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
         ;
         break;
       default:
-        jj_la1[22] = jj_gen;
+        jj_la1[23] = jj_gen;
         break label_10;
       }
       jj_consume_token(BIT_OR);
@@ -937,7 +975,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
         ;
         break;
       default:
-        jj_la1[23] = jj_gen;
+        jj_la1[24] = jj_gen;
         break label_11;
       }
       jj_consume_token(BIT_XOR);
@@ -977,7 +1015,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
         ;
         break;
       default:
-        jj_la1[24] = jj_gen;
+        jj_la1[25] = jj_gen;
         break label_12;
       }
       jj_consume_token(BIT_AND);
@@ -1073,13 +1111,13 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
         }
         break;
       default:
-        jj_la1[25] = jj_gen;
+        jj_la1[26] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
     default:
-      jj_la1[26] = jj_gen;
+      jj_la1[27] = jj_gen;
       ;
     }
   }
@@ -1201,13 +1239,13 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
         }
         break;
       default:
-        jj_la1[27] = jj_gen;
+        jj_la1[28] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
     default:
-      jj_la1[28] = jj_gen;
+      jj_la1[29] = jj_gen;
       ;
     }
   }
@@ -1230,7 +1268,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
         ;
         break;
       default:
-        jj_la1[29] = jj_gen;
+        jj_la1[30] = jj_gen;
         break label_13;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1316,7 +1354,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
         }
         break;
       default:
-        jj_la1[30] = jj_gen;
+        jj_la1[31] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -1333,7 +1371,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
         ;
         break;
       default:
-        jj_la1[31] = jj_gen;
+        jj_la1[32] = jj_gen;
         break label_14;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1392,7 +1430,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
         }
         break;
       default:
-        jj_la1[32] = jj_gen;
+        jj_la1[33] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -1410,7 +1448,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
         ;
         break;
       default:
-        jj_la1[33] = jj_gen;
+        jj_la1[34] = jj_gen;
         break label_15;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1496,7 +1534,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
         }
         break;
       default:
-        jj_la1[34] = jj_gen;
+        jj_la1[35] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -1585,13 +1623,13 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
         }
         break;
       default:
-        jj_la1[35] = jj_gen;
+        jj_la1[36] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
     default:
-      jj_la1[36] = jj_gen;
+      jj_la1[37] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1609,7 +1647,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
         jj_consume_token(BANG);
         break;
       default:
-        jj_la1[37] = jj_gen;
+        jj_la1[38] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -1659,7 +1697,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
       PrimaryExpression();
       break;
     default:
-      jj_la1[38] = jj_gen;
+      jj_la1[39] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1682,7 +1720,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
           ;
           break;
         default:
-          jj_la1[39] = jj_gen;
+          jj_la1[40] = jj_gen;
           break label_16;
         }
         jj_consume_token(COMMA);
@@ -1741,7 +1779,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
       jj_consume_token(RPAREN);
       break;
     default:
-      jj_la1[40] = jj_gen;
+      jj_la1[41] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1791,7 +1829,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
       NullLiteral();
       break;
     default:
-      jj_la1[41] = jj_gen;
+      jj_la1[42] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1817,7 +1855,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
                                  jjtn000.set(false, t.image) ;
         break;
       default:
-        jj_la1[42] = jj_gen;
+        jj_la1[43] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -1844,7 +1882,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
                             jjtn000.set(t.image) ;
         break;
       default:
-        jj_la1[43] = jj_gen;
+        jj_la1[44] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -1854,7 +1892,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
         Identifier();
         break;
       default:
-        jj_la1[44] = jj_gen;
+        jj_la1[45] = jj_gen;
         ;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1863,7 +1901,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
         URI();
         break;
       default:
-        jj_la1[45] = jj_gen;
+        jj_la1[46] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -2080,7 +2118,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
       QName();
       break;
     default:
-      jj_la1[46] = jj_gen;
+      jj_la1[47] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -2180,7 +2218,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
         jj_consume_token(STR_NE);
         break;
       default:
-        jj_la1[47] = jj_gen;
+        jj_la1[48] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -2275,14 +2313,14 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
     return false;
   }
 
-  final private boolean jj_3R_17() {
-    if (jj_scan_token(HOOK)) return true;
+  final private boolean jj_3R_25() {
+    if (jj_scan_token(STR_EQ)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }
 
-  final private boolean jj_3R_25() {
-    if (jj_scan_token(STR_EQ)) return true;
+  final private boolean jj_3R_17() {
+    if (jj_scan_token(HOOK)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }
@@ -2314,10 +2352,10 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
   public boolean lookingAhead = false;
   private boolean jj_semLA;
   private int jj_gen;
-  final private int[] jj_la1 = new int[48];
-  final private int[] jj_la1_0 = {0x0,0x30000000,0x80000000,0x0,0x0,0x8000000,0x30000000,0x0,0x78000000,0x80000000,0x80000000,0x78000000,0x0,0x78000000,0x78690000,0x78000000,0x78690000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x78690000,0x0,0x78690000,0x0,0x78690000,0x78690000,0x90000,0x600000,0x0,0x0,0x78000000,0x78000000,};
-  final private int[] jj_la1_1 = {0x20000,0x0,0x0,0x1,0x1020000,0x0,0x0,0x220000,0x122060e,0x20000,0x20000,0x120020e,0x40000,0x120020e,0x12002ce,0x2020e,0x1e006fe,0x3c300000,0x40000000,0x80000000,0xc,0xc,0x0,0x0,0x0,0xc000000,0xc000000,0x30300000,0x30300000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1e006de,0xc00000,0x1e006de,0x20000,0x12006de,0x2002ce,0x0,0x0,0x0,0x0,0x20020e,0x20e,};
-  final private int[] jj_la1_2 = {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xc,0x0,0x0,0x0,0x6000,0x6000,0x80,0x100,0x40,0x0,0x0,0x0,0x0,0x1c00,0x1c00,0xc,0xc,0x230,0x230,0xc,0xc,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x10000,0x8000,0x0,0x0,};
+  final private int[] jj_la1 = new int[49];
+  final private int[] jj_la1_0 = {0x0,0x30000000,0x80000000,0x0,0x0,0x8000000,0x30000000,0x0,0x78000000,0x80000000,0x80000000,0x78000000,0x0,0x78000000,0x78690000,0x78000000,0x78690000,0x0,0x690000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x78690000,0x0,0x78690000,0x0,0x78690000,0x78690000,0x90000,0x600000,0x0,0x0,0x78000000,0x78000000,};
+  final private int[] jj_la1_1 = {0x20000,0x0,0x0,0x1,0x1020000,0x0,0x0,0x220000,0x122060e,0x20000,0x20000,0x120020e,0x40000,0x120020e,0x12002ce,0x2020e,0x1e006fe,0x3c300000,0x0,0x40000000,0x80000000,0xc,0xc,0x0,0x0,0x0,0xc000000,0xc000000,0x30300000,0x30300000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1e006de,0xc00000,0x1e006de,0x20000,0x12006de,0x2002ce,0x0,0x0,0x0,0x0,0x20020e,0x20e,};
+  final private int[] jj_la1_2 = {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xc,0x0,0x0,0x0,0x0,0x6000,0x6000,0x80,0x100,0x40,0x0,0x0,0x0,0x0,0x1c00,0x1c00,0xc,0xc,0x230,0x230,0xc,0xc,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x10000,0x8000,0x0,0x0,};
   final private JJCalls[] jj_2_rtns = new JJCalls[2];
   private boolean jj_rescan = false;
   private int jj_gc = 0;
@@ -2328,7 +2366,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 48; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 49; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -2339,7 +2377,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 48; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 49; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -2349,7 +2387,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 48; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 49; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -2360,7 +2398,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 48; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 49; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -2369,7 +2407,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 48; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 49; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -2379,7 +2417,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 48; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 49; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -2494,7 +2532,7 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 48; i++) {
+    for (int i = 0; i < 49; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
