@@ -1,4 +1,4 @@
-// $Id: GraphPattern.java,v 1.4 2005/01/16 18:38:24 cyganiak Exp $
+// $Id: GraphPattern.java,v 1.5 2005/01/17 23:30:14 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import java.util.ArrayList;
@@ -21,8 +21,8 @@ public class GraphPattern {
 		this.name = name;
 	}
 	
-	public void addTriplePattern(Node s, Node p, Node o) {
-		this.triples.add(new Triple(s, p, o));
+	public void addTriplePattern(Triple pattern) {
+		this.triples.add(pattern);
 	}
 	
 	public Node getName() {
