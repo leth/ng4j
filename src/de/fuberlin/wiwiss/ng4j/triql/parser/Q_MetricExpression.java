@@ -12,13 +12,15 @@ import de.fuberlin.wiwiss.ng4j.triql.ResultBinding;
 import de.fuberlin.wiwiss.ng4j.triql.legacy.Value;
 import de.fuberlin.wiwiss.trust.Metric;
 import de.fuberlin.wiwiss.trust.MetricException;
+import de.fuberlin.wiwiss.trust.MetricResult;
 import de.fuberlin.wiwiss.trust.TriQLHelper;
+import de.fuberlin.wiwiss.trust.Constraint.MetricResultCollector;
 
 /**
  * A METRIC expression in TriQL.P. This is not used for vanilla TriQL.
  * The Metric instance is set from the outside after parsing has finished.
  * 
- * @version $Id: Q_MetricExpression.java,v 1.1 2005/03/15 08:59:08 cyganiak Exp $
+ * @version $Id: Q_MetricExpression.java,v 1.2 2005/03/21 21:51:55 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class Q_MetricExpression extends SimpleNode implements Expr, ExprBoolean {
@@ -65,14 +67,18 @@ public class Q_MetricExpression extends SimpleNode implements Expr, ExprBoolean 
             args.add(TriQLHelper.toRDFNode(expression.eval(q, env)));
         }
         try {
+            MetricResult metricResult = this.metric.calculateMetric(args);
+            if (q != null) {  
+                ((MetricResultCollector) q).collectMetricResult(metricResult);
+            }
             ParsedLiteral result = new ParsedLiteral();
-            result.setBoolean(this.metric.calculateMetric(args).getResult());
+            result.setBoolean(metricResult.getResult());
             return result;
         } catch (MetricException ex) {
             throw new RuntimeException(ex);
         }
     }
-
+    
     public String asInfixString() {
         return toString();
     }

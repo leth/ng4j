@@ -1579,7 +1579,7 @@ void MetricExpression() :
 {/*@bgen(jjtree) MetricExpression */
   try {
 /*@egen*/
-  <METRIC> <LPAREN> URI() <COMMA> Expression() ( <COMMA> Expression() )* <RPAREN>/*@bgen(jjtree)*/
+  <METRIC> <LPAREN> URI() ( <COMMA> Expression() )* <RPAREN>/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);

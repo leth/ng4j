@@ -591,7 +591,7 @@ void UnaryExpressionNotPlusMinus() #void :
 void MetricExpression() :
 {}
 {
-  <METRIC> <LPAREN> URI() <COMMA> Expression() ( <COMMA> Expression() )* <RPAREN>
+  <METRIC> <LPAREN> URI() ( <COMMA> Expression() )* <RPAREN>
 }
 
 void PrimaryExpression() #void :

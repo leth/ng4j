@@ -1675,8 +1675,6 @@ public class TriQLParser/*@bgen(jjtree)*/implements TriQLParserTreeConstants, Tr
       jj_consume_token(METRIC);
       jj_consume_token(LPAREN);
       URI();
-      jj_consume_token(COMMA);
-      Expression();
       label_16:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
