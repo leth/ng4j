@@ -1,4 +1,4 @@
-// $Id: ResultBinding.java,v 1.2 2004/12/17 10:23:08 cyganiak Exp $
+// $Id: ResultBinding.java,v 1.3 2005/02/07 00:16:44 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import java.util.Collections;
@@ -25,8 +25,16 @@ import de.fuberlin.wiwiss.ng4j.triql.legacy.WorkingVar;
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class ResultBinding {
-	private Map namesToValues = new HashMap();
+	private Map namesToValues;
 
+	public ResultBinding() {
+	    this(new HashMap());
+	}
+	
+	public ResultBinding(Map varNamesToValues) {
+	    this.namesToValues = varNamesToValues;
+	}
+	
 	public void add(String varName, RDFNode varValue) {
 		this.namesToValues.put(varName, varValue);
 	}
