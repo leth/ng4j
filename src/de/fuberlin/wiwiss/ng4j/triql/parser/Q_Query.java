@@ -8,6 +8,7 @@
 package de.fuberlin.wiwiss.ng4j.triql.parser;
 
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
+import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdql.QueryException;
 import com.hp.hpl.jena.rdql.Var;
@@ -205,7 +206,7 @@ public class Q_Query extends SimpleNode
             com.hp.hpl.jena.graph.Node nodeSubj = convertToGraphNode(tp.jjtGetChild(0), q) ;
             com.hp.hpl.jena.graph.Node nodePred = convertToGraphNode(tp.jjtGetChild(1), q) ;
             com.hp.hpl.jena.graph.Node nodeObj  = convertToGraphNode(tp.jjtGetChild(2), q) ;
-            graphPattern.addTriplePattern(nodeSubj, nodePred, nodeObj) ;
+            graphPattern.addTriplePattern(new Triple(nodeSubj, nodePred, nodeObj)) ;
         }
     }
 
