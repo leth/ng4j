@@ -212,7 +212,7 @@ href="http://www.w3.org/RDF/">RDF</A> | </P>
   </P>
   <P><strong><font color="#FF0000">This is just a preview. NG4J V0.1 will be released 
     09/15/04.</font></strong></P>
-  <P>The features of NG4J V0.1 are:</P>
+  <P>NG4J V0.1 extends Jena with these features:</P>
   </DIV>
 <ul>
   <li> graph-centric methods for manipulating sets of Named Graphs</li>
@@ -261,14 +261,14 @@ href="http://www.w3.org/RDF/">RDF</A> | </P>
 <ul>
   <li> <strong>Data syndication systems</strong> need to keep track of provenance 
     information, and provenance chains.</li>
-  <li><strong> Restricting information usage</strong> Information providers might 
+  <li><strong> Restricting information usage: </strong> Information providers might 
     want to attach information about intellectual property rights or their privacy 
     preferences to graphs in order to restrict the usage of published information.</li>
-  <li><strong>RDF repository housekeeping</strong> Triple stores need mechanisms 
+  <li><strong>RDF repository housekeeping:</strong> Triple stores need mechanisms 
     to replace and update parts of their content.</li>
-  <li><strong>Access control</strong> A triple store may wish to allow fine-grain 
+  <li><strong>Access control:</strong> A triple store may wish to allow fine-grain 
     access control, which appears as metadata concerning the graphs in the store.</li>
-  <li><strong>Signing RDF graphs</strong> For signing RDF graphs it is necessary 
+  <li><strong>Signing RDF graphs:</strong> For signing RDF graphs it is necessary 
     to keep the graph that has been signed distinct from the signature, and other 
     metadata concerning the signing, which may be kept in a second graph.</li>
   <li><strong>Expressing propositional attitudes</strong> such as modalities and 
@@ -283,7 +283,7 @@ href="http://www.w3.org/RDF/">RDF</A> | </P>
   of the fourth element, using it to refer to information sources, to model IDs 
   or statement IDs or more generally to ‘contexts’. Named Graphs propose a general 
   and simple variation on RDF, using sets of named RDF graphs. </P>
-<P><DIV class="trigInner"> A set of Named Graphs is a collection of RDF graphs, each one of which is named 
+<P><DIV class="trigInner"> A set of Named Graphs is a collection of RDF graphs. Each one is named 
   with a URIref. </DIV></P>
 <P>The name of a graph may occur either in the graph itself, in other graphs, 
   or not at all. Graphs may share URIrefs but not blank nodes. Named Graphs can 
@@ -305,11 +305,23 @@ href="http://www.w3.org/RDF/">RDF</A> | </P>
   is an exerimental implementation of the new syntaxes (TriX, TriG) and query 
   language (TriQL) developed within the Semantic Web Interest Group. Its purpose 
   is to have something for playing around with the new technologies. </P>
+<P><strong>Jena and the Model and Graph layers</strong></P>
+<P>Jena is a two-layered framework. Developers usually work with the Model
+  layer, using types like Model, Statement and Resource. The Model layer
+  is designed to be convenient to use for application programmers.</P>
+<P>Beneath lies the Graph layer, whose most important types are Graph,
+  Triple and Node. It offers functionality similar to the Model layer,
+  but is less convenient to use for an application programmer, and
+  is easier to work with when you design Jena system components
+  like triple stores or inference engines.</P>
+<P>NG4J lies between those two layers, using parts of both. Only
+  a part of its functionality is exposed at the Model layer, by
+  the NamedGraphModel class. This means developers working with NG4J
+  sometimes have to use the Graph layer to accomplish their goals.</P>
 <P><strong>Working with NamedGraphs and Quads</strong></P>
-<P>The basic idea of the API is to have a NamedGraphSet which represents a collection 
-  of Named Graphs. NamedGraphSets implement a provenance-aware data integration 
-  layer between the Jena graph layer and the Jena model layer. NamedGraphSets 
-  can be manipulated on graph-level as well as on quad-level. The NamedGraph object 
+<P>The basic idea of the NG4J API is to have a NamedGraphSet which represents a collection 
+  of Named Graphs. It can can be manipulated by adding and removing entire Graphs,
+  or by working with individual Quads. The NamedGraph object 
   wraps existing Jena graphs, meaning that GraphMem, GraphRDB and GraphD2RQ can 
   be reused. </P>
 <P><strong>Working with Models and Resources</strong></P>
@@ -323,11 +335,12 @@ href="http://www.w3.org/RDF/">RDF</A> | </P>
   for details about all methods.</P>
 <table width="100%" border="1" cellpadding="3" cellspacing="0">
   <tr> 
-    <td colspan="2"><strong>NamedGraph</strong></td>
+    <td colspan="2"><strong><a href="javadoc/de/fuberlin/wiwiss/namedgraphs/NamedGraph.html">NamedGraph</a></strong></td>
   </tr>
   <tr> 
-    <td colspan="2">A collection of RDF triples which is named by an URI. NamedGraph 
-      can wrap existing Jena graphs like GraphMem, GraphRDB or GraphD2RQ</td>
+    <td colspan="2">A collection of RDF triples which is named by a URI. A
+      NamedGraph can be created by wrapping existing Jena graphs like
+      GraphMem, GraphRDB or GraphD2RQ.</td>
   </tr>
   <tr> 
     <td width="28%">getGraphName() <br></td>
@@ -335,21 +348,24 @@ href="http://www.w3.org/RDF/">RDF</A> | </P>
   </tr>
   <tr> 
     <td>add(Triple)</td>
-    <td>Adds an triple to the NamedGraph</td>
+    <td>Adds an triple to the NamedGraph. (inherited from Jena's Graph type)</td>
   </tr>
   <tr> 
     <td>find(TripleMatch)</td>
-    <td>Returns an iterator over the query results</td>
+    <td>Returns an iterator over the query results. (inherited from Jena's Graph type)</td>
+  </tr>
+  <tr> 
+    <td colspan="2"><a href="javadoc/de/fuberlin/wiwiss/namedgraphs/NamedGraph.html#method_summary">More ...</a></td>
   </tr>
 </table>
 <P>&nbsp;</P>
 <table width="100%" border="1" cellspacing="0" cellpadding="3">
   <tr> 
-    <td colspan="2"><strong>NamedGraphSet</strong></td>
+    <td colspan="2"><strong><a href="javadoc/de/fuberlin/wiwiss/namedgraphs/NamedGraphSet.html">NamedGraphSet</a></strong></td>
   </tr>
   <tr> 
-    <td colspan="2">A set of Named Graphs is a collection of RDF graphs, each 
-      one of which is named with a URIref. The collection can be accessed and 
+    <td colspan="2">A set of Named Graphs is a collection of RDF graphs where
+      each one is named with a URIref. The collection can be accessed and 
       modified by adding and removing NamedGraph instances, by adding, removing 
       and finding Quads (RDF triples with an additional graph name) and through 
       it's union graph (the RDF graph containing all statements from all graphs 
@@ -364,7 +380,7 @@ href="http://www.w3.org/RDF/">RDF</A> | </P>
   </tr>
   <tr> 
     <td valign="top">addQuad(quad)</td>
-    <td>Adds a quad to the NamedGraphSet. A new Named Graph will automatically 
+    <td>Adds a quad to the NamedGraphSet. A new NamedGraph will automatically 
       be created if necessary. </td>
   </tr>
   <tr> 
@@ -373,46 +389,46 @@ href="http://www.w3.org/RDF/">RDF</A> | </P>
   </tr>
   <tr> 
     <td valign="top">read(url, lang) <br> </td>
-    <td>Read Named Graphs from an URL into the NamedGraphSet. Supported RDF serialization 
-      languages are TriX, TriG, RDF/XML, N-TRIPLE and N3. </td>
+    <td>Read NamedGraphs from a URL into the NamedGraphSet. Supported RDF serialization 
+      languages are TriX, TriG, RDF/XML, N-Triples and N3. </td>
   </tr>
   <tr> 
-    <td valign="top">write(out, lang)</td>
+    <td valign="top">write(writer, lang)</td>
     <td>Writes a serialized representation of the NamedGraphSet to a Writer. Supported 
-      RDF serialization languages are TriX, TriG, RDF/XML, N-TRIPLE and N3. If 
+      RDF serialization languages are TriX, TriG, RDF/XML, N-Triples and N3. If 
       the specified serialization language doesn't support Named Graphs, then 
       the union graph will be serialized, and knowledge about graph names is lost. 
-      Only TriX, TriG support graph naming.<br></td>
+      Only TriX and TriG support graph naming.<br></td>
   </tr>
   <tr> 
     <td valign="top">asJenaGraph(defaultGraphForAdding) </td>
     <td> Returns a Jena Graph view on the NamedGraphSet, equivalent to the union 
-      graph of all graphs in the graph set. New triples added to the graph are 
-      all written to the default graph.</td>
+      graph of all graphs in the graph set.</td>
   </tr>
   <tr>
     <td valign="top">asJenaModel(defaultGraphForAdding)</td>
     <td>Returns a Jena Model view on the NamedGraphSet, equivalent to the union 
-      graph of all graphs in the graph set. Add operations on the returned model 
-      are all written to the default graph. All Statements returned by this NamedGraphsModel 
+      graph of all graphs in the graph set. All Statements returned by this NamedGraphsModel 
       can be casted to NamedGraphStatements in order to access provenance information 
-      about the graphs they are contained in. 
-      <p></p>
-      <br></td>
+      about the graphs they are contained in.</td>
+  </tr>
+  <tr>
+    <td colspan="2"><a href="javadoc/de/fuberlin/wiwiss/namedgraphs/NamedGraphSet.html#method_summary">More ...</a></td>
   </tr>
 </table>
 <p>&nbsp;</p>
 <table width="100%" border="1" cellpadding="3" cellspacing="0">
   <tr> 
-    <td colspan="2"><strong>NamedGraphModel </strong>implements Jena Model</td>
+    <td colspan="2"><strong><a href="javadoc/de/fuberlin/wiwiss/namedgraphs/NamedGraphModel.html">NamedGraphModel</a></strong>
+      implements Jena Model</td>
   </tr>
   <tr> 
     <td colspan="2">NamedGraphModel provides a resource-centric view on a NamedGraphSet. 
-      It behaves like a normal Jana model based on the union graph of all graphs 
-      in the NamedGraphSet. Statements returned by the NamedGraphModel can be 
-      casted to NamedGraphStatements which are able to provide provenance information. 
-      All Jena Statements that are added to the model are added to the default 
-      graph of the underlying NamedGraphSet.</td>
+      It behaves like a normal Jana model based on the union graph 
+      of the NamedGraphSet. Statements returned by the NamedGraphModel can be 
+      casted to NamedGraphStatements which are able to provide provenance information.
+      Reading RDF files into the NamedGraphModel replaces statements previously loaded
+      from the same source or URL.</td>
   </tr>
   <tr> 
     <td width="28%" valign="top">getResource() <br></td>
@@ -420,14 +436,15 @@ href="http://www.w3.org/RDF/">RDF</A> | </P>
       can be casted to NamedGraphStatements.</td>
   </tr>
   <tr> 
-    <td valign="top">supports all other Jena Model methods</td>
-    <td>&nbsp;</td>
+    <td colspan="2">Supports all other Jena Model methods.
+      <a href="javadoc/de/fuberlin/wiwiss/namedgraphs/NamedGraphSet.html#method_summary">More ...</a></td>
   </tr>
 </table>
 <p>&nbsp;</p>
 <table width="100%" border="1" cellpadding="3" cellspacing="0">
   <tr> 
-    <td colspan="2"><strong>NamedGraphStatement</strong> implements Jena Statement</td>
+    <td colspan="2"><strong><a href="javadoc/de/fuberlin/wiwiss/namedgraphs/NamedGraphStatement.html">NamedGraphStatement</a></strong>
+      implements Jena Statement</td>
   </tr>
   <tr> 
     <td colspan="2">A NamedGraphStatement is a Statement which can provide provenance 
@@ -436,16 +453,20 @@ href="http://www.w3.org/RDF/">RDF</A> | </P>
   <tr> 
     <td width="28%" valign="top">listGraphs() <br>
       <br></td>
-    <td width="72%">List all NamedGraphs which contain the statement. Returns 
-      an iterator over Jena resources.</td>
-  </tr>
-  <tr> 
-    <td valign="top">listGraphNames() </td>
-    <td> List the names of all NamedGraphs which contain the statement.</td>
+    <td width="72%">List all NamedGraphs which contain the statement.</td>
   </tr>
   <tr>
     <td valign="top">listQuads() </td>
     <td> List all quads which contain the triple of the statement.</td>
+  </tr>
+  <tr> 
+    <td valign="top">getGraphName() </td>
+    <td>Returns the name of a graph containing the statement. If several graphs
+      contain the statement, one will be chosen arbitrarily. Useful if it is known
+      that there is only one.</td>
+  </tr>
+  <tr>
+    <td colspan="2"><a href="javadoc/de/fuberlin/wiwiss/namedgraphs/NamedGraphStatement.html#method_summary">More ...</a></td>
   </tr>
 </table>
 <p>&nbsp;</p>
@@ -521,7 +542,7 @@ while (it.hasNext()) {
   <li>NG4J can be downloaded from Sourceforge: <a href="http://sourceforge.net/projects/ng4j/" target="_blank">http://sourceforge.net/projects/ng4j/ 
     </a></li>
   <li>NG4J requires Jena 2.1. </li>
-  <li>NG4J is lisenced under the terms of the <a href="http://www.gnu.org/" target="_blank">GNU 
+  <li>NG4J is lisenced under the terms of the <a href="http://www.gnu.org/licenses/gpl.html" target="_blank">GNU 
     GENERAL PUBLIC LICENSE (GPL)</a>. </li>
 </ul>
 <TABLE border=1>
@@ -539,21 +560,30 @@ while (it.hasNext()) {
   </TBODY>
 </TABLE>
 <p><A href="http://sourceforge.net"> <IMG src="http://sourceforge.net/sflogo.php?group_id=118754&amp;type=5" width="210" height="62" border="0" alt="SourceForge.net Logo" /></A></p>
+<HR>
+<h2><A id=Installation name=Installation>Installation</A></h2>
+<ol>
+  <li>Download and install the <a href="http://jena.sourceforge.net/">Jena Semantic Web Framework</a>.</li>
+  <li>Download NG4J and unzip the archive into any directory.</li>
+  <li>Copy the file <tt>ng4j.jar</tt> into Jena's <tt>lib</tt> directory and add it to the classpath of your project.</li>
+  <li>That's it!</li>
+</ol>
 <HR title="Separator for header">
 <h2><A id=feedback name=feedback>Feedback</A></h2>
 <p>We are very interested in hearing about your experience and your opinion about 
   NG4J. </p>
-<p>Please send your comments to Chris Bizer and Richard Cyganiak and cc <a href="mailto:www-rdf-interest@w3.org">rdf-interest</a> 
+<p>Please send your comments to Chris Bizer and Richard Cyganiak and cc
+  <a href="mailto:www-rdf-interest@w3.org">www-rdf-interest@w3.org</a> 
   if your comments are of general interest.</p>
 <p>Chris Bizer<br>
   <a href="mailto:chris@bizer.de">chris@bizer.de</a><br>
-  <a href="http://www.bizer.de%20" target="_blank">www.bizer.de </a></p>
+  <a href="http://www.bizer.de" target="_blank">www.bizer.de </a></p>
 <p>Richard Cyganiak<br>
-  <a href="mailto:richard@cyganiak.de">richard@cyganiak.de </a><br>
+  <a href="mailto:richard@cyganiak.de">richard@cyganiak.de</a><br>
   <a href="http://page.mi.fu-berlin.de/%7Ecyganiak/" target="_blank">http://page.mi.fu-berlin.de/~cyganiak/</a><br>
 </p>
 <HR title="Separator for header">
-<p>$Date: 2004/09/13 15:13:03 $<br />
-  $Id: index.html,v 1.2 2004/09/13 15:13:03 cyganiak Exp $</p>
+<p>$Date: 2004/09/13 21:20:41 $<br />
+  $Id: index.html,v 1.3 2004/09/13 21:20:41 cyganiak Exp $</p>
 </BODY>
 </HTML>
