@@ -7,6 +7,8 @@
 
 package de.fuberlin.wiwiss.ng4j.triql.parser;
 
+import com.hp.hpl.jena.shared.PrefixMapping;
+
 public class SimpleNode implements Node
 {
   // These are manipulated by JJTree,JavaCC
@@ -69,14 +71,14 @@ public class SimpleNode implements Node
 
 
   // Operation to allow any node to do some alterations after the query has been parsed
-  public void fixup(Q_Query qnode)
+  public void fixup(PrefixMapping prefixes)
   {
       if (children != null)
       {
           for (int i = 0; i < children.length; ++i)
           {
               SimpleNode n = (SimpleNode)children[i];
-              n.fixup(qnode);
+              n.fixup(prefixes);
           }
       }
   }

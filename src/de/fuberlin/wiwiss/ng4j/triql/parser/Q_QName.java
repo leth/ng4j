@@ -6,6 +6,7 @@
 
 package de.fuberlin.wiwiss.ng4j.triql.parser;
 import com.hp.hpl.jena.rdql.QueryException;
+import com.hp.hpl.jena.shared.PrefixMapping;
 
 public class Q_QName extends Q_URI
 {
@@ -39,13 +40,13 @@ public class Q_QName extends Q_URI
         //super.setURI(seen) ;
     }
 
-    public void fixup(Q_Query qnode)
+    public void fixup(PrefixMapping prefixes)
     {
         
         if ( isRDFResource() )
             // Already done.
             return ;
-        String full = qnode.getPrefix(prefix) ;
+        String full = prefixes.getNsPrefixURI(prefix) ;
 
         if ( full == null )
             throw new QueryException("Query error: QName '"+seen+"' can not be expanded.") ;

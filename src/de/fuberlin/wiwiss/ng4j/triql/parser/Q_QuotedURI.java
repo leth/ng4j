@@ -7,6 +7,8 @@
 
 package de.fuberlin.wiwiss.ng4j.triql.parser;
 
+import com.hp.hpl.jena.shared.PrefixMapping;
+
 public class Q_QuotedURI extends Q_URI {
     // Also supports old-style "quoted qnames" (i.e. qnames inside <>)
     // Old RDQL used to always use quoted items for qnames and full URIs.  
@@ -43,23 +45,20 @@ public class Q_QuotedURI extends Q_URI {
         super.setURI(seen);
     }
 
-    public void fixup(Q_Query qnode)
+    public void fixup(PrefixMapping prefixes)
     {
         if ( ! isAbsolute )
-            absolute(qnode) ;
+            absolute(prefixes) ;
     }
 
     static final String prefixOperator = ":" ;
 
-    private void absolute(Q_Query qnode)
+    private void absolute(PrefixMapping prefixes)
     {
-        if ( qnode == null )
-        {
-            // Only occurs during testing when we jump straight into the parser.
-            isAbsolute = true ;
-            return ;
+        if (prefixes == null) {
+            // Happens only during testing
+            return;
         }
-            
         int i = seen.indexOf(prefixOperator) ;
         if ( i < 0 )
         {
@@ -69,7 +68,7 @@ public class Q_QuotedURI extends Q_URI {
 
         String prefix = seen.substring(0,i) ;
         
-        String full = qnode.getPrefix(prefix) ;
+        String full = prefixes.getNsPrefixURI(prefix) ;
 
         if ( full == null )
         {

@@ -67,7 +67,7 @@ public class Q_Query extends SimpleNode
                     extractPrefixes(q, (Q_PrefixesClause)n) ; 
                 }
             }
-            this.fixup(this) ;
+            this.fixup(this.query.getPrefixMapping()) ;
             
             int i = 0 ;
             // Select
@@ -296,7 +296,9 @@ public class Q_Query extends SimpleNode
         }
     }
     
-    String getPrefix(String prefix) { return query.getPrefix(prefix) ; }
+    String getPrefix(String prefix) {
+        return this.query.getPrefixMapping().getNsPrefixURI(prefix);
+    }
 }
 
 /*

@@ -8,6 +8,7 @@
 package de.fuberlin.wiwiss.ng4j.triql.parser;
 
 import com.hp.hpl.jena.rdf.model.* ;
+import com.hp.hpl.jena.shared.PrefixMapping;
 
 public class Q_TextLiteral extends ParsedLiteral {
 
@@ -50,14 +51,14 @@ public class Q_TextLiteral extends ParsedLiteral {
             seen = seen+"^^"+datatype.asQuotedString() ;
     }
   
-    public void fixup(Q_Query qnode)
+    public void fixup(PrefixMapping prefixes)
     {
         // Must wait until any QName is resolved.
         String tmp_datatype = null ;
         if ( datatype != null )
         {
             if ( ! datatype.isSet )
-                datatype.fixup(qnode) ;
+                datatype.fixup(prefixes) ;
             tmp_datatype = datatype.valueString() ;
         }
         
