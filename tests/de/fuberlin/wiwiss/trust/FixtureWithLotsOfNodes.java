@@ -14,7 +14,7 @@ import junit.framework.TestCase;
 /**
  * Provides lots of test data to several test cases which extend this class
  *
- * @version $Id: FixtureWithLotsOfNodes.java,v 1.3 2005/03/21 00:23:24 cyganiak Exp $
+ * @version $Id: FixtureWithLotsOfNodes.java,v 1.4 2005/03/28 22:31:44 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public abstract class FixtureWithLotsOfNodes extends TestCase {
@@ -124,7 +124,7 @@ public abstract class FixtureWithLotsOfNodes extends TestCase {
 	    GraphPattern pattern = new GraphPattern(Node.ANY);
 	    pattern.addTriplePattern(new Triple(TrustPolicy.GRAPH, rating, varRating));
 	    policy.addPattern(pattern);
-	    policy.addConstraint(ConstraintFixture.getConstraint("?rating > 3"));
+	    policy.addExpressionConstraint(ConstraintFixture.getConstraint("?rating > 3"));
 	    return policy;
 	}
 
