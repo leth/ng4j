@@ -1,6 +1,6 @@
 ﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <?xml version="1.0" encoding="utf-8"?><HTML lang=en xml:lang="en" 
-xmlns="http://www.w3.org/1999/xhtml"><HEAD><TITLE>Named Graphs API for Jena</TITLE>
+xmlns="http://www.w3.org/1999/xhtml"><HEAD><TITLE>NG4J - Named Graphs API for Jena</TITLE>
 <META http-equiv=Content-Type content="text/html; charset=utf-8">
 <STYLE type=text/css>
 
@@ -210,8 +210,6 @@ href="http://www.w3.org/RDF/">RDF</A> | </P>
   <P>The Named Graphs API for Jena (NG4J) is an extension to the Jena Semantic 
     Web framework for parsing, manipulating and serializing sets of Named Graphs. 
   </P>
-  <P><strong><font color="#FF0000">This is just a preview. NG4J V0.1 will be released 
-    09/15/04.</font></strong></P>
   <P>NG4J V0.1 extends Jena with these features:</P>
   </DIV>
 <ul>
@@ -314,10 +312,9 @@ href="http://www.w3.org/RDF/">RDF</A> | </P>
   but is less convenient to use for an application programmer, and
   is easier to work with when you design Jena system components
   like triple stores or inference engines.</P>
-<P>NG4J lies between those two layers, using parts of both. Only
-  a part of its functionality is exposed at the Model layer, by
-  the NamedGraphModel class. This means developers working with NG4J
-  sometimes have to use the Graph layer to accomplish their goals.</P>
+<P>NG4J lies between those two layers, using parts of both. Only a part of its 
+  functionality is exposed at the Model layer, by the NamedGraphModel class. The 
+  graph-centric and quad-centric methods are exposed directly on the Graph Layer.</P>
 <P><strong>Working with NamedGraphs and Quads</strong></P>
 <P>The basic idea of the NG4J API is to have a NamedGraphSet which represents a collection 
   of Named Graphs. It can can be manipulated by adding and removing entire Graphs,
@@ -495,8 +492,7 @@ Quad quad = new Quad(Node.createURI("http://www.bizer.de/InformationAboutRichard
                      Node.createURI("http://xmlns.com/foaf/0.1/mbox") ,
                      Node.createURI("mailto:richard@cyganiak.de"));
 
-// Add the quad to the graphset. This will create a new NamedGraph in the
-// graphset.
+// Add the quad to the graphset. This will create a new NamedGraph in the graphset.
 graphset.addQuad(quad);
 
 // Find information about Richard across all graphs in the graphset
@@ -517,7 +513,7 @@ while (it.hasNext()) {
 System.out.println("The graphset contains " + graphset.countGraphs() + " graphs.");
 
 // Serialize the graphset to a TriX file
-OutputStream out = new FileOutputStream("C:/bla.trix");
+OutputStream out = new FileOutputStream("C:/graphset.trix");
 graphset.write(out, "TRIX"); 
 
 ////////////////////////////////////////////////
@@ -526,6 +522,11 @@ graphset.write(out, "TRIX");
 
 // Get a Jena Model view on the GraphSet
 Model model = graphset.asJenaModel("http://example.org/defaultgraph");
+
+// Add provenance information about a graph
+Resource informationAboutRichard = model.getResource(&quot;http://www.bizer.de/InformationAboutRichard&quot;);<br>informationAboutRichard.addProperty(
+       model.createProperty(&quot;http://purl.org/dc/elements/1.1/author&quot;), &quot;Chris Bizer&quot;);<br>informationAboutRichard.addProperty(
+       model.createProperty(&quot;http://purl.org/dc/elements/1.1/date&quot;), &quot;09/15/2004&quot;);
 
 // Get a Jena resource and statement
 Resource richard = model.getResource("http://richard.cyganiak.de/foaf.rdf#RichardCyganiak");
@@ -543,8 +544,12 @@ while (it.hasNext()) {
         g.getProperty(model.getProperty("http://purl.org/dc/elements/1.1/author")).getString());
     System.out.println("Date: " + 
         g.getProperty(model.getProperty("http://purl.org/dc/elements/1.1/date")).getString());
-}</pre>
-</DIV>
+} 
+
+// Serialize the model to a TriX file<br>out = new FileOutputStream(&quot;C:/model.trix&quot;);
+model.write(out, &quot;TRIX&quot;);
+</pre>
+  </DIV>
 <P>&nbsp;</P>
 <HR>
 <h2><A id=Download name=Download>Download</A></h2>
@@ -564,8 +569,8 @@ while (it.hasNext()) {
     </TR>
     <TR> 
       <TD align=middle>V0.1</TD>
-      <TD align=left>Initial release including TriX parser and serializer.</TD>
-      <TD align=middle valign="top">2004-09-15</TD>
+      <TD align=left>Initial release.</TD>
+      <TD align=middle valign="top">2004-09-14</TD>
     </TR>
   </TBODY>
 </TABLE>
@@ -593,7 +598,7 @@ while (it.hasNext()) {
   <a href="http://page.mi.fu-berlin.de/%7Ecyganiak/" target="_blank">http://page.mi.fu-berlin.de/~cyganiak/</a><br>
 </p>
 <HR title="Separator for header">
-<p>$Date: 2004/09/13 22:27:03 $<br />
-  $Id: index.html,v 1.4 2004/09/13 22:27:03 cyganiak Exp $</p>
+<p>$Date: 2004/09/14 10:14:40 $<br />
+  $Id: index.html,v 1.5 2004/09/14 10:14:40 bizer Exp $</p>
 </BODY>
 </HTML>
