@@ -140,21 +140,15 @@ public TriGAntlrParser(ParserSharedInputState state) {
 					n3Directive();
 					break;
 				}
+				case QNAME:
+				case URIREF:
+				{
+					namedGraph();
+					break;
+				}
 				case LCURLY:
 				{
 					graph(null);
-					break;
-				}
-				case QNAME:
-				case KW_THIS:
-				case STRING:
-				case LBRACK:
-				case LPAREN:
-				case NUMBER:
-				case URIREF:
-				case UVAR:
-				{
-					statementOrNamedGraph();
 					break;
 				}
 				default:
@@ -199,6 +193,36 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		returnAST = n3Directive_AST;
 	}
 	
+	public final void namedGraph() throws RecognitionException, TokenStreamException {
+		
+		returnAST = null;
+		ASTPair currentAST = new ASTPair();
+		AST namedGraph_AST = null;
+		AST label_AST = null;
+		
+		graphLabel();
+		label_AST = (AST)returnAST;
+		{
+		switch ( LA(1)) {
+		case NAME_OP:
+		{
+			match(NAME_OP);
+			break;
+		}
+		case LCURLY:
+		{
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		}
+		}
+		graph(label_AST);
+		returnAST = namedGraph_AST;
+	}
+	
 	public final void graph(
 		AST label
 	) throws RecognitionException, TokenStreamException {
@@ -211,16 +235,16 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		if ( inputState.guessing==0 ) {
 			graph_AST = (AST)currentAST.root;
 			
-					  currentGraphName = label;
-					  startGraph(label);
-					  graph_AST = label;
+						currentGraphName = label;
+						startGraph(label);
+						graph_AST = label;
 					
 			currentAST.root = graph_AST;
 			currentAST.child = graph_AST!=null &&graph_AST.getFirstChild()!=null ?
 				graph_AST.getFirstChild() : graph_AST;
 			currentAST.advanceChildToEnd();
 		}
-		formulaList();
+		statements();
 		astFactory.addASTChild(currentAST, returnAST);
 		if ( inputState.guessing==0 ) {
 			
@@ -231,19 +255,6 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		match(RCURLY);
 		graph_AST = (AST)currentAST.root;
 		returnAST = graph_AST;
-	}
-	
-	public final void statementOrNamedGraph() throws RecognitionException, TokenStreamException {
-		
-		returnAST = null;
-		ASTPair currentAST = new ASTPair();
-		AST statementOrNamedGraph_AST = null;
-		AST subj_AST = null;
-		
-		subject();
-		subj_AST = (AST)returnAST;
-		graphOrPropertyList(subj_AST);
-		returnAST = statementOrNamedGraph_AST;
 	}
 	
 	public final void n3Directive0() throws RecognitionException, TokenStreamException {
@@ -307,12 +318,135 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		ASTPair currentAST = new ASTPair();
 		AST uriref_AST = null;
 		
-		AST tmp5_AST = null;
-		tmp5_AST = astFactory.create(LT(1));
-		astFactory.addASTChild(currentAST, tmp5_AST);
+		AST tmp6_AST = null;
+		tmp6_AST = astFactory.create(LT(1));
+		astFactory.addASTChild(currentAST, tmp6_AST);
 		match(URIREF);
 		uriref_AST = (AST)currentAST.root;
 		returnAST = uriref_AST;
+	}
+	
+	public final void graphLabel() throws RecognitionException, TokenStreamException {
+		
+		returnAST = null;
+		ASTPair currentAST = new ASTPair();
+		AST graphLabel_AST = null;
+		AST q_AST = null;
+		AST u_AST = null;
+		
+		switch ( LA(1)) {
+		case QNAME:
+		{
+			qname();
+			q_AST = (AST)returnAST;
+			if ( inputState.guessing==0 ) {
+				graphLabel_AST = (AST)currentAST.root;
+				graphLabel_AST=q_AST;
+				currentAST.root = graphLabel_AST;
+				currentAST.child = graphLabel_AST!=null &&graphLabel_AST.getFirstChild()!=null ?
+					graphLabel_AST.getFirstChild() : graphLabel_AST;
+				currentAST.advanceChildToEnd();
+			}
+			break;
+		}
+		case URIREF:
+		{
+			uriref();
+			u_AST = (AST)returnAST;
+			if ( inputState.guessing==0 ) {
+				graphLabel_AST = (AST)currentAST.root;
+				graphLabel_AST=u_AST;
+				currentAST.root = graphLabel_AST;
+				currentAST.child = graphLabel_AST!=null &&graphLabel_AST.getFirstChild()!=null ?
+					graphLabel_AST.getFirstChild() : graphLabel_AST;
+				currentAST.advanceChildToEnd();
+			}
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		}
+		returnAST = graphLabel_AST;
+	}
+	
+	public final void qname() throws RecognitionException, TokenStreamException {
+		
+		returnAST = null;
+		ASTPair currentAST = new ASTPair();
+		AST qname_AST = null;
+		
+		AST tmp7_AST = null;
+		tmp7_AST = astFactory.create(LT(1));
+		astFactory.addASTChild(currentAST, tmp7_AST);
+		match(QNAME);
+		qname_AST = (AST)currentAST.root;
+		returnAST = qname_AST;
+	}
+	
+	public final void statements() throws RecognitionException, TokenStreamException {
+		
+		returnAST = null;
+		ASTPair currentAST = new ASTPair();
+		AST statements_AST = null;
+		
+		switch ( LA(1)) {
+		case QNAME:
+		case KW_THIS:
+		case STRING:
+		case LBRACK:
+		case LPAREN:
+		case NUMBER:
+		case URIREF:
+		case UVAR:
+		{
+			statement();
+			{
+			switch ( LA(1)) {
+			case SEP:
+			{
+				AST tmp8_AST = null;
+				tmp8_AST = astFactory.create(LT(1));
+				match(SEP);
+				statements();
+				break;
+			}
+			case RCURLY:
+			{
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(LT(1), getFilename());
+			}
+			}
+			}
+			break;
+		}
+		case RCURLY:
+		{
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		}
+		returnAST = statements_AST;
+	}
+	
+	public final void statement() throws RecognitionException, TokenStreamException {
+		
+		returnAST = null;
+		ASTPair currentAST = new ASTPair();
+		AST statement_AST = null;
+		AST subj_AST = null;
+		
+		subject();
+		subj_AST = (AST)returnAST;
+		propertyList(subj_AST);
+		returnAST = statement_AST;
 	}
 	
 	public final void subject() throws RecognitionException, TokenStreamException {
@@ -325,69 +459,6 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		astFactory.addASTChild(currentAST, returnAST);
 		subject_AST = (AST)currentAST.root;
 		returnAST = subject_AST;
-	}
-	
-	public final void graphOrPropertyList(
-		AST subj
-	) throws RecognitionException, TokenStreamException {
-		
-		returnAST = null;
-		ASTPair currentAST = new ASTPair();
-		AST graphOrPropertyList_AST = null;
-		
-		switch ( LA(1)) {
-		case QNAME:
-		case SEP:
-		case KW_THIS:
-		case KW_HAS:
-		case KW_A:
-		case KW_IS:
-		case STRING:
-		case EQUAL:
-		case ARROW_R:
-		case ARROW_L:
-		case ARROW_PATH_L:
-		case LBRACK:
-		case LPAREN:
-		case NUMBER:
-		case URIREF:
-		case UVAR:
-		{
-			propertyList(subj);
-			AST tmp6_AST = null;
-			tmp6_AST = astFactory.create(LT(1));
-			match(SEP);
-			break;
-		}
-		case NAME_OP:
-		case LCURLY:
-		{
-			{
-			switch ( LA(1)) {
-			case NAME_OP:
-			{
-				match(NAME_OP);
-				break;
-			}
-			case LCURLY:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			graph(subj);
-			break;
-		}
-		default:
-		{
-			throw new NoViableAltException(LT(1), getFilename());
-		}
-		}
-		returnAST = graphOrPropertyList_AST;
 	}
 	
 	public final void propertyList(
@@ -420,8 +491,8 @@ public TriGAntlrParser(ParserSharedInputState state) {
 			switch ( LA(1)) {
 			case SEMI:
 			{
-				AST tmp8_AST = null;
-				tmp8_AST = astFactory.create(LT(1));
+				AST tmp9_AST = null;
+				tmp9_AST = astFactory.create(LT(1));
 				match(SEMI);
 				propertyList(subj);
 				break;
@@ -454,70 +525,6 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		returnAST = propertyList_AST;
 	}
 	
-	public final void formulaList() throws RecognitionException, TokenStreamException {
-		
-		returnAST = null;
-		ASTPair currentAST = new ASTPair();
-		AST formulaList_AST = null;
-		
-		switch ( LA(1)) {
-		case QNAME:
-		case KW_THIS:
-		case STRING:
-		case LBRACK:
-		case LPAREN:
-		case NUMBER:
-		case URIREF:
-		case UVAR:
-		{
-			statement0();
-			{
-			switch ( LA(1)) {
-			case SEP:
-			{
-				AST tmp9_AST = null;
-				tmp9_AST = astFactory.create(LT(1));
-				match(SEP);
-				formulaList();
-				break;
-			}
-			case RCURLY:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			break;
-		}
-		case RCURLY:
-		{
-			break;
-		}
-		default:
-		{
-			throw new NoViableAltException(LT(1), getFilename());
-		}
-		}
-		returnAST = formulaList_AST;
-	}
-	
-	public final void statement0() throws RecognitionException, TokenStreamException {
-		
-		returnAST = null;
-		ASTPair currentAST = new ASTPair();
-		AST statement0_AST = null;
-		AST subj_AST = null;
-		
-		subject();
-		subj_AST = (AST)returnAST;
-		propertyList(subj_AST);
-		returnAST = statement0_AST;
-	}
-	
 	public final void item() throws RecognitionException, TokenStreamException {
 		
 		returnAST = null;
@@ -531,7 +538,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		n_AST = (AST)returnAST;
 		astFactory.addASTChild(currentAST, returnAST);
 		{
-		_loop22:
+		_loop23:
 		do {
 			switch ( LA(1)) {
 			case PATH:
@@ -566,7 +573,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 			}
 			default:
 			{
-				break _loop22;
+				break _loop23;
 			}
 			}
 		} while (true);
@@ -750,8 +757,8 @@ public TriGAntlrParser(ParserSharedInputState state) {
 				break;
 			}
 			case SEP:
-			case SEMI:
 			case RCURLY:
+			case SEMI:
 			case RBRACK:
 			{
 				break;
@@ -765,8 +772,8 @@ public TriGAntlrParser(ParserSharedInputState state) {
 			break;
 		}
 		case SEP:
-		case SEMI:
 		case RCURLY:
+		case SEMI:
 		case RBRACK:
 		{
 			break;
@@ -820,8 +827,8 @@ public TriGAntlrParser(ParserSharedInputState state) {
 			break;
 		}
 		case SEP:
-		case SEMI:
 		case RCURLY:
+		case SEMI:
 		case RBRACK:
 		{
 			break;
@@ -907,20 +914,6 @@ public TriGAntlrParser(ParserSharedInputState state) {
 			AntlrUtils.ast(System.out, v_AST) ;
 		}
 		returnAST = testPoint_AST;
-	}
-	
-	public final void qname() throws RecognitionException, TokenStreamException {
-		
-		returnAST = null;
-		ASTPair currentAST = new ASTPair();
-		AST qname_AST = null;
-		
-		AST tmp19_AST = null;
-		tmp19_AST = astFactory.create(LT(1));
-		astFactory.addASTChild(currentAST, tmp19_AST);
-		match(QNAME);
-		qname_AST = (AST)currentAST.root;
-		returnAST = qname_AST;
 	}
 	
 	public final void anonnode(
@@ -1019,9 +1012,9 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		ASTPair currentAST = new ASTPair();
 		AST kwTHIS_AST = null;
 		
-		AST tmp24_AST = null;
-		tmp24_AST = astFactory.create(LT(1));
-		astFactory.addASTChild(currentAST, tmp24_AST);
+		AST tmp23_AST = null;
+		tmp23_AST = astFactory.create(LT(1));
+		astFactory.addASTChild(currentAST, tmp23_AST);
 		match(KW_THIS);
 		kwTHIS_AST = (AST)currentAST.root;
 		returnAST = kwTHIS_AST;
@@ -1044,9 +1037,9 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		switch ( LA(1)) {
 		case DATATYPE:
 		{
-			AST tmp25_AST = null;
-			tmp25_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp25_AST);
+			AST tmp24_AST = null;
+			tmp24_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp24_AST);
 			match(DATATYPE);
 			datatype();
 			dt_AST = (AST)returnAST;
@@ -1056,13 +1049,13 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		case EOF:
 		case QNAME:
 		case SEP:
-		case NAME_OP:
 		case KW_THIS:
 		case KW_OF:
 		case KW_HAS:
 		case KW_A:
 		case KW_IS:
 		case STRING:
+		case RCURLY:
 		case SEMI:
 		case COMMA:
 		case PATH:
@@ -1072,8 +1065,6 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		case ARROW_L:
 		case ARROW_PATH_L:
 		case ARROW_PATH_R:
-		case LCURLY:
-		case RCURLY:
 		case LBRACK:
 		case RBRACK:
 		case LPAREN:
@@ -1108,8 +1099,8 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		ASTPair currentAST = new ASTPair();
 		AST kwOF_AST = null;
 		
-		AST tmp26_AST = null;
-		tmp26_AST = astFactory.create(LT(1));
+		AST tmp25_AST = null;
+		tmp25_AST = astFactory.create(LT(1));
 		match(KW_OF);
 		returnAST = kwOF_AST;
 	}
@@ -1120,8 +1111,8 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		ASTPair currentAST = new ASTPair();
 		AST kwHAS_AST = null;
 		
-		AST tmp27_AST = null;
-		tmp27_AST = astFactory.create(LT(1));
+		AST tmp26_AST = null;
+		tmp26_AST = astFactory.create(LT(1));
 		match(KW_HAS);
 		returnAST = kwHAS_AST;
 	}
@@ -1132,9 +1123,9 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		ASTPair currentAST = new ASTPair();
 		AST kwA_AST = null;
 		
-		AST tmp28_AST = null;
-		tmp28_AST = astFactory.create(LT(1));
-		astFactory.addASTChild(currentAST, tmp28_AST);
+		AST tmp27_AST = null;
+		tmp27_AST = astFactory.create(LT(1));
+		astFactory.addASTChild(currentAST, tmp27_AST);
 		match(KW_A);
 		kwA_AST = (AST)currentAST.root;
 		returnAST = kwA_AST;
@@ -1146,8 +1137,8 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		ASTPair currentAST = new ASTPair();
 		AST kwIS_AST = null;
 		
-		AST tmp29_AST = null;
-		tmp29_AST = astFactory.create(LT(1));
+		AST tmp28_AST = null;
+		tmp28_AST = astFactory.create(LT(1));
 		match(KW_IS);
 		returnAST = kwIS_AST;
 	}
@@ -1260,9 +1251,9 @@ public TriGAntlrParser(ParserSharedInputState state) {
 			inputState.guessing--;
 		}
 		if ( synPredMatched39 ) {
-			AST tmp30_AST = null;
-			tmp30_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp30_AST);
+			AST tmp29_AST = null;
+			tmp29_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp29_AST);
 			match(AT_LANG);
 			literalModifier1_AST = (AST)currentAST.root;
 		}
@@ -1284,16 +1275,16 @@ public TriGAntlrParser(ParserSharedInputState state) {
 				inputState.guessing--;
 			}
 			if ( synPredMatched41 ) {
-				AST tmp31_AST = null;
-				tmp31_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp31_AST);
+				AST tmp30_AST = null;
+				tmp30_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp30_AST);
 				match(DATATYPE);
 				datatype();
 				dt_AST = (AST)returnAST;
 				astFactory.addASTChild(currentAST, returnAST);
 				if ( inputState.guessing==0 ) {
 					literalModifier1_AST = (AST)currentAST.root;
-					literalModifier1_AST = (AST)astFactory.make( (new ASTArray(2)).add(astFactory.create(tmp31_AST)).add(dt_AST)) ;
+					literalModifier1_AST = (AST)astFactory.make( (new ASTArray(2)).add(astFactory.create(tmp30_AST)).add(dt_AST)) ;
 					currentAST.root = literalModifier1_AST;
 					currentAST.child = literalModifier1_AST!=null &&literalModifier1_AST.getFirstChild()!=null ?
 						literalModifier1_AST.getFirstChild() : literalModifier1_AST;
@@ -1396,6 +1387,8 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		"AT_LANG",
 		"STRING",
 		"LITERAL",
+		"LCURLY",
+		"RCURLY",
 		"SEMI",
 		"COMMA",
 		"PATH",
@@ -1405,8 +1398,6 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		"ARROW_L",
 		"ARROW_PATH_L",
 		"ARROW_PATH_R",
-		"LCURLY",
-		"RCURLY",
 		"LBRACK",
 		"RBRACK",
 		"LPAREN",
@@ -1458,7 +1449,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 	};
 	
 	private static final long[] mk_tokenSet_0() {
-		long[] data = { 4398041300674L, 0L};
+		long[] data = { 4398032911554L, 0L};
 		return data;
 	}
 	public static final BitSet _tokenSet_0 = new BitSet(mk_tokenSet_0());

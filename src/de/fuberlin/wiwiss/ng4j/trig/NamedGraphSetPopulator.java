@@ -32,7 +32,7 @@ import de.fuberlin.wiwiss.ng4j.trig.parser.TriGAntlrParser;
  * 
  * @author		Andy Seaborne
  * @author Richard Cyganiak (richard@cyganiak.de)
- * @version 	$Id: NamedGraphSetPopulator.java,v 1.4 2004/11/25 23:49:03 cyganiak Exp $
+ * @version 	$Id: NamedGraphSetPopulator.java,v 1.5 2004/11/26 00:32:38 cyganiak Exp $
  */
 public class NamedGraphSetPopulator implements TriGParserEventHandler
 {
@@ -90,12 +90,12 @@ public class NamedGraphSetPopulator implements TriGParserEventHandler
 	public void deprecated(String message)					{ deprecated(null, message) ; }
 	
 	public void startGraph(int line, AST graphName) {
-		// create the graph so it exists even if the graph pattern is empty
-		if (graphName != null) {
-			Node node = createNode(line, graphName);
-			if (!node.isURI()) {
-				error("Line " + line + ": Graph names must be URIRefs or QNames");
-			}
+		Node node = createGraphNameNode(line, graphName);
+		if (node.isBlank()) {
+			error("Line " + line + ": Graph names must be URIRefs or QNames");
+		}
+		if (!this.namedGraphSet.containsGraph(node)) {
+			// create the graph so it exists even if the graph pattern is empty
 			this.namedGraphSet.createGraph(node);
 		}
 	}
@@ -238,9 +238,8 @@ public class NamedGraphSetPopulator implements TriGParserEventHandler
 
 			Node oNode = createNode(line, obj);
 			
-			Node gNode = graphName == null ?
-					this.defaultGraphName :
-					createNode(line, graphName);
+			Node gNode = createGraphNameNode(line, graphName);
+
 			this.namedGraphSet.addQuad(new Quad(gNode, sNode, pNode, oNode));
 		}
 		catch (JenaException rdfEx)
@@ -377,6 +376,13 @@ public class NamedGraphSetPopulator implements TriGParserEventHandler
 		}
 		return null ;
 	}
+
+	private Node createGraphNameNode(int line, AST thing) {
+		return thing == null
+				? this.defaultGraphName
+				: createNode(line, thing);
+	}
+			
 
     // Expand shorthand forms (not QNames) for URIrefs. Currently
 	// deals only with the cases <>, <#> and <#...>, but should

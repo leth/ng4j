@@ -7,13 +7,15 @@
 :graph2 :- { :b :b :b . }
 
 # in default graph
-{ :c :c :c . }
+{ :c :c :c }
 
 # in default graph
-:d :d :d .
+{
+	:d :d :d .
 
-# in default graph; URIs are realtive to base URI
-<#e> <#e> <#e> .
+	# URIs are realtive to base URI
+	<#e> <#e> <#e> .
 
-# TriG is always UTF-8 encoded
-:a :a "äöü" .
+	# TriG is always UTF-8 encoded
+	:a :a "äöü" .
+}

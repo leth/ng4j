@@ -1,8 +1,7 @@
 //-*- mode: antlr -*-
 
 /* TriG grammar, based on Jena's N3 grammar. Removed formula support,
- * added graph pattern support. Some more rework of the grammar to
- * get rid of the dot after a graph pattern.
+ * added graph pattern support.
  */
 
 /* This is part of the Jena RDF Framework.
@@ -143,7 +142,7 @@ tokens
 // The top level rule
 document!: 
 		{ startDocument() ; }
-		(n3Directive | graph[null] | statementOrNamedGraph)*
+		(n3Directive | namedGraph | graph[null] )*
 		{ endDocument() ; }
 		EOF ;
 
@@ -161,26 +160,39 @@ n3Directive0!:
 		{directive(#d, #ns, #u);}
 		;
 
+namedGraph!
+	: label:graphLabel (NAME_OP!)? graph[#label] ;
+
+graphLabel!
+	: q:qname {#graphLabel=#q;}
+	| u:uriref {#graphLabel=#u;}
+	;
+
+graph[AST label]
+	: LCURLY!
+		{
+			currentGraphName = label;
+			startGraph(label);
+			#graph = label;
+		}
+	  statements
+		{
+			endGraph(label);
+			currentGraphName = null;
+		}
+	  RCURLY!
+	;
+
+// List of statements, final SEP is optional. Possible empty
+statements!
+	: statement (SEP statements)?
+	| ;
+
 // A statement is "item verb item." with various
 // syntactic sugar for multiple properties and objects.
 // "verb" is a node and also the shorthand forms: 'a', => = etc
 // "item" is just a node presently.
-
-statementOrNamedGraph!
-	: subj:subject graphOrPropertyList[#subj] ;
-
-graphOrPropertyList![AST subj]
-	: propertyList[subj] SEP
-	| (NAME_OP!)? graph[subj]
-	;
-
-// List of statements without, necessarily, a final SEP.
-// Possible empty
-formulaList!
-	: statement0 (SEP formulaList)?
-	| ;
-
-statement0!
+statement!
 	: subj:subject propertyList[#subj] ;	
 
 subject
@@ -266,22 +278,6 @@ verb
 // Verbs that reverse the sense of subject and object
 verbReverse
 	:	kwIS! n:node kwOF!
-	;
-
-// Label is set if we have seen a :- in a propertyList
-graph[AST label]
-	: LCURLY!
-		{
-		  currentGraphName = label;
-		  startGraph(label);
-		  #graph = label;
-		}
-		formulaList
-		{
-			endGraph(label);
-			currentGraphName = null;
-		}
-	  RCURLY!
 	;
 
 // Label is set if we have seen a :- in a propertyList

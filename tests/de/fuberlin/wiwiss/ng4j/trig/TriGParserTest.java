@@ -1,4 +1,4 @@
-// $Id: TriGParserTest.java,v 1.5 2004/11/25 23:49:03 cyganiak Exp $
+// $Id: TriGParserTest.java,v 1.6 2004/11/26 00:32:39 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import java.io.Reader;
@@ -12,6 +12,7 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSetReader;
 import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
+import de.fuberlin.wiwiss.ng4j.trix.NamedGraphSetWriter;
 
 /**
  * Tests for TriG parsing
@@ -43,9 +44,12 @@ public class TriGParserTest extends TestCase {
 	public void testSimpleN3() throws Exception {
 		String n3 = "@prefix ex: <http://example.com/ex#> .\n" +
 				"ex:a ex:b ex:c .";
-		NamedGraphSet ngs = parseTriG(n3);
-		assertTrue(ngs.containsQuad(new Quad(defaultNode, aNode, bNode, cNode)));
-		assertEquals(1, ngs.countQuads());
+		try {
+			parseTriG(n3);
+			fail();
+		} catch (TriGException ex) {
+			// statements must be enclosed in graph
+		}
 	}
 	
 	public void testUnlabelledGraph() throws Exception {
@@ -111,11 +115,11 @@ public class TriGParserTest extends TestCase {
 
 	public void testDefaultGraph() throws Exception {
 		String triG = "@prefix ex: <http://example.com/ex#> .\n" +
-				"ex:a ex:a ex:a .\n" +
+				"{ ex:a ex:a ex:a }\n" +
 				"ex:graph1 :- { ex:a ex:b ex:c }\n" +
-				"ex:b ex:b ex:b .\n" +
+				"{ ex:b ex:b ex:b }\n" +
 				"ex:graph2 :- { ex:b ex:c ex:a }\n" +
-				"ex:c ex:c ex:c .\n";
+				"{ ex:c ex:c ex:c }\n";
 		NamedGraphSet ngs = parseTriG(triG);
 		assertTrue(ngs.containsQuad(new Quad(graph1Node, aNode, bNode, cNode)));
 		assertTrue(ngs.containsQuad(new Quad(graph2Node, bNode, cNode, aNode)));
@@ -126,7 +130,7 @@ public class TriGParserTest extends TestCase {
 	}
 	
 	public void testBaseURI() throws Exception {
-		String triG = "<> <> <> .";
+		String triG = "{ <> <> <> }";
 		NamedGraphSet ngs = parseTriG(triG);
 		Node base = Node.createURI(BASE);
 		assertTrue(ngs.containsQuad(new Quad(defaultNode, base, base, base)));
@@ -195,6 +199,19 @@ public class TriGParserTest extends TestCase {
 		} catch (TriGException ex) {
 			// literal nodes are not allowed as graph names
 		}	
+	}
+
+	public void testEmptyDefaultGraph() throws Exception {
+		String triG = "{}";
+		NamedGraphSet set = parseTriG(triG);
+		assertEquals(0, set.countQuads());
+		assertTrue(set.containsGraph(defaultNode));
+	}
+
+	public void testEmptyDocument() throws Exception {
+		String triG = "";
+		NamedGraphSet set = parseTriG(triG);
+		assertTrue(set.isEmpty());
 	}
 
 	public void testReadFromReader() {
