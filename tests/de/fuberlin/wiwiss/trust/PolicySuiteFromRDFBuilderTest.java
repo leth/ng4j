@@ -23,7 +23,7 @@ import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
  * TODO: tpl:graphExplanation
  * TODO: Warn when unknown term from the tpl namespace are used
  * 
- * @version $Id: PolicySuiteFromRDFBuilderTest.java,v 1.4 2005/03/21 21:51:59 cyganiak Exp $
+ * @version $Id: PolicySuiteFromRDFBuilderTest.java,v 1.5 2005/03/22 22:09:04 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class PolicySuiteFromRDFBuilderTest extends TestCase {
@@ -198,7 +198,7 @@ public class PolicySuiteFromRDFBuilderTest extends TestCase {
         this.graph.add(new Triple(policy1, TPL.graphPattern, pattern1));
         this.graph.add(new Triple(pattern1, TPL.pattern, Node.createLiteral("?GRAPH (?GRAPH dc:date ?date)")));
         // Cheating -- we don't support real xsd:dates yet
-        this.graph.add(new Triple(policy1, TPL.condition, Node.createLiteral("?date >= 2005 && ?date < 2006")));
+        this.graph.add(new Triple(policy1, TPL.constraint, Node.createLiteral("?date >= 2005 && ?date < 2006")));
         buildSuite();
         
         assertEquals(1, this.suite.getTrustPolicy(policy1URI).getConstraints().size());
@@ -219,8 +219,8 @@ public class PolicySuiteFromRDFBuilderTest extends TestCase {
         this.graph.add(new Triple(policy1, TPL.graphPattern, pattern1));
         this.graph.add(new Triple(pattern1, TPL.pattern, Node.createLiteral("?GRAPH (?GRAPH dc:date ?date)")));
         // Cheating -- we don't support real xsd:dates yet
-        this.graph.add(new Triple(policy1, TPL.condition, Node.createLiteral("?date >= 2005")));
-        this.graph.add(new Triple(policy1, TPL.condition, Node.createLiteral("?date < 2006")));
+        this.graph.add(new Triple(policy1, TPL.constraint, Node.createLiteral("?date >= 2005")));
+        this.graph.add(new Triple(policy1, TPL.constraint, Node.createLiteral("?date < 2006")));
         buildSuite();
 
         assertEquals(2, this.suite.getTrustPolicy(policy1URI).getConstraints().size());
@@ -239,7 +239,7 @@ public class PolicySuiteFromRDFBuilderTest extends TestCase {
     public void testMetric() {
         addSuiteAndPolicy1();
         this.graph.getPrefixMapping().setNsPrefix("ex", "http://example.org/metrics#");
-        this.graph.add(new Triple(policy1, TPL.condition, Node.createLiteral("METRIC(ex:IsFoo, ?a)")));
+        this.graph.add(new Triple(policy1, TPL.constraint, Node.createLiteral("METRIC(ex:IsFoo, ?a)")));
         PolicySuiteFromRDFBuilder builder = new PolicySuiteFromRDFBuilder(
                 this.graph, Arrays.asList(new Metric[] {new IsFooMetric()}));
         this.suite = builder.buildPolicySuite();
