@@ -1,0 +1,157 @@
+@prefix rdf:        <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:       <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc:         <http://purl.org/dc/elements/1.1/> .
+
+# Trust Policy Language Namespace
+@prefix :       <http://www.wiwiss.fu-berlin.de/suhl/bizer/TPL/> .
+
+# -----------------------------------------------
+# About this document
+# -----------------------------------------------
+
+<>  rdfs:label       "Trust Policy Language Vocabulary (TPL)" ;
+    rdfs:comment     "RDFS specification of the Trust Policy Language Vocabulary (TPL), a vocabulary used for defining trust policies to be used with TriQL Trust Layer" ;
+    dc:creator       "Chris Bizer" ;
+    dc:contributor   "Richard Cyganiak" ;
+    dc:date          "2005-01-31" ;
+    dc:format        "application/n3" ;
+    .
+
+
+# -----------------------------------------------
+# Trust Policy Suite
+# -----------------------------------------------
+
+:TrustPolicySuite   rdf:type rdfs:Class ;
+                    rdfs:label "Trust policy suite" ;
+                    rdfs:comment "A set of TPL trust policies" 
+                    .
+:suiteName          rdf:type rdf:Property ;
+                    rdfs:label "suite name" ;
+                    rdfs:comment "A policy suite's name" ;
+                    rdfs:domain :TrustPolicySuite
+                    .
+:includesPolicy     rdf:type rdf:Property ;
+                    rdfs:label "includes policy" ;
+                    rdfs:comment "Links a TrustPolicySuite to its member policies" ;
+                    rdfs:domain :TrustPolicySuite ;
+                    rdfs:range :TrustPolicy
+                    .
+
+
+# -----------------------------------------------
+# Trust Policy
+# -----------------------------------------------
+#
+# A trust policy defines rules for accepting or rejecting RDF statements.
+# A policy consists of graph patterns and conditions. Taken together,
+# they form an implicit TriQL.P query. A statement is trusted if it matches
+# the query. The policy also provides explanations templates which
+# can generate an explanation stating why a particular statement was trusted
+# (but not why a statement was rejected).
+
+:TrustPolicy        rdf:type rdfs:Class ;
+                    rdfs:label "Trust policy" ;
+                    rdfs:comment "A TPL trust policy" ;
+                    rdfs:subClassOf :ExplainableThing
+                    .
+:policyName         rdf:type rdf:Property ;
+                    rdfs:label "policy name" ;
+                    rdfs:comment "A trust policy's name" ;
+                    rdfs:domain :TrustPolicy ;
+                    rdfs:subPropertyOf rdfs:label
+                    .
+:policyDescription  rdf:type rdf:Property ;
+                    rdfs:label "policy description" ;
+                    rdfs:comment "The description of a trust policy" ;
+                    rdfs:domain :TrustPolicy ;
+                    rdfs:subPropertyOf rdfs:comment
+                    .
+:graphPattern       rdf:type rdf:Property ;
+                    rdfs:label "graph pattern" ;
+                    rdfs:comment "A graph pattern which trusted data must match" ;
+                    rdfs:domain :TrustPolicy ;
+                    rdfs:range :GraphPattern
+                    .
+:condition          rdf:type rdf:Property ;
+                    rdfs:label "condition" ;
+                    rdfs:comment "A TriQL.P expression, matching the Expression production, which trusted data must fulfill" ;
+                    rdfs:domain :TrustPolicy
+                    .
+
+
+# -----------------------------------------------
+# Graph Pattern
+# -----------------------------------------------
+
+:GraphPattern       rdf:type rdfs:Class ;
+                    rdfs:label "A graph pattern" ;
+                    rdfs:comment "A graph pattern with optional explanations" ;
+                    rdfs:subClassOf :ExplainableThing
+                    .
+:pattern            rdf:type rdf:Property ;
+                    rdfs:label "pattern" ;
+                    rdfs:comment "A TriQL.P expression, matching the Graph Pattern production" ;
+                    rdfs:domain :GraphPattern
+                    .
+
+
+# -----------------------------------------------
+# Explanation Templates
+# -----------------------------------------------
+#
+# Explanation templates can be assigned to trust policies and graph patterns.
+# They provide a textual explanation, or an RDF graph, explaining why a
+# particular RDF statement is trusted by the policy.
+
+:textExplanation    rdf:type rdf:Property ;
+                    rdfs:label "text explanation" ;
+                    rdfs:comment "A template for a textual explanation; might include @@?var@@ placeholders" ;
+                    rdfs:domain :ExplainableThing
+                    .
+:graphExplanation   rdf:type rdf:Property ;
+                    rdfs:label "graph explanation" ;
+                    rdfs:comment "A TriQL.P expression matching the TriplePattern production which will generate statements for an RDF graph explanation." ;
+                    rdfs:domain :ExplainableThing
+                    .
+
+
+# -----------------------------------------------
+# Special system-assigned variable nodes that can be used in graph patterns
+# -----------------------------------------------
+#
+# ?GRAPH            rdfs:comment "The name of the graph which contains the statement" .    
+#
+# ?SUB              rdfs:comment "The subject of the statement" .
+#
+# ?PRED             rdfs:comment "The predicate of the statement" .
+#
+# ?OBJ              rdfs:comment "The predicate of the statement" .
+#
+# ?USER             rdfs:comment "Represents the current user of the system" .
+
+
+# -----------------------------------------------
+# PolicyTrigger
+# -----------------------------------------------
+
+# PolicyTriggers are indicators for the application layer
+# that a policy can be used for a class or 
+# class/property combination.
+
+# We don't implement PolicyTriggers in version 0.1
+# Maybe PolicyTriggers are getting replaced by Fresnel RDFpath expressions
+
+#:PolicyTrigger     rdf:type rdfs:Class ;
+#                   rdfs:comment "Triple pattern which triggers one ore more trust policies." 
+#                   .
+#:triggerDescription rdf:type rdf:Property ;
+#                   rdfs:domain :PolicyTrigger
+#                   . 
+#:pattern           rdf:type rdf:Property ;
+#                   .
+#:policy            rdf:type rdf:Property ;
+#                   rdfs:comment """One ore more trust policies, that should be used.
+#                                   Maybe have a policy bag or sequence."""
+#                   rdfs:domain :PolicyTrigger
+#                   .

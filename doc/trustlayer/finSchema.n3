@@ -1,0 +1,304 @@
+
+# Financial Scenario Namespace
+@prefix fin: <http://www.fu-berlin/suhl/bizer/financialscenario/vocabulary/> .
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dtype: <http://www.w3.org/2001/XMLSchema#> . 
+@prefix foaf: <http://xmlns.com/foaf/0.1/#> .
+@prefix vcard: <http://www.w3.org/2001/vcard-rdf/3.0#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/#> .
+@prefix iso: <http://www.daml.org/2001/09/countries/iso-3166-ont#> .
+@prefix cur: <http://www.daml.ecs.soton.ac.uk/ont/currency.daml#> .
+
+# --------------------------------------------------------------   
+# Vocabulary for financial scenario
+# --------------------------------------------------------------  
+#
+# The financial scenario vocabulary is used for defining information objects
+# about corporations and their securities. 
+#
+#   
+# Contents:
+# 1. Classes
+# 2. Subclasses
+# 3. Properties 
+
+
+
+
+# 1. Classes
+
+fin:Author a rdfs:Class ;
+ rdfs:comment "An author of a news. It's not mandatory that the author is a person. It's also possible that the author of a news is the newsSource (a corporation is the author of their annual report for example).  " ;
+ rdfs:label "Author" .
+
+
+fin:NewsSource a rdfs:Class ;
+ rdfs:comment "The source of a news object. Like fin:Author the NewsSource has also a foaf:homepage and a dc:description.  " ;
+ rdfs:label "NewsSource" .
+
+fin:Security a rdfs:Class ;
+ rdfs:comment "Represents a security paper.      " ;
+ rdfs:label "Security" .
+
+fin:News a rdfs:Class ;
+ rdfs:comment "A fin:News represents all kinds of information about a corporation or a security.      " ;
+ rdfs:label "News" .
+
+fin:ValueAtDate a rdfs:Class ;
+ rdfs:comment "Details about a security at a specific date and place.       " ;
+ rdfs:label "ValueAtDate" .
+
+fin:Sector a rdfs:Class ; 
+  rdfs:comment " The sector a corporation belongs to.  "
+  rdfs:label " Sector ".
+  
+fin:Banking a fin:Sector ;
+ rdfs:comment " The banking and financial services sector " .
+ rdfs:label " Banking " .
+
+fin:Electronics a fin Sector ;
+ rdfs:comment " The electronics sector " .
+ rdfs:label " Electronics " .
+  
+ 
+# 2. Subclasses
+
+fin:Rating a rdfs:Class ;
+ rdfs:SubClassOf fin:News ;
+ rdfs:comment "A rating is published by a rating agency and describes the creditworthiness of a corporation.      " ;
+ rdfs:label "Rating" .
+
+fin:FactSheet a rdfs:Class ;
+ rdfs:SubClassOf fin:News ;
+ rdfs:comment "Short report containing the most important financial facts about a corporation.      " ;
+ rdfs:label "FactSheet" .
+
+fin:AnnualReport a rdfs:Class ;
+ rdfs:SubClassOf fin:News ;
+ rdfs:comment "Report published by a corporation at the end of fiscal year.      " ;
+ rdfs:label "AnnualReport" .
+
+fin:Corporation a rdfs:Class ;
+ rdfs:SubClassOf fin:News ;
+ rdfs:comment "Represents a company or concern. Like fin:News fin:Corporation has a dc:description and a foaf:homepage and name.      " ;
+ rdfs:label "Corporation" .
+
+fin:Share a rdfs:Class ;
+ rdfs:SubClassOf fin:Security ;
+ rdfs:comment "Represents a share emitted by a corporation.      " ;
+ rdfs:label "Share" .
+
+fin:InterimReport a rdfs:Class ;
+ rdfs:SubClassOf fin:News ;
+ rdfs:comment "The interim report is published by a corporation during a fiscal year.      " ;
+ rdfs:label "InterimReport" .
+
+fin:Discussionforum a rdfs:Class ;
+ rdfs:SubClassOf fin:NewsSource ;
+ rdfs:comment "A discusssionforum about financial topics.      " ;
+ rdfs:label "Discussionforum" .
+ 
+fin:NewsGroup a rdfs:Class ;
+ rdfs:SubClassOf fin:NewsSource ;
+ rdfs:comment "A unsenet newsgroup about financial topics.      " ;
+ rdfs:label "NewsGroup" .
+
+
+fin:RatingAgency a rdfs:Class ;
+ rdfs:SubClassOf fin:NewsSource ;
+ rdfs:comment "A rating agency like Moodys, Fitch, Standard and Poor's.      " ;
+ rdfs:label "RatingAgency" .
+
+fin:Posting a rdfs:Class ;
+ rdfs:SubClassOf fin:News ;
+ rdfs:comment "A posting in discussionforum.      " ;
+ rdfs:label "Posting" .
+
+fin:ProfitWarning a rdfs:Class ;
+ rdfs:SubClassOf fin:News ;
+ rdfs:comment "A profit warning published by a corporation.      " ;
+ rdfs:label "ProfitWarning" .
+
+fin:InfoPortal a rdfs:Class ;
+ rdfs:SubClassOf fin:NewsSource ;
+ rdfs:comment "An internet information portal like Wall Street Journal or Financial Times.      " ;
+ rdfs:label "InfoPortal" .
+
+fin:AnnualAccounts a rdfs:Class ;
+ rdfs:SubClassOf fin:News ;
+ rdfs:comment "Annual accounts is published by a corporation for each year.      " ;
+ rdfs:label "AnnualAccounts" .
+
+
+
+
+# 3. Properties
+
+
+# Properties of Discussionforum
+
+fin:numberOfPosts a rdf:Property ;
+ rdfs:label "numberOfPosts" ; 
+ rdfs:comment " The number of posts in a discussionforum.      " ;
+ rdfs:domain fin:Discussionforum ;
+ rdfs:range dtype:Integer .
+
+# Properties of Rating
+
+fin:scale a rdf:Property ;
+ rdfs:label "scale" ; 
+ rdfs:comment " Used rating scale.      " ;
+ rdfs:domain fin:Rating ;
+ rdfs:range dtype:string .
+
+fin:value a rdf:Property ;
+ rdfs:label "value" ; 
+ rdfs:comment " Value of the rating (e.g. AAA).      " ;
+ rdfs:domain fin:Rating ;
+ rdfs:range dtype:string .
+
+# properties of Security
+
+fin:emitter a rdf:Property ;
+ rdfs:label "emitter" ;
+ rdfs:comment " The fin:Corporation which emitted the security. " ;
+ rdfs:domain fin:Security ;
+ rdfs:range fin:Corporation .	
+ 
+
+fin:wkn a rdf:Property ;
+ rdfs:label "wkn" ; 
+ rdfs:comment " wkn (german: Wertpapierkennnummer) of a security. A number which identifies securities in germany.  " ;
+ rdfs:domain fin:Security ;
+ rdfs:range dtype:string .
+
+fin:valueAtDate a rdf:Property ;
+ rdfs:label "valueAtDate" ; 
+ rdfs:comment " Details about a security at a specific date and place.      " ;
+ rdfs:domain fin:Security ;
+ rdfs:range fin:ValueAtDate .
+
+# properties of ValueAtDate
+
+fin:marketPrice a rdf:Property ;
+ rdfs:label "marketPrice" ;
+ rdfs:comment " The securitie's market- price at the specific date. "
+ rdfs:domain fin:ValueAtDate ;
+ rdfs:range dtype:float .
+
+fin:market a rdf:Property ;
+ rdfs:label "market" ;
+ rdfs:comment " The url of the market where the security is traded. "
+ rdfs:domain fin:ValueAtDate ;
+ rdfs:range dtype:string .
+
+fin:currency a rdf:Property ;
+ rdfs:label "currency" ;
+ rdfs:comment " The securitie's currency. "
+ rdfs:domain fin:ValueAtDate ;
+ rdfs:range cur:Currency .
+
+fin:dividend a rdf:Property ;
+ rdfs:label "dividend" ;
+ rdfs:comment " The securitie's dividend. "
+ rdfs:domain fin:ValueAtDate ;
+ rdfs:range dtype:float .
+
+
+# properties of Corporation
+
+fin:sector a rdf:Property ;
+ rdfs:label "sector" ;
+ rdfs:comment " The sector a corporation belongs to. ".
+ rdfs:domain fin:Corporation ;
+ rdfs:range fin:Sector .	
+
+
+vcard:ADR a rdf:Property ;
+ rdfs:label "ADR" ;
+ rdfs:comment "The adress of a corporation" ;
+ rdfs:domain fin:Corporation ;
+ rdfs:range vcard:ADR .
+
+
+
+# properties of News
+
+fin:newsAbout a rdf:Property ;
+ rdfs:label " newsAbout " ;
+ rdfs:comment " The subject (fin:Corporation or fin:Security) a news is about " ;
+ rdfs:domain fin:News ;
+ rdfs:range fin:Corporation .
+
+fin:newsSource a rdf:Property ;
+ rdfs:label "newsSource" ;
+ rdfs:comment " The source of a specific news." ;
+ rdfs:domain fin:News ;
+ rdfs:range fin:NewsSource ;
+
+fin:author a rdf:Property ;
+ rdfs:label "author" ;
+ rdfs: comment "The auhtor of a specific news." ;
+ rdfs:domain fin:News ;
+ rdfs:range fin:Author .
+ 
+dc:date
+ rdfs:label "date" ;
+ rdfs:comment " Date and time when a fin:News is published. " ;
+ rdfs:domain fin:News ;
+ rdfs:range dtype:date . 
+ 
+fin:availableAt a rdf:Property
+ rdfs:label "availableAt" ;
+ rdfs:comment " Describes where the news can be found " ;
+ rdfs:domain fin:News ;
+ rdfs:range dtype:String .
+  
+fin:text a rdf:Property
+ rdfs:label "text" ;
+ rdfs:comment " The newstext " ;
+ rdfs:domain fin:News ;
+ rdfs:range dtype:String .
+
+ 
+ 
+# Properties of author 
+
+ fin:country a rdf:Property ;
+ rdfs:label "country" ; 
+ rdfs:comment " The country where the Author, the Corporation, the Security or the NewsSource is from.      " ;
+ rdfs:domain fin:Author ;
+ rdfs:range iso:Country .
+
+dc:description a rdf:Property ;
+ rdfs:label "description" ; 
+ rdfs:comment " A description about something.      " ;
+ rdfs:domain fin:Author ;
+ rdfs:range dtype:string .
+ 
+ foaf:homepage a rdf:Property ;
+ rdfs:label "homepage" ; 	
+ rdfs:comment " A fin:Author's, fin:Corporation's or fin:NewsSource's homepage.      " ;
+ rdfs:domain fin:Author ;
+ rdfs:range dtype:string .
+
+foaf:name a rdf:Property ;
+ rdfs:label "name" ; 
+ rdfs:comment " The name of a fin:Author, fin:Corporation, fin:NewsSource or fin:Security ." ;
+ rdfs:domain fin:Author ;
+ rdfs:range dtype:string .
+
+vcard:email a rdf:Property ;
+ rdfs:label "email" ; 
+ rdfs:comment " The email adress a fin:Author." ;
+ rdfs:domain fin:Author ;
+ rdfs:range dtype:string .
+ 
+vcard:title a rdf:Property ;
+ rdfs:label "TITLE" ; 
+ rdfs:comment " The vcard:TITLE of a fin:Author." ;
+ rdfs:domain fin:Author ;
+ rdfs:range dtype:string .
+

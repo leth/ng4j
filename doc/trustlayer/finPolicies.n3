@@ -1,0 +1,170 @@
+# ----------------------------------------------------
+# TPL Use Case 1: RDF Data Integration Policy Suite
+# ----------------------------------------------------
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix swp: <http://www.w3.org/2004/03/trix/swp-2/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix ex: <http:// www.example.org/vocabulary#> .
+@prefix tpl: <http://www.wiwiss.fu-berlin.de/suhl/bizer/TPL/> .
+@prefix gb: <http://www.ncbi.nlm.nih.gov/NCBI_GBSeq#> .
+@prefix tprefsl: <http://www.wiwiss.fu-berlin.de/suhl/bizer/TPrefsL/> .
+@prefix exdata: <http://www.example.org//TPLuseCase1/exampleData#> .
+@prefix fin: <http://www.fu-berlin/suhl/bizer/financialscenario/vocabulary/> .
+@prefix : <http://www.fu-berlin/suhl/bizer/financialscenario/policies/> .
+
+<>  rdf:type tpl:TrustPolicySuite;
+    tpl:suiteName "Financial Trust Policies" ;
+    tpl:includesPolicy :Policy1 .
+    tpl:includesPolicy :Policy2 .
+
+:Policy1 rdf:type tpl:TrustPolicy ;
+    tpl:policyName "Trust only rating agencies" ;
+    tpl:textExplanation "The information is stated in the document" ;
+    tpl:graphPattern [
+        tpl:pattern """(?GRAPH swp:assertedBy ?warrant .
+                        ?warrant swp:authority ?authority )""" ;
+        tpl:textExplanation "@@?GRAPH@@, which is asserted by the rating agency @@?authority@@." ;
+    ] ;
+    tpl:graphPattern [
+        tpl:pattern """(?authority rdf:type fin:RatingAgency)""" ;
+    ] .
+
+:Policy2 rdf:type tpl:TrustPolicy ;
+    tpl:policyName "Trust only self-asserted information" ;
+    tpl:textExplanation "The information is stated in the document" ;
+    tpl:graphPattern [
+        tpl:pattern """(?GRAPH swp:assertedBy ?warrant .
+                        ?warrant swp:assertedBy ?warrant .
+                        ?warrant swp:authority ?authority )""" ;
+        tpl:textExplanation "@@?GRAPH@@, which is self-asserted by @@?authority@@." ;
+    ] .
+
+
+
+# ----------------------------------------------------
+# Policy 2:
+# Use only data which is newer than a certain date
+# ----------------------------------------------------
+#
+# TriQL query:
+# ?graph1 (?GRAPH swp:assertedBy ?x .
+#          ?x dc:date ?y )
+# ?graph2 (?graph1 swp:assertedBy ?graph2 .
+#          ?graph2 swp:assertedBy ?graph2 .
+#          ?graph2 swp:authority exdata:Crawler )
+# AND ?y > '2004/1/1'^^xsd:date
+
+:Policy2 rdf:type tpl:TrustPolicy ;
+    tpl:policyName "Data should be newer than X" ;
+    tpl:policyDescription "Uses only data which is newer than a date, defined by the browser." ;
+    tpl:textExplanation "The information is beliefed because it was stated at @@?y@@, which is after 2004/1/1." ;
+    tpl:graphPattern [
+        tpl:pattern """?graph1 (?GRAPH swp:assertedBy ?x .
+                                ?x dc:date ?y )""" ;
+    ] ;
+    tpl:graphPattern [
+         tpl:pattern """?graph2 (?graph1 swp:assertedBy ?graph2 .
+                                 ?graph2 swp:assertedBy ?graph2 .
+                                 ?graph2 swp:authority exdata:Crawler )""" ;
+    ] ;
+    tpl:condition "?y > '2004/1/1'^^xsd:date" .
+
+
+
+# ----------------------------------------------------
+# Policy 3:
+# Use only data from ReseachInstitutes. 
+# The information that something is a ResearchInstitue should come from a trusted source.
+# ----------------------------------------------------
+#
+# TriQL query:
+# ?graph1 (?GRAPH swp:assertedBy ?y .
+#          ?y swp:authority ?z )
+# ?graph2 (?z rdf:type gb:ResearchInstitute )
+# ?graph3 (?graph2 swp:assertedBy ?a .
+#          ?a swp:authority ?b )
+# ?graph4 (?c tprefsl:about ?b .
+#          ?c tprefsl:trustee ?USER )
+# ?graph5 (?graph4 swp:assertedBy ?d .
+#          ?graph5 swp:assertedBy ?d .
+#          ?d swp:authority ?USER )
+
+:Policy3 rdf:type tpl:TrustPolicy ;
+    tpl:policyName "Use only data from Research Institutes." ;
+    tpl:policyDescription "Use only data from ReseachInstitutes. The information that something is a ResearchInstitue should come from a trusted source." ; 
+    tpl:graphPattern [ # The information is asserted by ?z
+        tpl:pattern """?graph1 (?GRAPH swp:assertedBy ?y .
+                                ?y swp:authority ?z )""" ;
+        tpl:textExplanation "The information is beliefed because it was stated in the information object @@?GRAPH@@, which was asserted by the Resarch Institute @@?z@@." ;
+    ] ;
+    tpl:graphPattern [ # ?z is a research institute
+        tpl:pattern "?graph2 (?z rdf:type gb:ResearchInstitute )" ;
+        tpl:textExplanation "The information that @@?z@@ is a Research Institute is beliefed because it was stated in the information object @@?graph2@@, which was asserted by @@?b@@ and you are trusting @@?b@@." ;
+    ] ;
+    tpl:graphPattern [ # ?graph2 asserted by authority ?b
+        tpl:pattern """?graph3 (?graph2 swp:assertedBy ?a .
+                                ?a swp:authority ?b )""" ;
+    ] ;
+    tpl:graphPattern [ # ?b is a trusted information source.
+        tpl:pattern """?graph4 (?c tprefsl:about ?b .
+                               ?c tprefsl:trustee ?USER )""" ;
+    ] ;
+    tpl:graphPattern [ # Chris has asserted his trust preferences by himself
+        tpl:pattern """?graph5 (?graph4 swp:assertedBy ?d .
+                               ?graph5 swp:assertedBy ?d .
+                               ?d swp:authority ?USER )""" ;
+    ] .
+
+
+
+# ----------------------------------------------------
+# Policy 5:
+# Use only data from graphs which have more positive than negative ratings by people I trust.
+# ----------------------------------------------------
+#
+# TriQL query:
+# AND ?GRAPH IN METRIC(tpl:MorePositiveThanNegative)
+#
+# The final explanation is build from the policy's explanation together with
+# the explanation produced by the metric plugin.
+
+:Policy5 rdf:type tpl:TrustPolicy ;
+    tpl:policyName "Only grpahs with more positive than negative ratings." ;
+    tpl:policyDescription "Only grpahs with more positive than negative ratings." ; 
+    tpl:textExplanation "The information has been stated in @@?GRAPH@@. And @@?GRAPH@@ got more positive than negative ratings:" .
+#    tpl:condition "METRIC(tpl:MorePositiveThanNegative, ?GRAPH)" .
+
+
+
+# ----------------------------------------------------
+# Policy 6:
+# Use only data from authors who work for at least 2 projects involving programming
+# ----------------------------------------------------
+#
+# TriQL query:
+# ?graph1 (?GRAPH swp:assertedBy ?graph1 .
+#          ?graph1 swp:authority ?z )
+# ?graph2 (?z ex:worksFor ?project )
+# ?graph3 (?project ex:topic ex:programming )
+# AND COUNT(?project) >= 2;
+
+:Policy6 rdf:type tpl:TrustPolicy ;
+    tpl:policyName "Author works for 2 projects involving programming" ;
+    tpl:policyDescription "Use only data from sources who work for at least 2 projects involving programming" ; 
+    tpl:textExplanation "The information is beliefed because it was stated in the information object @@?GRAPH@@" ;
+    tpl:graphPattern [ # The information is asserted by ?z 
+        tpl:pattern """?graph1 ( ?GRAPH swp:assertedBy ?graph1 .
+                                 ?graph1 swp:authority ?z )""" ;
+        tpl:textExplanation " which was asserted by @@?z@@ who is working for the following projects involving programming: " ;
+    ] ;
+    tpl:graphPattern [ # ?z works for project
+        tpl:pattern "?graph2 (?z ex:worksFor ?project )" ;
+        tpl:textExplanation "@@?project@@" ;
+    ] ;
+    tpl:graphPattern [ # Project involves programming
+        tpl:pattern "?graph3 (?project ex:topic ex:programming )" ;
+    ] .
+#    tpl:condition "COUNT(?project) >= 2" .
