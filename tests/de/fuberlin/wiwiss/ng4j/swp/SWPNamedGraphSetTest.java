@@ -1,9 +1,4 @@
-/*
- * Created on 16-Feb-2005
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
+//$Id: SWPNamedGraphSetTest.java,v 1.6 2005/02/24 13:29:50 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.swp;
 
 import java.security.cert.Certificate;
@@ -25,10 +20,7 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP;
 import junit.framework.TestCase;
 
 /**
- * @author erw01r
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * @author Rowland Watkins
  */
 public class SWPNamedGraphSetTest extends TestCase 
 {
@@ -40,7 +32,7 @@ public class SWPNamedGraphSetTest extends TestCase
 	protected final static Node foo = Node.createURI("http://example.org/#foo");
 	protected final static Node bar = Node.createURI("http://example.org/#bar");
 	protected final static Node baz = Node.createURI("http://example.org/#baz");
-	protected final static String keystore = "/home/erw01r/software/certificates/erw01r.p12";
+	protected final static String keystore = "tests/test.p12";
 	protected final static String password = "dpuser";
 	
 	protected SWPNamedGraphSet set;
@@ -60,8 +52,8 @@ public class SWPNamedGraphSetTest extends TestCase
 		g2.add( new Triple( bar, baz, foo ) );
 		g3.add( new Triple( baz, bar, foo ) );
 		g4.add( new Triple( bar, foo, baz ) );
-		list.add( g3 );
-		list.add( g4 );
+		list.add( g3.getGraphName() );
+		list.add( g4.getGraphName() );
 	}
 
 	/*
@@ -116,9 +108,10 @@ public class SWPNamedGraphSetTest extends TestCase
 				null, 
 				keystore, 
 				password ) );
-		set.write( System.out, "TRIG", "" );
-		testVerifyAllSignatures() ;
-		set.write( System.out, "TRIG", "" );
+//	TODO actual JUnit asserts
+//		set.write( System.out, "TRIG", "" );
+		assertTrue( set.verifyAllSignatures() );
+//		set.write( System.out, "TRIG", "" );
 	}
 
 	/*
@@ -134,7 +127,7 @@ public class SWPNamedGraphSetTest extends TestCase
 				null, 
 				keystore, 
 				password ) );
-		testVerifyAllSignatures();
+		assertTrue( set.verifyAllSignatures() );
 	}
 
 	
@@ -155,29 +148,6 @@ public class SWPNamedGraphSetTest extends TestCase
 	public void testAssertGraphsWithSignature() 
 	{
 		//TODO Implement assertGraphsWithSignature().
-	}
-	*/
-	
-	public void testVerifyAllSignatures() 
-	{
-		assertTrue( set.verifyAllSignatures() );
-	}
-	
-	/*
-	public void testGetAllWarrants() 
-	{
-		//TODO Implement getAllWarrants().
-	}
-
-	public void testGetAllAssertedGraphs() 
-	{
-		//TODO Implement getAllAssertedGraphs().
-	}
-
-	
-	public void testGetAllquotedGraphs() 
-	{
-		//TODO Implement getAllquotedGraphs().
 	}
 	*/
 	
