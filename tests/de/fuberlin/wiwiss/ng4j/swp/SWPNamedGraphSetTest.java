@@ -105,7 +105,9 @@ public class SWPNamedGraphSetTest extends TestCase
 				null, 
 				keystore, 
 				password ) );
+		set.write( System.out, "TRIG", "" );
 		testVerifyAllSignatures() ;
+		set.write( System.out, "TRIG", "" );
 	}
 
 	/*

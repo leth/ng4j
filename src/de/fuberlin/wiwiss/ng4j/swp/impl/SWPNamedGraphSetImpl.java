@@ -26,6 +26,7 @@ import de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.swp.utils.PKCS12Utils;
 import de.fuberlin.wiwiss.ng4j.swp.utils.SWPSignatureUtilities;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP;
+import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
 import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPBadDigestException;
 import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPBadSignatureException;
 import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPInvalidKeyException;
@@ -465,8 +466,10 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 
     public boolean verifyAllSignatures() 
     {
+    	NamedGraph verificationGraph = this.createGraph( SWP_V.default_graph );
     	String canonicalTripleList;
     	Iterator ngsIt = this.listGraphs();
+    	
     	
     	while ( ngsIt.hasNext() )
     	{
@@ -494,7 +497,6 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
         	            {
         	                try 
         	                {
-        	                	this.createGraph( "" );
         	                	Iterator exit = ng.find( ng.getGraphName(), SWP.signature, Node.ANY );
         	                	ArrayList li = new ArrayList();
         	                	while ( exit.hasNext() )
@@ -508,21 +510,26 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
         	                    if ( SWPSignatureUtilities.validateSignature( ng, SWP.JjcRdfC14N_rsa_sha1, signature.getLiteral().getLexicalForm(), certs ) )
         	                    {
         	                    	log.info( "Warrant graph " + ng.getGraphName().toString() + " successfully verified." );
+        	                    	
         	                    	Iterator dit = findQuads( Node.ANY, Node.ANY, SWP.digest, Node.ANY );
         	                		while ( dit.hasNext() )
         	                		{
         	                			Quad qud = ( Quad )dit.next();
         	                			String digest = qud.getObject().getLiteral().getLexicalForm();
-        	                			String digest1 = SWPSignatureUtilities.getCanonicalGraph( this.getGraph( qud.getSubject() ) );
+        	                			System.out.println( digest );
+        	                			String digest1 = SWPSignatureUtilities.calculateDigest( this.getGraph( qud.getSubject() ), SWP.JjcRdfC14N_sha1 );
+        	                			System.out.println( digest1 );
         	                			if ( digest1.equals( digest ) )
         	                			{
-        	                				
+        	                				verificationGraph.add( new Triple( qud.getSubject(), SWP_V.successful, Node.createLiteral( "true" ) ) );
         	                			}
+        	                			else verificationGraph.add( new Triple( qud.getSubject(), SWP_V.notSuccessful, Node.createLiteral( "true" ) ) );
         	                		}
         	                    }
         	                    else
         	                    {
         	                    	log.info( "Warrant graph " + ng.getGraphName().toString() + " verification failure!" );
+        	                    	verificationGraph.add( new Triple( ng.getGraphName(), SWP_V.notSuccessful, Node.createLiteral( "true" ) ) );
         	                    }
         	                }
         	                catch ( SWPInvalidKeyException e ) 
@@ -548,6 +555,10 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 								// TODO Auto-generated catch block
         	                	log.info( "Error constructing signature verifier." );
 								return false;
+							} catch ( SWPNoSuchDigestMethodException e ) 
+							{ 
+								// TODO Auto-generated catch block
+								e.printStackTrace();
 							}
         	            }
 	                }
