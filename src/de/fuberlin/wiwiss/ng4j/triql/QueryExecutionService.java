@@ -1,4 +1,4 @@
-// $Id: QueryExecutionService.java,v 1.6 2005/01/16 18:38:24 cyganiak Exp $
+// $Id: QueryExecutionService.java,v 1.7 2005/01/30 22:08:58 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import java.net.MalformedURLException;
@@ -54,7 +54,7 @@ public class QueryExecutionService {
 	public List execute() {
 		this.source = initSource();
 		this.results = new ArrayList();
-		Map matchedVars = new HashMap();
+		Map matchedVars = cloneMap(this.query.getPreboundVariableValues());
 		matchGraphPattern(0, matchedVars);
 		return this.results;
 	}
@@ -77,7 +77,7 @@ public class QueryExecutionService {
 			while (it.hasNext()) {
 				NamedGraph graph = (NamedGraph) it.next();
 				if (graphName.isVariable()) {
-					Map matchedVarsCopy = getCopy(matchedVars);
+					Map matchedVarsCopy = cloneMap(matchedVars);
 					matchedVarsCopy.put(graphName.getName(), graph.getGraphName());
 					matchGraph(index, graph, matchedVarsCopy);
 				} else {
@@ -106,7 +106,7 @@ public class QueryExecutionService {
 			if (containsNonMatchingDuplicates(tp, match)) {
 				continue;
 			}
-			Map matchedVarsCopy = getCopy(matchedVars);
+			Map matchedVarsCopy = cloneMap(matchedVars);
 			if (tp.getSubject().isVariable()) {
 				matchedVarsCopy.put(tp.getSubject().getName(), match.getSubject());
 			}
@@ -223,7 +223,7 @@ public class QueryExecutionService {
 		return StatementImpl.createObject(n, null);
 	}
 	
-	private Map getCopy(Map original) {
+	private Map cloneMap(Map original) {
 		Map result = new HashMap();
 		Iterator it = original.entrySet().iterator();
 		while (it.hasNext()) {

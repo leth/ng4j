@@ -1,5 +1,8 @@
-// $Id: TriQLGraphTest.java,v 1.3 2005/01/16 18:38:26 cyganiak Exp $
+// $Id: TriQLGraphTest.java,v 1.4 2005/01/30 22:09:00 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.graph.Node;
@@ -146,6 +149,7 @@ public class TriQLGraphTest extends TriQLTest {
 		assertExpectedBindingCount(1);
 		expectBinding("x", aURI);
 		expectBinding("y", bURI);
+		assertExpectedBinding();
 	}
 
 	public void testLiteralInPattern3() {
@@ -157,6 +161,7 @@ public class TriQLGraphTest extends TriQLTest {
 		assertExpectedBindingCount(1);
 		expectBinding("x", aURI);
 		expectBinding("y", bURI);
+		assertExpectedBinding();
 	}
 
 	public void testGraphNameInPattern() {
@@ -167,8 +172,9 @@ public class TriQLGraphTest extends TriQLTest {
 //		dumpResults();
 		assertExpectedBindingCount(1);
 		expectBinding("a", graph1);
-		expectBinding("b", aURI);
-		expectBinding("c", bURI);
+		expectBinding("b", bURI);
+		expectBinding("c", cURI);
+		assertExpectedBinding();
 	}
 
 	public void testDuplicateVariableInPattern1() {
@@ -180,6 +186,7 @@ public class TriQLGraphTest extends TriQLTest {
 		assertExpectedBindingCount(1);
 		expectBinding("a", aURI);
 		expectBinding("c", cURI);
+		assertExpectedBinding();
 	}
 
 	public void testDuplicateVariableInPattern2() {
@@ -191,6 +198,7 @@ public class TriQLGraphTest extends TriQLTest {
 		assertExpectedBindingCount(1);
 		expectBinding("a", aURI);
 		expectBinding("b", bURI);
+		assertExpectedBinding();
 	}
 
 	public void testDuplicateVariableInPattern3() {
@@ -202,5 +210,64 @@ public class TriQLGraphTest extends TriQLTest {
 		assertExpectedBindingCount(1);
 		expectBinding("a", aURI);
 		expectBinding("b", bURI);
+		assertExpectedBinding();
+	}
+
+	/**
+	 * Test pre-binding some variables
+	 */
+	
+	/**
+	 * Test query with pre-binding two variable
+	 */
+	public void testPrebinding() {
+		setQuery("SELECT ?a, ?b, ?c WHERE (?a, ?b, ?c)");
+		getQuery().prebindVariableValue("a", aURI);
+		getQuery().prebindVariableValue("b", bURI);
+		Map expectedPreboundValues = new HashMap();
+		expectedPreboundValues.put("a", aURI);
+		expectedPreboundValues.put("b", bURI);
+		assertEquals(expectedPreboundValues, getQuery().getPreboundVariableValues());
+	}
+
+	/**
+	 * Test query with pre-binding one variable
+	 */
+	public void testPrebindOneVariable() {
+		setQuery("SELECT ?a, ?b, ?c WHERE (?a, ?b, ?c)");
+		getQuery().prebindVariableValue("a", aURI);
+		addQuad(graph1, aURI, bURI, cURI);
+		addQuad(graph1, bURI, bURI, cURI);
+		executeQuery();
+//		dumpResults();
+		assertExpectedBindingCount(1);
+		expectBinding("a", aURI);
+		expectBinding("b", bURI);
+		expectBinding("c", cURI);
+		assertExpectedBinding();
+	}
+	
+	/**
+	 * Test query with pre-binding two variable
+	 */
+	public void testPrebindTwoVariables() {
+		setQuery("SELECT ?a, ?b, ?c WHERE (?a, ?b, ?c)");
+		getQuery().prebindVariableValue("a", aURI);
+		getQuery().prebindVariableValue("b", bURI);
+		addQuad(graph1, aURI, bURI, cURI);
+		addQuad(graph1, bURI, bURI, cURI);
+		addQuad(graph1, aURI, aURI, cURI);
+		addQuad(graph1, aURI, bURI, aURI);
+		executeQuery();
+//		dumpResults();
+		assertExpectedBindingCount(2);
+		expectBinding("a", aURI);
+		expectBinding("b", bURI);
+		expectBinding("c", cURI);
+		assertExpectedBinding();
+		expectBinding("a", aURI);
+		expectBinding("b", bURI);
+		expectBinding("c", aURI);
+		assertExpectedBinding();
 	}
 }

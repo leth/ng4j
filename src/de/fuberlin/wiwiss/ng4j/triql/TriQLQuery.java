@@ -1,4 +1,4 @@
-// $Id: TriQLQuery.java,v 1.4 2004/12/17 01:44:29 cyganiak Exp $
+// $Id: TriQLQuery.java,v 1.5 2005/01/30 22:08:58 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import java.io.File;
@@ -52,6 +52,7 @@ public class TriQLQuery {
 	private List graphPatterns = new ArrayList(); // [GraphPattern]
 	private List constraints = new ArrayList(); // [Constraint]
 	private Map prefixes = new HashMap(); // {String => String}
+	private Map preboundVars = new HashMap();	// {String => Node}
 
 	/**
 	 * Creates a new query instance whose data source is a NamedGraphSet.
@@ -101,6 +102,7 @@ public class TriQLQuery {
 	 * <pre>TriQLQuery query = new TriQLQuery(mySet, "SELECT ?x, ?y FROM ...");
 	 * Iterator results = query.getResults();</pre>
 	 * 
+	 * @param dataSource The datasource
 	 * @param queryString The TriQL query to be executed
 	 * @return An iterator over the results
 	 * @see #getResults()
@@ -264,6 +266,28 @@ public class TriQLQuery {
 
 	public String getPrefix(String prefix) {
 		return (String) this.prefixes.get(prefix);
+	}
+
+	/**
+	 * Fixes the value of a variable before executing the query.
+	 * Equivalent to adding "AND ?variable = &lt;value&gt;".
+	 * 
+	 * @param variable A variable name
+	 * @param value The value required for that variable
+	 * @see #getPreboundVariableValues
+	 */
+	public void prebindVariableValue(String variable, Node value) {
+	    this.preboundVars.put(variable, value);
+	}
+	
+	/**
+	 * Gets all pre-bound variables. It's a map from variable names
+	 * to their pre-bound values.
+	 * @return A map from strings to {@link Node}s
+	 * @see #prebindVariableValue
+	 */
+	public Map getPreboundVariableValues() {
+	    return this.preboundVars;
 	}
 
 	private void parse() {

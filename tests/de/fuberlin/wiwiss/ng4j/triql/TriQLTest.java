@@ -1,4 +1,4 @@
-//$Id: TriQLTest.java,v 1.3 2004/12/12 17:30:29 cyganiak Exp $
+//$Id: TriQLTest.java,v 1.4 2005/01/30 22:09:00 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import java.util.HashMap;
@@ -45,6 +45,7 @@ public class TriQLTest extends TestCase {
 
 	protected void setQuery(String queryString) {
 		this.query = queryString;
+		this.q = new TriQLQuery(this.set, this.query);
 	}
 	
 	protected TriQLQuery getQuery() {
@@ -52,7 +53,6 @@ public class TriQLTest extends TestCase {
 	}
 
 	protected void executeQuery() {
-		this.q = new TriQLQuery(this.set, this.query);
 		this.q.setPrefix("foaf", "http://xmlns.com/foaf/0.1/");
 		// ... could add more namespaces here
 		this.results = this.q.getResultsAsList();
