@@ -1,4 +1,4 @@
-// $Id: GraphPattern.java,v 1.2 2004/11/02 02:00:24 cyganiak Exp $
+// $Id: GraphPattern.java,v 1.3 2004/11/26 02:42:55 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import java.util.ArrayList;
@@ -9,7 +9,8 @@ import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.rdql.QueryException;
 
 /**
- * TODO: Describe this type
+ * A graph pattern in a TriQL query, consisting of a graph name pattern and
+ * a collection of triple patterns.
  *
  * @author Richard Cyganiak (richard@cyganiak.de)
  */

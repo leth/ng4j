@@ -1,11 +1,11 @@
-// $Id: AllTests.java,v 1.4 2004/11/26 00:48:38 cyganiak Exp $
+// $Id: AllTests.java,v 1.5 2004/11/26 02:42:56 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * TODO: Describe this type
+ * Unit Test suite for NG4J's TriG support
  *
  * @author Richard Cyganiak (richard@cyganiak.de)
  */

@@ -1,4 +1,4 @@
-// $Id: NamedGraphSet.java,v 1.3 2004/11/26 01:50:30 cyganiak Exp $
+// $Id: NamedGraphSet.java,v 1.4 2004/11/26 02:42:55 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.io.InputStream;
@@ -33,7 +33,7 @@ import com.hp.hpl.jena.graph.Node;
  *   as a Jena Model.
  * </ul></p>
  * 
- * TODO: define equals(); add TriQL query handler; support TriG
+ * TODO: define equals()
  * 
  * @author Chris Bizer
  * @author Richard Cyganiak (richard@cyganiak.de)

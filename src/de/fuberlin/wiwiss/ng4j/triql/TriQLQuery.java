@@ -1,4 +1,4 @@
-// $Id: TriQLQuery.java,v 1.2 2004/11/02 02:00:24 cyganiak Exp $
+// $Id: TriQLQuery.java,v 1.3 2004/11/26 02:42:55 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import java.io.File;
@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.rdql.Constraint;
 import com.hp.hpl.jena.rdql.QueryException;
 
@@ -37,8 +38,6 @@ import de.fuberlin.wiwiss.ng4j.triql.parser.TriQLParser;
  * add prefix bindings using the {@link #setPrefix(String, String)} method,
  * instead of the ususal USING ... FOR clauses.</p>
  * 
- * TODO: Documentation
- * 
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class TriQLQuery {
@@ -54,17 +53,34 @@ public class TriQLQuery {
 	private List constraints = new ArrayList(); // [Constraint]
 	private Map prefixes = new HashMap(); // {String => String}
 
+	/**
+	 * Creates a new query instance whose data source is a NamedGraphSet.
+	 * @param dataSource The NamedGraphSet on which to execute the query
+	 * @param queryString The TriQL query
+	 */
 	public TriQLQuery(NamedGraphSet dataSource, String queryString) {
 		this(queryString);
 		this.source = dataSource;
 	}
 
+	/**
+	 * Creates a new query instance whose data source is an URL given in
+	 * the query's FROM clause, or is passed later to the {@link #setSource}
+	 * or {@link #setSourceURL} method. 
+	 * @param queryString The TriQL query
+	 */
 	public TriQLQuery(String queryString) {
 		this();
 		this.queryString = queryString;
 		this.mustParse = true;
 	}
 	
+	/**
+	 * Constructor for assembling a TriQL query programmatically. All components
+	 * of the query (bound variables, source URL or NamedGraphSet, GraphPatterns,
+	 * Constraints, and namespace prefixes) must be passed to the instance using
+	 * the methods of the class.
+	 */
 	public TriQLQuery() {
 		this.mustParse = false;
 		this.baseURL = getDefaultBaseURL();
@@ -74,20 +90,62 @@ public class TriQLQuery {
 		this.prefixes.put("owl", "http://www.w3.org/2002/07/owl#");
 	}
 	
+	/**
+	 * <p>Convenience method for quick query execution. A NamedGraphSet
+	 * is the data source.
+	 * 
+	 * <pre>Iterator results = TriQLQuery.exec(mySet, "SELECT ?x, ?y FROM ...")</pre>
+	 * 
+	 * <p>is equivalent to</p>
+	 * 
+	 * <pre>TriQLQuery query = new TriQLQuery(mySet, "SELECT ?x, ?y FROM ...");
+	 * Iterator results = query.getResults();</pre>
+	 * 
+	 * @param queryString The TriQL query to be executed
+	 * @return An iterator over the results
+	 * @see #getResults()
+	 */
 	public static Iterator exec(NamedGraphSet dataSource, String queryString) {
 		TriQLQuery query = new TriQLQuery(dataSource, queryString);
 		return query.getResults();
 	}
-	
+
+	/**
+	 * <p>Convenience method for quick query execution. The data source
+	 * is an URL which must be given in the query's FROM clause.<p>
+	 * 
+	 * <pre>Iterator results = TriQLQuery.exec("SELECT ?x, ?y FROM ...")</pre>
+	 * 
+	 * <p>is equivalent to</p>
+	 * 
+	 * <pre>TriQLQuery query = new TriQLQuery("SELECT ?x, ?y FROM ...");
+	 * Iterator results = query.getResults();</pre>
+	 * 
+	 * @param queryString The TriQL query to be executed
+	 * @return An iterator over the results
+	 * @see #getResults()
+	 */
 	public static Iterator exec(String queryString) {
 		TriQLQuery query = new TriQLQuery(queryString);
 		return query.getResults();
 	}
 
+	/**
+	 * Executes the query and delivers results as an iterator over maps.
+	 * The keys of each map are the variable names. The values are the
+	 * result {@link Node}s. 
+	 * @return An iterator over the query results
+	 */
 	public Iterator getResults() {
 		return getResultsAsList().iterator();
 	}
 	
+	/**
+	 * Executes the query and delivers results as a list of maps.
+	 * The keys of each map are the variable names. The values are the
+	 * result {@link Node}s. 
+	 * @return A list of the query results
+	 */
 	public List getResultsAsList() {
 		if (this.mustParse) {
 			parse();
@@ -112,6 +170,10 @@ public class TriQLQuery {
 		return this.baseURL;
 	}
 
+	/**
+	 * Programmatically sets the NamedGraphSet on which the query will run.
+	 * @param source
+	 */
 	public void setSource(NamedGraphSet source) {
 		this.source = source;
 	}
@@ -120,6 +182,11 @@ public class TriQLQuery {
 		return this.source;
 	}
 
+	/**
+	 * Programmatically sets the source URL. On query execution, the URL
+	 * will be fetched and the query will run on the RDF data found there.
+	 * @param sourceURL
+	 */
 	public void setSourceURL(String sourceURL) {
 		this.sourceURL = sourceURL;
 	}
@@ -128,6 +195,11 @@ public class TriQLQuery {
 		return this.sourceURL;
 	}
 
+	/**
+	 * Programmatically adds a result variable. Calling <tt>addResultVar("foo")</tt>
+	 * is equivalent to having "?foo" in the SELECT clause.
+	 * @param name
+	 */
 	public void addResultVar(String name) {
 		if (this.resultVars.contains(name)) {
 			return;
@@ -139,6 +211,10 @@ public class TriQLQuery {
 		return this.resultVars;
 	}
 
+	/**
+	 * TODO: Is this necessary? We can find them all by going throug the patterns.
+	 * @param name
+	 */
 	public void addBoundVar(String name) {
 		if (this.boundVars.contains(name)) {
 			return;
@@ -150,6 +226,11 @@ public class TriQLQuery {
 		return this.boundVars;
 	}
 
+	/**
+	 * Programmatically adds a graph pattern to the query. This is equivalent
+	 * to having the pattern in the WHERE clause.
+	 * @param graphPattern
+	 */
 	public void addGraphPattern(GraphPattern graphPattern) {
 		this.graphPatterns.add(graphPattern);
 	}
@@ -158,6 +239,11 @@ public class TriQLQuery {
 		return this.graphPatterns;
 	}
 
+	/**
+	 * Programmatically adds a constraint to the query. This is equivalent
+	 * to having the constraint in the AND clause.
+	 * @param constraint
+	 */
 	public void addConstraint(Constraint constraint) {
 		this.constraints.add(constraint);
 	}
@@ -166,6 +252,12 @@ public class TriQLQuery {
 		return this.constraints;
 	}
 
+	/**
+	 * Programmatically adds a prefix mapping. This is equivalent to the
+	 * USING ... FOR clause.
+	 * @param prefix The namespace prefix to be added
+	 * @param expansion The full namespace URI
+	 */
 	public void setPrefix(String prefix, String expansion) {
 		this.prefixes.put(prefix, expansion);
 	}
