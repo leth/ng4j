@@ -11,7 +11,7 @@ import com.hp.hpl.jena.vocabulary.RDF;
 import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
 
 /**
- * @version $Id: TrustPolicyTest.java,v 1.3 2005/03/21 21:51:59 cyganiak Exp $
+ * @version $Id: TrustPolicyTest.java,v 1.4 2005/03/28 22:31:51 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class TrustPolicyTest extends FixtureWithLotsOfNodes {
@@ -53,25 +53,25 @@ public class TrustPolicyTest extends FixtureWithLotsOfNodes {
 	
 	public void testConditions() {
 	    TrustPolicy policy = new TrustPolicy("http://example.org/policies#Policy1");
-	    policy.addConstraint(ConstraintFixture.getConstraint("true"));
-	    assertEquals(1, policy.getConstraints().size());
-	    assertTrue(((Constraint) policy.getConstraints().iterator().next()).evaluate(new VariableBinding()).getResult());
+	    policy.addExpressionConstraint(ConstraintFixture.getConstraint("true"));
+	    assertEquals(1, policy.getExpressionConstraints().size());
+	    assertTrue(((ExpressionConstraint) policy.getExpressionConstraints().iterator().next()).evaluate(new VariableBinding()).getResult());
 	    
 	    policy = new TrustPolicy("http://example.org/policies#Policy1");
-	    policy.addConstraint(ConstraintFixture.getConstraint("false"));
-	    assertFalse(((Constraint) policy.getConstraints().iterator().next()).evaluate(new VariableBinding()).getResult());
+	    policy.addExpressionConstraint(ConstraintFixture.getConstraint("false"));
+	    assertFalse(((ExpressionConstraint) policy.getExpressionConstraints().iterator().next()).evaluate(new VariableBinding()).getResult());
 	}
 	
 	public void testAddMetricConstraint() {
 	    TrustPolicy policy = new TrustPolicy("http://example.org/policies#Policy1");
-	    policy.addConstraint(new ConstraintParser(
+	    policy.addExpressionConstraint(new ConstraintParser(
 	            "METRIC(<http://example.org/metrics#IsFoo>, ?var1)",
 	            new PrefixMappingImpl(),
-	            Collections.singletonList(new IsFooMetric())).parse());
-	    policy.addConstraint(new ConstraintParser(
+	            Collections.singletonList(new IsFooMetric())).parseExpressionConstraint());
+	    policy.addExpressionConstraint(new ConstraintParser(
 	            "METRIC(<http://example.org/metrics#IsFoo>, ?var2)",
 	            new PrefixMappingImpl(),
-	            Collections.singletonList(new IsFooMetric())).parse());
+	            Collections.singletonList(new IsFooMetric())).parseExpressionConstraint());
 
 	    VariableBinding vb = new VariableBinding();
 	    vb.setValue("var1", Node.createLiteral("foo"));

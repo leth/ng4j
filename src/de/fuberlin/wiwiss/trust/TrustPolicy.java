@@ -3,10 +3,8 @@ package de.fuberlin.wiwiss.trust;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.shared.PrefixMapping;
@@ -21,7 +19,7 @@ import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
  * can generate an explanation stating why a particular statement was trusted
  * (but not why a statement was rejected).
  *
- * @version $Id: TrustPolicy.java,v 1.4 2005/03/22 01:01:48 cyganiak Exp $
+ * @version $Id: TrustPolicy.java,v 1.5 2005/03/28 22:31:51 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class TrustPolicy {
@@ -57,40 +55,10 @@ public class TrustPolicy {
 	 */
 	public static final Node OBJ = Node.createVariable("OBJ");
 
-	/**
-	 * Constant for {@link #addCountRestriction}
-	 */
-	public static final String OPERATOR_EQUALS = "=";
-	
-	/**
-	 * Constant for {@link #addCountRestriction}
-	 */
-	public static final String OPERATOR_IS_GREATER = ">";
-	
-	/**
-	 * Constant for {@link #addCountRestriction}
-	 */
-	public static final String OPERATOR_IS_GREATER_OR_EQUAL = ">=";
-	
-	/**
-	 * Constant for {@link #addCountRestriction}
-	 */
-	public static final String OPERATOR_IS_LESS = "<";
-	
-	/**
-	 * Constant for {@link #addCountRestriction}
-	 */
-	public static final String OPERATOR_IS_LESS_OR_EQUAL = "<=";
-
 	private String uri;
 	private List graphPatterns = new ArrayList();
 	private Collection constraints = new ArrayList();
-	
-	// Variable names => int (COUNT_XXX constants)
-	private Map countRestrictionOperators = new HashMap();
-	
-	// Variable names => int
-	private Map countRestrictionValues = new HashMap();
+	private Collection countConstraints = new ArrayList();
 
 	private PrefixMapping prefixes = PrefixMapping.Standard;
 
@@ -112,15 +80,14 @@ public class TrustPolicy {
 		return Collections.unmodifiableList(this.graphPatterns);
 	}
 	
-	public void addCountRestriction(String variable, String operator, int value) {
-	    this.countRestrictionOperators.put(variable, operator);
-	    this.countRestrictionValues.put(variable, new Integer(value));
-	}
-	
-	public Collection getCountRestrictedVars() {
-	    return this.countRestrictionOperators.keySet();
+	public void addCountConstraint(CountConstraint count) {
+	    this.countConstraints.add(count);
 	}
 
+	public Collection getCountConstraints() {
+	    return Collections.unmodifiableCollection(this.countConstraints);
+	}
+	
 	public void setPrefixMapping(PrefixMapping prefixes) {
 	    this.prefixes = prefixes;
 	}
@@ -129,38 +96,18 @@ public class TrustPolicy {
 	    return this.prefixes;
 	}
 	
-	public boolean isMatchingCount(String variable, int value) {
-	    String op = (String) this.countRestrictionOperators.get(variable);
-	    if (op == null) {
-	        return true;
-	    } else if (op.equals(OPERATOR_EQUALS)) {
-	        return getCountRestrictionValue(variable) == value;
-	    } else if (op.equals(OPERATOR_IS_GREATER)) {
-	        return getCountRestrictionValue(variable) > value;
-	    } else if (op.equals(OPERATOR_IS_GREATER_OR_EQUAL)) {
-	        return getCountRestrictionValue(variable) >= value;
-	    } else if (op.equals(OPERATOR_IS_LESS)) {
-	        return getCountRestrictionValue(variable) < value;
-	    } else if (op.equals(OPERATOR_IS_LESS_OR_EQUAL)) {
-	        return getCountRestrictionValue(variable) <= value;
-	    } else {
-	        throw new IllegalStateException(
-	                "Illegal COUNT operator: '" + op + "'");
-	    }
-	}
-	
-	public void addConstraint(Constraint condition) {
+	public void addExpressionConstraint(ExpressionConstraint condition) {
 	    this.constraints.add(condition);
 	}
 
-	public Collection getConstraints() {
+	public Collection getExpressionConstraints() {
 	    return this.constraints;
 	}
 	
 	public boolean matchesConstraints(VariableBinding binding) {
 	    Iterator it = this.constraints.iterator();
 	    while (it.hasNext()) {
-            Constraint constraint = (Constraint) it.next();
+            ExpressionConstraint constraint = (ExpressionConstraint) it.next();
             EvaluationResult result = constraint.evaluate(binding);
             if (!result.getResult()) {
                 return false;
@@ -175,10 +122,5 @@ public class TrustPolicy {
 	
 	public ExplanationTemplate getExplanationTemplate() {
 	    return this.explanationTemplate;
-	}
-	
-	private int getCountRestrictionValue(String variable) {
-	    Integer value = (Integer) this.countRestrictionValues.get(variable);
-	    return value.intValue();
 	}
 }

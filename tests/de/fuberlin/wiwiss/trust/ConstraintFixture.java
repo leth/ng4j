@@ -5,17 +5,17 @@ import java.io.StringReader;
 import de.fuberlin.wiwiss.ng4j.triql.parser.Expr;
 import de.fuberlin.wiwiss.ng4j.triql.parser.ParseException;
 import de.fuberlin.wiwiss.ng4j.triql.parser.TriQLParser;
-import de.fuberlin.wiwiss.trust.Constraint;
+import de.fuberlin.wiwiss.trust.ExpressionConstraint;
 
 /**
- * Some {@link Constraint} instances for use in test cases.
+ * Some {@link ExpressionConstraint} instances for use in test cases.
  *
- * @version $Id: ConstraintFixture.java,v 1.1 2005/03/21 00:23:24 cyganiak Exp $
+ * @version $Id: ConstraintFixture.java,v 1.2 2005/03/28 22:31:51 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class ConstraintFixture {
 	
-	public static Constraint getConstraint(String expression) {
+	public static ExpressionConstraint getConstraint(String expression) {
 	    TriQLParser p = new TriQLParser(new StringReader(expression));
 	    try {
 	        p.Expression();
@@ -23,6 +23,6 @@ public class ConstraintFixture {
 	        throw new RuntimeException(ex);
 	    }
 	    p.top();
-	    return new Constraint((Expr) p.top());	    	    
+	    return new ExpressionConstraint((Expr) p.top());	    	    
 	}
 }

@@ -11,26 +11,28 @@ import com.hp.hpl.jena.shared.PrefixMapping;
 import de.fuberlin.wiwiss.ng4j.triql.parser.Expr;
 import de.fuberlin.wiwiss.ng4j.triql.parser.Node;
 import de.fuberlin.wiwiss.ng4j.triql.parser.ParseException;
+import de.fuberlin.wiwiss.ng4j.triql.parser.Q_CountExpression;
 import de.fuberlin.wiwiss.ng4j.triql.parser.Q_MetricExpression;
 import de.fuberlin.wiwiss.ng4j.triql.parser.SimpleNode;
 import de.fuberlin.wiwiss.ng4j.triql.parser.TriQLParser;
 
 /**
  * <p>Service for parsing a TriQL constraint into a
- * {@link Constraint} instance. The input is a string
- * like this:</p>
+ * {@link ExpressionConstraint} or {@link CountConstraint} instance.
+ * The input is a string like this:</p>
  *
  * <pre>
  * ?date >= '2005-01-01' AND ?date &lt; '2005-12-31'
  * </pre>
  * 
- * @version $Id: ConstraintParser.java,v 1.1 2005/03/21 00:23:28 cyganiak Exp $
+ * @version $Id: ConstraintParser.java,v 1.2 2005/03/28 22:31:51 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class ConstraintParser {
     private String constraint;
     private PrefixMapping prefixes;
     private Collection metricInstances = new ArrayList();
+    private SimpleNode resultNode = null;
     
     /**
      * @param constraint The string representation of the constraint
@@ -45,18 +47,37 @@ public class ConstraintParser {
         this.metricInstances = metricInstances;
     }
     
+    public boolean isCountConstraint() {
+        ensureParsed();
+        return this.resultNode instanceof Q_CountExpression;
+    }
+    
     /**
      * @return The parsed constraint
      * @throws TPLException on parse error
      */
-    public Constraint parse() {
+    public ExpressionConstraint parseExpressionConstraint() {
+        ensureParsed();
+        return new ExpressionConstraint((Expr) this.resultNode);
+    }
+
+    public CountConstraint parseCountConstraint() {
+        ensureParsed();
+        Q_CountExpression count = (Q_CountExpression) this.resultNode;
+        return new CountConstraint(
+                count.variableName(), count.operator(), (int) count.value());
+    }
+    
+    private void ensureParsed() {
+        if (this.resultNode != null) {
+            return;
+        }
         TriQLParser parser = new TriQLParser(new StringReader(this.constraint));
         try {
             parser.CountOrExpression();
-            SimpleNode parseTree = parser.top();
-            parseTree.fixup(this.prefixes);
-            setMetricInstances(parseTree);
-            return new Constraint((Expr) parseTree);
+            this.resultNode = parser.top();
+            this.resultNode.fixup(this.prefixes);
+            setMetricInstances(this.resultNode);
         } catch (ParseException e) {
             throw new TPLException("Error in constraint '" + this.constraint +
                     "': " + e.getMessage());

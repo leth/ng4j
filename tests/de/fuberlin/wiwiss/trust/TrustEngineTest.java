@@ -19,7 +19,7 @@ import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
 /**
- * @version $Id: TrustEngineTest.java,v 1.2 2005/03/21 00:23:24 cyganiak Exp $
+ * @version $Id: TrustEngineTest.java,v 1.3 2005/03/28 22:31:51 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class TrustEngineTest extends FixtureWithLotsOfNodes {
@@ -134,10 +134,10 @@ public class TrustEngineTest extends FixtureWithLotsOfNodes {
 	    this.source.addQuad(new Quad(graph1, node2, node2, Node.createLiteral("foo")));
 
 	    TrustPolicy policy = new TrustPolicy("http://example.org/policy1");
-	    policy.addConstraint(new ConstraintParser(
+	    policy.addExpressionConstraint(new ConstraintParser(
 	            "METRIC(<http://example.org/metrics#IsFoo>, ?OBJ)",
 	            new PrefixMappingImpl(),
-	            Collections.singletonList(new IsFooMetric())).parse());
+	            Collections.singletonList(new IsFooMetric())).parseExpressionConstraint());
 	    
 	    List results = iteratorToList(
 	            this.trustEngine.find(anyTriple,

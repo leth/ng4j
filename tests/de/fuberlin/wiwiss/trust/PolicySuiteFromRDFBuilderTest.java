@@ -23,7 +23,7 @@ import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
  * TODO: tpl:graphExplanation
  * TODO: Warn when unknown term from the tpl namespace are used
  * 
- * @version $Id: PolicySuiteFromRDFBuilderTest.java,v 1.6 2005/03/26 23:56:46 cyganiak Exp $
+ * @version $Id: PolicySuiteFromRDFBuilderTest.java,v 1.7 2005/03/28 22:31:51 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class PolicySuiteFromRDFBuilderTest extends TestCase {
@@ -192,7 +192,7 @@ public class PolicySuiteFromRDFBuilderTest extends TestCase {
         assertEquals(Node.createVariable("z"), p.getTriple(1).getObject());
     }
 
-    public void testOneCondition() {
+    public void testConstraint() {
         addSuiteAndPolicy1();
         this.graph.getPrefixMapping().setNsPrefix("dc", "http://purl.org/dc/elements/1.1/");
         this.graph.add(new Triple(policy1, TPL.graphPattern, pattern1));
@@ -201,9 +201,9 @@ public class PolicySuiteFromRDFBuilderTest extends TestCase {
         this.graph.add(new Triple(policy1, TPL.constraint, Node.createLiteral("?date >= 2005 && ?date < 2006")));
         buildSuite();
         
-        assertEquals(1, this.suite.getTrustPolicy(policy1URI).getConstraints().size());
-        Constraint condition = (Constraint) this.suite.getTrustPolicy(policy1URI)
-        			.getConstraints().iterator().next();
+        assertEquals(1, this.suite.getTrustPolicy(policy1URI).getExpressionConstraints().size());
+        ExpressionConstraint condition = (ExpressionConstraint) this.suite.getTrustPolicy(policy1URI)
+        			.getExpressionConstraints().iterator().next();
         VariableBinding binding = new VariableBinding();
         binding.setValue("date", Node.createLiteral("2005", null, XSDDatatype.XSDinteger));
         assertTrue(condition.evaluate(binding).getResult());
@@ -213,7 +213,7 @@ public class PolicySuiteFromRDFBuilderTest extends TestCase {
         assertFalse(condition.evaluate(binding).getResult());
     }
 
-    public void testTwoConditions() {
+    public void testTwoConstraints() {
         addSuiteAndPolicy1();
         this.graph.getPrefixMapping().setNsPrefix("dc", "http://purl.org/dc/elements/1.1/");
         this.graph.add(new Triple(policy1, TPL.graphPattern, pattern1));
@@ -223,10 +223,10 @@ public class PolicySuiteFromRDFBuilderTest extends TestCase {
         this.graph.add(new Triple(policy1, TPL.constraint, Node.createLiteral("?date < 2006")));
         buildSuite();
 
-        assertEquals(2, this.suite.getTrustPolicy(policy1URI).getConstraints().size());
-        Iterator it = this.suite.getTrustPolicy(policy1URI).getConstraints().iterator();
-        Constraint condition1 = (Constraint) it.next();
-        Constraint condition2 = (Constraint) it.next();
+        assertEquals(2, this.suite.getTrustPolicy(policy1URI).getExpressionConstraints().size());
+        Iterator it = this.suite.getTrustPolicy(policy1URI).getExpressionConstraints().iterator();
+        ExpressionConstraint condition1 = (ExpressionConstraint) it.next();
+        ExpressionConstraint condition2 = (ExpressionConstraint) it.next();
         VariableBinding binding = new VariableBinding();
         binding.setValue("date", Node.createLiteral("2005", null, XSDDatatype.XSDinteger));
         assertTrue(condition1.evaluate(binding).getResult() && condition2.evaluate(binding).getResult());
@@ -244,14 +244,27 @@ public class PolicySuiteFromRDFBuilderTest extends TestCase {
                 this.graph, Arrays.asList(new Metric[] {new IsFooMetric()}));
         this.suite = builder.buildPolicySuite();
         
-        assertEquals(1, this.suite.getTrustPolicy(policy1URI).getConstraints().size());
-        Constraint condition = (Constraint) this.suite.getTrustPolicy(policy1URI)
-        			.getConstraints().iterator().next();
+        assertEquals(1, this.suite.getTrustPolicy(policy1URI).getExpressionConstraints().size());
+        ExpressionConstraint condition = (ExpressionConstraint) this.suite.getTrustPolicy(policy1URI)
+        			.getExpressionConstraints().iterator().next();
         VariableBinding binding = new VariableBinding();
         binding.setValue("a", Node.createLiteral("foo"));
         assertTrue(condition.evaluate(binding).getResult());
         binding.setValue("a", Node.createLiteral("bar"));
         assertFalse(condition.evaluate(binding).getResult());
+    }
+
+    public void testCount() {
+        addSuiteAndPolicy1();
+        this.graph.add(new Triple(policy1, TPL.constraint, Node.createLiteral("COUNT(?GRAPH) > 1")));
+        buildSuite();
+        
+        assertEquals(1, this.suite.getTrustPolicy(policy1URI).getCountConstraints().size());
+        CountConstraint count = (CountConstraint) this.suite.getTrustPolicy(policy1URI)
+        			.getCountConstraints().iterator().next();
+        assertEquals("GRAPH", count.variableName());
+        assertEquals(">", count.operator());
+        assertEquals(1, count.value());
     }
 
     public void testPolicyWithoutExplanation() {

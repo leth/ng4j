@@ -15,7 +15,7 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
 /**
- * @version $Id: MetricTest.java,v 1.4 2005/03/22 01:01:21 cyganiak Exp $
+ * @version $Id: MetricTest.java,v 1.5 2005/03/28 22:31:51 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class MetricTest extends TestCase {
@@ -55,7 +55,7 @@ public class MetricTest extends TestCase {
                 new PrefixMappingImpl(),
                 Collections.EMPTY_LIST);
         try {
-            parser.parse();
+            parser.parseExpressionConstraint();
             fail("Expected TPLException because metric ex:unknown doesn't exist");
         } catch (TPLException ex) {
             // is expected
@@ -63,12 +63,12 @@ public class MetricTest extends TestCase {
     }
 
     public void testNoArguments() {
-        Constraint constraint = makeConstraint("METRIC(ex:TrueMetric)");
+        ExpressionConstraint constraint = makeConstraint("METRIC(ex:TrueMetric)");
         assertTrue(constraint.evaluate(new VariableBinding()).getResult());
     }
     
     public void testSimpleMetricConstraint() {
-        Constraint constraint = makeConstraint(
+        ExpressionConstraint constraint = makeConstraint(
                 "METRIC(<http://example.org/metrics#IsFoo>, ?a)");
         VariableBinding binding = new VariableBinding();
         binding.setValue("a", Node.createLiteral("foo"));
@@ -89,26 +89,26 @@ public class MetricTest extends TestCase {
     }
 
     public void testReturnExplanation() {
-        Constraint constraint = makeConstraint(
+        ExpressionConstraint constraint = makeConstraint(
                 "METRIC(ex:TrueMetric, 'Explanation')");
         assertEquals("Part[\"Explanation\"]",
                 constraint.evaluate(new VariableBinding()).getTextExplanation().toString());
     }
     
     public void testNoExplanation() {
-        Constraint constraint = makeConstraint("METRIC(ex:TrueMetric)");
+        ExpressionConstraint constraint = makeConstraint("METRIC(ex:TrueMetric)");
         assertNull(constraint.evaluate(new VariableBinding()).getTextExplanation());
     }
     
     public void testSeveralExplanations() {
-        Constraint constraint = makeConstraint(
+        ExpressionConstraint constraint = makeConstraint(
                 "(METRIC(ex:TrueMetric, 'Expl1') && !(METRIC(ex:TrueMetric, 'Expl2')))");
         assertEquals("Part[] <Part[\"Expl1\"], Part[\"Expl2\"]>",
                 constraint.evaluate(new VariableBinding()).getTextExplanation().toString());
     }
     
-    private Constraint makeConstraint(String expression) {
-        return new ConstraintParser(expression, this.prefixes, this.metrics).parse();
+    private ExpressionConstraint makeConstraint(String expression) {
+        return new ConstraintParser(expression, this.prefixes, this.metrics).parseExpressionConstraint();
     }
     
     class EqualsMetric implements Metric {

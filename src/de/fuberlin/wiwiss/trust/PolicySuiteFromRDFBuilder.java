@@ -20,7 +20,7 @@ import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
  * Service for building a {@link PolicySuite} from an RDF graph containing
  * the policy's description using the TPL vocabulary.
  *
- * @version $Id: PolicySuiteFromRDFBuilder.java,v 1.5 2005/03/26 23:56:56 cyganiak Exp $
+ * @version $Id: PolicySuiteFromRDFBuilder.java,v 1.6 2005/03/28 22:31:51 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class PolicySuiteFromRDFBuilder {
@@ -130,7 +130,7 @@ public class PolicySuiteFromRDFBuilder {
                 throw new TPLException("Objects of tpl:condition must be literals; "
                         + constraintNode + " is not");
             }
-            policy.addConstraint(buildConstraint(constraintNode.getLiteral().getLexicalForm()));
+            addConstraintToPolicy(constraintNode.getLiteral().getLexicalForm(), policy);
         }
         
         warnIfMoreThanOne(policyNode, TPL.textExplanation, Node.ANY,
@@ -150,9 +150,14 @@ public class PolicySuiteFromRDFBuilder {
         return new GraphPatternParser(pattern, this.prefixes).parse();
     }
     
-    private Constraint buildConstraint(String constraint) {
-        return new ConstraintParser(
-                constraint, this.prefixes, this.metricInstances).parse();
+    private void addConstraintToPolicy(String constraint, TrustPolicy policy) {
+        ConstraintParser parser = new ConstraintParser(
+                constraint, this.prefixes, this.metricInstances);
+        if (parser.isCountConstraint()) {
+            policy.addCountConstraint(parser.parseCountConstraint());
+        } else {
+            policy.addExpressionConstraint(parser.parseExpressionConstraint());
+        }
     }
     
     private void checkForUnlinkedPolicies() {
