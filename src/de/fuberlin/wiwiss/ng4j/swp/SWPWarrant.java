@@ -6,8 +6,9 @@
  */
 package de.fuberlin.wiwiss.ng4j.swp;
 
+import java.security.Signature;
+
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
-import de.fuberlin.wiwiss.ng4j.swp.signature.SWPSignature;
 
 /**
  * 
@@ -51,7 +52,7 @@ public interface SWPWarrant {
      * 
      * @return
      */     
-    public SWPSignature getSignature();
+    public Signature getSignature();
 
     /**
      * Returns true if the warrant is signed.

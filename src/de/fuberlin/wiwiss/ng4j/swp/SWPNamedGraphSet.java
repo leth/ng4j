@@ -5,8 +5,8 @@
 package de.fuberlin.wiwiss.ng4j.swp;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
-import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPBadDigestException;
-import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPBadSignatureException;
+import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPBadDigestException;
+import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPBadSignatureException;
 
 import java.security.PrivateKey;
 import java.util.ArrayList;
@@ -188,10 +188,11 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * @param listOfAuthorityProperties
      * @return
      */
+	
     public boolean assertGraphs( ArrayList listOfGraphNames, SWPAuthority authority, ArrayList listOfAuthorityProperties );
 
     public boolean quoteGraphs( ArrayList listOfGraphNames, SWPAuthority authority, ArrayList listOfAuthorityProperties );
-
+    
     /**
      * 
      * Given an list of graphs and an SWP Authority, assert
@@ -203,6 +204,7 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * @param authority
      * @return
      */
+	/*
     public boolean assertGraphsWithSignature( ArrayList listOfGraphNames, 
     										SWPAuthority authority, 
     										Node signatureMethod, 
@@ -212,7 +214,7 @@ public interface SWPNamedGraphSet extends NamedGraphSet
     										String password ) 
     throws SWPBadSignatureException, 
     SWPBadDigestException;
-   
+   */
     /**
      * 
      * For all signature graphs in the set,
