@@ -24,6 +24,7 @@ import com.hp.hpl.jena.vocabulary.RDF;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.Quad;
+import de.fuberlin.wiwiss.ng4j.trig.parser.TriGAntlrParser;
 
 /**
  * A Handler for TriG parsing events which populates a NamedGraphSet. Based
@@ -31,7 +32,7 @@ import de.fuberlin.wiwiss.ng4j.Quad;
  * 
  * @author		Andy Seaborne
  * @author Richard Cyganiak (richard@cyganiak.de)
- * @version 	$Id: NamedGraphSetPopulator.java,v 1.2 2004/11/22 02:48:50 cyganiak Exp $
+ * @version 	$Id: NamedGraphSetPopulator.java,v 1.3 2004/11/25 22:14:38 cyganiak Exp $
  */
 public class NamedGraphSetPopulator implements TriGParserEventHandler
 {
@@ -63,13 +64,14 @@ public class NamedGraphSetPopulator implements TriGParserEventHandler
 	final String anonPrefix = "_" ;
 
 	private boolean inGraph = false;
-	private Node baseGraphName;
+	private Node defaultGraphName;
 
-	public NamedGraphSetPopulator(NamedGraphSet ngs, String _base)
+	public NamedGraphSetPopulator(NamedGraphSet ngs, String _base,
+			String defaultGraphName)
 	{
 		this.namedGraphSet = ngs;
 		this.base = _base ;
-		this.baseGraphName = Node.createURI(_base);
+		this.defaultGraphName = Node.createURI(defaultGraphName);
 		if ( VERBOSE )
 			System.out.println("N3toRDF: "+base) ;
 	}
@@ -106,7 +108,7 @@ public class NamedGraphSetPopulator implements TriGParserEventHandler
 			// @prefix now
 			if ( args[0].getType() != TriGParser.QNAME )
 			{
-				error("Line "+line+": N3toRDF: Prefix directive does not start with a prefix! "+args[0].getText()+ "["+TriGParser.getTokenNames()[args[0].getType()]+"]") ;
+				error("Line "+line+": N3toRDF: Prefix directive does not start with a prefix! "+args[0].getText()+ "["+TriGAntlrParser._tokenNames[args[0].getType()]+"]") ;
 				return ;
 			}
 					
@@ -222,9 +224,9 @@ public class NamedGraphSetPopulator implements TriGParserEventHandler
 
             // Didn't find an existing one above so make it ...
             if ( pNode == null )
-                pNode = Node.createURI(propStr) ;
+                pNode = Node.createURI(expandRelativeURIRef(propStr));
             else
-                propStr = pNode.getURI() ;
+                propStr = pNode.getURI();
 
 			Node sNode = createNode(line, subj);
             // Must be a resource
@@ -234,7 +236,7 @@ public class NamedGraphSetPopulator implements TriGParserEventHandler
 			Node oNode = createNode(line, obj);
 			
 			Node gNode = graphName == null ?
-					this.baseGraphName :
+					this.defaultGraphName :
 					createNode(line, graphName);
 			this.namedGraphSet.addQuad(new Quad(gNode, sNode, pNode, oNode));
 		}
@@ -300,7 +302,7 @@ public class NamedGraphSetPopulator implements TriGParserEventHandler
                      datatype.getType() != TriGParser.URIREF )
                 {
                     error("Line "+ line+ ": N3toRDF: Must use URIref or QName datatype URI: "
-                            + text+ "^^"+ typeURI+"("+TriGParser.getTokenNames()[datatype.getType()]+")");
+                            + text+ "^^"+ typeURI+"("+TriGAntlrParser._tokenNames[datatype.getType()]+")");
                     return Node.createLiteral("Illegal literal: " + text + "^^" + typeURI, null, null);
  
                 }
@@ -325,7 +327,7 @@ public class NamedGraphSetPopulator implements TriGParserEventHandler
                     typeURI = typeURI2 ;
                 }
 
-                typeURI = expandHereURIRef(typeURI);
+                typeURI = expandRelativeURIRef(typeURI);
                 RDFDatatype type = TypeMapper.getInstance().getSafeTypeByName(typeURI);
                 return Node.createLiteral(text, null, type);
 
@@ -345,11 +347,11 @@ public class NamedGraphSetPopulator implements TriGParserEventHandler
                     error("Line "+line+": N3toRDF: Undefined qname namespace: " + text);
                     return null ;
                 }
-                return Node.createURI(expandHereURIRef(uriref));
+                return Node.createURI(expandRelativeURIRef(uriref));
 
             // Normal URIref - may be <> or <#>
             case TriGParser.URIREF :
-                return Node.createURI(expandHereURIRef(text));
+                return Node.createURI(expandRelativeURIRef(text));
 
             // Lists
             case TriGParser.TK_LIST_NIL:
@@ -373,16 +375,13 @@ public class NamedGraphSetPopulator implements TriGParserEventHandler
 		return null ;
 	}
 
-    // Expand shorthand forms (not QNames) for URIrefs.
-    private String expandHereURIRef(String text)
-    {
-        // Not a "named" bNode (start with _:)
-        if ( text.equals("") )
-            // The case of <>.
-            return base ;
-        if ( text.equals("#") )
-            // The case of <#>.
-            return base+"#" ;
+    // Expand shorthand forms (not QNames) for URIrefs. Currently
+	// deals only with the cases <>, <#> and <#...>, but should
+	// probably also expand <file> to <http://example.com/base/file>
+    private String expandRelativeURIRef(String text) {
+        if (text.equals("") || text.startsWith("#")) {
+            return this.base + text;
+        }
         return text;
     }
     

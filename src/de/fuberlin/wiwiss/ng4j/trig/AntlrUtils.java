@@ -8,13 +8,15 @@ import java.io.* ;
 
 import com.hp.hpl.jena.n3.N3AntlrParser;
 
+import de.fuberlin.wiwiss.ng4j.trig.parser.TriGAntlrParser;
+
 import antlr.* ;
 import antlr.collections.*;
 
 /** Miscellaneous things in support of Antlr-derived parsers.
  * 
  * @author		Andy Seaborne
- * @version 	$Id: AntlrUtils.java,v 1.1 2004/11/22 00:46:19 cyganiak Exp $
+ * @version 	$Id: AntlrUtils.java,v 1.2 2004/11/25 22:14:38 cyganiak Exp $
  */
 
 public class AntlrUtils
@@ -22,7 +24,7 @@ public class AntlrUtils
 	/** Format an AST node */
 	public static String ast(AST t)
 	{
-		return "[" + t.getText() + ", " + TriGParser.getTokenNames()[t.getType()] + "]";
+		return "[" + t.getText() + ", " + TriGAntlrParser._tokenNames[t.getType()] + "]";
 	}
 	
 	/** Print an AST node (but not its subnodes) */

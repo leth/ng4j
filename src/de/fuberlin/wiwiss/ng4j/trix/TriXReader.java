@@ -1,16 +1,13 @@
 /*
- * $Id: NamedGraphSetReader.java,v 1.1 2004/10/23 13:31:24 cyganiak Exp $
+ * $Id: TriXReader.java,v 1.1 2004/11/25 22:14:39 cyganiak Exp $
  */
 package de.fuberlin.wiwiss.ng4j.trix;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,6 +24,7 @@ import com.hp.hpl.jena.shared.JenaException;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
+import de.fuberlin.wiwiss.ng4j.NamedGraphSetReader;
 
 /**
  * Reads TriX files (see
@@ -41,7 +39,7 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
  * 
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
-public class NamedGraphSetReader implements ParserCallback {
+public class TriXReader implements ParserCallback, NamedGraphSetReader {
 	private NamedGraphSet set;
 	private Node defaultGraph;
 	private NamedGraph currentGraph;
@@ -76,22 +74,6 @@ public class NamedGraphSetReader implements ParserCallback {
 		} catch (SAXException e) {
 			throw new JenaException(e);
 		} catch (URISyntaxException e) {
-			throw new JenaException(e);
-		}
-	}
-
-	public void read(NamedGraphSet namedGraphSet, String url,
-			String defaultGraphName) {
-		try {
-			URLConnection conn = new URL(url).openConnection();
-			String encoding = conn.getContentEncoding();
-			if (encoding == null) {
-				read(namedGraphSet, conn.getInputStream(), url,
-						defaultGraphName);
-			} else {
-				read(namedGraphSet, new InputStreamReader(conn.getInputStream(), encoding), url, defaultGraphName);
-			}
-		} catch (IOException e) {
 			throw new JenaException(e);
 		}
 	}

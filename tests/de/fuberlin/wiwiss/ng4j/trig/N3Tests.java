@@ -1,4 +1,4 @@
-// $Id: N3Tests.java,v 1.1 2004/11/22 02:48:52 cyganiak Exp $
+// $Id: N3Tests.java,v 1.2 2004/11/25 22:14:38 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import java.io.File;
@@ -61,6 +61,10 @@ public class N3Tests extends TestSuite {
 		private String resultFile;
 		private String baseURI;
 
+		public N3Test(String testName) {
+			super(testName);
+		}
+
 		public N3Test(String testFile, String resultFile, String baseURI) {
 			super(testFile);
 			this.testFile = testFile;
@@ -85,7 +89,7 @@ public class N3Tests extends TestSuite {
 			Reader in = new InputStreamReader(new FileInputStream(this.testFile), "UTF-8");
 			NamedGraphSet ngs = new NamedGraphSetImpl();
 			NamedGraphSetPopulator handler = new NamedGraphSetPopulator(
-					ngs, this.baseURI);
+					ngs, this.baseURI, this.baseURI);
 			new TriGParser(in, handler).parse();
 			return ngs.getGraph(this.baseURI);
 		}

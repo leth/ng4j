@@ -1,0 +1,19 @@
+@prefix : <http://example.com/ns#> .
+
+# in a named graph
+:graph1 { :a :a :a . } .
+
+# in another named graph
+:graph2 :- { :b :b :b . } .
+
+# in default graph
+{ :c :c :c . }
+
+# in default graph
+:d :d :d .
+
+# in default graph; URIs are realtive to base URI
+<#e> <#e> <#e> .
+
+# TriG is always UTF-8 encoded
+:a :a "äöü" .

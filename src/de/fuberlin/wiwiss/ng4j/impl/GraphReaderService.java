@@ -1,10 +1,11 @@
-// $Id: GraphReaderService.java,v 1.2 2004/10/26 07:17:40 cyganiak Exp $
+// $Id: GraphReaderService.java,v 1.3 2004/11/25 22:14:39 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.net.MalformedURLException;
@@ -23,8 +24,10 @@ import com.hp.hpl.jena.rdf.model.impl.RDFReaderFImpl;
 import com.hp.hpl.jena.shared.JenaException;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
+import de.fuberlin.wiwiss.ng4j.NamedGraphSetReader;
+import de.fuberlin.wiwiss.ng4j.trig.TriGReader;
 import de.fuberlin.wiwiss.ng4j.trix.JenaRDFReader;
-import de.fuberlin.wiwiss.ng4j.trix.NamedGraphSetReader;
+import de.fuberlin.wiwiss.ng4j.trix.TriXReader;
 
 /**
  * Reads RDF graphs from external sources (URLs, InputStreams,
@@ -69,6 +72,7 @@ public class GraphReaderService {
 	private RDFReaderF readerFactory = new RDFReaderFImpl();
 
 	public GraphReaderService() {
+		// TODO: Replace this by some kind of extensible registry
 		this.mimeTypes.put("application/rdf+xml", "RDF/XML");
 		this.mimeTypes.put("text/rdf+xml", "RDF/XML");
 		this.mimeTypes.put("application/n3", "N3");
@@ -81,6 +85,7 @@ public class GraphReaderService {
 		this.fileExtensions.put("ttl", "N3");
 		this.fileExtensions.put("nt", "N-TRIPLES");
 		this.fileExtensions.put("trix", "TRIX");
+		this.fileExtensions.put("trig", "TRIG");
 		this.readerFactory.setReaderClassName("TRIX",
 				JenaRDFReader.class.getName());
 	}
@@ -150,13 +155,14 @@ public class GraphReaderService {
 	 * <li>"<strong>N3</strong>" (can also be used for Turtle files)</li>
 	 * <li>"<strong>N-TRIPLE</strong>"</li>
 	 * <li>"<strong>TRIX</strong>"</li>
+	 * <li>"<strong>TRIG</strong>"</li>
 	 * </ul>
 	 * Setting the language is optional for URL sources. If no language
 	 * is given, the implementation will try to guess the language
 	 * based on MIME types and filename extensions. This will not work
 	 * in all cases and is not tested very well, so it's safest to
 	 * specify the language in any case.
-	 * @param lang "RDF/XML", "N3", "N-TRIPLE" or "TRIX"
+	 * @param lang "RDF/XML", "N3", "N-TRIPLE", "TRIX" or "TRIG"
 	 */
 	public void setLanguage(String lang) {
 		this.lang = lang;
@@ -179,11 +185,9 @@ public class GraphReaderService {
 	public void readInto(NamedGraphSet set) {
 		makeSureWeHaveLanguage();
 		if (languageSupportsNamedGraphs(this.lang)) {
-			// TODO: Hack -- will clean this up when I add TriG support
-			// (Problem is there can be other languages than TriX here but our code just assumes it is TriX)
-			NamedGraphSetReader ngsReader = new NamedGraphSetReader();
+			NamedGraphSetReader ngsReader = createReader(this.lang);
 			if (this.url != null) {
-				ngsReader.read(set, getFixedURL(this.url), getFixedURL(this.url));
+				readNGSFromURL(set, ngsReader);
 			} else if (this.reader != null) {
 				ngsReader.read(set, this.reader, this.baseURI, this.baseURI);
 			} else if (this.inputStream != null) {
@@ -232,7 +236,33 @@ public class GraphReaderService {
 	}
 
 	private boolean languageSupportsNamedGraphs(String language) {
-		return "TRIX".equals(language);
+		return "TRIX".equals(language) || "TRIG".equals(language);
+	}
+
+	private NamedGraphSetReader createReader(String language) {
+		if ("TRIX".equals(language)) {
+			return new TriXReader();
+		} else if ("TRIG".equals(language)) {
+			return new TriGReader();
+		}
+		throw new IllegalArgumentException("Unsupported Named Graphs serialization: "
+				+ language);
+	}
+
+	private void readNGSFromURL(NamedGraphSet set, NamedGraphSetReader ngsReader) {
+		String fixedURL = getFixedURL(this.url);
+		try {
+			URLConnection conn = new URL(fixedURL).openConnection();
+			String encoding = conn.getContentEncoding();
+			if (encoding == null) {
+				ngsReader.read(set, conn.getInputStream(), fixedURL, fixedURL);
+			} else {
+				ngsReader.read(set, new InputStreamReader(
+						conn.getInputStream(), encoding), fixedURL, fixedURL);
+			}
+		} catch (IOException e) {
+			throw new JenaException(e);
+		}
 	}
 
 	private String getURI() {

@@ -5,68 +5,41 @@
 
 package de.fuberlin.wiwiss.ng4j.trig;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 
+import antlr.RecognitionException;
 import antlr.TokenStreamException;
 import de.fuberlin.wiwiss.ng4j.trig.parser.TriGAntlrLexer;
 import de.fuberlin.wiwiss.ng4j.trig.parser.TriGAntlrParser;
 import de.fuberlin.wiwiss.ng4j.trig.parser.TriGAntlrParserTokenTypes;
 
-/** The formal interface to the TriG parser.  Wraps up the antlr parser and lexer.
+/**
+ * The formal interface to the TriG parser.  Wraps up the antlr parser and lexer.
  * @author		Andy Seaborne
  * @author Richard Cyganiak (richard@cyganiak.de)
- * @version 	$Id: TriGParser.java,v 1.1 2004/11/22 00:46:19 cyganiak Exp $
+ * @version 	$Id: TriGParser.java,v 1.2 2004/11/25 22:14:38 cyganiak Exp $
  */
-public class TriGParser implements TriGAntlrParserTokenTypes
-{
-	TriGAntlrLexer lexer = null ;
-	TriGAntlrParser parser = null ;
+public class TriGParser implements TriGAntlrParserTokenTypes {
+	private TriGAntlrLexer lexer = null ;
+	private TriGAntlrParser parser = null ;
 	
-	public TriGParser(BufferedReader r, TriGParserEventHandler h)
-	{
-		lexer = new TriGAntlrLexer(r) ;
-		parser = new TriGAntlrParser(lexer) ;
-		parser.setEventHandler(h) ;
-		parser.setLexer(lexer) ;
-    }
-
-	public TriGParser(Reader r, TriGParserEventHandler h)
-	{
-		lexer = new TriGAntlrLexer(r) ;
-		parser = new TriGAntlrParser(lexer) ;
-		parser.setEventHandler(h) ;
-		parser.setLexer(lexer) ;
+	public TriGParser(Reader r, TriGParserEventHandler h) {
+		this.lexer = new TriGAntlrLexer(r);
+		this.parser = createParser(h);
     }
     
-	public TriGParser(InputStream in, TriGParserEventHandler h)
-	{
-        Reader r = null ;
-        try { 
-            // UTF-8 always exists.
-            r = new InputStreamReader(in, "UTF-8") ;
-        } catch (UnsupportedEncodingException ex) {}
-        lexer = new TriGAntlrLexer(r) ;
-        parser = new TriGAntlrParser(lexer) ;
-		parser.setEventHandler(h) ;
-		parser.setLexer(lexer) ;
-    }
-
-    static public String[] getTokenNames() { return TriGAntlrParser._tokenNames ; }
-    
-    public int line() { return lexer.getLine() ; }
-    public int col() { return lexer.getColumn() ; }
-    
-    public TriGAntlrParser getParser()  { return parser ; }
-    public TriGAntlrLexer getLexer()    { return lexer ; }
-
-	/** Call the top level parser rule */
-	public void parse() throws antlr.RecognitionException, TokenStreamException
-	{
-		parser.document() ;
+	/**
+	 * Runs the parsing process by calling the top level parser rule
+	 */
+	public void parse() throws RecognitionException, TokenStreamException {
+		this.parser.document();
+	}
+	
+	private TriGAntlrParser createParser(TriGParserEventHandler handler) {
+		TriGAntlrParser result = new TriGAntlrParser(this.lexer);
+		result.setEventHandler(handler);
+		result.setLexer(this.lexer);
+		return result;
 	}
 }
 
