@@ -1,9 +1,11 @@
-// $Id: NamedGraphExample.java,v 1.2 2004/12/17 10:23:14 cyganiak Exp $
+// $Id: NamedGraphExample.java,v 1.3 2004/12/17 11:16:09 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.examples;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.Iterator;
 
 import com.hp.hpl.jena.graph.Node;
@@ -65,9 +67,8 @@ public class NamedGraphExample {
 		// Count all graphs in the graphset (2)
 		System.out.println("The graphset contains " + graphset.countGraphs() + " graphs.");
 
-		// Serialize the graphset to a TriX file
-		OutputStream out = new FileOutputStream("C:/graphset.trix");
-		graphset.write(out, "TRIX"); 
+		// Serialize the graphset to System.out, using the TriX syntax
+		graphset.write(System.out, "TRIX");
 
 		////////////////////////////////////////////////
 		//		 Operations on Model Level
@@ -93,6 +94,7 @@ public class NamedGraphExample {
 		// So who has published my email address all over the Web??!?
 		while (it.hasNext()) {
 			Resource g = (Resource) it.next();
+			System.out.println();
 			System.out.println("GraphName: " + g.toString());
 			System.out.println("Author: " + 
 				g.getProperty(model.getProperty("http://purl.org/dc/elements/1.1/author")).getString());
@@ -100,9 +102,8 @@ public class NamedGraphExample {
 				g.getProperty(model.getProperty("http://purl.org/dc/elements/1.1/date")).getString());
 		}
 		
-		// Serialize the model to a TriX file
-		out = new FileOutputStream("C:/model.trix");
-		model.write(out, "TRIX"); 
+		// Serialize the model to System.out, using the TriG syntax
+		model.write(System.out, "TRIG", "http://richard.cyganiak.de/foaf.rdf");
 	}
 }
 

@@ -1,0 +1,47 @@
+Source: http://www.bizer.de/InformationAboutRichard
+Statement: http://richard.cyganiak.de/foaf.rdf#RichardCyganiak @http://xmlns.com/foaf/0.1/mbox mailto:richard@cyganiak.de
+Source: http://example.org/persons/123
+Statement: http://richard.cyganiak.de/foaf.rdf#RichardCyganiak @http://xmlns.com/foaf/0.1/name "Richard Cyganiak"
+The graphset contains 2 graphs.
+<?xml version="1.0" encoding="utf-8"?>
+<TriX xmlns="http://www.w3.org/2004/03/trix/trix-1/">
+  <graph>
+    <uri>http://example.org/persons/123</uri>
+    <triple>
+      <uri>http://richard.cyganiak.de/foaf.rdf#RichardCyganiak</uri>
+      <uri>http://xmlns.com/foaf/0.1/name</uri>
+      <plainLiteral>Richard Cyganiak</plainLiteral>
+    </triple>
+  </graph>
+  <graph>
+    <uri>http://www.bizer.de/InformationAboutRichard</uri>
+    <triple>
+      <uri>http://richard.cyganiak.de/foaf.rdf#RichardCyganiak</uri>
+      <uri>http://xmlns.com/foaf/0.1/mbox</uri>
+      <uri>mailto:richard@cyganiak.de</uri>
+    </triple>
+  </graph>
+</TriX>
+GraphName: http://www.bizer.de/InformationAboutRichard
+Author: Chris Bizer
+Date: 09/15/2004
+@prefix dc:      <http://purl.org/dc/elements/1.1/> .
+@prefix foaf:    <http://xmlns.com/foaf/0.1/> .
+@prefix :        <http://richard.cyganiak.de/foaf.rdf#> .
+
+<http://example.org/defaultgraph> {
+    <http://www.bizer.de/InformationAboutRichard>
+          dc:author "Chris Bizer" ;
+          dc:date "09/15/2004" .
+}
+
+<http://example.org/persons/123> {
+    :RichardCyganiak
+          foaf:name "Richard Cyganiak" .
+}
+
+<http://www.bizer.de/InformationAboutRichard> {
+    :RichardCyganiak
+          foaf:mbox <mailto:richard@cyganiak.de> .
+}
+
