@@ -154,7 +154,7 @@ tokens
 // The top level rule
 document!: 
 		{ startDocument() ; }
-		(n3Directive | graph[null] | statement)*	// Not a statementList: must end in a SEP
+		(n3Directive | graph[null] | statementOrNamedGraph)*
 		{ endDocument() ; }
 		EOF ;
 
@@ -177,11 +177,13 @@ n3Directive0!:
 // "verb" is a node and also the shorthand forms: 'a', => = etc
 // "item" is just a node presently.
 
-statement!
-	: statement0 SEP! ;
+statementOrNamedGraph!
+	: subj:subject graphOrPropertyList[#subj] ;
 
-statement0!
-	: subj:subject propertyList[#subj] ;	
+graphOrPropertyList![AST subj]
+	: propertyList[subj] SEP
+	| (NAME_OP!)? graph[subj]
+	;
 
 // List of statements without, necessarily, a final SEP.
 // Possible empty
@@ -189,13 +191,14 @@ formulaList!
 	: (statement0|n3Directive0) (SEP formulaList)?
 	| ;
 
+statement0!
+	: subj:subject propertyList[#subj] ;	
+
 subject
 	: item ;
 
 propertyList![AST subj]
-	: NAME_OP! graph[subj] propertyList[subj]
-	| graph[subj] propertyList[subj]
-	| propValue[subj] (SEMI propertyList[subj])?
+	: propValue[subj] (SEMI propertyList[subj])?
 	| 		// void : allows for [ :a :b ] and empty list "; .".
 	;
 

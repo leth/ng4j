@@ -1,4 +1,4 @@
-// $Id: TriGReaderTest.java,v 1.1 2004/11/25 22:14:38 cyganiak Exp $
+// $Id: TriGReaderTest.java,v 1.2 2004/11/25 22:48:02 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import java.io.InputStream;
@@ -62,17 +62,5 @@ public class TriGReaderTest extends TestCase {
 
 	public void testNoAdditionalQuads() {
 		assertEquals(6, this.ngs.countQuads());
-	}
-
-	public void testReadFromReader() {
-		String trig = "@prefix : <http://example.com/ns#> .\n" +
-				"graph1 { :a :a \"ŠšŸ\" . }";
-		Reader r = new StringReader(trig);
-		NamedGraphSetReader reader = new TriGReader();
-		NamedGraphSet set = new NamedGraphSetImpl();
-		reader.read(set, r, BASE, DEFAULT);
-		assertTrue(this.ngs.containsQuad(
-				new Quad(graph1, a, a, Node.createLiteral("ŠšŸ", null, null))));
-		assertEquals(1, this.ngs.countQuads());
 	}
 }

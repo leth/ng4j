@@ -1,4 +1,4 @@
-// $Id: TriGParserTest.java,v 1.3 2004/11/25 22:14:38 cyganiak Exp $
+// $Id: TriGParserTest.java,v 1.4 2004/11/25 22:48:02 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import java.io.Reader;
@@ -8,6 +8,7 @@ import com.hp.hpl.jena.graph.Node;
 
 import junit.framework.TestCase;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
+import de.fuberlin.wiwiss.ng4j.NamedGraphSetReader;
 import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 import de.fuberlin.wiwiss.ng4j.trix.NamedGraphSetWriter;
@@ -57,7 +58,7 @@ public class TriGParserTest extends TestCase {
 	
 	public void testQuadFormula() throws Exception {
 		String triG = "@prefix ex: <http://example.com/ex#> .\n" +
-				"ex:graph1 :- { ex:a ex:b ex:c } .";
+				"ex:graph1 :- { ex:a ex:b ex:c }";
 		NamedGraphSet ngs = parseTriG(triG);
 		assertTrue(ngs.containsQuad(new Quad(graph1Node, aNode, bNode, cNode)));
 		assertEquals(1, ngs.countQuads());
@@ -65,7 +66,7 @@ public class TriGParserTest extends TestCase {
 	
 	public void testIllegalNamingOperator() throws Exception {
 		String triG = "@prefix ex: <http://example.com/ex#> .\n" +
-		"ex:graph ex:foo { ex:a ex:b ex:c } .";
+		"ex:graph ex:foo { ex:a ex:b ex:c }";
 		try {
 			parseTriG(triG);
 			fail();
@@ -77,7 +78,7 @@ public class TriGParserTest extends TestCase {
 	
 	public void testIllegalGraphName() throws Exception {
 		String triG = "@prefix ex: <http://example.com/ex#> .\n" +
-		"foo :- { ex:a ex:b ex:c } .";
+		"foo :- { ex:a ex:b ex:c }";
 		try {
 			parseTriG(triG);
 			fail();
@@ -88,7 +89,7 @@ public class TriGParserTest extends TestCase {
 	
 	public void testNoNestedGraphs() throws Exception {
 		String triG = "@prefix ex: <http://example.com/ex#> .\n" +
-		"ex:graph :- { ex:graph :- { ex:a ex:b ex:c } } .";
+		"ex:graph :- { ex:graph :- { ex:a ex:b ex:c } }";
 		try {
 			parseTriG(triG);
 			fail();
@@ -99,9 +100,9 @@ public class TriGParserTest extends TestCase {
 	
 	public void testMultipleGraphs() throws Exception {
 		String triG = "@prefix ex: <http://example.com/ex#> .\n" +
-				"ex:graph1 :- { ex:a ex:b ex:c } .\n" +
-				"ex:graph2 :- { ex:b ex:c ex:a } .\n" +
-				"ex:graph3 :- { ex:c ex:a ex:b } .\n";
+				"ex:graph1 :- { ex:a ex:b ex:c }\n" +
+				"ex:graph2 :- { ex:b ex:c ex:a }\n" +
+				"ex:graph3 :- { ex:c ex:a ex:b }\n";
 		NamedGraphSet ngs = parseTriG(triG);
 		assertTrue(ngs.containsQuad(new Quad(graph1Node, aNode, bNode, cNode)));
 		assertTrue(ngs.containsQuad(new Quad(graph2Node, bNode, cNode, aNode)));
@@ -112,9 +113,9 @@ public class TriGParserTest extends TestCase {
 	public void testDefaultGraph() throws Exception {
 		String triG = "@prefix ex: <http://example.com/ex#> .\n" +
 				"ex:a ex:a ex:a .\n" +
-				"ex:graph1 :- { ex:a ex:b ex:c } .\n" +
+				"ex:graph1 :- { ex:a ex:b ex:c }\n" +
 				"ex:b ex:b ex:b .\n" +
-				"ex:graph2 :- { ex:b ex:c ex:a } .\n" +
+				"ex:graph2 :- { ex:b ex:c ex:a }\n" +
 				"ex:c ex:c ex:c .\n";
 		NamedGraphSet ngs = parseTriG(triG);
 		assertTrue(ngs.containsQuad(new Quad(graph1Node, aNode, bNode, cNode)));
@@ -135,7 +136,7 @@ public class TriGParserTest extends TestCase {
 
 	public void testWithoutGraphNamingOperator() throws Exception {
 		String triG = "@prefix ex: <http://example.com/ex#> .\n" +
-				"ex:graph1 { ex:a ex:b ex:c } .";
+				"ex:graph1 { ex:a ex:b ex:c }";
 		NamedGraphSet ngs = parseTriG(triG);
 		assertTrue(ngs.containsQuad(new Quad(graph1Node, aNode, bNode, cNode)));
 		assertEquals(1, ngs.countQuads());
@@ -147,5 +148,28 @@ public class TriGParserTest extends TestCase {
 		NamedGraphSet ngs = parseTriG(triG);
 		assertTrue(ngs.containsQuad(new Quad(graph1Node, aNode, bNode, cNode)));
 		assertEquals(1, ngs.countQuads());
+	}
+	
+	public void testGraphWithDot() throws Exception {
+		String triG = "@prefix ex: <http://example.com/ex#> .\n" +
+				"ex:graph1 { ex:a ex:b ex:c } .";
+		try {
+			parseTriG(triG);
+			fail();
+		} catch (TriGException ex) {
+			// there must be no dot after a graph
+		}	
+	}
+	
+	public void testReadFromReader() {
+		String trig = "@prefix : <http://example.com/ns#> .\n" +
+				":graph1 { :a :a \"ŠšŸ\" . }";
+		Reader r = new StringReader(trig);
+		NamedGraphSetReader reader = new TriGReader();
+		NamedGraphSet set = new NamedGraphSetImpl();
+		reader.read(set, r, BASE, DEFAULT);
+		assertTrue(set.containsQuad(new Quad(Node.ANY, Node.ANY, Node.ANY,
+				Node.createLiteral("ŠšŸ", null, null))));
+		assertEquals(1, set.countQuads());
 	}
 }

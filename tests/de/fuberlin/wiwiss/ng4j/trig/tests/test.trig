@@ -1,10 +1,10 @@
 @prefix : <http://example.com/ns#> .
 
 # in a named graph
-:graph1 { :a :a :a . } .
+:graph1 { :a :a :a }
 
 # in another named graph
-:graph2 :- { :b :b :b . } .
+:graph2 :- { :b :b :b . }
 
 # in default graph
 { :c :c :c . }
