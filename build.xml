@@ -9,10 +9,11 @@
 	<property name="src.tests" value="tests"/>
 	<property name="build" value="bin"/>
 	<property name="build.tests" value="bin-tests"/>
-<!--	<property name="dist" value="dist"/>-->
 	<property name="lib" value="lib"/>
-	<property name="doc" value="doc/javadoc"/>
+	<property name="doc" value="doc"/>
+	<property name="javadoc" value="${doc}/javadoc"/>
 	<property name="jar" value="${project}.jar"/>
+    <property name="zip" value="${project}.zip"/>
    
 	<path id="project.class.path">
 		<pathelement path="${java.class.path}"/>
@@ -31,7 +32,7 @@
 	ant test		- runs JUnit tests
 	ant javadoc 	- creates javadoc documentation
 	ant jar			- creates jar file
-<!--	ant release 	- creates a release .zip file-->
+	ant zip   		- creates a release zip file
     ant all         - all of the above
 	ant clean   	- cleans everything created by the build process
 		</echo>
@@ -41,15 +42,12 @@
 		<!-- Delete all directory trees created by the build process -->
 		<delete dir="${build}" failonerror="false"/>
 		<delete dir="${build.tests}" failonerror="false"/>
-<!--		<delete dir="${project}" failonerror="false"/>
-		<delete dir="${dist}" failonerror="false"/>-->
-		<delete dir="${doc}" failonerror="false"/>
+		<delete dir="${javadoc}" failonerror="false"/>
 		<delete file="${jar}" failonerror="false"/>
+		<delete file="${zip}" failonerror="false"/>
 	</target>
 	
 	<target name="init">
-		<!-- Create the time stamp -->
-		<tstamp/>
 		<!-- Create the build directory structure used by compile -->
 		<mkdir dir="${build}"/>
 	</target>
@@ -110,26 +108,16 @@
 			</classpath>
 		</java>
 	</target>
-	
-<!--
-	<target name="release" depends="dist">
-		<!- Creates a release zip file ->
-		<mkdir dir="${project}"/>
-		<copy file="LICENSE" todir="${project}"/>
-		<copy file="README" todir="${project}"/>
-		<copy file="${dist}/${project}.jar" todir="${project}"/>
-		<zip zipfile="${dist}/release.zip" basedir="${project}"/>
-	</target>-->
-	
+
 	<target name="javadoc">
 		<!-- Creates javadoc documentation for the source
              (but not for the tests) -->
-		<delete dir="${doc}"/>
-		<mkdir dir="${doc}"/>
+		<delete dir="${javadoc}"/>
+		<mkdir dir="${javadoc}"/>
 		<javadoc packagenames="*"
 				sourcepath="${src}"
 				classpathref="project.class.path"
-				destdir="${doc}"
+				destdir="${javadoc}"
 				author="true"
 				version="true"
 				private="false"
@@ -148,5 +136,13 @@
 		<jar jarfile="${jar}" basedir="${build}"/>
 	</target>
 
-    <target name="all" depends="test,javadoc,jar"/>
+	<target name="zip" depends="jar,javadoc">
+		<!-- Creates a release zip file containing sources, tests,
+			 docs (includig javadoc), the jar file, and the build file. -->
+		<zip destfile="${zip}"
+			 basedir="."
+			 excludes="${lib}/** ${build}/** ${build.tests}/** ${zip}"/>
+	</target>
+
+    <target name="all" depends="zip"/>
 </project>
