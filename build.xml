@@ -19,11 +19,11 @@
 	<property name="javacc.home" value="bin/javacc-2.1"/>
 
 	<path id="project.class.path">
-		<pathelement path="${java.class.path}"/>
 		<fileset dir="${lib}">
 			<include name="**/*.jar"/>
 			<exclude name="junit.jar"/>
 		</fileset>
+		<pathelement path="${java.class.path}"/>
 	</path>
 	
 	<target name="help">
@@ -95,6 +95,7 @@
 		<copy todir="${build.tests}/">
 			<fileset dir="${src.tests}/">
 				<include name="${project.path}/trix/tests/*"/>
+				<include name="${project.path}/trig/tests/*"/>
 			</fileset>
 		</copy>
 	</target>
