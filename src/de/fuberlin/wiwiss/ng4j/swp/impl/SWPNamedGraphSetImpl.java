@@ -228,46 +228,12 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 												SWP.digest, 
 												Node.createLiteral( graphDigest, null, XSDDatatype.XSDbase64Binary ) ) );
 					warrantGraph.add( new Triple( currentGraph.getGraphName(), SWP.digestMethod, digestMethod ) );
-					//Not sure if these are needed
-					/*
-					 warrantGraph.add( new Triple( currentGraph.getGraphName(), SWP.authority.asNode(), Node.createURI( authority.getEmail() ) ) );
-					 warrantGraph.add( new Triple( currentGraph.getGraphName(), 
-												SWP.validFrom.asNode(), 
-												Node.createLiteral( authority.getCertificate().getNotBefore().toString(), 
-																	null, 
-																	XSDDatatype.XSDdateTime ) ) );
-	                 warrantGraph.add( new Triple( currentGraph.getGraphName(), 
-												SWP.validUntil.asNode(), 
-												Node.createLiteral( authority.getCertificate().getNotAfter().toString(), 
-																	null, 
-																	XSDDatatype.XSDdateTime ) ) );
-	            
-	            	warrantGraph.add( new Triple( warrantGraph.getGraphName(), SWP.signatureMethod.asNode(), signatureMethod ) );
-	            
-	            	String graphSetSignature = SWPSignatureUtilities.calculateSignature( this, signatureMethod, pkey );
-	            	warrantGraph.add( new Triple( currentGraph.getGraphName(), 
-												SWP.signature.asNode(), 
-												Node.createLiteral( graphSetSignature, null, XSDDatatype.XSDbase64Binary ) ) );
-												*/
 				} 
 				catch ( SWPNoSuchDigestMethodException e ) 
 				{
 					System.out.println( e.getMessage() );
 					return false;
 				} 
-				/*
-				catch ( SWPInvalidKeyException e ) 
-				{
-					return false;
-				} 
-				catch ( SWPSignatureException e ) 
-				{
-					return false;
-				} 
-				catch ( SWPNoSuchAlgorithmException e ) 	
-				{
-					return false;
-					}*/
 			}  
 			
 			Object pkey = null;
@@ -364,25 +330,41 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     									String keystore,
     									String password ) throws SWPBadSignatureException
     {
-    	//    	 Create a new warrant graph.
+		// Create a new warrant graph.
 		SWPNamedGraph warrantGraph = createNewWarrantGraph();
 		// Assert all graphs in the graphset.
+		boolean result = false;
 		
 		authority.addDescriptionToGraph( warrantGraph, listOfAuthorityProperties );
 		
-        Iterator graphIterator = this.listGraphs();
-        while ( graphIterator.hasNext() ) 
-        {
-        
-            NamedGraph currentGraph = ( NamedGraph ) graphIterator.next();
-			if ( currentGraph.contains( currentGraph.getGraphName(), SWP.quotedBy, currentGraph.getGraphName() ) &
-					currentGraph.contains( currentGraph.getGraphName(), SWP.signature, Node.ANY ) )
-			{
-				System.out.println( "Warrant graph: "+currentGraph.getGraphName()+" already quoted and signed; skipping.");
-				break;
-			}
-			else
-			{
+		Iterator graphIterator = this.listGraphs();
+		String warrantQuery = "SELECT * WHERE (?graph swp:assertedBy ?graph) (?graph swp:signature ?signature) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
+        Iterator witr = TriQLQuery.exec( this, warrantQuery );
+		if ( witr.hasNext() )
+		{
+            while ( witr.hasNext() )
+            {
+                Map results = ( Map ) witr.next();
+	            Node graph = ( Node ) results.get( "graph" );
+				System.out.println(graph);
+				
+				
+				while ( graphIterator.hasNext() ) 
+			    {
+			        
+					NamedGraph currentGraph = ( NamedGraph ) graphIterator.next();
+					if ( currentGraph.contains( currentGraph.getGraphName(), SWP.quotedBy, graph ) )
+					{
+						System.out.println( "Warrant graph: "+currentGraph.getGraphName()+" already quoted and signed; skipping." );
+					}        
+				}  
+            }
+		}
+		else if ( graphIterator.hasNext() )
+		{
+			while ( graphIterator.hasNext() ) 
+		    {
+				NamedGraph currentGraph = ( NamedGraph ) graphIterator.next();
 				try 
 				{
 					String graphDigest = SWPSignatureUtilities.calculateDigest( currentGraph, digestMethod );
@@ -391,55 +373,16 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 												SWP.digest, 
 												Node.createLiteral( graphDigest, null, XSDDatatype.XSDbase64Binary ) ) );
 					warrantGraph.add( new Triple( currentGraph.getGraphName(), SWP.digestMethod, digestMethod ) );
-	            
-	           
-					//Not sure if these are needed
-					/*
-					 warrantGraph.add( new Triple( currentGraph.getGraphName(), SWP.authority.asNode(), Node.createURI( authority.getEmail() ) ) );
-	            	warrantGraph.add( new Triple( currentGraph.getGraphName(), 
-												SWP.validFrom.asNode(), 
-												Node.createLiteral( authority.getCertificate().getNotBefore().toString(), 
-																	null, 
-																	XSDDatatype.XSDdateTime ) ) );
-	                warrantGraph.add( new Triple( currentGraph.getGraphName(), 
-												SWP.validUntil.asNode(), 
-												Node.createLiteral( authority.getCertificate().getNotAfter().toString(), 
-																	null, 
-																	XSDDatatype.XSDdateTime ) ) );
-	            
-	            	warrantGraph.add( new Triple( warrantGraph.getGraphName(), SWP.signatureMethod.asNode(), signatureMethod ) );
-	            
-	            	String graphSetSignature = SWPSignatureUtilities.calculateSignature( this, signatureMethod, pkey );
-	            	warrantGraph.add( new Triple( currentGraph.getGraphName(), 
-												SWP.signature.asNode(), 
-												Node.createLiteral( graphSetSignature, null, XSDDatatype.XSDbase64Binary ) ) );
-												*/
 				} 
 				catch ( SWPNoSuchDigestMethodException e ) 
 				{
 					System.out.println( e.getMessage() );
 					return false;
 				} 
-				/*
-				 catch ( SWPInvalidKeyException e ) 
-				 {
-				 return false;
-				 } 
-				 catch ( SWPSignatureException e ) 
-				 {
-				return false;
-				} 
-				catch ( SWPNoSuchAlgorithmException e ) 
-				{
-				return false;
-				}*/ 
-			}
-		}  
-        
-		if ( warrantGraph.contains( Node.ANY, SWP.digest, Node.ANY ) )
-		{
+			}  
+			
 			Object pkey = null;
-			// Sign the warrant graph now.
+        	// Sign the warrant graph now.
 			String warrantGraphSignature = null;
 			try 
 			{
@@ -451,6 +394,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 				{
 					pkey = OpenPGPUtils.decryptPGP( keystore, password );
 				}
+        	
 				if ( pkey != null )
 				{
 					warrantGraph.add( new Triple( warrantGraph.getGraphName(),
@@ -463,6 +407,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 												Node.createLiteral( warrantGraphSignature, null, XSDDatatype.XSDbase64Binary ) ) );
 				}
 				else throw new SWPInvalidKeyException( "Private key empty." );
+			
 			} 
 			catch ( SWPInvalidKeyException e ) 
 			{
@@ -472,7 +417,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 				return false;
 			}  
 			catch ( SWPSignatureException e ) 
-			{
+			{	
 				//make the private key unusable
 				System.out.println( e.getMessage() );
 				pkey = null;
@@ -481,12 +426,6 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 			catch ( SWPNoSuchAlgorithmException e ) 
 			{
 				//make the private key unusable
-				System.out.println( e.getMessage() );
-				pkey = null;
-				return false;
-			} 
-			catch ( SWPAlgorithmNotSupportedException e ) 
-			{
 				System.out.println( e.getMessage() );
 				pkey = null;
 				return false;
@@ -508,14 +447,22 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 				System.out.println( e.getMessage() );
 				pkey = null;
 				return false;
+			} 
+			catch ( SWPAlgorithmNotSupportedException e ) 
+			{
+				System.out.println( e.getMessage() );
+				pkey = null;
+				return false;
 			}
 		
+        
 			// Add warrant graph to graphset
 			this.addGraph( warrantGraph );
-			return true;
+			result = true;
 		}
 		else
-			return false;
+			result = false;
+		return result;
         
     }
 
