@@ -4,9 +4,16 @@
  */
 package de.fuberlin.wiwiss.ng4j.swp.util;
 
+import java.io.ByteArrayInputStream;
+import java.security.GeneralSecurityException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateExpiredException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
@@ -175,10 +182,9 @@ public class SWPSignatureUtilitiesTest extends TestCase
 	SWPAlgorithmNotSupportedException, 
 	SWPCertificateException 
 	{
-		g1signature = SWPSignatureUtilities.calculateSignature( g1, 
+		assertNotNull( SWPSignatureUtilities.calculateSignature( g1, 
 															SWP.JjcRdfC14N_rsa_sha224, 
-															PKCS12Utils.decryptPrivateKey( keystore, password ) );
-		testValidateSignatureNamedGraphNodeStringString();
+															PKCS12Utils.decryptPrivateKey( keystore, password ) ) );
 	}
 
 	/*
@@ -190,9 +196,9 @@ public class SWPSignatureUtilitiesTest extends TestCase
 	SWPNoSuchAlgorithmException, 
 	SWPValidationException 
 	{
-		setSignature = SWPSignatureUtilities.calculateSignature( this.set, 
+		assertNotNull( SWPSignatureUtilities.calculateSignature( this.set, 
 															SWP.JjcRdfC14N_rsa_sha1, 
-															PKCS12Utils.decryptPrivateKey( keystore, password ) );
+															PKCS12Utils.decryptPrivateKey( keystore, password ) ) );
 	}
 
 	/*
@@ -203,48 +209,144 @@ public class SWPSignatureUtilitiesTest extends TestCase
 	SWPSignatureException, 
 	SWPNoSuchAlgorithmException, 
 	SWPValidationException, 
-	SWPCertificateException 
+	CertificateException 
 	{
-		Certificate[] certs = PKCS12Utils.getCertChain( keystore, password );
+		String cert = "-----BEGIN CERTIFICATE-----\n"+
+					"MIID8zCCA1ygAwIBAgIBAzANBgkqhkiG9w0BAQQFADCBoTELMAkGA1UEBhMCVUsxEjAQBgNVBAgT\n"+
+					"CUhhbXBzaGlyZTEUMBIGA1UEBxMLU291dGhhbXB0b24xIjAgBgNVBAoTGVVuaXZlcnNpdHkgb2Yg\n"+
+					"U291dGhhbXB0b24xDTALBgNVBAsTBERTU0UxDjAMBgNVBAMTBURQIENBMSUwIwYJKoZIhvcNAQkB\n"+
+					"FhZlcncwMXJAZWNzLnNvdG9uLmFjLnVrMB4XDTA0MDYwNzIxMDIzM1oXDTA1MDYwNzIxMDIzM1ow\n"+
+					"gasxCzAJBgNVBAYTAlVLMRIwEAYDVQQIEwlIYW1wc2hpcmUxFDASBgNVBAcTC1NvdXRoYW1wdG9u\n"+
+					"MSIwIAYDVQQKExlVbml2ZXJzaXR5IG9mIFNvdXRoYW1wdG9uMQ0wCwYDVQQLEwREU1NFMRgwFgYD\n"+
+					"VQQDEw9Sb3dsYW5kIFdhdGtpbnMxJTAjBgkqhkiG9w0BCQEWFmVydzAxckBlY3Muc290b24uYWMu\n"+
+					"dWswgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAMlBcaqp10bBhIjCdnHg30/LYWQe4hdoHIm0\n"+
+					"4b+REqJWELOJTp23io/+YEmrP+Oym5/HOuWfDPx7j+mS6R/GK7SyafV8qP1fiA8nsOsakj1eR0t8\n"+
+					"ypnufUhlVY5G40FIYmTmtgH/gnNXWf0VWCasUjTSmaUWa4+VinhVr2d8P4FjAgMBAAGjggEtMIIB\n"+
+					"KTAJBgNVHRMEAjAAMCwGCWCGSAGG+EIBDQQfFh1PcGVuU1NMIEdlbmVyYXRlZCBDZXJ0aWZpY2F0\n"+
+					"ZTAdBgNVHQ4EFgQUjrkjaHUEtMqzJBV7MvCkywLpql4wgc4GA1UdIwSBxjCBw4AU2BlKcSrg9M5M\n"+
+					"KQEX1T6vXkoMcPWhgaekgaQwgaExCzAJBgNVBAYTAlVLMRIwEAYDVQQIEwlIYW1wc2hpcmUxFDAS\n"+
+					"BgNVBAcTC1NvdXRoYW1wdG9uMSIwIAYDVQQKExlVbml2ZXJzaXR5IG9mIFNvdXRoYW1wdG9uMQ0w\n"+
+					"CwYDVQQLEwREU1NFMQ4wDAYDVQQDEwVEUCBDQTElMCMGCSqGSIb3DQEJARYWZXJ3MDFyQGVjcy5z\n"+
+					"b3Rvbi5hYy51a4IBADANBgkqhkiG9w0BAQQFAAOBgQB1cOuBoxtpLfBnh7FMZNDgnTDSofvvRoCR\n"+
+					"2aUMnvCDo84rkwbz/jXboP4VDRmmgqAgtjtgqR0PO/ua6pgF46Nax2hx+B+JHtvYuNDB2gUuRqpI\n"+
+					"EJFdIZtF5zZawEkphFL+5N2fZhz6h/JWsqtkWmU7cflRI2luqUC3lmfpsI1zYw==\n"+
+					"-----END CERTIFICATE-----";
+		
+		CertificateFactory cf = CertificateFactory.getInstance( "X.509" );
+		X509Certificate certificate = ( X509Certificate ) cf.generateCertificate( new ByteArrayInputStream( cert.getBytes() ) );
 		String signature = "Q5giVuVAnlhxj9XEDws5erZA4yBmPHyzrh+BaI/7aIOAH9inXcaav1+yluhA5IG898ycUZsSqQLw" +
-				"JdVtQhaZOvEUVggv7WWO0/RpjJnrrm1BpVFKGF8Wb/9mls+FDFAPFR03nPxCvWzpU+n4RRMbWqtf" +
-				"6laHEeKwHV64f4L6tcw=";
+						"JdVtQhaZOvEUVggv7WWO0/RpjJnrrm1BpVFKGF8Wb/9mls+FDFAPFR03nPxCvWzpU+n4RRMbWqtf" +
+						"6laHEeKwHV64f4L6tcw=";
+		
+		String badsignature = "Q5giVuVAnlhxj9XEDws5erZA4yBmPHyzrh+B/7aIOAH9inXcaav1+yluhA5IG898ycUZsSqQLw" +
+						"JdVthaZOvEUVggv7WWO0/RpjJnrrm1pVFKGF8Wb/9mls+FDFAPFR03nPxCvWzpU+n4RRMbWqtf" +
+						"6laHEeKwHV64f4L6tcw=";
+		
 		assertTrue( SWPSignatureUtilities.validateSignature( g1, 
-															SWP.JjcRdfC14N_rsa_sha224, signature, 
-															(X509Certificate )certs[0] ) );
+															SWP.JjcRdfC14N_rsa_sha224, 
+															signature, 
+															certificate ) );
+		
+		assertFalse( SWPSignatureUtilities.validateSignature( g1, 
+															SWP.JjcRdfC14N_rsa_sha224, 
+															badsignature, 
+															certificate ) );
 	}
 	
 
 	/*
 	 * Class under test for boolean validateSignature(NamedGraph, Node, String, X509Certificate, ArrayList)
 	 */
-	/*
+	
 	public void testValidateSignatureNamedGraphNodeStringX509CertificateArrayList() 
+	throws SWPInvalidKeyException, 
+	SWPSignatureException, 
+	SWPCertificateException, 
+	SWPNoSuchAlgorithmException, 
+	SWPValidationException 
 	{
-		//TODO Implement validateSignature().
+		Certificate[] certs = PKCS12Utils.getCertChain( keystore, password );
+		
+		String signature = "Q5giVuVAnlhxj9XEDws5erZA4yBmPHyzrh+BaI/7aIOAH9inXcaav1+yluhA5IG898ycUZsSqQLw" +
+						"JdVtQhaZOvEUVggv7WWO0/RpjJnrrm1BpVFKGF8Wb/9mls+FDFAPFR03nPxCvWzpU+n4RRMbWqtf" +
+						"6laHEeKwHV64f4L6tcw=";
+		
+		String badsignature = "Q5giVuVAnlhxj9XEDws5erZA4yBmPHyzrh+B/7aIOAH9inXcaav1+yluhA5IG898ycUZsSqQLw" +
+						"JdVthaZOvEUVggv7WWO0/RpjJnrrm1pVFKGF8Wb/9mls+FDFAPFR03nPxCvWzpU+n4RRMbWqtf" +
+						"6laHEeKwHV64f4L6tcw=";
+		
+		ArrayList list = new ArrayList();
+		list.add( certs[1]);
+		
+		assertTrue( SWPSignatureUtilities.validateSignature( g1, 
+															SWP.JjcRdfC14N_rsa_sha224, 
+															signature, 
+															(X509Certificate )certs[0], 
+															list ) );
+		
+		assertFalse( SWPSignatureUtilities.validateSignature( g1, 
+															SWP.JjcRdfC14N_rsa_sha224, 
+															badsignature, 
+															(X509Certificate )certs[0], 
+															list ) );
 	}
-	*/
 	/*
 	 * Class under test for boolean validateSignature(NamedGraph, Node, String, X509Certificate, ArrayList, ArrayList)
 	 */
-	/*
+	
 	public void testValidateSignatureNamedGraphNodeStringX509CertificateArrayListArrayList() 
+	throws SWPInvalidKeyException, 
+	SWPSignatureException, 
+	SWPCertificateException, 
+	SWPNoSuchAlgorithmException, 
+	SWPValidationException 
 	{
-		//TODO Implement validateSignature().
+		Certificate[] certs = PKCS12Utils.getCertChain( keystore, password );
+		
+		String signature = "Q5giVuVAnlhxj9XEDws5erZA4yBmPHyzrh+BaI/7aIOAH9inXcaav1+yluhA5IG898ycUZsSqQLw" +
+						"JdVtQhaZOvEUVggv7WWO0/RpjJnrrm1BpVFKGF8Wb/9mls+FDFAPFR03nPxCvWzpU+n4RRMbWqtf" +
+						"6laHEeKwHV64f4L6tcw=";
+		
+		String badsignature = "Q5giVuVAnlhxj9XEDws5erZA4yBmPHyzrh+B/7aIOAH9inXcaav1+yluhA5IG898ycUZsSqQLw" +
+						"JdVthaZOvEUVggv7WWO0/RpjJnrrm1pVFKGF8Wb/9mls+FDFAPFR03nPxCvWzpU+n4RRMbWqtf" +
+						"6laHEeKwHV64f4L6tcw=";
+		
+		ArrayList list = new ArrayList();
+		list.add( certs[1]);
+		
+		assertTrue( SWPSignatureUtilities.validateSignature( g1, 
+															SWP.JjcRdfC14N_rsa_sha224, 
+															signature, 
+															(X509Certificate )certs[0], 
+															list, 
+															list ) );
+		
+		assertFalse( SWPSignatureUtilities.validateSignature( g1, 
+															SWP.JjcRdfC14N_rsa_sha224, 
+															badsignature, 
+															(X509Certificate )certs[0], 
+															list, 
+															list ) );
 	}
-	*/
-	/*
-	public void testVerifyCertificate() 
+	
+	
+	public void testVerifyCertificateX509CertificateArrayList() 
+	throws CertificateExpiredException, 
+	CertificateNotYetValidException, 
+	GeneralSecurityException 
 	{
-		//TODO Implement verifyCertificate().
+		Certificate[] certs = PKCS12Utils.getCertChain( keystore, password );
+		ArrayList list = new ArrayList();
+		list.add( certs[1]);
+		SWPSignatureUtilities.verifyCertificate( ( X509Certificate )certs[0], list );
 	}
-	*/
+	
 	/*
-	public void testVerifyCertificationChain() 
+	public void testVerifyCertificationChainCertPathArrayList() 
 	{
 		//TODO Implement verifyCertificationChain().
-	}
-	*/
+	}*/
+	
 	/**
 	 * 
 	 */
@@ -252,7 +354,7 @@ public class SWPSignatureUtilitiesTest extends TestCase
 	{
 		SWPAuthority auth = new SWPAuthorityImpl();
 		auth.setEmail( "mailto:rowland@grid.cx" );
-		auth.setID(Node.createURI( "http://grid.cx/rowland" ) );
+		auth.setID( Node.createURI( "http://grid.cx/rowland" ) );
 		Certificate[] chain = PKCS12Utils.getCertChain( keystore, password );
 		auth.setCertificate( ( X509Certificate )chain[0] );
 		
@@ -267,7 +369,6 @@ public class SWPSignatureUtilitiesTest extends TestCase
 	{
 		return new SWPNamedGraphSetImpl();
 	}
-
 }
 
 /*
