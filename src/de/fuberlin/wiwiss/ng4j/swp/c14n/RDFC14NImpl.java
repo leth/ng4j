@@ -20,9 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 
-import org.apache.log4j.Category;
-
-
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -34,7 +31,6 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 public class RDFC14NImpl  
 {
-		static final Category log = Category.getInstance( RDFC14NImpl.class );
         public static final Node TILDE = Node.create( "~" );
         public static final Node C14N_TRUE = Node.create( "http://www-uk.hpl.hp.com/people/jjc/rdf/c14n#true" );
         public static final String C14N = "http://www-uk.hpl.hp.com/people/jjc/rdf/c14n#";

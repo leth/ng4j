@@ -16,24 +16,19 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Enumeration;
 
-import org.apache.log4j.Category;
-
-import de.fuberlin.wiwiss.ng4j.swp.exceptions.RDFSignatureException;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPCertificateException;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPPKCS12Exception;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPSignatureException;
 
 
 public class PKCS12Utils {
+	private static final String KEY_STORE_TYPE_PKCS12 = "PKCS12";
+
 	/**
 	 * Loads and decrypt the PCKS12 file specified in the configuration properties.
 	 * 
 	 * @return the PKCS12 object, already decrypted.
 	 */
-	
-	static final Category log = Category.getInstance( PKCS12Utils.class );
-	private static final String KEY_STORE_TYPE_PKCS12 = "PKCS12";
-	
 	public static KeyStore loadAndDecryptPKCS12( String keyStoreFileName, String password ) 
 	throws SWPSignatureException, 
 	SWPCertificateException, 

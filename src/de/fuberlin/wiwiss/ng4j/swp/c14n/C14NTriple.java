@@ -7,10 +7,6 @@ package de.fuberlin.wiwiss.ng4j.swp.c14n;
 import java.text.DecimalFormat;
 import java.util.Hashtable;
 
-import org.apache.log4j.Category;
-
-
-
 import com.hp.hpl.jena.graph.Node;
 
 
@@ -24,7 +20,6 @@ import com.hp.hpl.jena.graph.Node;
 
 public class C14NTriple extends Object implements Comparable
 {
-	static final Category log = Category.getInstance( C14NTriple.class );
 	public Node subject;
 	public Node predicate;
 	public Node object;

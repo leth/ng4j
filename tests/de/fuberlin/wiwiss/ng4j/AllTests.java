@@ -1,5 +1,5 @@
 /*
- * $Id: AllTests.java,v 1.8 2005/02/19 18:09:21 erw Exp $
+ * $Id: AllTests.java,v 1.9 2005/02/24 09:11:16 cyganiak Exp $
  */
 package de.fuberlin.wiwiss.ng4j;
 
@@ -31,7 +31,7 @@ public class AllTests {
 		suite.addTest(de.fuberlin.wiwiss.ng4j.triql.AllTests.suite());
 		suite.addTest(de.fuberlin.wiwiss.ng4j.trig.AllTests.suite());
 		suite.addTest(de.fuberlin.wiwiss.ng4j.swp.AllTests.suite());
-		suite.addTest(de.fuberlin.wiwiss.ng4j.swp.utils.AllTests.suite());
+		suite.addTest(de.fuberlin.wiwiss.ng4j.swp.util.AllTests.suite());
 		return suite;
 	}
 }
