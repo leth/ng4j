@@ -1,4 +1,4 @@
-// $Id: TriGParserTest.java,v 1.8 2004/12/12 17:39:28 cyganiak Exp $
+// $Id: TriGParserTest.java,v 1.9 2004/12/12 17:47:04 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import java.io.Reader;
@@ -167,7 +167,7 @@ public class TriGParserTest extends TestCase {
 
 	public void testBlankGraphName() throws Exception {
 		String triG = "@prefix ex: <http://example.com/ex#> .\n" +
-				"_:foo { ex:a ex:b ex:c } .";
+				"_:foo { ex:a ex:b ex:c }";
 		try {
 			parseTriG(triG);
 			fail();
@@ -178,7 +178,7 @@ public class TriGParserTest extends TestCase {
 
 	public void testLiteralGraphName() throws Exception {
 		String triG = "@prefix ex: <http://example.com/ex#> .\n" +
-				"\"abc\" { ex:a ex:b ex:c } .";
+				"\"abc\" { ex:a ex:b ex:c }";
 		try {
 			parseTriG(triG);
 			fail();
@@ -203,5 +203,17 @@ public class TriGParserTest extends TestCase {
 		assertTrue(set.containsQuad(new Quad(Node.ANY, Node.ANY, Node.ANY,
 				Node.createLiteral("ŠšŸ", null, null))));
 		assertEquals(1, set.countQuads());
+	}
+
+	public void testDuplicateGraphName() throws Exception {
+		String triG = "@prefix : <http://example.com/ex#> .\n" +
+				":graph { :a :b :c }\n" +
+				":graph { :d :e :f }";
+		try {
+			parseTriG(triG);
+			fail();
+		} catch (TriGException ex) {
+			// Graph names must be unique
+		}	
 	}
 }

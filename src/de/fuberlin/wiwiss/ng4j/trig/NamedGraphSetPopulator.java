@@ -6,7 +6,9 @@
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,7 +34,7 @@ import de.fuberlin.wiwiss.ng4j.trig.parser.TriGAntlrParser;
  * 
  * @author		Andy Seaborne
  * @author Richard Cyganiak (richard@cyganiak.de)
- * @version 	$Id: NamedGraphSetPopulator.java,v 1.5 2004/11/26 00:32:38 cyganiak Exp $
+ * @version 	$Id: NamedGraphSetPopulator.java,v 1.6 2004/12/12 17:47:02 cyganiak Exp $
  */
 public class NamedGraphSetPopulator implements TriGParserEventHandler
 {
@@ -64,6 +66,7 @@ public class NamedGraphSetPopulator implements TriGParserEventHandler
 	final String anonPrefix = "_" ;
 
 	private Node defaultGraphName;
+	private Set previousGraphNames = new HashSet();
 
 	public NamedGraphSetPopulator(NamedGraphSet ngs, String _base,
 			String defaultGraphName)
@@ -94,6 +97,10 @@ public class NamedGraphSetPopulator implements TriGParserEventHandler
 		if (node.isBlank()) {
 			error("Line " + line + ": Graph names must be URIRefs or QNames");
 		}
+		if (this.previousGraphNames.contains(node)) {
+			error("Line " + line + ": Graph names must be unique within file");
+		}
+		this.previousGraphNames.add(node);
 		if (!this.namedGraphSet.containsGraph(node)) {
 			// create the graph so it exists even if the graph pattern is empty
 			this.namedGraphSet.createGraph(node);
