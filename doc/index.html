@@ -185,7 +185,7 @@ P.footer {
     Richard Cyganiak, Freie Universität Berlin</p>
 </div>
 <DIV class=head> 
-  <H1 id=title>NG4J - Named Graphs API for Jena V0.3</H1>
+  <H1 id=title>NG4J - Named Graphs API for Jena V0.4</H1>
   <DIV class=nav>
 <P><STRONG>Nearby:</STRONG> <A 
 href="http://www.w3.org/2004/03/trix/" target="_blank">W3C Named Graphs Webite</A> 
@@ -204,10 +204,10 @@ href="http://www.w3.org/RDF/">RDF</A> | </P>
   <P>The Named Graphs API for Jena (NG4J) is an extension to the Jena Semantic 
     Web framework for parsing, manipulating and serializing sets of Named Graphs. 
   </P>
-  <P>NG4J V0.3 extends Jena with:</P>
+  <P>NG4J V0.4 extends Jena with:</P>
   </DIV>
 <ul>
-  <li> graph-centric methods for manipulating sets of Named Graphs</li>
+  <li>graph-centric methods for manipulating sets of Named Graphs</li>
   <li>quad-centric methods for manipulating sets of Named Graphs</li>
   <li>viewing graphsets as Jena models and Jena graphs</li>
   <li>provenance-enabled Jena statements</li>
@@ -216,6 +216,8 @@ href="http://www.w3.org/RDF/">RDF</A> | </P>
     XSLT syntactic extensions</li>
   <li>integrated parser and serializer for the TriG syntax</li>
   <li>in-memory or database-persisted graphset storage</li>
+  <li>API support for the Semantic Web Publishing (SWP) vocabulary</li>
+  <li>creation and verification of graph signatures using X.509 certificates</li>
   <li>directory reader for importing existing RDF files.</li>
   <li>directory writer for serializing graph sets a classic RDF files.</li>
 </ul>
@@ -249,6 +251,9 @@ href="#example">Usage Examples</A> </DIV>
   </li>
   <li> 
     <DIV class=status><A href="#Download">Download</A> </DIV>
+  </li>
+  <li> 
+    <DIV class=status><A href="#acknowledgements">Acknowledgements</A> </DIV>
   </li>
   <li> 
     <DIV class=status><A href="#feedback">Feedback</A> </DIV>
@@ -665,7 +670,7 @@ NamedGraphSetDB.delete(connection, "myapp");</pre>
 </DIV>
 <p>&nbsp;</p>
 
-<h3 id="SWP">Semantic Web Publishing (SWP) API and Digital Signatures</h3>
+<h3 id="SWP">2.4 Semantic Web Publishing (SWP) API and Digital Signatures</h3>
 <p><strong>Working with Digital Signatures and Named Graphs</strong></p>
 
 <p>The Semantic Web Publishing Vocabulary (SWP) is used for publishing Named Graphs on the Web. It allows authorities to indicate whether they assert or quote a graph and to sign graphs using digital signatures. More information about the SWP vocabulary is available on the <a href="http://www.wiwiss.fu-berlin.de/suhl/bizer/TriQLP/">TriQL.P Trust Architecture</a> page.</p>
@@ -872,6 +877,11 @@ The SWP Framework relies heavily on the PKI (Public Key Infrastructure) to provi
       <TH>Release Date</TH>
     </TR>
     <TR> 
+      <TD align=middle>V0.4</TD>
+      <TD align=left>SWP and X.509 signatures support, TriQL improvements, bugfixes.</TD>
+      <TD align=middle valign="top">2005-02-24</TD>
+    </TR>
+    <TR> 
       <TD align=middle>V0.3</TD>
       <TD align=left>TriG support, TriX syntactic extensions support,
         Jena 2.2 compatibility, bugfixes and minor improvements.</TD>
@@ -897,8 +907,13 @@ The SWP Framework relies heavily on the PKI (Public Key Infrastructure) to provi
   <li>Copy the file <tt>ng4j.jar</tt> into Jena's <tt>lib</tt> directory and add it to the classpath of your project.</li>
   <li>That's it!</li>
 </ol>
+
 <HR title="Separator for header">
-<h2><A id=feedback name=feedback>4. Feedback</A></h2>
+<h2><A id=acknowledgements name=acknowledgements>4. Acknowledgements</A></h2>
+<p>Lots of thanks to Rowland Watkins (erw01r at ecs.soton.ac.uk) for his work on the SWP API.</p>
+
+<HR title="Separator for header">
+<h2><A id=feedback name=feedback>5. Feedback</A></h2>
 <p>We are very interested in hearing about your experience and your opinion about 
   NG4J. Please send your comments to Chris Bizer and Richard Cyganiak.</p>
 <p>Chris Bizer<br>
@@ -909,7 +924,7 @@ The SWP Framework relies heavily on the PKI (Public Key Infrastructure) to provi
   <a href="http://page.mi.fu-berlin.de/%7Ecyganiak/" target="_blank">http://page.mi.fu-berlin.de/~cyganiak/</a><br>
 </p>
 <HR title="Separator for header">
-<p>$Date: 2005/02/24 08:38:47 $<br />
-  $Id: index.html,v 1.14 2005/02/24 08:38:47 cyganiak Exp $</p>
+<p>$Date: 2005/02/24 08:51:36 $<br />
+  $Id: index.html,v 1.15 2005/02/24 08:51:36 cyganiak Exp $</p>
 </BODY>
 </HTML>
