@@ -472,68 +472,78 @@ href="http://www.w3.org/RDF/">RDF</A> | </P>
 <p>&nbsp;</p>
 <HR title="Separator for header">
 <h2><A id=example name=example>Usage Example</A></h2>
-<p>The section gives a NG4J usage example: <font color="#FF0000">(Still work in 
-  progress :-)</font></p>
+<p>The section gives a NG4J usage example:</p>
 <DIV class="trigInner"> 
-  <pre>////////////////////////////////////////////////<br>// Operations on GraphSet Level<br>////////////////////////////////////////////////
-  <p>// Create a new graphset
-NamedGraphSet graphset = new NamedGraphSetImpl();</p><br>// Read a TriX file, containing several Named Graphs<br>graphset.read(&quot;file:///c:/bla.trix&quot;, &quot;TriX&quot;);
-  <p>// Create a new NamedGraph<br>NamedGraph namedgraph = new NamedGraphImpl(&quot;http://cyganiak.de/myFOAF&quot;, new GraphMem());<br>
+  <pre>////////////////////////////////////////////////
+//       Operations on GraphSet Level
+////////////////////////////////////////////////
+
+// Create a new graphset
+NamedGraphSet graphset = new NamedGraphSetImpl();
+
+// Create a new NamedGraph in the NamedGraphSet
+NamedGraph graph = graphset.createGraph("http://example.org/persons/123");
+
 // Add information to the NamedGraph
-namedgraph.add(new Triple( Node.createURI(&quot;http://page.mi.fu-berlin.de/~cyganiak/foaf.rdf#RichardCyganiak&quot;),
-                           Node.createURI(&quot;http://xmlns.com/foaf/0.1/name&quot;) ,
-                           Node.createLiteral(&quot;Richard Cyganiak&quot;)));</p>
-// Add the graph to the graphset
-graphset.addGraph(namedgraph);<br>
+graph.add(new Triple(Node.createURI("http://richard.cyganiak.de/foaf.rdf#RichardCyganiak"),
+                     Node.createURI("http://xmlns.com/foaf/0.1/name") ,
+                     Node.createLiteral("Richard Cyganiak", null, null)));
+
 // Create a quad
-Quad quad = new Quad( Node.createURI(&quot;http://www.bizer.de/InformationAboutRichard&quot;),
-                      Node.createURI(&quot;http://page.mi.fu-berlin.de/~cyganiak/foaf.rdf#RichardCyganiak&quot;),
-                      Node.createURI(&quot;http://xmlns.com/foaf/0.1/mbox&quot;) ,
-                      Node.createLiteral(&quot;mailto:richard@cyganiak.de&quot;)));
+Quad quad = new Quad(Node.createURI("http://www.bizer.de/InformationAboutRichard"),
+                     Node.createURI("http://richard.cyganiak.de/foaf.rdf#RichardCyganiak"),
+                     Node.createURI("http://xmlns.com/foaf/0.1/mbox") ,
+                     Node.createURI("mailto:richard@cyganiak.de"));
 
-// Add the quad to the graphset. This will create a new named graph in the graphset.
+// Add the quad to the graphset. This will create a new NamedGraph in the
+// graphset.
 graphset.addQuad(quad);
-  <p>// Find information about Richard across all grahs in the graphset
-ExtendedIterator it = graphset.findQuads(new Quad( <br>                      Node_ANY, 
-                      Node.createURI(&quot;http://page.mi.fu-berlin.de/~cyganiak/foaf.rdf#RichardCyganiak&quot;),
-                      Node_ANY ,
-                      Node_ANY));</p>
+
+// Find information about Richard across all graphs in the graphset
+Iterator it = graphset.findQuads( 
+        Node.ANY, 
+        Node.createURI("http://richard.cyganiak.de/foaf.rdf#RichardCyganiak"),
+        Node.ANY,
+        Node.ANY);
+
 while (it.hasNext()) {
-    ... Do something with the information ...
-}
-  <p>// Find information in a specific graph of the graphset 
-ExtendedIterator it = graphset.findQuads(new Quad( <br>                      Node.createURI(&quot;http://cyganiak.de/myFOAF&quot;), 
-                      Node.createURI(&quot;http://page.mi.fu-berlin.de/~cyganiak/foaf.rdf#RichardCyganiak&quot;),
-                      Node_ANY ,
-                      Node_ANY));</p>while (it.hasNext()) { 
-   ... Do something with the information ...
+    Quad q = (Quad) it.next();
+    System.out.println("Source: " + q.getGraphName());
+    System.out.println("Statement: " + q.getTriple());
+    // (This will output the two statements created above)
 }
 
-// Count all graphs in the graphset
-System.out.println(&quot;The graphset contains &quot; + graphset.countGraphs() + &quot;graphs.&quot;);
+// Count all graphs in the graphset (2)
+System.out.println("The graphset contains " + graphset.countGraphs() + " graphs.");
 
-// Serialize the graphset to a Trix file
-....
-graphset.write(out, &quot;TriX&quot;); 
+// Serialize the graphset to a TriX file
+OutputStream out = new FileOutputStream("C:/bla.trix");
+graphset.write(out, "TRIX"); 
 
-&nbsp;<br><p>////////////////////////////////////////////////<br>// Operations on Model Level<br>////////////////////////////////////////////////</p>
-<p>// Get a Jena Model view on the GraphSet<br>Model model = graphset.viewAsJenaModel(&quot;http://defaultgraph.org/defaultgraph&quot;);</p>
-<p>// Get a Jena resource
-Resource Richard = model.getResource(&quot;http://page.mi.fu-berlin.de/~cyganiak/foaf.rdf#RichardCyganiak&quot;);</p>
-<p>// Get provenance information about Richard's email adress</p>NamedGraphStatement mboxStmt = 
-    (NamedGraphStatement) Richard.getProperty(new Property(&quot;http://xmlns.com/foaf/0.1/mbox&quot;));
-  <p>// Get an iterator over all graphs which contain the statement.<br>ExtendedIterator it = mboxStmt.listGraphs();
+////////////////////////////////////////////////
+//       Operations on Model Level
+////////////////////////////////////////////////
 
-//Output information about these graphs
+// Get a Jena Model view on the GraphSet
+Model model = graphset.asJenaModel("http://example.org/defaultgraph");
+
+// Get a Jena resource and statement
+Resource richard = model.getResource("http://richard.cyganiak.de/foaf.rdf#RichardCyganiak");
+NamedGraphStatement mboxStmt = 
+    (NamedGraphStatement) richard.getProperty(model.getProperty("http://xmlns.com/foaf/0.1/mbox"));
+
+// Get an iterator over all graphs which contain the statement.
+it = mboxStmt.listGraphNames();
+
+// So who has published my email address all over the Web??!?
 while (it.hasNext()) {
-     Resource currentGraph = (Resource) it.next();
-     Sytem.out.println(&quot;GraphName: &quot; + currentGraph.toString());
-     Sytem.out.println(&quot;Author: &quot; + 
-        currentGraph.getProperty(new Property(&quot;http://purl.org/dc/elements/1.1/author&quot;).getString()));
-     Sytem.out.println(&quot;Date: &quot; + 
-        currentGraph.getProperty(new Property(&quot;http://purl.org/dc/elements/1.1/date&quot;).getString()));
-}</p>
-  </pre>
+    Resource g = (Resource) it.next();
+    System.out.println("GraphName: " + g.toString());
+    System.out.println("Author: " + 
+        g.getProperty(model.getProperty("http://purl.org/dc/elements/1.1/author")).getString());
+    System.out.println("Date: " + 
+        g.getProperty(model.getProperty("http://purl.org/dc/elements/1.1/date")).getString());
+}</pre>
 </DIV>
 <P>&nbsp;</P>
 <HR>
@@ -583,7 +593,7 @@ while (it.hasNext()) {
   <a href="http://page.mi.fu-berlin.de/%7Ecyganiak/" target="_blank">http://page.mi.fu-berlin.de/~cyganiak/</a><br>
 </p>
 <HR title="Separator for header">
-<p>$Date: 2004/09/13 21:20:41 $<br />
-  $Id: index.html,v 1.3 2004/09/13 21:20:41 cyganiak Exp $</p>
+<p>$Date: 2004/09/13 22:27:03 $<br />
+  $Id: index.html,v 1.4 2004/09/13 22:27:03 cyganiak Exp $</p>
 </BODY>
 </HTML>
