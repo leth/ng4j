@@ -1,4 +1,4 @@
-// $Id: TriQLQuery.java,v 1.5 2005/01/30 22:08:58 cyganiak Exp $
+// $Id: TriQLQuery.java,v 1.6 2005/02/01 23:42:03 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import java.io.File;
@@ -13,6 +13,8 @@ import java.util.Map;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.rdql.QueryException;
+import com.hp.hpl.jena.shared.PrefixMapping;
+import com.hp.hpl.jena.shared.impl.PrefixMappingImpl;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.triql.legacy.Constraint;
@@ -51,8 +53,9 @@ public class TriQLQuery {
 	private List boundVars = new ArrayList(); // [String]
 	private List graphPatterns = new ArrayList(); // [GraphPattern]
 	private List constraints = new ArrayList(); // [Constraint]
-	private Map prefixes = new HashMap(); // {String => String}
 	private Map preboundVars = new HashMap();	// {String => Node}
+	private PrefixMapping prefixes = 
+	    new PrefixMappingImpl().setNsPrefixes(PrefixMapping.Standard);
 
 	/**
 	 * Creates a new query instance whose data source is a NamedGraphSet.
@@ -85,10 +88,6 @@ public class TriQLQuery {
 	public TriQLQuery() {
 		this.mustParse = false;
 		this.baseURL = getDefaultBaseURL();
-		this.prefixes.put("rdf",  "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
-		this.prefixes.put("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
-		this.prefixes.put("xsd", "http://www.w3.org/2001/XMLSchema#"); 
-		this.prefixes.put("owl", "http://www.w3.org/2002/07/owl#");
 	}
 	
 	/**
@@ -261,11 +260,11 @@ public class TriQLQuery {
 	 * @param expansion The full namespace URI
 	 */
 	public void setPrefix(String prefix, String expansion) {
-		this.prefixes.put(prefix, expansion);
+		this.prefixes.setNsPrefix(prefix, expansion);
 	}
 
-	public String getPrefix(String prefix) {
-		return (String) this.prefixes.get(prefix);
+	public PrefixMapping getPrefixMapping() {
+		return this.prefixes;
 	}
 
 	/**
@@ -300,7 +299,8 @@ public class TriQLQuery {
 		} catch (QueryException qEx) {
 			throw qEx;
 		} catch (Exception e) {
-            throw new QueryException("Parse error: "+e) ;
+//            throw new QueryException("Parse error: "+e) ;
+		    throw new RuntimeException(e);
 		}
 	}
 	
