@@ -1,4 +1,4 @@
-// $Id: NamedGraphExample.java,v 1.2 2004/09/13 22:26:23 cyganiak Exp $
+// $Id: NamedGraphExample.java,v 1.3 2004/09/14 10:14:56 bizer Exp $
 package de.fuberlin.wiwiss.namedgraphs.examples;
 
 import java.io.FileOutputStream;
@@ -66,7 +66,7 @@ public class NamedGraphExample {
 		System.out.println("The graphset contains " + graphset.countGraphs() + " graphs.");
 
 		// Serialize the graphset to a TriX file
-		OutputStream out = new FileOutputStream("C:/bla.trix");
+		OutputStream out = new FileOutputStream("C:/graphset.trix");
 		graphset.write(out, "TRIX"); 
 
 		////////////////////////////////////////////////
@@ -76,8 +76,14 @@ public class NamedGraphExample {
 		// Get a Jena Model view on the GraphSet
 		Model model = graphset.asJenaModel("http://example.org/defaultgraph");
 
+		// Add provenance information about a graph
+		Resource informationAboutRichard = model.getResource("http://www.bizer.de/InformationAboutRichard");
+		informationAboutRichard.addProperty(model.createProperty("http://purl.org/dc/elements/1.1/author"), "Chris Bizer");
+		informationAboutRichard.addProperty(model.createProperty("http://purl.org/dc/elements/1.1/date"), "09/15/2004");
+
 		// Get a Jena resource and statement
 		Resource richard = model.getResource("http://richard.cyganiak.de/foaf.rdf#RichardCyganiak");
+			
 		NamedGraphStatement mboxStmt = 
 			(NamedGraphStatement) richard.getProperty(model.getProperty("http://xmlns.com/foaf/0.1/mbox"));
 
@@ -93,5 +99,9 @@ public class NamedGraphExample {
 			System.out.println("Date: " + 
 				g.getProperty(model.getProperty("http://purl.org/dc/elements/1.1/date")).getString());
 		}
+		
+		// Serialize the model to a TriX file
+		out = new FileOutputStream("C:/model.trix");
+		model.write(out, "TRIX"); 
 	}
 }
