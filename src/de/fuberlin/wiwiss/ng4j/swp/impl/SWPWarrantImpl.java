@@ -107,14 +107,14 @@ public class SWPWarrantImpl implements SWPWarrant
 	public SWPAuthority getAuthority() throws SWPCertificateException 
 	{
 		SWPAuthority authority = new SWPAuthorityImpl();
-		String query = "SELECT * WHERE (<"+warrant.getGraphName().getURI()+"> swp:authority ?authority) (?authority swpX509Certificate ?certificate) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
+		String query = "SELECT * WHERE <"+warrant.getGraphName().getURI()+"> (<"+warrant.getGraphName().getURI()+"> swp:authority ?authority . ?authority swp:X509Certificate ?certificate) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
 		Iterator itr = TriQLQuery.exec( local, query );
 		if ( itr.hasNext() )
 		{
 			
 			X509Certificate certificate = null;
 			Map results =  ( Map ) itr.next();
-			Node auth = ( Node ) results.get( "graph" );
+			Node auth = ( Node ) results.get( "authority" );
 			Node cert = ( Node ) results.get( "certificate" );
 			String certs = "-----BEGIN CERTIFICATE-----\n" +
 							cert.getLiteral().getLexicalForm() + 
