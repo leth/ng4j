@@ -1,4 +1,4 @@
-// $Id: NamedGraphSet.java,v 1.2 2004/09/13 22:26:04 cyganiak Exp $
+// $Id: NamedGraphSet.java,v 1.3 2004/09/13 23:33:27 cyganiak Exp $
 package de.fuberlin.wiwiss.namedgraphs;
 
 import java.io.InputStream;
@@ -235,7 +235,7 @@ public interface NamedGraphSet {
 
 	/**
 	 * Read Named Graphs from an URL into the NamedGraphSet. 
-	 * Supported RDF serialization languages are "TriX", "RDF/XML",
+	 * Supported RDF serialization languages are "TRIX", "RDF/XML",
 	 * "N-TRIPLE" and "N3".
 	 * <p>
 	 * Serialization languages that support named graphs (like TriX)
@@ -253,7 +253,7 @@ public interface NamedGraphSet {
 	
 	/**
 	 * Read Named Graphs from an InputStream into the NamedGraphSet. 
-	 * Supported RDF serialization languages are "TriX", "RDF/XML",
+	 * Supported RDF serialization languages are "TRIX", "RDF/XML",
 	 * "N-TRIPLE" and "N3".
 	 * <p>
 	 * Serialization languages that support named graphs (like TriX)
@@ -272,7 +272,7 @@ public interface NamedGraphSet {
 	
 	/**
 	 * Read Named Graphs from a Reader into the NamedGraphSet. 
-	 * Supported RDF serialization languages are "TriX", "RDF/XML",
+	 * Supported RDF serialization languages are "TRIX", "RDF/XML",
 	 * "N-TRIPLE" and "N3".
 	 * <p>
 	 * Serialization languages that support named graphs (like TriX)
@@ -292,7 +292,7 @@ public interface NamedGraphSet {
 	/** 
 	 * Writes a serialized represention of the NamedGraphSet to
 	 * an OutputStream. Supported RDF serialization languages are
-	 * "TriX", "RDF/XML", "N-TRIPLE" and "N3".
+	 * "TRIX", "RDF/XML", "N-TRIPLE" and "N3".
 	 * <p>
 	 * If the specified serialization language doesn't support
 	 * named graphs, then the union graph will be serialized, and
@@ -310,7 +310,7 @@ public interface NamedGraphSet {
 	/** 
 	 * Writes a serialized represention of the NamedGraphSet to
 	 * a Writer. Supported RDF serialization languages are
-	 * "TriX", "RDF/XML", "N-TRIPLE" and "N3".
+	 * "TRIX", "RDF/XML", "N-TRIPLE" and "N3".
 	 * <p>
 	 * If the specified serialization language doesn't support
 	 * named graphs, then the union graph will be serialized, and

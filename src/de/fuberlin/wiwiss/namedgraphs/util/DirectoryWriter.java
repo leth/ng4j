@@ -1,4 +1,4 @@
-// $Id: DirectoryWriter.java,v 1.1 2004/09/13 14:37:29 cyganiak Exp $
+// $Id: DirectoryWriter.java,v 1.2 2004/09/13 23:33:28 cyganiak Exp $
 package de.fuberlin.wiwiss.namedgraphs.util;
 
 import java.io.File;
@@ -51,11 +51,14 @@ public class DirectoryWriter {
 			NamedGraph graph = (NamedGraph) it.next();
 			try {
 				String name = new URI(graph.getGraphName().getURI()).toString();
+				System.out.println(name);
+				System.out.println(dir.toURI().toString());
 				if (!name.startsWith(dir.toURI().toString())) {
 					continue;
 				}
 				RDFWriter writer = factory.getWriter(lang);
-				writer.write(new ModelCom(graph), new FileOutputStream(new File(graph.getGraphName().getURI())), graph.getGraphName().getURI());
+				URI fileURI = new URI(graph.getGraphName().getURI());
+				writer.write(new ModelCom(graph), new FileOutputStream(new File(fileURI)), graph.getGraphName().getURI());
 			} catch (URISyntaxException ex) {
 				throw new JenaException(ex);
 			} catch (FileNotFoundException ex) {

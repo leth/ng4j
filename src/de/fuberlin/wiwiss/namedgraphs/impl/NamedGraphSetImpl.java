@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetImpl.java,v 1.2 2004/09/13 22:26:03 cyganiak Exp $
+// $Id: NamedGraphSetImpl.java,v 1.3 2004/09/13 23:33:26 cyganiak Exp $
 package de.fuberlin.wiwiss.namedgraphs.impl;
 
 import java.io.InputStream;
@@ -228,11 +228,25 @@ public class NamedGraphSetImpl implements NamedGraphSet {
 	}
 
 	public void write(OutputStream out, String lang) {
-		new NamedGraphSetWriter().write(this, out);
+		// TODO: Ugly! Fix this
+		if ("TRIX".equals(lang)) {
+			new NamedGraphSetWriter().write(this, out);
+		} else {
+			// can fail if no graph in set
+			NamedGraph firstGraph = (NamedGraph) listGraphs().next();
+			asJenaModel(firstGraph.getGraphName().toString()).write(out, lang);
+		}
 	}
 
 	public void write(Writer out, String lang) {
-		new NamedGraphSetWriter().write(this, out);
+		// TODO: Ugly! Fix this
+		if ("TRIX".equals(lang)) {
+			new NamedGraphSetWriter().write(this, out);
+		} else {
+			// can fail if no graph in set
+			NamedGraph firstGraph = (NamedGraph) listGraphs().next();
+			asJenaModel(firstGraph.getGraphName().toString()).write(out, lang);
+		}
 	}
 	
 	protected NamedGraph createNamedGraphInstance(Node graphName) {
