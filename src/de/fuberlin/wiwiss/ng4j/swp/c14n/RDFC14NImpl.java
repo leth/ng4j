@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 
+import org.apache.log4j.Category;
+
+
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -31,6 +34,7 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 public class RDFC14NImpl  
 {
+		static final Category log = Category.getInstance( RDFC14NImpl.class );
         public static final Node TILDE = Node.create( "~" );
         public static final Node C14N_TRUE = Node.create( "http://www-uk.hpl.hp.com/people/jjc/rdf/c14n#true" );
         public static final String C14N = "http://www-uk.hpl.hp.com/people/jjc/rdf/c14n#";
@@ -61,7 +65,7 @@ public class RDFC14NImpl
         public RDFC14NImpl( String rdf,String base ) throws FileNotFoundException 
 		{ 
         	model.read( new FileInputStream( rdf ), base );
-        	doit( model, base );
+        	doit( model );
         }
 
         /**
@@ -73,7 +77,7 @@ public class RDFC14NImpl
         public RDFC14NImpl( InputStream rdfStream, String base ) 
         {
         	model.read( rdfStream, base );
-        	doit( model, base );
+        	doit( model );
         }
         
         /**
@@ -87,18 +91,17 @@ public class RDFC14NImpl
 				
 		{
         	model.read( new FileInputStream( rdffile ), base );
-        	doit( model, base );
+        	doit( model );
         }
         
-        public RDFC14NImpl( Model model, String base )
+        public RDFC14NImpl( Model model )
         {
-        	doit( model, base );
+        	doit( model );
         }
         
-        private void doit( Model model, String base ) 
+        private void doit( Model model ) 
         {
         	this.model = model;
-        	this.base = base;
         	StmtIterator st = model.listStatements();
         	ArrayList a = new ArrayList();
         	while( st.hasNext() ) 
@@ -374,7 +377,7 @@ public class RDFC14NImpl
 }
 
 /*
- *  (c)   Copyright 2004 Rowland Watkins (rowland@grid.cx) & University of 
+ *  (c)   Copyright 2004, 2005 Rowland Watkins (rowland@grid.cx) & University of 
  * 		  Southampton, Declarative Systems and Software Engineering Research 
  *        Group, University of Southampton, Highfield, SO17 1BJ
  *   	  All rights reserved.
