@@ -693,22 +693,22 @@ public class SWPSignatureUtilities
 			sig = new JDKDigestSignature.SHA1WithRSAEncryption();
 			log.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA1withRSA );
 		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_dsa_sha224 ) ) 
+		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha224 ) ) 
 		{
 			sig = new JDKDigestSignature.SHA224WithRSAEncryption();
 			log.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA224withRSA );
 		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_dsa_sha256 ) ) 
+		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha256 ) ) 
     	{
 			sig = new JDKDigestSignature.SHA256WithRSAEncryption();
 			log.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA256withRSA );
 		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_dsa_sha384 ) ) 
+		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha384 ) ) 
     	{
 			sig = new JDKDigestSignature.SHA384WithRSAEncryption();
 			log.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA384withRSA );
 		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_dsa_sha512 ) ) 
+		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha512 ) ) 
 		{
 			sig = new JDKDigestSignature.SHA512WithRSAEncryption();
 			log.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA512withRSA );
@@ -830,22 +830,22 @@ public class SWPSignatureUtilities
 			sig = new JDKDigestSignature.SHA1WithRSAEncryption();
 			log.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA1withRSA );
 		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_dsa_sha224 ) ) 
+		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha224 ) ) 
 		{
 			sig = new JDKDigestSignature.SHA224WithRSAEncryption();
 			log.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA224withRSA );
 		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_dsa_sha256 ) ) 
+		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha256 ) ) 
     	{
 			sig = new JDKDigestSignature.SHA256WithRSAEncryption();
 			log.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA256withRSA );
 		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_dsa_sha384 ) ) 
+		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha384 ) ) 
     	{
 			sig = new JDKDigestSignature.SHA384WithRSAEncryption();
 			log.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA384withRSA );
 		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_dsa_sha512 ) ) 
+		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha512 ) ) 
 		{
 			sig = new JDKDigestSignature.SHA512WithRSAEncryption();
 			log.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA512withRSA );
@@ -964,27 +964,27 @@ public class SWPSignatureUtilities
 			sig = new JDKDigestSignature.SHA1WithRSAEncryption();
 			log.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA1withRSA );
 		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_dsa_sha224 ) ) 
+		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha224 ) ) 
 		{
 			sig = new JDKDigestSignature.SHA224WithRSAEncryption();
 			log.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA224withRSA );
 		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_dsa_sha256 ) ) 
+		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha256 ) ) 
     	{
 			sig = new JDKDigestSignature.SHA256WithRSAEncryption();
 			log.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA256withRSA );
 		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_dsa_sha384 ) ) 
+		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha384 ) ) 
     	{
 			sig = new JDKDigestSignature.SHA384WithRSAEncryption();
 			log.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA384withRSA );
 		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_dsa_sha512 ) ) 
+		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha512 ) ) 
 		{
 			sig = new JDKDigestSignature.SHA512WithRSAEncryption();
 			log.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA512withRSA );
 		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_dsa_sha1 ) ) 
+		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha1 ) ) 
 		{
 			try 
 			{
