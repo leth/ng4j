@@ -7,7 +7,13 @@
 package de.fuberlin.wiwiss.ng4j.swp.signature;
 
 import com.hp.hpl.jena.graph.Node;
+
+import java.security.InvalidKeyException;
+import java.security.InvalidParameterException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.Signature;
+import java.security.SignatureException;
 
 /**
  * 
@@ -17,20 +23,110 @@ import java.security.Signature;
  * @author rowland watkins
  *
  */
-public class SWPSignature extends Signature {
+public class SWPSignature extends Signature 
+{
 	
-	private Node sigMethod;
+	/**
+     * @param algorithm
+     */
+    protected SWPSignature(String algorithm) 
+    { 
+        super(algorithm);
+        // TODO Auto-generated constructor stub
+    }
+
+    private Node sigMethod;
 	
-    public void setSignatureMethod(Node sigMethod) {
+	
+    public void setSignatureMethod(Node sigMethod) 
+    {
     		this.sigMethod = sigMethod;
     	}
     
-    public Node getSignatureMethod() {
+    public Node getSignatureMethod() 
+    {
     	   return null;
     	}
-  
- 
 
+    /* (non-Javadoc)
+     * @see java.security.SignatureSpi#engineSign()
+     */
+    protected byte[] engineSign() throws 
+    SignatureException
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see java.security.SignatureSpi#engineUpdate(byte)
+     */
+    protected void engineUpdate(byte b) throws 
+    SignatureException 
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /* (non-Javadoc)
+     * @see java.security.SignatureSpi#engineVerify(byte[])
+     */
+    protected boolean engineVerify(byte[] sigBytes) throws 
+    SignatureException 
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see java.security.SignatureSpi#engineUpdate(byte[], int, int)
+     */
+    protected void engineUpdate(byte[] b, int off, int len) throws 
+    SignatureException 
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /* (non-Javadoc)
+     * @see java.security.SignatureSpi#engineInitSign(java.security.PrivateKey)
+     */
+    protected void engineInitSign(PrivateKey privateKey) throws 
+    InvalidKeyException 
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /* (non-Javadoc)
+     * @see java.security.SignatureSpi#engineInitVerify(java.security.PublicKey)
+     */
+    protected void engineInitVerify(PublicKey publicKey) throws 
+    InvalidKeyException 
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /* (non-Javadoc)
+     * @see java.security.SignatureSpi#engineGetParameter(java.lang.String)
+     */
+    protected Object engineGetParameter(String param) throws 
+    InvalidParameterException 
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see java.security.SignatureSpi#engineSetParameter(java.lang.String, java.lang.Object)
+     */
+    protected void engineSetParameter(String param, Object value) throws 
+    InvalidParameterException 
+    {
+        // TODO Auto-generated method stub
+        
+    }
 }
 
 /*
