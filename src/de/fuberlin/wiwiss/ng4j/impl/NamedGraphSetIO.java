@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetIO.java,v 1.3 2004/11/26 02:45:09 cyganiak Exp $
+// $Id: NamedGraphSetIO.java,v 1.4 2004/12/17 11:23:28 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import java.io.InputStream;
@@ -22,14 +22,14 @@ import de.fuberlin.wiwiss.ng4j.trix.TriXWriter;
  */
 public abstract class NamedGraphSetIO implements NamedGraphSet {
 
-	public void read(InputStream source, String baseURI, String lang) {
+	public void read(InputStream source, String lang, String baseURI) {
 		GraphReaderService service = new GraphReaderService();
 		service.setSourceInputStream(source, baseURI);
 		service.setLanguage(lang);
 		service.readInto(this);
 	}
 
-	public void read(Reader source, String baseURI, String lang) {
+	public void read(Reader source, String lang, String baseURI) {
 		GraphReaderService service = new GraphReaderService();
 		service.setSourceReader(source, baseURI);
 		service.setLanguage(lang);
@@ -43,27 +43,27 @@ public abstract class NamedGraphSetIO implements NamedGraphSet {
 		service.readInto(this);
 	}
 
-	public void write(OutputStream out, String lang) {
+	public void write(OutputStream out, String lang, String baseURI) {
 		if ("TRIX".equals(lang)) {
-			new TriXWriter().write(this, out, null);
+			new TriXWriter().write(this, out, baseURI);
 		} else if ("TRIG".equals(lang)) {
-			new TriGWriter().write(this, out, null);
+			new TriGWriter().write(this, out, baseURI);
 		} else {
 			// can fail if no graph in set
 			NamedGraph firstGraph = (NamedGraph) listGraphs().next();
-			asJenaModel(firstGraph.getGraphName().toString()).write(out, lang);
+			asJenaModel(firstGraph.getGraphName().toString()).write(out, lang, baseURI);
 		}
 	}
 
-	public void write(Writer out, String lang) {
+	public void write(Writer out, String lang, String baseURI) {
 		if ("TRIX".equals(lang)) {
-			new TriXWriter().write(this, out, null);
+			new TriXWriter().write(this, out, baseURI);
 		} else if ("TRIG".equals(lang)) {
-			new TriGWriter().write(this, out, null);
+			new TriGWriter().write(this, out, baseURI);
 		} else {
 			// can fail if no graph in set
 			NamedGraph firstGraph = (NamedGraph) listGraphs().next();
-			asJenaModel(firstGraph.getGraphName().toString()).write(out, lang);
+			asJenaModel(firstGraph.getGraphName().toString()).write(out, lang, baseURI);
 		}
 	}
 }

@@ -1,4 +1,4 @@
-// $Id: NamedGraphSet.java,v 1.5 2004/12/12 17:30:28 cyganiak Exp $
+// $Id: NamedGraphSet.java,v 1.6 2004/12/17 11:23:28 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.io.InputStream;
@@ -277,10 +277,10 @@ public interface NamedGraphSet {
 	 * graphs will be replaced by those from the source.
 	 * 
 	 * @param source The source of the input serialization
-	 * @param baseURI The URI from where the input was read
 	 * @param lang The RDF serialization language of the input
+	 * @param baseURI The URI from where the input was read
 	 */
-	public void read(InputStream source, String baseURI, String lang);
+	public void read(InputStream source, String lang, String baseURI);
 	
 	/**
 	 * Read Named Graphs from a Reader into the NamedGraphSet. 
@@ -299,7 +299,7 @@ public interface NamedGraphSet {
 	 * @param baseURI The URI from where the input was read
 	 * @param lang The RDF serialization language of the input
 	 */
-	public void read(Reader source, String baseURI, String lang);
+	public void read(Reader source, String lang, String baseURI);
 
 	/** 
 	 * Writes a serialized represention of the NamedGraphSet to
@@ -316,8 +316,9 @@ public interface NamedGraphSet {
 	 * 
 	 * @param out The stream into which the serialization will be written
 	 * @param lang The RDF serialization language to be used
+	 * @param baseURI The base URI of the output file, or null if don't care
 	 */
-	public void write(OutputStream out, String lang);		
+	public void write(OutputStream out, String lang, String baseURI);
 	
 	/** 
 	 * Writes a serialized represention of the NamedGraphSet to
@@ -336,8 +337,9 @@ public interface NamedGraphSet {
 	 *
 	 * @param out The stream into which the serialization will be written
 	 * @param lang The RDF serialization language to be used
+	 * @param baseURI The base URI of the output file, or null if don't care
 	 */
-	public void write(Writer out, String lang);
+	public void write(Writer out, String lang, String baseURI);
 }
 
 /*

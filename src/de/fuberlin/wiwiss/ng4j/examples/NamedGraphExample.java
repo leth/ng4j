@@ -1,11 +1,7 @@
-// $Id: NamedGraphExample.java,v 1.3 2004/12/17 11:16:09 cyganiak Exp $
+// $Id: NamedGraphExample.java,v 1.4 2004/12/17 11:23:28 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.examples;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.Iterator;
 
 import com.hp.hpl.jena.graph.Node;
@@ -68,7 +64,7 @@ public class NamedGraphExample {
 		System.out.println("The graphset contains " + graphset.countGraphs() + " graphs.");
 
 		// Serialize the graphset to System.out, using the TriX syntax
-		graphset.write(System.out, "TRIX");
+		graphset.write(System.out, "TRIX", null);
 
 		////////////////////////////////////////////////
 		//		 Operations on Model Level
