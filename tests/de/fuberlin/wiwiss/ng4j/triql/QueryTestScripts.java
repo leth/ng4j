@@ -1,7 +1,7 @@
 /*
  * (c) Copyright 2001, 2002, 2003, Hewlett-Packard Development Company, LP
  * [See end of file]
- * $Id: QueryTestScripts.java,v 1.1 2004/10/26 07:17:40 cyganiak Exp $
+ * $Id: QueryTestScripts.java,v 1.2 2004/12/12 17:30:29 cyganiak Exp $
  */
 
 
@@ -18,10 +18,8 @@ import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.rdql.QueryException;
@@ -35,7 +33,6 @@ import com.hp.hpl.jena.util.ModelLoader;
 import com.hp.hpl.jena.util.TestManifestList;
 import com.hp.hpl.jena.vocabulary.TestQuery;
 
-import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphImpl;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
@@ -45,7 +42,7 @@ import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
  *  adding new script files.  This class need not change.
  *
  * @author   Andy Seaborne
- * @version  $Id: QueryTestScripts.java,v 1.1 2004/10/26 07:17:40 cyganiak Exp $
+ * @version  $Id: QueryTestScripts.java,v 1.2 2004/12/12 17:30:29 cyganiak Exp $
  */
 
 

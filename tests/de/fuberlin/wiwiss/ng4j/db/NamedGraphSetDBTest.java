@@ -1,8 +1,6 @@
-// $Id: MySQLTest.java,v 1.3 2004/11/26 03:42:17 cyganiak Exp $
+// $Id: NamedGraphSetDBTest.java,v 1.1 2004/12/12 17:30:29 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -10,34 +8,27 @@ import java.util.List;
 import com.hp.hpl.jena.mem.GraphMem;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
+import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSetTest;
 import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphImpl;
 import de.fuberlin.wiwiss.ng4j.triql.TriQLQuery;
 
 /**
- * Tests for DB persistence. Needs a MySQL database. Connection data must be
- * provided within this file.
- *
- * TODO: Put DB access data somewhere more safe!
+ * Tests {@link NamedGraphSetDB} by reusing the common NamedGraphSetTest
+ * tests and adding some additional tests.
  *
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
-public class MySQLTest extends NamedGraphSetTest {
-	private static final String URL = "jdbc:mysql://localhost/ng4j";
-	private static final String USER = "root";
-	private static final String PW = "";
+public class NamedGraphSetDBTest extends NamedGraphSetTest {
 
-	public void setUp() throws Exception {
-		Class.forName("com.mysql.jdbc.Driver");
-		Connection connection = DriverManager.getConnection(URL, USER, PW);
-		this.set = new NamedGraphSetDB(connection);
+	public NamedGraphSet createNamedGraphSet() throws Exception {
+		return DBConnectionHelper.createNamedGraphSetDB();
 	}
 
-	protected void tearDown() throws Exception {
-		this.set.close();
-		Connection connection = DriverManager.getConnection(URL, USER, PW);
-		NamedGraphSetDB.delete(connection);
+	public void tearDown() throws Exception {
+		super.tearDown();
+		DBConnectionHelper.deleteNamedGraphSetTables();
 	}
 	
 	public void testIsEmpty() {

@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetImpl.java,v 1.2 2004/11/02 02:00:25 cyganiak Exp $
+// $Id: NamedGraphSetImpl.java,v 1.3 2004/12/12 17:30:30 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import java.util.ArrayList;
@@ -37,8 +37,9 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 	
 	/**
 	 * List of all NamedGraphs that backs the UnionGraphs handed
-	 * out by {@link #asJenaGraph(Node)}.
-	 * This whole graphs List affair is probably rather slow.
+	 * out by {@link #asJenaGraph(Node)}. This is always in sync
+	 * with namesToGraphsMap.values(), but it's a List, not a
+	 * Collection. This whole graphs List affair is probably rather slow.
 	 */
 	private List graphs = new ArrayList();
 
@@ -51,7 +52,7 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 	}
 
 	public boolean containsGraph(Node graphName) {
-		if (!graphName.isConcrete()) {
+		if (Node.ANY.equals(graphName)) {
 			return !isEmpty();
 		}
 		return this.namesToGraphsMap.containsKey(graphName);
@@ -93,17 +94,21 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 	}
 
 	public void removeGraph(Node graphName) {
-		if (graphName.isConcrete()) {
-			this.graphs.remove(this.namesToGraphsMap.get(graphName));
-			this.namesToGraphsMap.remove(graphName);
-		} else {
+		if (Node.ANY.equals(graphName)) {
 			this.namesToGraphsMap.clear();
 			this.graphs.clear();
+		} else {
+			this.graphs.remove(this.namesToGraphsMap.get(graphName));
+			this.namesToGraphsMap.remove(graphName);
 		}
 	}
 
 	public void removeGraph(String graphNameURI) {
 		removeGraph(Node.createURI(graphNameURI));
+	}
+
+	public void clear() {
+		this.namesToGraphsMap.clear();
 	}
 
 	public void addQuad(Quad quad) {
@@ -118,7 +123,7 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 	}
 
 	public boolean containsQuad(Quad pattern) {
-		if (pattern.getGraphName().isConcrete()) {
+		if (!Node.ANY.equals(pattern.getGraphName())) {
 			if (!containsGraph(pattern.getGraphName())) {
 				return false;
 			}
@@ -153,7 +158,7 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 		if (!containsGraph(pattern.getGraphName())) {
 			return new NullIterator();
 		}
-		if (!pattern.getGraphName().isConcrete()) {
+		if (Node.ANY.equals(pattern.getGraphName())) {
 			return getQuadIteratorOverAllGraphs(pattern.getTriple());
 		}
 		return getQuadIteratorOverGraph(

@@ -1,4 +1,4 @@
-// $Id: TriQLGraphTest.java,v 1.1 2004/11/02 02:00:24 cyganiak Exp $
+// $Id: TriQLGraphTest.java,v 1.2 2004/12/12 17:30:29 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
@@ -132,7 +132,7 @@ public class TriQLGraphTest extends TriQLTest {
 
 	public void testLiteralInPattern() {
 		setQuery("SELECT * WHERE (?x ?y 5)");
-		addQuad(graph1, aURI, bURI, Node.createLiteral("5", null, XSDDatatype.XSDint));
+		addQuad(graph1, aURI, bURI, Node.createLiteral("5", null, XSDDatatype.XSDinteger));
 		addQuad(graph1, aURI, bURI, Node.createLiteral("5.7", null, null));
 		executeQuery();
 //		dumpResults();
@@ -155,7 +155,7 @@ public class TriQLGraphTest extends TriQLTest {
 
 	public void testLiteralInPattern3() {
 		setQuery("SELECT * WHERE (?x ?y \"5\"^^xsd:integer)");
-		addQuad(graph1, aURI, bURI, Node.createLiteral("5", null, XSDDatatype.XSDint));
+		addQuad(graph1, aURI, bURI, Node.createLiteral("5", null, XSDDatatype.XSDinteger));
 		addQuad(graph1, aURI, bURI, Node.createLiteral("5.7", null, null));
 		executeQuery();
 //		dumpResults();

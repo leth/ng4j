@@ -1,4 +1,4 @@
-//$Id: TriQLTest.java,v 1.2 2004/11/02 02:00:24 cyganiak Exp $
+//$Id: TriQLTest.java,v 1.3 2004/12/12 17:30:29 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import java.util.HashMap;
@@ -19,16 +19,28 @@ import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
  *
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
-public abstract class TriQLTest extends TestCase {
+public class TriQLTest extends TestCase {
 	private String query;
 	private TriQLQuery q;
-	private NamedGraphSet ngs;
 	private List results;
 	private Map expectedBinding;
+	protected NamedGraphSet set;
 	
-	public void setUp() {
-		this.ngs = new NamedGraphSetImpl();
-		this.expectedBinding = new HashMap();
+	public void setUp() throws Exception {
+		this.set = createNamedGraphSet();
+		this.expectedBinding = new HashMap();		
+	}
+
+	/**
+	 * Creates the NamedGraphSet instance under test. Might be overridden
+	 * by subclasses to test other NamedGraphSet implementations.
+	 */
+	protected NamedGraphSet createNamedGraphSet() throws Exception {
+		return new NamedGraphSetImpl();
+	}
+
+	public void tearDown() throws Exception {
+		this.set.close();
 	}
 
 	protected void setQuery(String queryString) {
@@ -40,14 +52,14 @@ public abstract class TriQLTest extends TestCase {
 	}
 
 	protected void executeQuery() {
-		this.q = new TriQLQuery(this.ngs, this.query);
+		this.q = new TriQLQuery(this.set, this.query);
 		this.q.setPrefix("foaf", "http://xmlns.com/foaf/0.1/");
 		// ... could add more namespaces here
 		this.results = this.q.getResultsAsList();
 	}
 	
 	protected void addQuad(Node graphName, Node s, Node p, Node o) {
-		this.ngs.addQuad(new Quad(graphName, s, p, o));
+		this.set.addQuad(new Quad(graphName, s, p, o));
 	}
 	
 	protected void assertExpectedBindingCount(int count) {

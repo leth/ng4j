@@ -1,4 +1,4 @@
-// $Id: QueryExecutionService.java,v 1.3 2004/11/26 03:42:16 cyganiak Exp $
+// $Id: QueryExecutionService.java,v 1.4 2004/12/12 17:30:29 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import java.net.MalformedURLException;
@@ -69,8 +69,8 @@ public class QueryExecutionService {
 		}
 		GraphPattern gp =
 				(GraphPattern) this.query.getGraphPatterns().get(index);
-		Node graphName = eliminateVariables(gp.getName(), matchedVars);
-		if (!this.source.containsGraph(graphName)) {
+		Node graphName = getPossiblyMatchedNode(gp.getName(), matchedVars);
+		if (!this.source.containsGraph(varToAny(graphName))) {
 			return;
 		}
 		if (graphName.isConcrete()) {
@@ -79,9 +79,9 @@ public class QueryExecutionService {
 			Iterator it = this.source.listGraphs();
 			while (it.hasNext()) {
 				NamedGraph graph = (NamedGraph) it.next();
-				if (gp.getName().isVariable()) {
+				if (graphName.isVariable()) {
 					Map matchedVarsCopy = getCopy(matchedVars);
-					matchedVarsCopy.put(gp.getName().getName(), graph.getGraphName());
+					matchedVarsCopy.put(graphName.getName(), graph.getGraphName());
 					matchGraph(index, graph, matchedVarsCopy);
 				} else {
 					matchGraph(index, graph, matchedVars);
@@ -103,6 +103,7 @@ public class QueryExecutionService {
 			return;
 		}
 		Triple tp = gp.getTriple(tripleIndex);
+		Triple t2 = getTripleMatch(tp, matchedVars);
 		Iterator it = graph.find(getTripleMatch(tp, matchedVars));
 		while (it.hasNext()) {
 			Triple match = (Triple) it.next();
@@ -118,6 +119,17 @@ public class QueryExecutionService {
 			}
 			matchTriplePattern(tripleIndex + 1, graphIndex, graph, matchedVarsCopy);
 		}
+	}
+
+	private Node varToAny(Node node) {
+		return node.isVariable() ? Node.ANY : node;
+	}
+
+	private Node getPossiblyMatchedNode(Node node, Map matchedVars) {
+		if (node.isVariable() && matchedVars.containsKey(node.getName())) {
+			return (Node) matchedVars.get(node.getName());
+		}
+		return node;
 	}
 
 	private Node eliminateVariables(Node node, Map matchedVars) {

@@ -1,4 +1,4 @@
-// $Id: NamedGraphSet.java,v 1.4 2004/11/26 02:42:55 cyganiak Exp $
+// $Id: NamedGraphSet.java,v 1.5 2004/12/12 17:30:28 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.io.InputStream;
@@ -122,6 +122,11 @@ public interface NamedGraphSet {
 	 * @return An iterator over all NamedGraphs in the set
 	 */
 	public Iterator listGraphs();	
+
+	/**
+	 * Deletes all NamedGraphs from the set.
+	 */
+	public void clear();
 
 	/** 
 	 * Returns the number of NamedGraphs in the set. Empty graphs

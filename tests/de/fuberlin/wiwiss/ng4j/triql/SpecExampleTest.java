@@ -1,4 +1,4 @@
-// $Id: SpecExampleTest.java,v 1.1 2004/11/02 02:00:24 cyganiak Exp $
+// $Id: SpecExampleTest.java,v 1.2 2004/12/12 17:30:29 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
@@ -23,7 +23,7 @@ public class SpecExampleTest extends TriQLTest {
 	private final static Node w1 = Node.createAnon(new AnonId("w1"));
 	private final static Node w2 = Node.createAnon(new AnonId("w2"));
 
-	public void setUp() {
+	public void setUp() throws Exception {
 		super.setUp();
 		addQuad(g1, monica, ex("name"), Node.createLiteral("Monica Murphy", null, null));
 		addQuad(g1, monica, ex("homepage"), Node.createURI("http://www.monicamurphy.org"));

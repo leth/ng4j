@@ -1,5 +1,5 @@
 /*
- * $Id: AllTests.java,v 1.4 2004/11/22 02:48:51 cyganiak Exp $
+ * $Id: AllTests.java,v 1.5 2004/12/12 17:30:30 cyganiak Exp $
  */
 package de.fuberlin.wiwiss.ng4j;
 
@@ -21,8 +21,8 @@ public class AllTests {
 		TestSuite suite = new TestSuite(
 			"Test for de.fuberlin.wiwiss.namedgraphs");
 		//$JUnit-BEGIN$
-		suite.addTestSuite(NamedGraphSetTest.class);
 		suite.addTestSuite(UnionGraphTest.class);
+		suite.addTestSuite(NamedGraphSetTest.class);
 		suite.addTestSuite(NamedGraphModelTest.class);
 		suite.addTestSuite(NamedGraphStatementIteratorTest.class);
 		//$JUnit-END$

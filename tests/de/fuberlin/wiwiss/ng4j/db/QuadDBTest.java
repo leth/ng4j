@@ -1,8 +1,9 @@
-// $Id: QuadDBTest.java,v 1.1 2004/11/02 02:00:25 cyganiak Exp $
+// $Id: QuadDBTest.java,v 1.2 2004/12/12 17:30:29 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
+import java.util.Iterator;
+
+import junit.framework.TestCase;
 
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.graph.Node;
@@ -10,21 +11,14 @@ import com.hp.hpl.jena.rdf.model.AnonId;
 
 import de.fuberlin.wiwiss.ng4j.Quad;
 
-import junit.framework.TestCase;
-
 /**
- * Tests for {@link QuadDB}. Needs a MySQL database. Connection data must be
- * provided within this file.
+ * Tests for {@link QuadDB}.
  *
  * TODO: Add tests for QuadDB table management
- * TODO: Put DB access data somewhere more safe!
  * 
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class QuadDBTest extends TestCase {
-	private static final String URL = "jdbc:mysql://localhost/ng4j";
-	private static final String USER = "root";
-	private static final String PW = "";
 	private final static Node graph1 = Node.createURI("http://example.org/graph1");
 	private final static Node graph2 = Node.createURI("http://example.org/graph2");
 	private final static Node graph3 = Node.createURI("http://example.org/graph3");
@@ -36,9 +30,7 @@ public class QuadDBTest extends TestCase {
 	private QuadDB db;
 
 	protected void setUp() throws Exception {
-		Class.forName("com.mysql.jdbc.Driver");
-		Connection connection = DriverManager.getConnection(URL, USER, PW);
-		this.db = new QuadDB(connection, "ng4j_test");
+		this.db = new QuadDB(DBConnectionHelper.getConnection(), "ng4j_test");
 		this.db.createTables();
 	}
 
@@ -153,6 +145,16 @@ public class QuadDBTest extends TestCase {
 		this.db.insert(graph1, node1, node2, Node.createLiteral("2004", null, XSDDatatype.XSDgYear));
 		assertTrue(this.db.find(graph1, node1, node2, Node.createLiteral("2004", null, XSDDatatype.XSDgYear)).hasNext());
 		assertFalse(this.db.find(graph1, node1, node2, Node.createLiteral("2004", null, null)).hasNext());
+	}
+	
+	public void testFindIterator() {
+		this.db.insert(graph1, node1, node2, node3);
+		Iterator it = this.db.find(Node.ANY, Node.ANY, Node.ANY, Node.ANY);
+		assertTrue(it.hasNext());
+		assertTrue(it.hasNext());
+		assertNotNull(it.next());
+		assertFalse(it.hasNext());
+		assertFalse(it.hasNext());
 	}
 	
 	public void testEscape() {

@@ -1,4 +1,4 @@
-// $Id: TriQLQueryResults.java,v 1.2 2004/11/02 02:00:24 cyganiak Exp $
+// $Id: TriQLQueryResults.java,v 1.3 2004/12/12 17:30:29 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import java.util.Iterator;
@@ -13,7 +13,6 @@ import com.hp.hpl.jena.rdf.model.impl.LiteralImpl;
 import com.hp.hpl.jena.rdf.model.impl.ResourceImpl;
 import com.hp.hpl.jena.rdql.QueryException;
 import com.hp.hpl.jena.rdql.QueryResults;
-import com.hp.hpl.jena.rdql.QueryResultsMem;
 import com.hp.hpl.jena.rdql.ResultBinding;
 
 /**

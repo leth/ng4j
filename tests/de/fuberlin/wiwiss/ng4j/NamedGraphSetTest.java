@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetTest.java,v 1.3 2004/11/26 03:42:17 cyganiak Exp $
+// $Id: NamedGraphSetTest.java,v 1.4 2004/12/12 17:30:30 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.util.ArrayList;
@@ -7,18 +7,18 @@ import java.util.Iterator;
 
 import junit.framework.TestCase;
 
+import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
+import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.mem.GraphMem;
 
-import de.fuberlin.wiwiss.ng4j.NamedGraph;
-import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
-import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphImpl;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
 /**
- * Tests for {@link NamedGraphSet}.
+ * Abstract test cases for {@link NamedGraphSet}. Implementations can
+ * run this by implementing {@link #createNamedGraphSetInstanceUnderTest}.
  *
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
@@ -30,15 +30,24 @@ public class NamedGraphSetTest extends TestCase {
 	protected final static Node foo = Node.createURI("http://example.org/#foo");
 	protected final static Node bar = Node.createURI("http://example.org/#bar");
 	protected final static Node baz = Node.createURI("http://example.org/#baz");
+	protected final static Node variableA = Node.createVariable("a");
 
 	protected NamedGraphSet set;
 
 	public void setUp() throws Exception {
-		setSet(new NamedGraphSetImpl());
+		this.set = createNamedGraphSet();
+	}
+	
+	/**
+	 * Creates the NamedGraphSet instance under test. Might be overridden by
+	 * subclasses to test other NamedGraphSet implementations.
+	 */
+	protected NamedGraphSet createNamedGraphSet() throws Exception {
+		return new NamedGraphSetImpl();
 	}
 
-	private void setSet(NamedGraphSet set) {
-		this.set = set;
+	public void tearDown() throws Exception {
+		this.set.close();
 	}
 
 	public void testFixture() {
@@ -105,13 +114,25 @@ public class NamedGraphSetTest extends TestCase {
 		assertFalse(this.set.containsGraph(uri1));
 		assertFalse(this.set.containsGraph(uri2));
 	}
-	
+
+	public void testRemoveGraphVariable() {
+		this.set.addGraph(createGraph(uri1));
+		this.set.addGraph(createGraph(uri2));
+		assertTrue(this.set.containsGraph(uri1));
+		assertTrue(this.set.containsGraph(uri2));
+		this.set.removeGraph(variableA);
+		assertTrue(this.set.containsGraph(uri1));
+		assertTrue(this.set.containsGraph(uri2));		
+	}
+
 	public void testContainsGraph() {
 		assertFalse(this.set.containsGraph(uri1));
 		assertFalse(this.set.containsGraph(Node.ANY));
+		assertFalse(this.set.containsGraph(variableA));
 		this.set.addGraph(createGraph(uri1));
 		assertTrue(this.set.containsGraph(uri1));
 		assertTrue(this.set.containsGraph(Node.ANY));
+		assertFalse(this.set.containsGraph(variableA));
 		this.set.removeGraph(uri1);
 		assertFalse(this.set.containsGraph(uri1));
 		assertFalse(this.set.containsGraph(Node.ANY));
@@ -152,12 +173,21 @@ public class NamedGraphSetTest extends TestCase {
 		assertFalse(this.set.containsQuad(new Quad(node1, foo, bar, baz)));
 	}
 
-	public void testCreateGraphNoURI() {
+	public void testCreateGraphAnon() {
 		try {
 			this.set.createGraph(Node.createAnon());
 			fail();
 		} catch (Exception iex) {
 			// expected since graph names must be URIs
+		}
+	}
+
+	public void testCreateGraphVariable() {
+		try {
+			this.set.createGraph(variableA);
+			fail();
+		} catch (Exception ex) {
+			// expected because graph names must be URIs
 		}
 	}
 
@@ -177,8 +207,6 @@ public class NamedGraphSetTest extends TestCase {
 		assertFalse(it.hasNext());
 		assertTrue(graphs.contains(node1));
 		assertTrue(graphs.contains(node2));
-		this.set.removeGraph(Node.ANY);
-		assertFalse(this.set.listGraphs().hasNext());
 	}
 
 	public void testAddQuadToExistingGraph() {
@@ -215,6 +243,18 @@ public class NamedGraphSetTest extends TestCase {
 		} catch (Exception iaex) {
 			// expected because added quad contains wildcard
 		}
+		try {
+			this.set.addQuad(new Quad(variableA, foo, bar, baz));
+			fail();
+		} catch (Exception iaex) {
+			// expected because added quad contains wildcard
+		}
+		try {
+			this.set.addQuad(new Quad(node1, variableA, bar, baz));
+			fail();
+		} catch (Exception iaex) {
+			// expected because added quad contains wildcard
+		}
 	}
 
 	public void testContainsQuads() {
@@ -235,6 +275,24 @@ public class NamedGraphSetTest extends TestCase {
 		assertTrue(this.set.containsQuad(quad1spo));
 		assertFalse(this.set.containsQuad(quad2_po));
 		assertFalse(this.set.containsQuad(quad2spo));
+	}
+
+	public void testContainsDoesNotMatchVariables() {
+		assertFalse(this.set.containsQuad(new Quad(
+				Node.createVariable("a"),
+				Node.ANY,
+				Node.ANY,
+				Node.ANY)));
+		assertFalse(this.set.containsQuad(new Quad(
+				Node.ANY,
+				Node.createVariable("b"),
+				Node.ANY,
+				Node.ANY)));
+		assertFalse(this.set.containsQuad(new Quad(
+				Node.createVariable("a"),
+				Node.createVariable("b"),
+				Node.createVariable("c"),
+				Node.createVariable("d"))));
 	}
 
 	public void testRemoveQuads() {
@@ -334,6 +392,33 @@ public class NamedGraphSetTest extends TestCase {
 		} catch (IllegalArgumentException iaex) {
 			// but it should fail
 		}
+	}
+
+	/**
+	 * Checks if the asJenaGraph() view is linked back to the
+	 * NamedGraphSet.
+	 */
+	public void testGraphViewIsLinkedToNGS() {
+		Graph graph = this.set.asJenaGraph(node1);
+		assertFalse(graph.contains(foo, bar, baz));
+		this.set.addQuad(new Quad(node2, foo, bar, baz));
+		assertTrue(graph.contains(foo, bar, baz));
+	}
+
+	public void testClear() {
+		addSomeQuads();
+		this.set.clear();
+		assertFalse(this.set.containsQuad(new Quad(Node.ANY, Node.ANY, Node.ANY, Node.ANY)));
+		assertEquals(0, this.set.countQuads());
+		assertFalse(this.set.containsGraph(Node.ANY));
+		assertEquals(0, this.set.countGraphs());
+	}
+
+	public void testLiteral() {
+		Quad q = new Quad(node1, foo, bar,
+				Node.createLiteral("5", null, XSDDatatype.XSDint));
+		this.set.addQuad(q);
+		assertTrue(this.set.containsQuad(q));
 	}
 
 	private NamedGraph createGraph(String uri) {

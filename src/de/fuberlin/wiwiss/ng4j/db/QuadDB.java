@@ -1,4 +1,4 @@
-// $Id: QuadDB.java,v 1.1 2004/11/02 02:00:23 cyganiak Exp $
+// $Id: QuadDB.java,v 1.2 2004/12/12 17:30:26 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -83,31 +83,33 @@ public class QuadDB {
 				getWhereClause(g, s, p, o);
 		final ResultSet results = executeQuery(sql);
 		return new Iterator() {
-			private boolean hasNext;
+			private boolean hasReadNext = false;
 			private Quad current = null;
+			private Quad next = null;
 
 			public boolean hasNext() {
-				if (this.current == null) {
+				if (!this.hasReadNext) {
 					try {
-						this.hasNext = results.next();
-						if (this.hasNext) {
-							this.current = makeQuad();
+						if (results.next()) {
+							this.next = makeQuad();
 						} else {
-							results.close();
+							this.next = null;
 						}
 					} catch (SQLException ex) {
 						throw new JenaException(ex);
 					}
+					this.hasReadNext = true;
 				}
-				return this.hasNext;
+				return (this.next != null);
 			}
 			public Object next() {
 				if (!hasNext()) {
 					throw new NoSuchElementException();
 				}
-				Quad result = this.current;
-				this.current = null;
-				return result;
+				this.current = this.next;
+				this.next = null;
+				this.hasReadNext = false;
+				return this.current;
 			}
 			public void remove() {
 				if (this.current == null) {

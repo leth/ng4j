@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetDB.java,v 1.2 2004/11/02 02:26:13 cyganiak Exp $
+// $Id: NamedGraphSetDB.java,v 1.3 2004/12/12 17:30:26 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -90,6 +90,9 @@ public class NamedGraphSetDB extends NamedGraphSetIO implements NamedGraphSet {
 	}
 
 	public void removeGraph(Node graphName) {
+		if (!graphName.isURI() && !Node.ANY.equals(graphName)) {
+			return;
+		}
 		this.db.delete(graphName, Node.ANY, Node.ANY, Node.ANY);
 		this.db.deleteGraphName(graphName);
 	}
@@ -99,6 +102,9 @@ public class NamedGraphSetDB extends NamedGraphSetIO implements NamedGraphSet {
 	}
 
 	public boolean containsGraph(Node graphName) {
+		if (!graphName.isURI() && !Node.ANY.equals(graphName)) {
+			return false;
+		}
 		return this.db.containsGraphName(graphName);
 	}
 
@@ -159,6 +165,11 @@ public class NamedGraphSetDB extends NamedGraphSetIO implements NamedGraphSet {
 		return this.db.countGraphNames() == 0;
 	}
 
+	public void clear() {
+		this.db.delete(Node.ANY, Node.ANY, Node.ANY, Node.ANY);
+		this.db.deleteGraphName(Node.ANY);
+	}
+
 	public void addQuad(Quad quad) {
 		if (!this.db.containsGraphName(quad.getGraphName())) {
 			this.db.insertGraphName(quad.getGraphName());
@@ -167,6 +178,18 @@ public class NamedGraphSetDB extends NamedGraphSetIO implements NamedGraphSet {
 	}
 
 	public boolean containsQuad(Quad pattern) {
+		if (!pattern.getGraphName().isURI() && !Node.ANY.equals(pattern.getGraphName())) {
+			return false;
+		}
+		if (!pattern.getSubject().isConcrete() && !Node.ANY.equals(pattern.getSubject())) {
+			return false;
+		}
+		if (!pattern.getPredicate().isURI() && !Node.ANY.equals(pattern.getPredicate())) {
+			return false;
+		}
+		if (!pattern.getObject().isConcrete() && !Node.ANY.equals(pattern.getObject())) {
+			return false;
+		}
 		return this.db.find(pattern.getGraphName(), pattern.getSubject(), pattern.getPredicate(), pattern.getObject()).hasNext();
 	}
 
