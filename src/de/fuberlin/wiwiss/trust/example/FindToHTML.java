@@ -15,7 +15,7 @@ import de.fuberlin.wiwiss.trust.ExplanationToHTMLRenderer;
 import de.fuberlin.wiwiss.trust.TrustLayerGraph;
 
 /**
- * @version $Id: FindToHTML.java,v 1.1 2005/03/22 01:01:49 cyganiak Exp $
+ * @version $Id: FindToHTML.java,v 1.2 2005/03/26 23:56:56 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class FindToHTML {
@@ -42,6 +42,7 @@ public class FindToHTML {
         // Set up the TrustLayerGraph
         TrustLayerGraph tlg = new TrustLayerGraph(source, tplGraph);
         tlg.selectTrustPolicy(policyURI);
+//        tlg.setSystemVariable("USER", Node.createURI("http://example.org/user"));
         
         System.out.println("<h1>FIND results and explanations</h1>");
         System.out.println("<p>Finding " + findMe + " ...</p>");

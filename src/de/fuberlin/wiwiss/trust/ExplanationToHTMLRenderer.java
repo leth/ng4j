@@ -9,7 +9,7 @@ import com.hp.hpl.jena.shared.PrefixMapping;
 import com.hp.hpl.jena.shared.impl.PrefixMappingImpl;
 
 /**
- * @version $Id: ExplanationToHTMLRenderer.java,v 1.1 2005/03/22 01:01:48 cyganiak Exp $
+ * @version $Id: ExplanationToHTMLRenderer.java,v 1.2 2005/03/26 23:56:56 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class ExplanationToHTMLRenderer {
@@ -65,6 +65,9 @@ public class ExplanationToHTMLRenderer {
     }
     
     private String getNodeAsHTML(Node node) {
+        if (node == null) {
+            return "<tt>[null]</tt>";
+        }
         if (node.isLiteral()) {
             return escape(node.getLiteral().getLexicalForm());
         }

@@ -13,7 +13,7 @@ import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.graph.Node;
 
 /**
- * @version $Id: ExplanationTemplate.java,v 1.1 2005/02/18 01:44:59 cyganiak Exp $
+ * @version $Id: ExplanationTemplate.java,v 1.2 2005/03/26 23:56:56 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class ExplanationTemplate {
@@ -65,19 +65,19 @@ public class ExplanationTemplate {
     }
     
     public ExplanationPart instantiate(VariableBinding binding) {
-        List instanceNode = new ArrayList();
+        List instanceNodes = new ArrayList();
         for (int i = 0; i < this.templateNodes.length; i++) {
             if (!this.templateNodes[i].isVariable()) {
-                instanceNode.add(this.templateNodes[i]);
+                instanceNodes.add(this.templateNodes[i]);
                 continue;
             }
             if (!binding.containsName(this.templateNodes[i].getName())) {
                 throw new IllegalArgumentException(
                         "Unbound variable: " + this.templateNodes[i]);
             }
-            instanceNode.add(binding.value(this.templateNodes[i].getName()));
+            instanceNodes.add(binding.value(this.templateNodes[i].getName()));
         }
-        return new ExplanationPart(instanceNode);
+        return new ExplanationPart(instanceNodes);
     }
     
     public Collection instantiateTree(ResultTable results) {

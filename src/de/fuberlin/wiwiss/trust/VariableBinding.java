@@ -10,7 +10,7 @@ import java.util.Set;
 import com.hp.hpl.jena.graph.Node;
 
 /**
- * @version $Id: VariableBinding.java,v 1.2 2005/03/21 00:23:28 cyganiak Exp $
+ * @version $Id: VariableBinding.java,v 1.3 2005/03/26 23:56:56 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class VariableBinding {
@@ -49,6 +49,9 @@ public class VariableBinding {
         Iterator it = variableNames.iterator();
         while (it.hasNext()) {
             String variableName = (String) it.next();
+            if (!containsName(variableName)) {
+                continue;
+            }
             result.setValue(variableName, value(variableName));
         }
         return result;

@@ -3,11 +3,9 @@ package de.fuberlin.wiwiss.trust;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
@@ -22,7 +20,7 @@ import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
  * Service for building a {@link PolicySuite} from an RDF graph containing
  * the policy's description using the TPL vocabulary.
  *
- * @version $Id: PolicySuiteFromRDFBuilder.java,v 1.4 2005/03/22 22:09:11 cyganiak Exp $
+ * @version $Id: PolicySuiteFromRDFBuilder.java,v 1.5 2005/03/26 23:56:56 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class PolicySuiteFromRDFBuilder {
@@ -95,12 +93,6 @@ public class PolicySuiteFromRDFBuilder {
     }
 
     private void buildPolicy(Node policyNode) {
-        Set usableVariables = new HashSet();
-        usableVariables.add(TrustPolicy.GRAPH);
-        usableVariables.add(TrustPolicy.SUBJ);
-        usableVariables.add(TrustPolicy.PRED);
-        usableVariables.add(TrustPolicy.OBJ);
-
         String name = getFirstLiteral(policyNode, TPL.policyName);
         String description = getFirstLiteral(policyNode, TPL.policyDescription);
         Map explTemplatesForPattern = new HashMap();
@@ -120,7 +112,6 @@ public class PolicySuiteFromRDFBuilder {
                         " has no tpl:pattern");
             }
             GraphPattern p = buildPattern(pattern);
-            usableVariables.addAll(p.getAllVariables());
             policy.addPattern(p);
             
             warnIfMoreThanOne(patternNode, TPL.textExplanation, Node.ANY,
@@ -152,10 +143,6 @@ public class PolicySuiteFromRDFBuilder {
                 policy.getGraphPatterns(),
                 textExplanation,
                 explTemplatesForPattern).explanationTemplate();
-        if (!usableVariables.containsAll(template.usedVariables())) {
-            throw new TPLException("Explanation template '" + template 
-                    + "' contains a variable not defined anywhere");
-        }
         policy.setExplanationTemplate(template);
     }
     
