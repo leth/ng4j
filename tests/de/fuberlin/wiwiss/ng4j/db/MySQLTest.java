@@ -1,4 +1,4 @@
-// $Id: MySQLTest.java,v 1.1 2004/11/02 02:00:25 cyganiak Exp $
+// $Id: MySQLTest.java,v 1.2 2004/11/02 02:26:08 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -31,7 +31,7 @@ public class MySQLTest extends NamedGraphSetTest {
 	public void setUp() throws Exception {
 		Class.forName("com.mysql.jdbc.Driver");
 		Connection connection = DriverManager.getConnection(URL, USER, PW);
-		this.set = NamedGraphSetDB.open(connection);
+		this.set = new NamedGraphSetDB(connection);
 	}
 
 	protected void tearDown() throws Exception {
