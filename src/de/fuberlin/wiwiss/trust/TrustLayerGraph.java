@@ -20,10 +20,11 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 /**
  * TODO: Write documentation and tests!
  * 
- * @version $Id: TrustLayerGraph.java,v 1.2 2005/03/22 01:01:47 cyganiak Exp $
+ * @version $Id: TrustLayerGraph.java,v 1.3 2005/03/28 13:28:16 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class TrustLayerGraph extends GraphBase {
+    private NamedGraphSet sourceData;
     private TrustEngine engine;
     private Graph policySuiteGraph;
     private Collection metricInstances = new ArrayList();
@@ -34,6 +35,7 @@ public class TrustLayerGraph extends GraphBase {
     private VariableBinding systemVariables = new VariableBinding();
     
     public TrustLayerGraph(NamedGraphSet untrustedDatasource, Graph policySuite) {
+        this.sourceData = untrustedDatasource;
         this.engine = new TrustEngine(untrustedDatasource, this.systemVariables);
         this.policySuiteGraph = policySuite;
     }
@@ -99,7 +101,9 @@ public class TrustLayerGraph extends GraphBase {
                     + " must implement " + Metric.class.getName());
         }
         try {
-            this.metricInstances.add(metricImplementationClass.newInstance());
+            Metric metricInstance = (Metric) metricImplementationClass.newInstance();
+            metricInstance.setup(this.sourceData);
+            this.metricInstances.add(metricInstance);
         } catch (InstantiationException ex) {
             throw new RuntimeException(ex);
         } catch (IllegalAccessException ex) {
