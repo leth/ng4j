@@ -16,7 +16,9 @@ import java.security.cert.CertificateException;
 
 import org.apache.log4j.Category;
 
-import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.RDFSignatureException;
+import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPCertificateException;
+import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPPKCS12Exception;
+import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPSignatureException;
 
 
 public class PKCS12Utils {
@@ -29,7 +31,10 @@ public class PKCS12Utils {
 	static final Category log = Category.getInstance( PKCS12Utils.class );
 	private static final String KEY_STORE_TYPE_PKCS12 = "PKCS12";
 	
-	public static KeyStore loadAndDecryptPKCS12( String keyStoreFileName, String password ) throws RDFSignatureException
+	public static KeyStore loadAndDecryptPKCS12( String keyStoreFileName, String password ) 
+	throws SWPSignatureException, 
+	SWPCertificateException, 
+	SWPPKCS12Exception
 	{
 		try 
 		{
@@ -41,28 +46,24 @@ public class PKCS12Utils {
 		} 
 		catch ( FileNotFoundException fnfex ) 
 		{
-		    String message = "File: " + keyStoreFileName + " could not be found.";
-			throw new RDFSignatureException( message, fnfex );
+			throw new SWPPKCS12Exception( "File: " + keyStoreFileName + " could not be found." );
 		}
 		catch ( NoSuchAlgorithmException nsaex )
 		{
 		    String message = "No such algorithm: "+nsaex.getMessage();
-			throw new RDFSignatureException( message, nsaex );
+			throw new SWPPKCS12Exception( "No such algorithm: "+nsaex.getMessage() );
 		}
 		catch ( CertificateException cex )
-		{
-		    String message = "Error accessing certificate: "+cex.getMessage();
-			throw new RDFSignatureException( message, cex );
+		{		
+			throw new SWPCertificateException( "Error accessing certificate." );
 		}
 		catch ( KeyStoreException ksex ) 
 		{
-			String message = "Error initialising keystore with " + keyStoreFileName+ ksex.getMessage();
-			throw new RDFSignatureException( message, ksex );
+			throw new SWPPKCS12Exception( "Error initialising keystore with " + keyStoreFileName );
 		} 
 		catch ( IOException ioex ) 
 		{
-			String message = "Error opening keystore: " + keyStoreFileName;
-			throw new RDFSignatureException( message, ioex );
+			throw new SWPPKCS12Exception( "Error opening keystore: " + keyStoreFileName );
 		} 
 	}
 

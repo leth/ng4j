@@ -49,7 +49,13 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 import de.fuberlin.wiwiss.ng4j.swp.signature.SWPSignatureUtilities;
 import de.fuberlin.wiwiss.ng4j.swp.signature.c14n.RDFC14NImpl;
-import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.CertificateValidationException;
+import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP;
+import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPCertificateValidationException;
+import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPInvalidKeyException;
+import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPNoSuchDigestMethodException;
+import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPNoSuchAlgorithmException;
+import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPSignatureException;
+import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPValidationException;
 
 /**
  * @author rowland
@@ -68,10 +74,6 @@ implements SWPSignatureUtilities
     static final Category log = Category.getInstance( SWPSignatureUtilitiesImpl.class );
     private static final String ALG_ID_SIGNATURE_SHA1withRSA 	= "SHA1withRSA";
     private static final String ALG_ID_SIGNATURE_SHA1withDSA 	= "SHA1withDSA";
-    private static final String ALG_ID_SIGNATURE_NONEwithDSA 	= "NONEwithDSA";
-    private static final String ALG_ID_SIGNATURE_MD5withRSA 	= "MD5withRSA";
-    private static final String ALG_ID_SIGNATURE_MD2withRSA 	= "MD2withRSA";
-    private static final String ALG_ID_SIGNATURE_ECDSA      	= "ECDSA";
     
     private static final String X509_CERTIFICATE_TYPE 			= "X.509";
     private static final String CERTIFICATION_CHAIN_ENCODING 	= "PkiPath";
@@ -107,24 +109,36 @@ implements SWPSignatureUtilities
     }
     
     public String calculateDigest( NamedGraph graph, Node digestMethod )
+    throws SWPNoSuchDigestMethodException
     {
         String data = getCanonicalGraph( graph );
         Security.addProvider( new BouncyCastleProvider() );
-		
-        Digest  digest = new SHA1Digest();
-        byte[]  resBuf = new byte[ digest.getDigestSize() ];
-        String  resStr;
-        digest.update( data.getBytes(), 0, data.getBytes().length );
-        digest.doFinal( resBuf, 0 );
+	
+        byte[] res = null;
+        if ( digestMethod.equals( SWP.JjcRdfC14N_sha1.asNode() ) )
+        {
+            Digest  digest = new SHA1Digest();
+            byte[]  resBuf = new byte[ digest.getDigestSize() ];
+            String  resStr;
+            digest.update( data.getBytes(), 0, data.getBytes().length );
+            digest.doFinal( resBuf, 0 );
 	    
-        byte[] res = Hex.encode( resBuf );
-		
+            res = Hex.encode( resBuf );
+        }
+        else
+        {
+            throw new SWPNoSuchDigestMethodException("The digest method: "+digestMethod +
+            		" does not exist.");
+        }
         return new String( res );
     }
 
     public String calculateSignature( NamedGraph graph, 
             						  Node signatureMethod, 
             						  PrivateKey key ) 
+    throws SWPNoSuchAlgorithmException, 
+    SWPSignatureException, 
+    SWPInvalidKeyException
     {
         String canonicalGraph = getCanonicalGraph( graph );
         String signature = null;
@@ -135,45 +149,20 @@ implements SWPSignatureUtilities
         Signature sig = null;
         String algo = null;
             
-        if ( StringUtils.contains( signatureMethod.toString(), "rsa" ) 
-                	&& StringUtils.contains( signatureMethod.toString(), "sha1") )
+        if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha1.asNode() ) ) 
         {
             algo = ALG_ID_SIGNATURE_SHA1withRSA;
             log.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA1withRSA );
         }
-        else if ( StringUtils.contains( signatureMethod.toString(), "dsa" ) 
-                	&& StringUtils.contains( signatureMethod.toString(), "sha1") )
+        else if ( signatureMethod.equals( SWP.JjcRdfC14N_dsa_sha1.asNode() ) ) 
         {
             algo = ALG_ID_SIGNATURE_SHA1withDSA;
             log.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA1withDSA );
         }
-        else if ( StringUtils.contains( signatureMethod.toString(), "dsa" ) 
-                	&& StringUtils.contains( signatureMethod.toString(), "none") )
-        {
-            algo = ALG_ID_SIGNATURE_NONEwithDSA;
-            log.info( "Using algorithm: "+ALG_ID_SIGNATURE_NONEwithDSA );
-        }
-        else if ( StringUtils.contains( signatureMethod.toString(), "rsa" ) 
-            	&& StringUtils.contains( signatureMethod.toString(), "md5") )
-        {
-            algo = ALG_ID_SIGNATURE_MD5withRSA;
-            log.info( "Using algorithm: "+ALG_ID_SIGNATURE_MD5withRSA );
-        }
-        else if ( StringUtils.contains( signatureMethod.toString(), "rsa" ) 
-            	&& StringUtils.contains( signatureMethod.toString(), "md2") )
-        {
-            algo = ALG_ID_SIGNATURE_MD2withRSA;
-            log.info( "Using algorithm: "+ALG_ID_SIGNATURE_MD2withRSA );
-        }
-        else if ( StringUtils.contains( signatureMethod.toString(), "ecdsa" ) )
-        {
-            algo = ALG_ID_SIGNATURE_ECDSA;
-            log.info( "Using algorithm: "+ALG_ID_SIGNATURE_ECDSA );
-        }
         else 
         {
-            algo = ALG_ID_SIGNATURE_SHA1withRSA;
-            log.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA1withRSA );
+            throw new SWPNoSuchAlgorithmException("The signature" +
+            		"method: "+signatureMethod+" does not exist.");
         }
                
         try 
@@ -182,20 +171,21 @@ implements SWPSignatureUtilities
             sig.initSign( key );
             sig.update( canonicalGraph.getBytes() );
         } 
-        catch (NoSuchAlgorithmException e)
+        catch ( NoSuchAlgorithmException e )
         {
             log.fatal( ALG_ID_SIGNATURE_SHA1withRSA +" not found! " +e.getMessage() );
-            return new String();
+            throw new SWPNoSuchAlgorithmException( "The signature" +
+            		"method: "+signatureMethod+" does not exist.", e ); 
         }
-        catch (InvalidKeyException e1) 
-        {
-            log.fatal("Public key supplied is invalid. "+ e1.getMessage() );
-            return new String();
+        catch ( InvalidKeyException e1 ) 
+        { 
+            log.fatal( "Public key supplied is invalid. "+ e1.getMessage() );
+            throw new SWPInvalidKeyException( "Public key supplied is invalid." );
         } 
-        catch (SignatureException e3) 
+        catch ( SignatureException e3 ) 
         {
-            log.fatal("Error updating input data. "+ e3.getMessage() );
-            return new String();
+            log.fatal( "Error updating input data. "+ e3.getMessage() );
+            throw new SWPSignatureException( "Error updating input data." );
         } 
             
         try 
@@ -203,10 +193,10 @@ implements SWPSignatureUtilities
             BASE64Encoder encoder = new BASE64Encoder();
             signature = encoder.encodeBuffer( sig.sign() );
         } 
-        catch (SignatureException e2) 
+        catch ( SignatureException e2 ) 
         {
             log.fatal("Error generating signature. "+ e2.getMessage() );
-            return new String();
+            throw new SWPSignatureException( "Error generating signature." );
         }
         
         return signature;
@@ -217,6 +207,10 @@ implements SWPSignatureUtilities
             						  Node signatureMethod, 
             						  String signatureValue, 
             						  PublicKey key ) 
+    throws SWPNoSuchAlgorithmException,
+    SWPValidationException, 
+    SWPInvalidKeyException, 
+    SWPSignatureException
     {
         String canonicalGraph = getCanonicalGraph( graph );
         boolean result = false;
@@ -231,25 +225,27 @@ implements SWPSignatureUtilities
         	sig.initVerify( key );
         	sig.update( canonicalGraph.getBytes( "UTF-8" ) );
         } 
-        catch (NoSuchAlgorithmException e) 
+        catch ( NoSuchAlgorithmException e ) 
         {
             log.fatal( ALG_ID_SIGNATURE_SHA1withRSA +" not found! " +e.getMessage() );
-            return false;
+            throw new SWPNoSuchAlgorithmException( "The signature" +
+            		"method: "+signatureMethod+" does not exist.", e ); 
         }
-        catch (IOException e1) 
-        {
-           log.fatal("Unable to access signature: " +e1.getMessage() );
-           return false;
+        catch ( IOException e1 ) 
+        {	
+            log.fatal( "Unable to access signature: " +e1.getMessage() );
+            throw new SWPValidationException( "I/O error: Unable to access " +
+            		"signature value.", e1 );
         }
         catch (InvalidKeyException e2) 
         {
             log.fatal("Public key supplied is invalid. "+ e2.getMessage() );
-            return false;
+            throw new SWPInvalidKeyException( "Public key supplied is invalid." );
         }
     	catch (SignatureException e3) 
     	{
             log.fatal("Error updating input data. "+ e3.getMessage() );
-            return false;
+            throw new SWPSignatureException( "Error updating input data." );
         } 
         
     	try 
@@ -259,7 +255,7 @@ implements SWPSignatureUtilities
     	catch (SignatureException e4) 
     	{
             log.fatal("Error verifying signature. "+e4.getMessage() );
-            return false;
+            throw new SWPSignatureException( "Error verifying signature." );
         }
     	
     	return result;
@@ -270,6 +266,10 @@ implements SWPSignatureUtilities
             						  String signatureValue,
             						  X509Certificate certificate, 
             						  ArrayList trustedCertificates ) 
+    throws SWPNoSuchAlgorithmException,
+    SWPValidationException, 
+    SWPInvalidKeyException, 
+    SWPSignatureException
     {
         String canonicalGraph = getCanonicalGraph( graph );
         boolean result = false;
@@ -280,18 +280,18 @@ implements SWPSignatureUtilities
         }
         catch ( CertificateExpiredException e ) 
         {
-            log.warn( "Certificate has expired" );
-            return false;
+            log.warn( "Certificate has expired." );
+            throw new SWPValidationException( "Certificate has expired.", e );
         }
         catch ( CertificateNotYetValidException e ) 
         {
             log.warn( "Certificate not yet valid." );
-            return false;
+            throw new SWPValidationException( "Certificate not yet valid.", e );
         }
         catch ( GeneralSecurityException e ) 
         {
-            log.warn( "Certificate not signed by some trusted certificates" );
-            return false;
+            log.warn( "Certificate not signed by some trusted certificates." );
+            throw new SWPValidationException( "Certificate not signed by some trusted certificates.", e );
         }
         
         Signature sig;
@@ -307,22 +307,24 @@ implements SWPSignatureUtilities
         catch (NoSuchAlgorithmException e) 
         {
             log.fatal( ALG_ID_SIGNATURE_SHA1withRSA +" not found! " +e.getMessage() );
-            return false;
+            throw new SWPNoSuchAlgorithmException( "The signature" +
+            		"method: "+signatureMethod+" does not exist.", e ); 
         }
         catch (IOException e1) 
         {
-           log.fatal("Unable to access signature: " +e1.getMessage() );
-           return false;
+            log.fatal("Unable to access signature: " +e1.getMessage() );
+            throw new SWPValidationException( "I/O error: Unable to access " +
+                    "signature value.", e1 );
         }
         catch (InvalidKeyException e2) 
         {
             log.fatal("Public key supplied is invalid. "+ e2.getMessage() );
-            return false;
+            throw new SWPInvalidKeyException( "Public key supplied is invalid." );
         }
     	catch (SignatureException e3) 
     	{
             log.fatal("Error updating input data. "+ e3.getMessage() );
-            return false;
+            throw new SWPSignatureException( "Error updating input data." );
         } 
         
     	try 
@@ -332,7 +334,7 @@ implements SWPSignatureUtilities
     	catch (SignatureException e4) 
     	{
             log.fatal("Error verifying signature. "+e4.getMessage() );
-            return false;
+            throw new SWPSignatureException( "Error verifying signature." );
         }
         
         
@@ -344,7 +346,12 @@ implements SWPSignatureUtilities
             						  String signatureValue,
             						  X509Certificate certificate, 
             						  ArrayList trustedCertificates, 
-            						  ArrayList otherCertificates ) 
+            						  ArrayList otherCertificates )
+    throws SWPNoSuchAlgorithmException,
+    SWPValidationException, 
+    SWPInvalidKeyException, 
+    SWPSignatureException
+    
     {
         String canonicalGraph = getCanonicalGraph( graph );
         boolean result = false;
@@ -355,18 +362,18 @@ implements SWPSignatureUtilities
         }
         catch ( CertificateExpiredException e ) 
         {
-            log.warn( "Certificate has expired" );
-            return false;
+            log.warn( "Certificate has expired." );
+            throw new SWPValidationException( "Certificate has expired.", e );
         }
         catch ( CertificateNotYetValidException e ) 
         {
             log.warn( "Certificate not yet valid." );
-            return false;
+            throw new SWPValidationException( "Certificate not yet valid.", e );
         }
         catch ( GeneralSecurityException e ) 
         {
-            log.warn( "Certificate not signed by some trusted certificates" );
-            return false;
+            log.warn( "Certificate not signed by some trusted certificates." );
+            throw new SWPValidationException( "Certificate not signed by some trusted certificates.", e );
         }
         
         Signature sig;
@@ -382,22 +389,24 @@ implements SWPSignatureUtilities
         catch (NoSuchAlgorithmException e) 
         {
             log.fatal( ALG_ID_SIGNATURE_SHA1withRSA +" not found! " +e.getMessage() );
-            return false;
+            throw new SWPNoSuchAlgorithmException( "The signature" +
+            		"method: "+signatureMethod+" does not exist.", e ); 
         }
         catch (IOException e1) 
         {
-           log.fatal("Unable to access signature: " +e1.getMessage() );
-           return false;
+            log.fatal("Unable to access signature: " +e1.getMessage() );
+            throw new SWPValidationException( "I/O error: Unable to access " +
+                    "signature value.", e1 );
         }
         catch (InvalidKeyException e2) 
         {
             log.fatal("Public key supplied is invalid. "+ e2.getMessage() );
-            return false;
+            throw new SWPInvalidKeyException( "Public key supplied is invalid." );
         }
     	catch (SignatureException e3) 
     	{
             log.fatal("Error updating input data. "+ e3.getMessage() );
-            return false;
+            throw new SWPSignatureException( "Error updating input data." );
         } 
         
     	try 
@@ -407,7 +416,7 @@ implements SWPSignatureUtilities
     	catch (SignatureException e4) 
     	{
             log.fatal("Error verifying signature. "+e4.getMessage() );
-            return false;
+            throw new SWPSignatureException( "Error verifying signature." );
         }
         
         return result;
@@ -425,7 +434,7 @@ implements SWPSignatureUtilities
      * @throws CertificateExpiredException if the certificate validity period is expired.
      * @throws CertificateNotYetValidException if the certificate validity period is not
      * yet started.
-     * @throws CertificateValidationException if the certificate is invalid (can not be
+     * @throws SWPCertificateValidationException if the certificate is invalid (can not be
      * validated using the given set of trusted certificates.
      */
     public void verifyCertificate( X509Certificate aCertificate,
@@ -462,7 +471,7 @@ implements SWPSignatureUtilities
         }
             
         // Certificate is not signed by any of the trusted certificates, so it is invalid
-        throw new CertificateValidationException(
+        throw new SWPCertificateValidationException(
             "Can not find trusted parent certificate.");
     }
     

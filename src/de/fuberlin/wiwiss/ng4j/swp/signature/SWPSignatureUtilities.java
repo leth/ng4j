@@ -10,12 +10,13 @@ import java.util.ArrayList;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.Signature;
-import java.security.SignatureException;
-import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
+import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPInvalidKeyException;
+import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPNoSuchDigestMethodException;
+import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPNoSuchAlgorithmException;
+import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPSignatureException;
+import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPValidationException;
 
 import com.hp.hpl.jena.graph.Node;
 
@@ -37,7 +38,8 @@ public interface SWPSignatureUtilities
      * 
      * @return
      */
-    public String calculateDigest( NamedGraph graph, Node digestMethod );
+    public String calculateDigest( NamedGraph graph, Node digestMethod )
+    				throws SWPNoSuchDigestMethodException;
 	
     /**
      * Calculates a signature for a graph and returns the signature as a base64Binary.
@@ -48,7 +50,10 @@ public interface SWPSignatureUtilities
      */
     public String calculateSignature( NamedGraph graph, 
             						  Node signatureMethod, 
-            						  PrivateKey key );
+            						  PrivateKey key )
+    				throws SWPNoSuchAlgorithmException, 
+    				SWPSignatureException,
+    				SWPInvalidKeyException;
 
     /**
      * Validates a signature for a given graph and a given public key.
@@ -60,7 +65,11 @@ public interface SWPSignatureUtilities
     public boolean validateSignature( NamedGraph graph, 
             						  Node signatureMethod, 
             						  String signatureValue, 
-            						  PublicKey key );
+            						  PublicKey key )
+    				throws SWPNoSuchAlgorithmException, 
+    				SWPValidationException,
+    				SWPInvalidKeyException,
+    				SWPSignatureException;
     
     /**
      * Validates a signature for a given graph and a given certificate and
@@ -74,7 +83,11 @@ public interface SWPSignatureUtilities
             						  Node signatureMethod,
             						  String signatureValue, 
             						  X509Certificate certificate, 
-            						  ArrayList trustedCertificates );
+            						  ArrayList trustedCertificates )
+    				throws SWPNoSuchAlgorithmException,
+    				SWPValidationException, 
+    				SWPInvalidKeyException, 
+    				SWPSignatureException;
  
     
     /**
@@ -94,5 +107,9 @@ public interface SWPSignatureUtilities
             						  String signatureValue, 
             						  X509Certificate certificate, 
             						  ArrayList trustedCertificates, 
-            						  ArrayList otherCertificates );
+            						  ArrayList otherCertificates )
+    				throws SWPNoSuchAlgorithmException,
+    				SWPValidationException, 
+    				SWPInvalidKeyException, 
+    				SWPSignatureException;
 }
