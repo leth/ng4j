@@ -1,4 +1,4 @@
-// $Id: TriGParserTest.java,v 1.7 2004/11/26 00:51:07 cyganiak Exp $
+// $Id: TriGParserTest.java,v 1.8 2004/12/12 17:39:28 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import java.io.Reader;
@@ -54,9 +54,12 @@ public class TriGParserTest extends TestCase {
 	public void testUnlabelledGraph() throws Exception {
 		String triG = "@prefix ex: <http://example.com/ex#> .\n" +
 				"{ ex:a ex:b ex:c }";
-		NamedGraphSet ngs = parseTriG(triG);
-		assertTrue(ngs.containsQuad(new Quad(defaultNode, aNode, bNode, cNode)));
-		assertEquals(1, ngs.countQuads());
+		try {
+			parseTriG(triG);
+			fail();
+		} catch (TriGException ex) {
+			// unlabelled graphs are not allowed
+		}
 	}
 	
 	public void testQuadFormula() throws Exception {
@@ -112,27 +115,11 @@ public class TriGParserTest extends TestCase {
 		assertEquals(3, ngs.countQuads());
 	}	
 
-	public void testDefaultGraph() throws Exception {
-		String triG = "@prefix ex: <http://example.com/ex#> .\n" +
-				"{ ex:a ex:a ex:a }\n" +
-				"ex:graph1 :- { ex:a ex:b ex:c }\n" +
-				"{ ex:b ex:b ex:b }\n" +
-				"ex:graph2 :- { ex:b ex:c ex:a }\n" +
-				"{ ex:c ex:c ex:c }\n";
-		NamedGraphSet ngs = parseTriG(triG);
-		assertTrue(ngs.containsQuad(new Quad(graph1Node, aNode, bNode, cNode)));
-		assertTrue(ngs.containsQuad(new Quad(graph2Node, bNode, cNode, aNode)));
-		assertTrue(ngs.containsQuad(new Quad(defaultNode, aNode, aNode, aNode)));
-		assertTrue(ngs.containsQuad(new Quad(defaultNode, bNode, bNode, bNode)));
-		assertTrue(ngs.containsQuad(new Quad(defaultNode, cNode, cNode, cNode)));
-		assertEquals(5, ngs.countQuads());
-	}
-	
 	public void testBaseURI() throws Exception {
-		String triG = "{ <> <> <> }";
+		String triG = "<> { <> <> <> }";
 		NamedGraphSet ngs = parseTriG(triG);
 		Node base = Node.createURI(BASE);
-		assertTrue(ngs.containsQuad(new Quad(defaultNode, base, base, base)));
+		assertTrue(ngs.containsQuad(new Quad(base, base, base, base)));
 		assertEquals(1, ngs.countQuads());
 	}
 
@@ -198,13 +185,6 @@ public class TriGParserTest extends TestCase {
 		} catch (TriGException ex) {
 			// literal nodes are not allowed as graph names
 		}	
-	}
-
-	public void testEmptyDefaultGraph() throws Exception {
-		String triG = "{}";
-		NamedGraphSet set = parseTriG(triG);
-		assertEquals(0, set.countQuads());
-		assertTrue(set.containsGraph(defaultNode));
 	}
 
 	public void testEmptyDocument() throws Exception {

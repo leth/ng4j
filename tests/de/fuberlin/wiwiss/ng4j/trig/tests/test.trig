@@ -1,16 +1,10 @@
 @prefix : <http://example.com/ns#> .
 
-# in a named graph
 :graph1 { :a :a :a }
 
-# in another named graph
 :graph2 :- { :b :b :b . }
 
-# in default graph
-{ :c :c :c }
-
-# in default graph
-{
+:graph3 {
 	:d :d :d .
 
 	# URIs are realtive to base URI

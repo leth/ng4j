@@ -142,7 +142,7 @@ tokens
 // The top level rule
 document!: 
 		{ startDocument() ; }
-		(n3Directive | namedGraph | graph[null] )*
+		(n3Directive | namedGraph )*
 		{ endDocument() ; }
 		EOF ;
 

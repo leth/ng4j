@@ -146,11 +146,6 @@ public TriGAntlrParser(ParserSharedInputState state) {
 					namedGraph();
 					break;
 				}
-				case LCURLY:
-				{
-					graph(null);
-					break;
-				}
 				default:
 				{
 					break _loop3;
@@ -223,40 +218,6 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		returnAST = namedGraph_AST;
 	}
 	
-	public final void graph(
-		AST label
-	) throws RecognitionException, TokenStreamException {
-		
-		returnAST = null;
-		ASTPair currentAST = new ASTPair();
-		AST graph_AST = null;
-		
-		match(LCURLY);
-		if ( inputState.guessing==0 ) {
-			graph_AST = (AST)currentAST.root;
-			
-						currentGraphName = label;
-						startGraph(label);
-						graph_AST = label;
-					
-			currentAST.root = graph_AST;
-			currentAST.child = graph_AST!=null &&graph_AST.getFirstChild()!=null ?
-				graph_AST.getFirstChild() : graph_AST;
-			currentAST.advanceChildToEnd();
-		}
-		statements();
-		astFactory.addASTChild(currentAST, returnAST);
-		if ( inputState.guessing==0 ) {
-			
-						endGraph(label);
-						currentGraphName = null;
-					
-		}
-		match(RCURLY);
-		graph_AST = (AST)currentAST.root;
-		returnAST = graph_AST;
-	}
-	
 	public final void n3Directive0() throws RecognitionException, TokenStreamException {
 		
 		returnAST = null;
@@ -318,9 +279,9 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		ASTPair currentAST = new ASTPair();
 		AST uriref_AST = null;
 		
-		AST tmp6_AST = null;
-		tmp6_AST = astFactory.create(LT(1));
-		astFactory.addASTChild(currentAST, tmp6_AST);
+		AST tmp4_AST = null;
+		tmp4_AST = astFactory.create(LT(1));
+		astFactory.addASTChild(currentAST, tmp4_AST);
 		match(URIREF);
 		uriref_AST = (AST)currentAST.root;
 		returnAST = uriref_AST;
@@ -369,6 +330,40 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		}
 		}
 		returnAST = graphLabel_AST;
+	}
+	
+	public final void graph(
+		AST label
+	) throws RecognitionException, TokenStreamException {
+		
+		returnAST = null;
+		ASTPair currentAST = new ASTPair();
+		AST graph_AST = null;
+		
+		match(LCURLY);
+		if ( inputState.guessing==0 ) {
+			graph_AST = (AST)currentAST.root;
+			
+						currentGraphName = label;
+						startGraph(label);
+						graph_AST = label;
+					
+			currentAST.root = graph_AST;
+			currentAST.child = graph_AST!=null &&graph_AST.getFirstChild()!=null ?
+				graph_AST.getFirstChild() : graph_AST;
+			currentAST.advanceChildToEnd();
+		}
+		statements();
+		astFactory.addASTChild(currentAST, returnAST);
+		if ( inputState.guessing==0 ) {
+			
+						endGraph(label);
+						currentGraphName = null;
+					
+		}
+		match(RCURLY);
+		graph_AST = (AST)currentAST.root;
+		returnAST = graph_AST;
 	}
 	
 	public final void qname() throws RecognitionException, TokenStreamException {

@@ -1,4 +1,4 @@
-// $Id: TriGReaderTest.java,v 1.3 2004/11/25 23:49:03 cyganiak Exp $
+// $Id: TriGReaderTest.java,v 1.4 2004/12/12 17:39:28 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import java.io.InputStream;
@@ -44,11 +44,6 @@ public class TriGReaderTest extends TestCase {
 		assertTrue(this.ngs.containsQuad(new Quad(graph2, b, b, b)));
 	}
 
-	public void testDefaultGraph() {
-		assertTrue(this.ngs.containsQuad(new Quad(defaultGraph, c, c, c)));
-		assertTrue(this.ngs.containsQuad(new Quad(defaultGraph, d, d, d)));		
-	}
-	
 	public void testBaseURI() {
 		assertTrue(this.ngs.containsQuad(new Quad(Node.ANY, e, e, e)));
 	}
@@ -59,6 +54,6 @@ public class TriGReaderTest extends TestCase {
 	}
 
 	public void testNoAdditionalQuads() {
-		assertEquals(6, this.ngs.countQuads());
+		assertEquals(5, this.ngs.countQuads());
 	}
 }
