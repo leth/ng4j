@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetTest.java,v 1.4 2004/12/12 17:30:30 cyganiak Exp $
+// $Id: NamedGraphSetTest.java,v 1.5 2004/12/14 13:30:15 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.util.ArrayList;
@@ -419,6 +419,15 @@ public class NamedGraphSetTest extends TestCase {
 				Node.createLiteral("5", null, XSDDatatype.XSDint));
 		this.set.addQuad(q);
 		assertTrue(this.set.containsQuad(q));
+	}
+
+	public void testMultipleStatementsWithSameSubjectAndPredicate() {
+		NamedGraph graph = this.set.createGraph(node1);
+		graph.add(new Triple(foo, bar, node1));
+		graph.add(new Triple(foo, bar, node2));
+		assertTrue(this.set.containsQuad(new Quad(node1, foo, bar, node1)));
+		assertTrue(this.set.containsQuad(new Quad(node1, foo, bar, node2)));
+		assertEquals(2, this.set.countQuads());
 	}
 
 	private NamedGraph createGraph(String uri) {

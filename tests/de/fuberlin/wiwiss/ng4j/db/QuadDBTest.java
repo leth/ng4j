@@ -1,4 +1,4 @@
-// $Id: QuadDBTest.java,v 1.2 2004/12/12 17:30:29 cyganiak Exp $
+// $Id: QuadDBTest.java,v 1.3 2004/12/14 13:30:15 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.util.Iterator;
@@ -25,6 +25,7 @@ public class QuadDBTest extends TestCase {
 	private final static Node node1 = Node.createURI("http://example.org/node1");
 	private final static Node node2 = Node.createURI("http://example.org/node2");
 	private final static Node node3 = Node.createURI("http://example.org/node3");
+	private final static Node node4 = Node.createURI("http://example.org/node4");
 	private final static Node blank1 = Node.createAnon(new AnonId("blank1"));
 	private final static Node blank2 = Node.createAnon(new AnonId("blank2"));
 	private QuadDB db;
@@ -177,5 +178,17 @@ public class QuadDBTest extends TestCase {
 		this.db.insert(graph2, node3, node1, node2);
 		this.db.delete(Node.ANY, Node.ANY, Node.ANY, Node.ANY);
 		assertEquals(0, this.db.count());
+	}
+	
+	public void testSameSubjectAndPredicate() {
+		this.db.insert(graph1, node1, node2, node3);
+		this.db.insert(graph1, node1, node2, node4);
+		assertEquals(2, this.db.count());
+	}
+	
+	public void testDontInsertDuplicates() {
+		this.db.insert(graph1, node1, node2, node3);
+		this.db.insert(graph1, node1, node2, node3);
+		assertEquals(1, this.db.count());
 	}
 }
