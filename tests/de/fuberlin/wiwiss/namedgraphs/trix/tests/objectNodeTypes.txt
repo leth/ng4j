@@ -1,0 +1,17 @@
+startGraph
+uri: <http://example.org/#bar>
+uri: <http://example.org/#baz>
+id: "foobar"
+uri: <http://example.org/#bar>
+uri: <http://example.org/#baz>
+uri: <http://example.org/#foo>
+uri: <http://example.org/#bar>
+uri: <http://example.org/#baz>
+plainLiteral: "foobar"
+uri: <http://example.org/#bar>
+uri: <http://example.org/#baz>
+plainLiteral: "foobar"@en
+uri: <http://example.org/#bar>
+uri: <http://example.org/#baz>
+typedLiteral: "foobar"^^<http://example.org/#dt>
+endGraph

@@ -1,0 +1,5 @@
+startGraph: <file:/test#graph>
+uri: <file:/test#foo>
+uri: <file:/test#bar>
+uri: <file:/test#baz>
+endGraph

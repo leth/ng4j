@@ -1,0 +1,10 @@
+startGraph: <http://example.org/#graph1>
+uri: <http://example.org/#foo1>
+uri: <http://example.org/#bar1>
+uri: <http://example.org/#baz1>
+endGraph
+startGraph: <http://example.org/#graph2> <http://example.org/#graph3>
+uri: <http://example.org/#foo2>
+uri: <http://example.org/#bar2>
+uri: <http://example.org/#baz2>
+endGraph

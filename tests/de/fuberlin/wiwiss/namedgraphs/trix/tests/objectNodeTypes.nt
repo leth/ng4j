@@ -1,0 +1,5 @@
+<http://example.org/#bar> <http://example.org/#baz> _:foobar .
+<http://example.org/#bar> <http://example.org/#baz> <http://example.org/#foo> .
+<http://example.org/#bar> <http://example.org/#baz> "foobar" .
+<http://example.org/#bar> <http://example.org/#baz> "foobar"@en .
+<http://example.org/#bar> <http://example.org/#baz> "foobar"^^<http://example.org/#dt> .

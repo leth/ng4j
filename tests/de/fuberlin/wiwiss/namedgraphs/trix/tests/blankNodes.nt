@@ -1,0 +1,2 @@
+<http://example.org/#foo> <http://example.org/#bar> _:foobar .
+_:foobar <http://example.org/#bar> <http://example.org/#baz> .

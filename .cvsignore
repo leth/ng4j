@@ -1,0 +1,5 @@
+bin
+bin-tests
+.classpath
+.project
+.DS_Store

@@ -1,0 +1,5 @@
+startGraph
+uri: <http://example.org/#foo>
+uri: <http://example.org/#bar>
+uri: <http://example.org/#baz>
+endGraph

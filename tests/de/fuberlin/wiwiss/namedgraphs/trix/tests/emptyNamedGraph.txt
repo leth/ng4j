@@ -1,0 +1,2 @@
+startGraph: <http://example.org/#graph>
+endGraph

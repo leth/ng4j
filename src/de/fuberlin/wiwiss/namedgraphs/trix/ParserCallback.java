@@ -1,0 +1,106 @@
+/*
+ * $Id: ParserCallback.java,v 1.1 2004/09/13 14:37:28 cyganiak Exp $
+ */
+package de.fuberlin.wiwiss.namedgraphs.trix;
+
+import java.util.List;
+
+/**
+ * Callback that is fed by {@link TriXParser} with graphs and triples from
+ * a TriX file (see
+ * <a href="http://www.hpl.hp.com/techreports/2004/HPL-2004-56">TriX
+ * specification</a>). Implement this if you want to do something
+ * with data from TriX files.
+ * <p>
+ * A TriX file contains zero or more named graphs, each of whom
+ * might contain zero or more triples. For each graph, first
+ * {@link #startGraph} is called, then all triples are processed,
+ * then {@link #endGraph} is called. Processing of triples works
+ * like this: For each triple within a graph, first one of the
+ * <tt>subjectXXX</tt> methods is called (for example,
+ * {@link #subjectURI}), then {@link #predicate} is called, and
+ * finally one of the <tt>objectXXX</tt> methods is called (for example,
+ * {@link #objectPlainLiteral}).
+ * <p>
+ * Graphs and triples are processed in the same order as they are
+ * encountered in the file.
+ *
+ * @author Richard Cyganiak (richard@cyganiak.de)
+ */
+public interface ParserCallback {
+
+	/**
+	 * Called at the beginning of each trix:graph element.
+	 * @param uris zero or more names of the graph, as strings
+	 */
+	public void startGraph(List uris);
+
+	/**
+	 * Called at the end of each trix:graph element
+	 */
+	public void endGraph();
+
+	/**
+	 * Called for each trix:triple element whose subject is a trix:uri.
+	 * @param uri the subject URI of the triple
+	 */
+	public void subjectURI(String uri);
+
+	/**
+	 * Called for each trix:triple element whose subject is a trix:id.
+	 * @param id the subject blank node ID of the triple
+	 */
+	public void subjectBNode(String id);
+
+	/**
+	 * Called for each trix:triple element whose subject is a
+	 * trix:plainLiteral. Note that RDF doesn't allow literals as
+	 * subjects, but TriX does.
+	 * @param value the subject literal value of the triple
+	 * @param lang the language tag of the subject literal, or <tt>null</tt>
+	 * 			  if none was given
+	 */
+	public void subjectPlainLiteral(String value, String lang);
+
+	/**
+	 * Called for each trix:triple element whose subject is a
+	 * trix:typedLiteral. Note that RDF doesn't allow literals as
+	 * subjects, but TriX does.
+	 * @param value the subject literal value of the triple
+	 * @param datatypeURI the datatype URI of the subject literal
+	 */
+	public void subjectTypedLiteral(String value, String datatypeURI);
+
+	/**
+	 * Called for the predicate of each trix:triple.
+	 * @param uri the predicate URI of the triple.
+	 */
+	public void predicate(String uri);
+
+	/**
+	 * Called for each trix:triple element whose object is a trix:uri.
+	 * @param uri the object URI of the triple
+	 */
+	public void objectURI(String uri);
+
+	/**
+	 * Called for each trix:triple element whose object is a trix:id.
+	 * @param id the object blank node ID of the triple
+	 */
+	public void objectBNode(String id);
+
+	/**
+	 * Called for each trix:triple element whose object is a trix:plainLiteral.
+	 * @param value the object literal value of the triple
+	 * @param lang the language tag of the object literal, or <tt>null</tt>
+	 * 			  if none was given
+	 */
+	public void objectPlainLiteral(String value, String lang);
+
+	/**
+	 * Called for each trix:triple element whose object is a trix:typedLiteral.
+	 * @param value the object literal value of the triple
+	 * @param datatypeURI the datatype URI of the object literal
+	 */
+	public void objectTypedLiteral(String value, String datatypeURI);
+}
