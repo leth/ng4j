@@ -21,7 +21,7 @@ import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
  * can generate an explanation stating why a particular statement was trusted
  * (but not why a statement was rejected).
  *
- * @version $Id: TrustPolicy.java,v 1.1 2005/02/18 01:44:59 cyganiak Exp $
+ * @version $Id: TrustPolicy.java,v 1.2 2005/03/21 00:23:28 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class TrustPolicy {
@@ -84,7 +84,7 @@ public class TrustPolicy {
 
 	private String uri;
 	private List graphPatterns = new ArrayList();
-	private Collection conditions = new ArrayList();
+	private Collection constraints = new ArrayList();
 	
 	// Variable names => int (COUNT_XXX constants)
 	private Map countRestrictionOperators = new HashMap();
@@ -95,7 +95,6 @@ public class TrustPolicy {
 	private PrefixMapping prefixes = PrefixMapping.Standard;
 
 	private ExplanationTemplate explanationTemplate;
-	private Collection metrics = new ArrayList();	// [MetricConstraint]
 	
 	public TrustPolicy(String uri) {
 	    this.uri = uri;
@@ -150,12 +149,23 @@ public class TrustPolicy {
 	    }
 	}
 	
-	public void addCondition(Condition condition) {
-	    this.conditions.add(condition);
+	public void addConstraint(Constraint condition) {
+	    this.constraints.add(condition);
 	}
 
-	public Collection getConditions() {
-	    return this.conditions;
+	public Collection getConstraints() {
+	    return this.constraints;
+	}
+	
+	public boolean matchesConstraints(VariableBinding binding) {
+	    Iterator it = this.constraints.iterator();
+	    while (it.hasNext()) {
+            Constraint constraint = (Constraint) it.next();
+            if (!constraint.isSatisfiedBy(binding)) {
+                return false;
+            }
+        }
+	    return true;
 	}
 	
 	public void setExplanationTemplate(ExplanationTemplate expl) {
@@ -164,21 +174,6 @@ public class TrustPolicy {
 	
 	public ExplanationTemplate getExplanationTemplate() {
 	    return this.explanationTemplate;
-	}
-	
-	public void addMetricConstraint(Metric metric, List arguments) {
-	    this.metrics.add(new MetricConstraint(metric, arguments));
-	}
-	
-	public boolean matchesMetricConstraints(VariableBinding binding) {
-	    Iterator it = this.metrics.iterator();
-	    while (it.hasNext()) {
-            MetricConstraint constraint = (MetricConstraint) it.next();
-            if (!constraint.isSatisfied(binding)) {
-                return false;
-            }
-        }
-	    return true;
 	}
 	
 	private int getCountRestrictionValue(String variable) {

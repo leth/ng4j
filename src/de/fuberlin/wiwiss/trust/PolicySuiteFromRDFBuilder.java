@@ -22,7 +22,7 @@ import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
  * Service for building a {@link PolicySuite} from an RDF graph containing
  * the policy's description using the TPL vocabulary.
  *
- * @version $Id: PolicySuiteFromRDFBuilder.java,v 1.2 2005/03/15 08:59:08 cyganiak Exp $
+ * @version $Id: PolicySuiteFromRDFBuilder.java,v 1.3 2005/03/21 00:23:28 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class PolicySuiteFromRDFBuilder {
@@ -86,7 +86,6 @@ public class PolicySuiteFromRDFBuilder {
         Iterator it = policyNodes.iterator();
         while (it.hasNext()) {
             Node policyNode = (Node) it.next();
-            System.out.println(policyNode);
             if (!policyNode.isURI()) {
                 throw new TPLException(
                         "tpl:TrustPolicies must be URIs; " + policyNode + " is not");
@@ -132,15 +131,15 @@ public class PolicySuiteFromRDFBuilder {
             }
         }
         
-        Collection conditions = getAllObjects(policyNode, TPL.condition);
-        it = conditions.iterator();
+        Collection constraints = getAllObjects(policyNode, TPL.condition);
+        it = constraints.iterator();
         while (it.hasNext()) {
-            Node conditionNode = (Node) it.next();
-            if (!conditionNode.isLiteral()) {
+            Node constraintNode = (Node) it.next();
+            if (!constraintNode.isLiteral()) {
                 throw new TPLException("Objects of tpl:condition must be literals; "
-                        + conditionNode + " is not");
+                        + constraintNode + " is not");
             }
-            policy.addCondition(buildCondition(conditionNode.getLiteral().getLexicalForm()));
+            policy.addConstraint(buildConstraint(constraintNode.getLiteral().getLexicalForm()));
         }
         
         warnIfMoreThanOne(policyNode, TPL.textExplanation, Node.ANY,
@@ -164,9 +163,9 @@ public class PolicySuiteFromRDFBuilder {
         return new GraphPatternParser(pattern, this.prefixes).parse();
     }
     
-    private Condition buildCondition(String condition) {
-        return new ConditionParser(
-                condition, this.prefixes, this.metricInstances).parse();
+    private Constraint buildConstraint(String constraint) {
+        return new ConstraintParser(
+                constraint, this.prefixes, this.metricInstances).parse();
     }
     
     private void checkForUnlinkedPolicies() {

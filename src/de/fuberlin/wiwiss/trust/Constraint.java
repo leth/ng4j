@@ -11,31 +11,30 @@ import com.hp.hpl.jena.rdf.model.impl.StatementImpl;
 import com.hp.hpl.jena.rdql.Query;
 
 import de.fuberlin.wiwiss.ng4j.triql.ResultBinding;
-import de.fuberlin.wiwiss.ng4j.triql.legacy.Constraint;
 import de.fuberlin.wiwiss.ng4j.triql.parser.Expr;
 
 /**
- * A condition in a trust policy that must hold for a result
+ * A constraint in a trust policy that must hold for a result
  * binding to be trusted. This is a boolean expression that can
  * use all variables occuring in the graph patterns. 
  *
- * @version $Id: Condition.java,v 1.1 2005/02/18 01:44:59 cyganiak Exp $
+ * @version $Id: Constraint.java,v 1.1 2005/03/21 00:23:28 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
-public class Condition implements Constraint {
+public class Constraint implements de.fuberlin.wiwiss.ng4j.triql.legacy.Constraint {
     private Expr expression;
 
-    public Condition(Expr expression) {
+    public Constraint(Expr expression) {
         this.expression = expression;
     }
     
     /**
      * For use within TriQL Trust Layer
-     * @param varNamesToNodes A variable binding
+     * @param binding A variable binding
      * @return does it satisfy the condition?
      */
-    public boolean isSatisfiedBy(Map varNamesToNodes) {
-        return isSatisfied(null, createResultBindingFrom(varNamesToNodes));
+    public boolean isSatisfiedBy(VariableBinding binding) {
+        return isSatisfied(null, createResultBindingFrom(binding));
     }
 
     /**
@@ -48,9 +47,9 @@ public class Condition implements Constraint {
         return this.expression.eval(q, env).getBoolean();
     }
 
-    private ResultBinding createResultBindingFrom(Map varNamesToNodes) {
+    private ResultBinding createResultBindingFrom(VariableBinding vb) {
         Map varNamesToRDFNodes = new HashMap();
-        Iterator it = varNamesToNodes.entrySet().iterator();
+        Iterator it = vb.asMap().entrySet().iterator();
         while (it.hasNext()) {
             Entry entry = (Entry) it.next();
             Node varValue = (Node) entry.getValue();

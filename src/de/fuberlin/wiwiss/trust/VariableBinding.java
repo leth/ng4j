@@ -1,6 +1,7 @@
 package de.fuberlin.wiwiss.trust;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -9,7 +10,7 @@ import java.util.Set;
 import com.hp.hpl.jena.graph.Node;
 
 /**
- * @version $Id: VariableBinding.java,v 1.1 2005/02/18 01:44:59 cyganiak Exp $
+ * @version $Id: VariableBinding.java,v 1.2 2005/03/21 00:23:28 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class VariableBinding {
@@ -37,6 +38,10 @@ public class VariableBinding {
     
     public Set variableNames() {
         return this.namesToValues.keySet();
+    }
+    
+    public Map asMap() {
+        return Collections.unmodifiableMap(this.namesToValues);
     }
     
     public VariableBinding selectSubset(Collection variableNames) {
