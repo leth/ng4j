@@ -1,9 +1,8 @@
 package de.fuberlin.wiwiss.ng4j.swp.vocabulary;
 
-/* CVS $Id: SWP.java,v 1.4 2005/02/19 18:04:47 erw Exp $ */
+/* CVS $Id: SWP.java,v 1.5 2005/03/14 23:21:15 erw Exp $ */
  
 import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.rdf.model.*;
  
 /**
  * Vocabulary definitions from swp-3.rdf 
@@ -152,12 +151,48 @@ public class SWP
     
     /** <p>Jeremy's C14N method together with SHA1 and DSA</p> */
     public static final Node JjcRdfC14N_dsa_sha1 = Node.createURI( "http://www.w3.org/2004/03/trix/swp-2/JjcRdfC14N-dsa-sha1" );
+	
+	 /** <p>Jeremy's C14N method together with SHA224 and DSA</p> */
+    public static final Node JjcRdfC14N_dsa_sha224 = Node.createURI( "http://www.w3.org/2004/03/trix/swp-2/JjcRdfC14N-dsa-sha224" );
+	
+	 /** <p>Jeremy's C14N method together with SHA256 and DSA</p> */
+    public static final Node JjcRdfC14N_dsa_sha256 = Node.createURI( "http://www.w3.org/2004/03/trix/swp-2/JjcRdfC14N-dsa-sha256" );
+	
+	/** <p>Jeremy's C14N method together with SHA384 and DSA</p> */
+    public static final Node JjcRdfC14N_dsa_sha384 = Node.createURI( "http://www.w3.org/2004/03/trix/swp-2/JjcRdfC14N-dsa-sha384" );
+	
+	 /** <p>Jeremy's C14N method together with SHA512 and DSA</p> */
+    public static final Node JjcRdfC14N_dsa_sha512 = Node.createURI( "http://www.w3.org/2004/03/trix/swp-2/JjcRdfC14N-dsa-sha512" );
     
     /** <p>Jeremy's C14N method together with SHA1 and RSA</p> */
     public static final Node JjcRdfC14N_rsa_sha1 = Node.createURI( "http://www.w3.org/2004/03/trix/swp-2/JjcRdfC14N-rsa-sha1" );
+	
+	/** <p>Jeremy's C14N method together with SHA224 and RSA</p> */
+    public static final Node JjcRdfC14N_rsa_sha224 = Node.createURI( "http://www.w3.org/2004/03/trix/swp-2/JjcRdfC14N-rsa-sha224" );
+	
+	/** <p>Jeremy's C14N method together with SHA256 and RSA</p> */
+    public static final Node JjcRdfC14N_rsa_sha256 = Node.createURI( "http://www.w3.org/2004/03/trix/swp-2/JjcRdfC14N-rsa-sha256" );
+	
+	/** <p>Jeremy's C14N method together with SHA384 and RSA</p> */
+    public static final Node JjcRdfC14N_rsa_sha384 = Node.createURI( "http://www.w3.org/2004/03/trix/swp-2/JjcRdfC14N-rsa-sha384" );
+	
+	/** <p>Jeremy's C14N method together with SHA512 and RSA</p> */
+    public static final Node JjcRdfC14N_rsa_sha512 = Node.createURI( "http://www.w3.org/2004/03/trix/swp-2/JjcRdfC14N-rsa-sha512" );
     
     /** <p>Jeremy's C14N method together with SHA1</p> */
     public static final Node JjcRdfC14N_sha1 = Node.createURI( "http://www.w3.org/2004/03/trix/swp-2/JjcRdfC14N-sha1" );
+	
+	/** <p>Jeremy's C14N method together with SHA224</p> */
+    public static final Node JjcRdfC14N_sha224 = Node.createURI( "http://www.w3.org/2004/03/trix/swp-2/JjcRdfC14N-sha224" );
+	
+	/** <p>Jeremy's C14N method together with SHA256</p> */
+    public static final Node JjcRdfC14N_sha256 = Node.createURI( "http://www.w3.org/2004/03/trix/swp-2/JjcRdfC14N-sha256" );
+	
+	/** <p>Jeremy's C14N method together with SHA384</p> */
+    public static final Node JjcRdfC14N_sha384 = Node.createURI( "http://www.w3.org/2004/03/trix/swp-2/JjcRdfC14N-sha384" );
+	
+	/** <p>Jeremy's C14N method together with SHA512</p> */
+    public static final Node JjcRdfC14N_sha512 = Node.createURI( "http://www.w3.org/2004/03/trix/swp-2/JjcRdfC14N-sha512" );
     
     /** <p>Jeremy Carroll's RDF C14N method described in the 'Signing RDF Graphs' paper 
      *  http://www.hpl.hp.com/techreports/2003/HPL-2003-142.html</p>
