@@ -4,19 +4,17 @@
  */
 
 package de.fuberlin.wiwiss.ng4j.trig;
-import java.io.* ;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.Writer;
 
-import com.hp.hpl.jena.n3.N3AntlrParser;
-
+import antlr.collections.AST;
 import de.fuberlin.wiwiss.ng4j.trig.parser.TriGAntlrParser;
-
-import antlr.* ;
-import antlr.collections.*;
 
 /** Miscellaneous things in support of Antlr-derived parsers.
  * 
  * @author		Andy Seaborne
- * @version 	$Id: AntlrUtils.java,v 1.2 2004/11/25 22:14:38 cyganiak Exp $
+ * @version 	$Id: AntlrUtils.java,v 1.3 2004/11/26 00:51:07 cyganiak Exp $
  */
 
 public class AntlrUtils
@@ -38,7 +36,9 @@ public class AntlrUtils
 	public static void ast(Writer w, AST t)
 	{
 		String s = ast(t) ;
-		try { w.write(s); } catch (IOException ioEx) {}
+		try { w.write(s); } catch (IOException ioEx) {
+			// ignore silently ???
+		}
 	}
 
 	/** Format an AST node and its subnodes.  Derived from the antlr code */
@@ -50,13 +50,13 @@ public class AntlrUtils
 		ts += " '" + t.toString()+"'";
 		if (t.getFirstChild() != null)
 		{
-			ts += ASTout((BaseAST) t.getFirstChild()) ;
+			ts += ASTout(t.getFirstChild()) ;
 		}
 		if (t.getFirstChild() != null)
 			ts += " )";
 		if (t.getNextSibling() != null)
 		{
-			ts += ASTout((BaseAST) t.getNextSibling()) ;
+			ts += ASTout(t.getNextSibling()) ;
 		}
 		return ts;
 	}

@@ -1,4 +1,4 @@
-// $Id: TriGParserTest.java,v 1.6 2004/11/26 00:32:39 cyganiak Exp $
+// $Id: TriGParserTest.java,v 1.7 2004/11/26 00:51:07 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import java.io.Reader;
@@ -12,7 +12,6 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSetReader;
 import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
-import de.fuberlin.wiwiss.ng4j.trix.NamedGraphSetWriter;
 
 /**
  * Tests for TriG parsing

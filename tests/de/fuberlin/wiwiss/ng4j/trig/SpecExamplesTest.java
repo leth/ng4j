@@ -1,10 +1,9 @@
-// $Id: SpecExamplesTest.java,v 1.1 2004/11/26 00:48:38 cyganiak Exp $
+// $Id: SpecExamplesTest.java,v 1.2 2004/11/26 00:51:07 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import junit.framework.TestCase;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
-import de.fuberlin.wiwiss.ng4j.trix.NamedGraphSetWriter;
 
 /**
  * Test parsing the example TriG files from the spec
