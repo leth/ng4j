@@ -22,7 +22,7 @@ import java.text.* ;
 /** Common framework for implementing N3 writers.
  *
  * @author		Andy Seaborne
- * @version 	$Id: N3JenaWriterCommon.java,v 1.1 2004/12/13 22:56:28 cyganiak Exp $
+ * @version 	$Id: N3JenaWriterCommon.java,v 1.2 2004/12/17 11:15:31 cyganiak Exp $
  */
 
 public class N3JenaWriterCommon implements RDFWriter
@@ -38,7 +38,7 @@ public class N3JenaWriterCommon implements RDFWriter
     
     Map writerPropertyMap = null ;
 
-    final boolean doAbbreviatedBaseURIref = getBooleanValue("abbrevBaseURI", true) ; 
+    final boolean doAbbreviatedBaseURIref = false; 
     boolean alwaysAllocateBNodeLabel = false ;
     
     // Common variables

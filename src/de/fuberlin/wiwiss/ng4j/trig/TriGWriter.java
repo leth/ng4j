@@ -1,5 +1,5 @@
 /*
- * $Id: TriGWriter.java,v 1.3 2004/12/17 05:06:31 cyganiak Exp $
+ * $Id: TriGWriter.java,v 1.4 2004/12/17 11:15:31 cyganiak Exp $
  */
 package de.fuberlin.wiwiss.ng4j.trig;
 
@@ -73,8 +73,7 @@ public class TriGWriter implements NamedGraphSetWriter {
 		this.prefixMaker.addDefaultNamespace("rdfg", "http://www.w3.org/2004/03/trix/rdfg-1/");
 		Model namespaceModel = ModelFactory.createDefaultModel();
 		namespaceModel.setNsPrefixes(this.prefixMaker.getPrefixMap());
-		new N3JenaWriterOnlyNamespaces().write(
-				namespaceModel, out, baseURI);
+		new N3JenaWriterOnlyNamespaces().write(namespaceModel, out, baseURI);
 		Iterator it = getSortedGraphNames(set).iterator();
 		while (it.hasNext()) {
 			String graphName = (String) it.next();
@@ -130,6 +129,9 @@ public class TriGWriter implements NamedGraphSetWriter {
 	}
 
 	private class N3JenaWriterOnlyNamespaces extends N3JenaWriterCommon {
+		protected void writeHeader(Model model) {
+			// don't write out the base URI
+		}
 		protected void writeModel(Model model) {
 			// don't write body
 		}
