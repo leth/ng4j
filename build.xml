@@ -64,7 +64,7 @@
 		     build directory -->
 		<copy todir="${build}/">
 			<fileset dir="${src}/">
-				<include name="{$project.path}/trix/*.xsd"/>
+				<include name="${project.path}/trix/*.xsd"/>
 			</fileset>
 		</copy>
 	</target>
@@ -89,9 +89,9 @@
 	<target name="copyfiles.tests" depends="init">
 		<!-- Copies non-class files from test source directory to
 		     test build directory -->
-		<copy todir="${build}/">
-			<fileset dir="${src}/">
-				<include name="{$project.path}/trix/tests/*"/>
+		<copy todir="${build.tests}/">
+			<fileset dir="${src.tests}/">
+				<include name="${project.path}/trix/tests/*"/>
 			</fileset>
 		</copy>
 	</target>
