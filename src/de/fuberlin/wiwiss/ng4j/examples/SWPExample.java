@@ -1,9 +1,10 @@
-// $Id: SWPExample.java,v 1.5 2005/03/15 15:57:38 erw Exp $
+// $Id: SWPExample.java,v 1.6 2005/03/15 16:10:00 erw Exp $
 package de.fuberlin.wiwiss.ng4j.examples;
 
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
@@ -12,10 +13,12 @@ import de.fuberlin.wiwiss.ng4j.Quad;
 
 import de.fuberlin.wiwiss.ng4j.swp.SWPAuthority;
 import de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraph;
+import de.fuberlin.wiwiss.ng4j.swp.SWPWarrant;
 
 import de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPBadDigestException;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPBadSignatureException;
+import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPCertificateException;
 import de.fuberlin.wiwiss.ng4j.swp.impl.SWPAuthorityImpl;
 import de.fuberlin.wiwiss.ng4j.swp.impl.SWPNamedGraphSetImpl;
 import de.fuberlin.wiwiss.ng4j.swp.util.PKCS12Utils;
@@ -27,7 +30,11 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP;
  */
 public class SWPExample {
 
-	public static void main(String[] args) throws SWPBadSignatureException, SWPBadDigestException {
+	public static void main(String[] args) 
+	throws SWPBadSignatureException, 
+	SWPBadDigestException, 
+	SWPCertificateException 
+	{
 		////////////////////////////////////////////////
 		//		 Do some asserting and quoting
 		////////////////////////////////////////////////
@@ -134,7 +141,38 @@ public class SWPExample {
         // 3. call verifyAllSignatures() :-)
 		
 		//Let's do some fancy things:
-		// 1. List all assertedGraphs
+		// 1. Get all warrant graphs my this authority
+		// 2. Test to see if warrant is signed
+		// 3. Get the warrant's SWPAuthority
+		// 4. List all graphs asserted by this warrant
+		Iterator it = graphset2.getAllWarrants( rowland );
+		while ( it.hasNext() )
+		{
+			SWPWarrant warrant = ( SWPWarrant ) it.next();
+			// Let's see if this warrant is signed:
+			if ( warrant.isSigned() )
+			{
+				System.out.println( "This warrant has been signed!" );
+			}
+			else System.out.println( "This warrant has NOT been signed!" );
+			System.out.println();
+			
+			// Get the warrant's SWPAuthority
+			SWPAuthority authority = warrant.getAuthority();
+			System.out.println( "Authority's ID: "+authority.getID() );
+			System.out.println();
+			
+			// Get all asserted graphs in the warrant
+			// This *will* include the warrant graph itself.
+			// Chris, Richard: I assume this should be the case?
+			System.out.println( "Asserted Graphs in Warrant:" );
+			System.out.println();
+			Iterator itr = warrant.getAssertedGraphs();
+			while ( itr.hasNext() )
+			{
+				System.out.println( itr.next() );
+			}
+		}
 
         System.out.println();
         System.out.println("Finished :-)");
