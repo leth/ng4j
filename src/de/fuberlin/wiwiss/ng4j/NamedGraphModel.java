@@ -1,4 +1,4 @@
-// $Id: NamedGraphModel.java,v 1.2 2004/11/26 01:50:30 cyganiak Exp $
+// $Id: NamedGraphModel.java,v 1.3 2004/12/13 22:56:31 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.io.InputStream;
@@ -197,6 +197,7 @@ public class NamedGraphModel extends ModelCom implements Model {
 		}
 		if ("TRIG".equals(lang)) {
 			new TriGWriter().write(this.graphSet, writer, base);
+			return this;
 		}
 		return super.write(writer, lang, base);
 	}
@@ -208,6 +209,7 @@ public class NamedGraphModel extends ModelCom implements Model {
 		}
 		if ("TRIG".equals(lang)) {
 			new TriGWriter().write(this.graphSet, writer, null);
+			return this;
 		}
 		return super.write(writer, lang);
 	}
@@ -223,6 +225,7 @@ public class NamedGraphModel extends ModelCom implements Model {
 		}
 		if ("TRIG".equals(lang)) {
 			new TriGWriter().write(this.graphSet, writer, base);
+			return this;
 		}
 		return super.write(writer, lang, base);
 	}
@@ -234,6 +237,7 @@ public class NamedGraphModel extends ModelCom implements Model {
 		}
 		if ("TRIG".equals(lang)) {
 			new TriGWriter().write(this.graphSet, writer, null);
+			return this;
 		}
 		return super.write(writer, lang);
 	}
