@@ -11,7 +11,7 @@
 	<property name="build.tests" value="bin-tests"/>
 <!--	<property name="dist" value="dist"/>-->
 	<property name="lib" value="lib"/>
-	<property name="doc" value="doc"/>
+	<property name="doc" value="doc/javadoc"/>
    
 	<path id="project.class.path">
 		<pathelement path="${java.class.path}"/>
