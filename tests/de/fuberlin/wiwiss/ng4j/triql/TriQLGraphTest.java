@@ -1,14 +1,9 @@
-// $Id: TriQLGraphTest.java,v 1.2 2004/12/12 17:30:29 cyganiak Exp $
+// $Id: TriQLGraphTest.java,v 1.3 2005/01/16 18:38:26 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdql.Query;
-import com.hp.hpl.jena.rdql.QueryResults;
-import com.hp.hpl.jena.vocabulary.DC_11;
 
 /**
  * Tests for {@link TriQLQuery}
@@ -164,10 +159,48 @@ public class TriQLGraphTest extends TriQLTest {
 		expectBinding("y", bURI);
 	}
 
-	public void testRDQLDate() {
-		Model m = ModelFactory.createDefaultModel();
-		m.createResource("http://example.org/r").addProperty(DC_11.date, m.createTypedLiteral("2004-01-01", XSDDatatype.XSDdate));
-		QueryResults qr = Query.exec("SELECT ?x WHERE (?x ?y ?z) AND ?z < \"2004-07-15\"^^xsd:date", m);
-		assertTrue(qr.hasNext());
+	public void testGraphNameInPattern() {
+		setQuery("SELECT * WHERE ?a (?a ?b ?c)");
+		addQuad(graph1, graph1, bURI, cURI);
+		addQuad(graph1, graph2, bURI, cURI);
+		executeQuery();
+//		dumpResults();
+		assertExpectedBindingCount(1);
+		expectBinding("a", graph1);
+		expectBinding("b", aURI);
+		expectBinding("c", bURI);
+	}
+
+	public void testDuplicateVariableInPattern1() {
+		setQuery("SELECT * WHERE (?a ?a ?c)");
+		addQuad(graph1, aURI, aURI, cURI);
+		addQuad(graph1, aURI, bURI, cURI);
+		executeQuery();
+//		dumpResults();
+		assertExpectedBindingCount(1);
+		expectBinding("a", aURI);
+		expectBinding("c", cURI);
+	}
+
+	public void testDuplicateVariableInPattern2() {
+		setQuery("SELECT * WHERE (?a ?b ?a)");
+		addQuad(graph1, aURI, bURI, aURI);
+		addQuad(graph1, aURI, bURI, cURI);
+		executeQuery();
+//		dumpResults();
+		assertExpectedBindingCount(1);
+		expectBinding("a", aURI);
+		expectBinding("b", bURI);
+	}
+
+	public void testDuplicateVariableInPattern3() {
+		setQuery("SELECT * WHERE (?a ?b ?b)");
+		addQuad(graph1, aURI, bURI, bURI);
+		addQuad(graph1, aURI, bURI, cURI);
+		executeQuery();
+//		dumpResults();
+		assertExpectedBindingCount(1);
+		expectBinding("a", aURI);
+		expectBinding("b", bURI);
 	}
 }

@@ -1,4 +1,4 @@
-// $Id: QueryExecutionService.java,v 1.5 2004/12/17 01:44:29 cyganiak Exp $
+// $Id: QueryExecutionService.java,v 1.6 2005/01/16 18:38:24 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import java.net.MalformedURLException;
@@ -100,10 +100,12 @@ public class QueryExecutionService {
 			return;
 		}
 		Triple tp = gp.getTriple(tripleIndex);
-		Triple t2 = getTripleMatch(tp, matchedVars);
 		Iterator it = graph.find(getTripleMatch(tp, matchedVars));
 		while (it.hasNext()) {
 			Triple match = (Triple) it.next();
+			if (containsNonMatchingDuplicates(tp, match)) {
+				continue;
+			}
 			Map matchedVarsCopy = getCopy(matchedVars);
 			if (tp.getSubject().isVariable()) {
 				matchedVarsCopy.put(tp.getSubject().getName(), match.getSubject());
@@ -116,6 +118,23 @@ public class QueryExecutionService {
 			}
 			matchTriplePattern(tripleIndex + 1, graphIndex, graph, matchedVarsCopy);
 		}
+	}
+
+	private boolean containsNonMatchingDuplicates(Triple pattern, Triple potentialMatch) {
+		if (areSameVariable(pattern.getSubject(), pattern.getPredicate())) {
+			return !potentialMatch.getSubject().matches(potentialMatch.getPredicate());
+		}
+		if (areSameVariable(pattern.getSubject(), pattern.getObject())) {
+			return !potentialMatch.getSubject().matches(potentialMatch.getObject());
+		}
+		if (areSameVariable(pattern.getObject(), pattern.getPredicate())) {
+			return !potentialMatch.getObject().matches(potentialMatch.getPredicate());
+		}
+		return false;
+	}
+	
+	private boolean areSameVariable(Node v1, Node v2) {
+		return v1.isVariable() && v2.isVariable() && v1.getName().equals(v2.getName());
 	}
 
 	private Node varToAny(Node node) {
