@@ -1,5 +1,6 @@
 bin
 bin-tests
+doc/javadoc
 ng4j.jar
 ng4j.zip
 .classpath
