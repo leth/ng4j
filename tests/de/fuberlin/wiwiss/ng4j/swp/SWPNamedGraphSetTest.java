@@ -1,9 +1,10 @@
-//$Id: SWPNamedGraphSetTest.java,v 1.7 2005/03/14 23:44:20 erw Exp $
+//$Id: SWPNamedGraphSetTest.java,v 1.8 2005/03/15 18:44:40 erw Exp $
 package de.fuberlin.wiwiss.ng4j.swp;
 
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
@@ -11,6 +12,8 @@ import com.hp.hpl.jena.graph.Triple;
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPBadDigestException;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPBadSignatureException;
+import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPCertificateException;
+import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPSignatureException;
 import de.fuberlin.wiwiss.ng4j.swp.impl.SWPAuthorityImpl;
 import de.fuberlin.wiwiss.ng4j.swp.impl.SWPNamedGraphSetImpl;
 import de.fuberlin.wiwiss.ng4j.swp.SWPAuthority;
@@ -68,39 +71,163 @@ public class SWPNamedGraphSetTest extends TestCase
 	 * Class under test for boolean swpAssert(SWPAuthority, ArrayList)
 	 */
 	public void testSwpAssertSWPAuthorityArrayList() 
+	throws SWPSignatureException, 
+	SWPCertificateException 
 	{
-		//TODO Implement swpAssert().
+		set.swpAssert( getAuthority( keystore, password ), null );  
+		
+		Iterator it = set.getAllAssertedGraphs( getAuthority( keystore, password ) );
+		assertTrue( it.hasNext() );
+		
+		Iterator it1 = set.getAllQuotedGraphs( getAuthority( keystore, password ) );
+		assertFalse( it1.hasNext() );
+		
+		Iterator it2 = set.getAllWarrants( getAuthority( keystore, password ) );
+		assertTrue( it2.hasNext() );
+		while ( it2.hasNext() )
+		{
+			SWPWarrant warrant = ( SWPWarrant )it2.next();
+			
+			assertFalse( warrant.isSigned() );
+			
+			assertNull( warrant.getSignature() );
+			
+			assertNotNull( warrant.getAuthority() );
+			
+			Iterator itr = warrant.getAssertedGraphs();
+			assertTrue( itr.hasNext() );
+			
+			Iterator itr2 = warrant.getGraphs();
+			assertTrue( itr.hasNext() );
+			
+			Iterator itr3 = warrant.getQuotedGraphs();
+			assertFalse( itr3.hasNext() );
+		}
 	}
 
 	/*
 	 * Class under test for boolean swpAssert(SWPAuthority)
 	 */
 	public void testSwpAssertSWPAuthority() 
+	throws SWPSignatureException, 
+	SWPCertificateException 
 	{
-		//TODO Implement swpAssert().
+		set.swpAssert( getAuthority( keystore, password ) ); 
+		
+		Iterator it = set.getAllAssertedGraphs( getAuthority( keystore, password ) );
+		assertTrue( it.hasNext() );
+		
+		Iterator it1 = set.getAllQuotedGraphs( getAuthority( keystore, password ) );
+		assertFalse( it1.hasNext() );
+		
+		Iterator it2 = set.getAllWarrants( getAuthority( keystore, password ) );
+		assertTrue( it2.hasNext() );
+		while ( it2.hasNext() )
+		{
+			SWPWarrant warrant = ( SWPWarrant )it2.next();
+			
+			assertFalse( warrant.isSigned() );
+			
+			assertNull( warrant.getSignature() );
+			
+			assertNotNull( warrant.getAuthority() );
+			
+			Iterator itr = warrant.getAssertedGraphs();
+			assertTrue( itr.hasNext() );
+			
+			Iterator itr2 = warrant.getGraphs();
+			assertTrue( itr.hasNext() );
+			
+			Iterator itr3 = warrant.getQuotedGraphs();
+			assertFalse( itr3.hasNext() );
+		}
 	}
 
 	/*
 	 * Class under test for boolean swpQuote(SWPAuthority, ArrayList)
 	 */
 	public void testSwpQuoteSWPAuthorityArrayList() 
+	throws SWPSignatureException, 
+	SWPCertificateException 
 	{
-		//TODO Implement swpQuote().
+		set.swpQuote( getAuthority( keystore, password ), null ); 
+		
+		Iterator it = set.getAllQuotedGraphs( getAuthority( keystore, password ) );
+		assertTrue( it.hasNext() );
+		
+		//Don't forget the warrant graph asserts itself.
+		Iterator it1 = set.getAllAssertedGraphs( getAuthority( keystore, password ) );
+		assertTrue( it1.hasNext() );
+		
+		Iterator it2 = set.getAllWarrants( getAuthority( keystore, password ) );
+		assertTrue( it2.hasNext() );
+		while ( it2.hasNext() )
+		{
+			SWPWarrant warrant = ( SWPWarrant )it2.next();
+			
+			assertFalse( warrant.isSigned() );
+			
+			assertNull( warrant.getSignature() );
+			
+			assertNotNull( warrant.getAuthority() );
+			
+			Iterator itr = warrant.getAssertedGraphs();
+			assertTrue( itr.hasNext() );
+			
+			Iterator itr2 = warrant.getGraphs();
+			assertTrue( itr.hasNext() );
+			
+			Iterator itr3 = warrant.getQuotedGraphs();
+			assertTrue( itr3.hasNext() );
+		}
 	}
 
 	/*
 	 * Class under test for boolean swpQuote(SWPAuthority)
 	 */
 	public void testSwpQuoteSWPAuthority() 
+	throws SWPSignatureException, 
+	SWPCertificateException 
 	{
-		//TODO Implement swpQuote().
+		set.swpQuote( getAuthority( keystore, password ) ); 
+		
+		Iterator it = set.getAllQuotedGraphs( getAuthority( keystore, password ) );
+		assertTrue( it.hasNext() );
+		
+		// Don't forget the warrant graph asserts itself.
+		Iterator it1 = set.getAllAssertedGraphs( getAuthority( keystore, password ) );
+		assertTrue( it1.hasNext() );
+		
+		Iterator it2 = set.getAllWarrants( getAuthority( keystore, password ) );
+		assertTrue( it2.hasNext() );
+		while ( it2.hasNext() )
+		{
+			SWPWarrant warrant = ( SWPWarrant )it2.next();
+			
+			assertFalse( warrant.isSigned() );
+			
+			assertNull( warrant.getSignature() );
+			
+			assertNotNull( warrant.getAuthority() );
+			
+			Iterator itr = warrant.getAssertedGraphs();
+			assertTrue( itr.hasNext() );
+			
+			Iterator itr2 = warrant.getGraphs();
+			assertTrue( itr.hasNext() );
+			
+			Iterator itr3 = warrant.getQuotedGraphs();
+			assertTrue( itr3.hasNext() );
+		}
 	}
 	/*
 	 *  Class under test for boolean assertWithSignature(SWPAuthority, Node, Node, ArrayList, String, String)
 	 */
 	public void testAssertWithSignature() 
 	throws SWPBadSignatureException, 
-	SWPBadDigestException 
+	SWPBadDigestException, 
+	SWPSignatureException, 
+	SWPCertificateException 
 	{
 		assertTrue( set.assertWithSignature( getAuthority( keystore, password ), 
 				SWP.JjcRdfC14N_rsa_sha384, 
@@ -108,17 +235,43 @@ public class SWPNamedGraphSetTest extends TestCase
 				null, 
 				keystore, 
 				password ) );
-
-		//set.write( System.out, "TRIG", "" );
-		set.write( System.out, "TRIG", "" );
+		
 		assertTrue( set.verifyAllSignatures() );
+		
 		assertFalse( set.assertWithSignature( getAuthority( keystore, password ), 
 				SWP.JjcRdfC14N_rsa_sha384, 
 				SWP.JjcRdfC14N_sha384, 
 				null, 
 				keystore, 
 				password ) );
-		//set.write( System.out, "TRIG", "" );
+		
+		
+		Iterator it = set.getAllAssertedGraphs( getAuthority( keystore, password ) );
+		assertTrue( it.hasNext() );
+		
+		Iterator it1 = set.getAllQuotedGraphs( getAuthority( keystore, password ) );
+		assertFalse( it1.hasNext() );
+		
+		Iterator wit = set.getAllWarrants( getAuthority( keystore, password ) );
+		assertTrue( wit.hasNext() );
+		while ( wit.hasNext() )
+		{
+			SWPWarrant warrant =  ( SWPWarrant ) wit.next();
+			Iterator itr = warrant.getAssertedGraphs();
+			assertTrue( itr.hasNext() );
+			
+			Iterator itr1 = warrant.getQuotedGraphs();
+			assertFalse( itr1.hasNext() );
+			
+			Iterator itr2 = warrant.getGraphs();
+			assertTrue( itr2.hasNext() );
+			
+			assertNotNull( warrant.getSignature() );
+			assertNotNull( warrant.getAuthority() );
+			
+			assertTrue( warrant.isSigned() );
+			
+		}
 	}
 
 	/*
@@ -134,7 +287,15 @@ public class SWPNamedGraphSetTest extends TestCase
 				null, 
 				keystore, 
 				password ) );
+		
 		assertTrue( set.verifyAllSignatures() );
+		
+		Iterator it = set.getAllQuotedGraphs( getAuthority( keystore, password ) );
+		assertTrue( it.hasNext() );
+		
+		//Never forget the warrant graph asserts itself!
+		Iterator it1 = set.getAllAssertedGraphs( getAuthority( keystore, password ) );
+		assertTrue( it1.hasNext() );
 	}
 
 	
@@ -151,12 +312,55 @@ public class SWPNamedGraphSetTest extends TestCase
 		assertTrue( set.quoteGraphs( list, getAuthority( keystore, password ), null ) );
 	}
 
-	/*
+	
 	public void testAssertGraphsWithSignature() 
+	throws SWPBadSignatureException,
+	SWPBadDigestException, 
+	SWPSignatureException, 
+	SWPCertificateException 
 	{
-		//TODO Implement assertGraphsWithSignature().
+		ArrayList list = new ArrayList();
+		list.add(uri1);
+		list.add(uri2);
+		list.add(uri3);
+		list.add(uri4);
+		
+		set.assertGraphsWithSignature( list, 
+									getAuthority( keystore, password ), 
+									SWP.JjcRdfC14N_rsa_sha256, 
+									SWP.JjcRdfC14N_sha384, 
+									null, 
+									keystore, 
+									password );
+		
+		Iterator it = set.getAllAssertedGraphs( getAuthority( keystore, password ) );
+		assertTrue( it.hasNext() );
+		
+		Iterator it1 = set.getAllQuotedGraphs( getAuthority( keystore, password ) );
+		assertFalse( it1.hasNext() );
+		
+		Iterator wit = set.getAllWarrants( getAuthority( keystore, password ) );
+		assertTrue( wit.hasNext() );
+		while ( wit.hasNext() )
+		{
+			SWPWarrant warrant =  ( SWPWarrant ) wit.next();
+			Iterator itr = warrant.getAssertedGraphs();
+			assertTrue( itr.hasNext() );
+			
+			Iterator itr1 = warrant.getQuotedGraphs();
+			assertFalse( itr1.hasNext() );
+			
+			Iterator itr2 = warrant.getGraphs();
+			assertTrue( itr2.hasNext() );
+			
+			assertNotNull( warrant.getSignature() );
+			assertNotNull( warrant.getAuthority() );
+			
+			assertTrue( warrant.isSigned() );
+			
+		}
 	}
-	*/
+	
 	
 	public SWPAuthority getAuthority( String keystore, String password )
 	{
