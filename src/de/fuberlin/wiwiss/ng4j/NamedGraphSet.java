@@ -1,4 +1,4 @@
-// $Id: NamedGraphSet.java,v 1.6 2004/12/17 11:23:28 cyganiak Exp $
+// $Id: NamedGraphSet.java,v 1.7 2004/12/17 11:37:57 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.io.InputStream;
@@ -226,7 +226,7 @@ public interface NamedGraphSet {
 	 * <p>
 	 * <tt>Read</tt> and <tt>write</tt> operations one the returned
 	 * model have the behaviour of {@link #read(String, String)} and
-	 * {@link #write(OutputStream, String)}.
+	 * {@link #write(OutputStream, String, String)}.
 	 * <p>
 	 * All Statements returned by the NamedGraphModel can be casted to 
 	 * {@link NamedGraphStatement} to access information about the graphs
@@ -332,7 +332,7 @@ public interface NamedGraphSet {
 	 * <p>
 	 * Note that this method might generate wrong results if the Writer
 	 * is translated to bytes using anything but the system's default
-	 * encoding. For this reason, {@link #write(OutputStream, String)}
+	 * encoding. For this reason, {@link #write(OutputStream, String, String)}
 	 * should be used if possible.
 	 *
 	 * @param out The stream into which the serialization will be written
