@@ -8,12 +8,14 @@
   <body>
     <p>Support for <a href="http://www.wiwiss.fu-berlin.de/suhl/bizer/TriG/">TriG</a>,
       a serialization format for Named Graphs based on N3/Turtle.</p>
-    <p>The implementation
+    <p>The parser implementation
       is based on Jena's N3 parser. The parser is generated from an
       <a href="http://www.antlr.org/">AntLR</a> grammar. The grammar and all of
       the files generated from it are stored in the <tt>parser</tt> subpackage.</p>
     <p>The parser uses the callback interface TriGParserEventHandler. Its only
       implementation is the NamedGraphSetPopulator, which processes the parser
       events and populates a NamedGraphSet.</p>
+    <p>The serializer uses a copy of Jena's N3JenaWriterPP to write out the
+      individual graphs, with a bit of surrounding code.
   </body>
 </html>

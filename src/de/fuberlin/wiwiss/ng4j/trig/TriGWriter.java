@@ -1,5 +1,5 @@
 /*
- * $Id: TriGWriter.java,v 1.1 2004/11/26 01:50:32 cyganiak Exp $
+ * $Id: TriGWriter.java,v 1.2 2004/12/13 22:56:28 cyganiak Exp $
  */
 package de.fuberlin.wiwiss.ng4j.trig;
 
@@ -9,10 +9,17 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.impl.ModelCom;
 import com.hp.hpl.jena.shared.JenaException;
 
+import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSetWriter;
 
@@ -25,15 +32,18 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSetWriter;
  */
 public class TriGWriter implements NamedGraphSetWriter {
 	private Writer writer;
+	private NamedGraph currentGraph;
 
 	public void write(NamedGraphSet set, Writer out, String baseURI) {
 		this.writer = new BufferedWriter(out);
+		Iterator it = getSortedGraphNames(set).iterator();
+		while (it.hasNext()) {
+			String graphName = (String) it.next();
+			this.currentGraph = set.getGraph(graphName);
+			new N3JenaWriterOnlyStatements().write(
+					new ModelCom(this.currentGraph), out, baseURI);
+		}
 		try {
-			Iterator it = set.listGraphs();
-			while (it.hasNext()) {
-//				NamedGraph graph = (NamedGraph) it.next();
-// TODO @@@				writeGraph(graph);
-			}
 			this.writer.flush();
 		} catch (IOException ioex) {
 			throw new JenaException(ioex);
@@ -45,6 +55,73 @@ public class TriGWriter implements NamedGraphSetWriter {
 			write(set, new OutputStreamWriter(out, "utf-8"), baseURI);
 		} catch (UnsupportedEncodingException ueex) {
 			// UTF-8 is always supported
+		}
+	}
+
+	private String getCurrentGraphURI() {
+		return this.currentGraph.getGraphName().getURI();
+	}
+
+	private boolean currentGraphIsEmpty() {
+		return this.currentGraph.isEmpty();
+	}
+
+	private List getSortedGraphNames(NamedGraphSet set) {
+		Iterator unsortedIt = set.listGraphs();
+		List sorting = new ArrayList();
+		while (unsortedIt.hasNext()) {
+			sorting.add(((NamedGraph) unsortedIt.next()).getGraphName().getURI());
+		}
+		Collections.sort(sorting);
+		return sorting;
+	}
+
+	private class N3JenaWriterOnlyStatements extends N3JenaWriterPP {
+
+		protected void startWriting() {
+			if (TriGWriter.this.currentGraphIsEmpty()) {
+				this.out.println(formatURI(getCurrentGraphURI()) + " { }");
+				this.out.println();
+				super.startWriting();
+				return;
+			}
+			this.out.println(formatURI(getCurrentGraphURI()) + " {");
+
+			// don't use any prefixes
+			this.prefixMap = new HashMap();
+
+			// indent all statements of the graph
+			this.out.setIndent(4);
+			this.out.println();
+
+			super.startWriting();
+		}
+
+		protected void finishWriting() {
+			super.finishWriting();
+
+			if (TriGWriter.this.currentGraphIsEmpty()) {
+				return;
+			}
+			// return to normal indentation level and close graph
+			this.out.setIndent(0);
+			this.out.println();
+
+			this.out.println("}");
+			this.out.println();
+		}
+
+		protected void writeHeader(Model model) {
+			// don't write header
+		}
+
+		protected void writePrefixes(Model model) {
+			// don't write prefixes
+		}
+
+		private String getCurrentGraphURI() {
+			// Hackish ... smuggling in the current graph name
+			return TriGWriter.this.getCurrentGraphURI();
 		}
 	}
 }
