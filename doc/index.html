@@ -485,7 +485,7 @@ href="#example">Usage Examples</A> </DIV>
   Level</h3>
 <DIV class="trigInner"> 
   <pre>////////////////////////////////////////////////
-//       Operations on GraphSet Level
+//         Operations on GraphSet Level
 ////////////////////////////////////////////////
 
 // Create a new graphset
@@ -496,16 +496,17 @@ NamedGraph graph = graphset.createGraph("http://example.org/persons/123");
 
 // Add information to the NamedGraph
 graph.add(new Triple(Node.createURI("http://richard.cyganiak.de/foaf.rdf#RichardCyganiak"),
-                     Node.createURI("http://xmlns.com/foaf/0.1/name") ,
-                     Node.createLiteral("Richard Cyganiak", null, null)));
+        Node.createURI("http://xmlns.com/foaf/0.1/name") ,
+        Node.createLiteral("Richard Cyganiak", null, null)));
 
 // Create a quad
 Quad quad = new Quad(Node.createURI("http://www.bizer.de/InformationAboutRichard"),
-                     Node.createURI("http://richard.cyganiak.de/foaf.rdf#RichardCyganiak"),
-                     Node.createURI("http://xmlns.com/foaf/0.1/mbox") ,
-                     Node.createURI("mailto:richard@cyganiak.de"));
+        Node.createURI("http://richard.cyganiak.de/foaf.rdf#RichardCyganiak"),
+        Node.createURI("http://xmlns.com/foaf/0.1/mbox") ,
+        Node.createURI("mailto:richard@cyganiak.de"));
 
-// Add the quad to the graphset. This will create a new NamedGraph in the graphset.
+// Add the quad to the graphset. This will create a new NamedGraph in the
+// graphset.
 graphset.addQuad(quad);
 
 // Find information about Richard across all graphs in the graphset
@@ -525,26 +526,26 @@ while (it.hasNext()) {
 // Count all graphs in the graphset (2)
 System.out.println("The graphset contains " + graphset.countGraphs() + " graphs.");
 
-// Serialize the graphset to a TriX file
-OutputStream out = new FileOutputStream("C:/graphset.trix");
-graphset.write(out, "TRIX"); 
+// Serialize the graphset to System.out, using the TriX syntax
+graphset.write(System.out, "TRIX", null);
 
 ////////////////////////////////////////////////
-//       Operations on Model Level
+//         Operations on Model Level
 ////////////////////////////////////////////////
 
 // Get a Jena Model view on the GraphSet
 Model model = graphset.asJenaModel("http://example.org/defaultgraph");
 
 // Add provenance information about a graph
-Resource informationAboutRichard = model.getResource(&quot;http://www.bizer.de/InformationAboutRichard&quot;);<br>informationAboutRichard.addProperty(
-       model.createProperty(&quot;http://purl.org/dc/elements/1.1/author&quot;), &quot;Chris Bizer&quot;);<br>informationAboutRichard.addProperty(
-       model.createProperty(&quot;http://purl.org/dc/elements/1.1/date&quot;), &quot;09/15/2004&quot;);
+Resource informationAboutRichard = model.getResource("http://www.bizer.de/InformationAboutRichard");
+informationAboutRichard.addProperty(model.createProperty("http://purl.org/dc/elements/1.1/author"), "Chris Bizer");
+informationAboutRichard.addProperty(model.createProperty("http://purl.org/dc/elements/1.1/date"), "09/15/2004");
 
 // Get a Jena resource and statement
 Resource richard = model.getResource("http://richard.cyganiak.de/foaf.rdf#RichardCyganiak");
+
 NamedGraphStatement mboxStmt = 
-    (NamedGraphStatement) richard.getProperty(model.getProperty("http://xmlns.com/foaf/0.1/mbox"));
+        (NamedGraphStatement) richard.getProperty(model.getProperty("http://xmlns.com/foaf/0.1/mbox"));
 
 // Get an iterator over all graphs which contain the statement.
 it = mboxStmt.listGraphNames();
@@ -552,17 +553,19 @@ it = mboxStmt.listGraphNames();
 // So who has published my email address all over the Web??!?
 while (it.hasNext()) {
     Resource g = (Resource) it.next();
+    System.out.println();
     System.out.println("GraphName: " + g.toString());
     System.out.println("Author: " + 
         g.getProperty(model.getProperty("http://purl.org/dc/elements/1.1/author")).getString());
     System.out.println("Date: " + 
         g.getProperty(model.getProperty("http://purl.org/dc/elements/1.1/date")).getString());
-} 
+}
 
-// Serialize the model to a TriX file<br>out = new FileOutputStream(&quot;C:/model.trix&quot;);
-model.write(out, &quot;TRIX&quot;);
-</pre>
-  </DIV>
+// Serialize the model to System.out, using the TriG syntax
+model.write(System.out, "TRIG", "http://richard.cyganiak.de/foaf.rdf");</pre>
+</DIV>
+<p>When run, the example code will write <a href="example_output.txt">this output</a> to System.out.</p>
+
 <p>&nbsp;</p><h3><A id=TriQL name=TriQL>2.2 Querying Named Graphs with TriQL</A></h3>
 
 <p><a href="http://www.wiwiss.fu-berlin.de/suhl/bizer/TriQL/">TriQL</a> is a query 
@@ -714,7 +717,7 @@ NamedGraphSetDB.delete(connection, "myapp");</pre>
   <a href="http://page.mi.fu-berlin.de/%7Ecyganiak/" target="_blank">http://page.mi.fu-berlin.de/~cyganiak/</a><br>
 </p>
 <HR title="Separator for header">
-<p>$Date: 2004/12/17 05:08:00 $<br />
-  $Id: index.html,v 1.11 2004/12/17 05:08:00 cyganiak Exp $</p>
+<p>$Date: 2004/12/17 11:31:40 $<br />
+  $Id: index.html,v 1.12 2004/12/17 11:31:40 cyganiak Exp $</p>
 </BODY>
 </HTML>
