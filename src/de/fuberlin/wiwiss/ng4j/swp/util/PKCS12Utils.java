@@ -16,6 +16,8 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Enumeration;
 
+import org.apache.log4j.Category;
+
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPCertificateException;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPPKCS12Exception;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPSignatureException;
@@ -23,7 +25,7 @@ import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPSignatureException;
 
 public class PKCS12Utils {
 	private static final String KEY_STORE_TYPE_PKCS12 = "PKCS12";
-
+	static final Category log = Category.getInstance( PKCS12Utils.class );
 	/**
 	 * Loads and decrypt the PCKS12 file specified in the configuration properties.
 	 * 
@@ -111,12 +113,12 @@ public class PKCS12Utils {
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} 
+			}
             catch ( SWPCertificateException e ) 
             {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} 
+				log.error( e.getMessage() );
+				throw new SWPSignatureException( e.getMessage() );
+			}
             catch ( SWPPKCS12Exception e ) 
             {
 				// TODO Auto-generated catch block
@@ -146,24 +148,33 @@ public class PKCS12Utils {
 		    KeyStore ks = null;
 		    String alias = null;
 	        Certificate[] certChain = null;
-			try {
+			try 
+			{
 				ks = PKCS12Utils.loadAndDecryptPKCS12( pkcs12, password );
 				Enumeration aliasesEnum = ks.aliases();
 				while ( aliasesEnum.hasMoreElements() ) 
 		        {
-		            alias = (String)aliasesEnum.nextElement();
+		            alias = ( String ) aliasesEnum.nextElement();
 		            certChain = ks.getCertificateChain( alias );
 		        }
-			} catch (SWPSignatureException e) {
+			} 
+			catch ( SWPSignatureException e ) 
+			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (SWPCertificateException e) {
+			}
+			catch ( SWPCertificateException e ) 
+			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (SWPPKCS12Exception e) {
+			}
+			catch ( SWPPKCS12Exception e ) 
+			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (KeyStoreException e) {
+			} 
+			catch ( KeyStoreException e ) 
+			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
