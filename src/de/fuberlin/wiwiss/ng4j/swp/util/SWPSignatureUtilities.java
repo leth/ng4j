@@ -26,6 +26,8 @@ import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.PKIXParameters;
 import java.security.cert.TrustAnchor;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.DSAPrivateKey;
+import java.security.interfaces.RSAPrivateKey;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -312,7 +314,7 @@ public class SWPSignatureUtilities
          */
         Signature sig = null;
             
-		if ( key instanceof PrivateKey  )
+		if ( key instanceof RSAPrivateKey  )
 		{
 			if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha1 ) ) 
 	        {
@@ -341,17 +343,7 @@ public class SWPSignatureUtilities
 	        }
 	        else if ( signatureMethod.equals( SWP.JjcRdfC14N_dsa_sha1 ) ) 
 	        {
-				try 
-				{
-					sig = Signature.getInstance( ALG_ID_SIGNATURE_SHA1withDSA, new BouncyCastleProvider() );
-				}
-				catch ( NoSuchAlgorithmException e )
-		    	{
-		    		log.fatal( ALG_ID_SIGNATURE_SHA1withDSA +" not found! " +e.getMessage() );
-		    		throw new SWPNoSuchAlgorithmException( "The signature" +
-		    				"method: "+signatureMethod+" does not exist.", e ); 
-		    	}
-	            log.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA1withDSA );
+				throw new SWPAlgorithmNotSupportedException( "RSA private key detected. DSA encyption is not supported." );
 	        }
 	        else 
 	        {
@@ -387,7 +379,49 @@ public class SWPSignatureUtilities
 	        }
 	        else if ( signatureMethod.equals( SWP.JjcRdfC14N_dsa_sha1 ) ) 
 	        {
-				throw new SWPAlgorithmNotSupportedException( "DSA private key detected. PGP DSA is not supported." );
+				throw new SWPAlgorithmNotSupportedException( "RSA private key detected. PGP DSA encryption is not supported." );
+	        }
+	        else 
+	        {
+	            throw new SWPNoSuchAlgorithmException( "The signature" +
+	            		"method: "+signatureMethod+" does not exist." );
+	        }
+		}
+		else if ( key instanceof DSAPrivateKey )
+		{
+			if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha1 ) ) 
+	        {
+				throw new SWPAlgorithmNotSupportedException( "DSA private key detected. RSA is not supported." );
+	        }
+			else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha224 ) ) 
+	        {
+				throw new SWPAlgorithmNotSupportedException( "DSA private key detected. RSA is not supported." );
+	        }
+			else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha256 ) ) 
+	        {
+				throw new SWPAlgorithmNotSupportedException( "DSA private key detected. RSA is not supported." );
+	        }
+			else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha384 ) ) 
+	        {
+				throw new SWPAlgorithmNotSupportedException( "DSA private key detected. RSA is not supported." );
+	        }
+			else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha512 ) ) 
+	        {
+				throw new SWPAlgorithmNotSupportedException( "DSA private key detected. RSA is not supported." );
+	        }
+	        else if ( signatureMethod.equals( SWP.JjcRdfC14N_dsa_sha1 ) ) 
+	        {
+				try 
+				{
+					sig = Signature.getInstance( ALG_ID_SIGNATURE_SHA1withDSA, new BouncyCastleProvider() );
+				}
+				catch ( NoSuchAlgorithmException e )
+		    	{
+		    		log.fatal( ALG_ID_SIGNATURE_SHA1withDSA +" not found! " +e.getMessage() );
+		    		throw new SWPNoSuchAlgorithmException( "The signature" +
+		    				"method: "+signatureMethod+" does not exist.", e ); 
+		    	}
+	            log.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA1withDSA );
 	        }
 	        else 
 	        {
@@ -1155,6 +1189,7 @@ public class SWPSignatureUtilities
      * @param aTrustedCACertificates a list of most trusted root CA certificates.
      * @throws CertPathValidatorException if the certification chain is invalid.
      */
+	/*
     public static void verifyCertificationChain( CertPath aCertChain,
         ArrayList aTrustedCACertificates )
     throws GeneralSecurityException 
@@ -1191,7 +1226,7 @@ public class SWPSignatureUtilities
 
         // Execute the certification chain validation
         chainValidator.validate( certChainForValidation, certPathValidatorParams );
-    }
+    }*/
     
     /**
      * Removes the last certificate from given certification chain.
@@ -1200,6 +1235,7 @@ public class SWPSignatureUtilities
      * 
      * @return given cert chain without the last certificate in it.
      */
+	/*
     private static CertPath removeLastCertFromCertChain( CertPath aCertChain )
     throws CertificateException 
     {
@@ -1210,7 +1246,7 @@ public class SWPSignatureUtilities
         CertPath certChainWithoutLastCertificate = cf.generateCertPath( certsWithoutLast );
         
         return certChainWithoutLastCertificate;
-    }
+    }*/
 }
 
 /*
