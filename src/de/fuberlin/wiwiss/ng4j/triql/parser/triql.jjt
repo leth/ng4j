@@ -179,6 +179,8 @@ TOKEN [IGNORE_CASE] :
   < FOR:         "for" >
 | < STR_EQ: "eq" >
 | < STR_NE: "ne" >
+| < METRIC: "metric" >
+| < COUNT: "count" >
 }
 
 TOKEN :
@@ -404,6 +406,22 @@ void PrefixDecl() :
 
 // **** Debug point
 
+void CountOrExpression() #void :
+{}
+{
+  CountExpression()
+|
+  Expression()
+}
+
+void CountExpression() #void :
+{}
+{
+  <COUNT> <LPAREN> Var() <RPAREN>
+  ( <LT> | <EQ> | <NEQ> | <GT> | <LE> | <GE> )
+  NumericLiteral()
+}
+
 void Expression() #void :
 {}
 {
@@ -569,9 +587,18 @@ void UnaryExpressionNotPlusMinus() #void :
   PrimaryExpression()
 }
 
+// TriQL.P metrics -- not necessary for vanilla TriQL!
+void MetricExpression() :
+{}
+{
+  <METRIC> <LPAREN> URI() <COMMA> Expression() ( <COMMA> Expression() )* <RPAREN>
+}
+
 void PrimaryExpression() #void :
 {}
 {
+  MetricExpression()		// Only for TriQL.P metrics
+|						// Only for TriQL.P metrics
   Var()
 |
   Literal()

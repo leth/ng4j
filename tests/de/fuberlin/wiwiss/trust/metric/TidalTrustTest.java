@@ -1,10 +1,7 @@
 package de.fuberlin.wiwiss.trust.metric;
 
-import java.util.Iterator;
-
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.graph.Graph;
+import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.shared.PrefixMapping;
@@ -12,9 +9,9 @@ import com.hp.hpl.jena.shared.PrefixMapping;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 import de.fuberlin.wiwiss.trust.EXPL;
+import de.fuberlin.wiwiss.trust.ExplanationPart;
 import de.fuberlin.wiwiss.trust.Metric;
 import de.fuberlin.wiwiss.trust.MetricResult;
-import de.fuberlin.wiwiss.trust.ExplanationPart;
 
 
 /**
@@ -29,7 +26,7 @@ public class TidalTrustTest {
 
         // get data source
         NamedGraphSet data = new NamedGraphSetImpl();
-        data.read("file:/home/voodoo/Java/project/trustlayer/ng4j/tests/de/fuberlin/wiwiss/trust/metric/testDataTidalTrust.trig", "TRIG");
+        data.read("file:tests/de/fuberlin/wiwiss/trust/metric/testDataTidalTrust.trig", "TRIG");
         
         // run metric
         java.util.List arguments = new java.util.LinkedList();

@@ -1,5 +1,6 @@
 package de.fuberlin.wiwiss.trust.example;
 
+import java.util.Collections;
 import java.util.Iterator;
 
 import com.hp.hpl.jena.graph.Node;
@@ -22,7 +23,7 @@ import de.fuberlin.wiwiss.trust.TrustPolicy;
 /**
  * Runs a few tests.
  *
- * @version $Id: TrustLayerTest.java,v 1.1 2005/02/18 01:45:00 cyganiak Exp $
+ * @version $Id: TrustLayerTest.java,v 1.2 2005/03/15 08:59:08 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class TrustLayerTest {
@@ -31,16 +32,16 @@ public class TrustLayerTest {
 
         // get trust policy
         Model tplFile = ModelFactory.createDefaultModel();
-        tplFile.read("file:examples/finPolicies.n3", "N3");
+        tplFile.read("file:doc/trustlayer/finPolicies.n3", "N3");
         PolicySuite suite = new PolicySuiteFromRDFBuilder(
-                tplFile.getGraph()).buildPolicySuite();
-        TrustPolicy policy = suite.getTrustPolicy("http://www.fu-berlin/suhl/bizer/financialscenario/policies/Policy1");
+                tplFile.getGraph(), Collections.EMPTY_LIST).buildPolicySuite();
+        TrustPolicy policy = suite.getTrustPolicy("http://www.fu-berlin/suhl/bizer/financialscenario/policies/Policy2");
 //        TrustPolicy policy = TrustPolicy.TRUST_EVERYTHING;
 //        TrustPolicy policy = FixtureWithLotsOfNodes.getPolicyTrustOnlySelfAssertedInformation();
         
         // get data source
         NamedGraphSet source = new NamedGraphSetImpl();
-        source.read("file:examples/finData2.trig", "TRIG");
+        source.read("file:doc/trustlayer/finData.trig", "TRIG");
         
         // run query
         TrustEngine trusted = new TrustEngine(source);

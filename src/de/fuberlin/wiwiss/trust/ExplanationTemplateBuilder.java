@@ -1,7 +1,5 @@
 package de.fuberlin.wiwiss.trust;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +7,7 @@ import java.util.Map;
 import com.hp.hpl.jena.graph.Node;
 
 /**
- * @version $Id: ExplanationTemplateBuilder.java,v 1.1 2005/02/18 01:44:59 cyganiak Exp $
+ * @version $Id: ExplanationTemplateBuilder.java,v 1.2 2005/03/15 08:59:08 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class ExplanationTemplateBuilder {
@@ -28,43 +26,41 @@ public class ExplanationTemplateBuilder {
         if (this.rootTemplateNode == null && this.patternsToTemplateNodes.isEmpty()) {
             return null;	// no explanations at all defined
         }
-        ExplanationTemplate rootExplanation =
-            (this.rootTemplateNode == null)
-                    ? new ExplanationTemplate()
-                    : createExplanationTemplate(this.rootTemplateNode);
-        GraphPatternTreeNode root =
-            new GraphPatternTreeBuilder(this.patterns).getRootNode();
-        addChildTemplates(rootExplanation, getChildTemplates(root));
-        return rootExplanation;
+        return createExplanationTemplate(
+                this.rootTemplateNode,
+                new GraphPatternTreeBuilder(this.patterns).getRootNode());
     }
-    
-    private ExplanationTemplate createExplanationTemplate(Node pattern) {
-        return new ExplanationTemplate(
-                pattern.getLiteral().getLexicalForm(),
-                pattern.getLiteral().language());
+
+    private ExplanationTemplate createExplanationTemplate(Node rdfExplanationTemplate, 
+            GraphPatternTreeNode currentPattern) {
+        ExplanationTemplate result;
+        if (rdfExplanationTemplate == null) {
+            result = new ExplanationTemplate();
+        } else {
+            result = new ExplanationTemplate(
+		            rdfExplanationTemplate.getLiteral().getLexicalForm(),
+		            rdfExplanationTemplate.getLiteral().language());
+        }
+        addChildTemplates(result, currentPattern);
+        return result;
     }
-    
-    private void addChildTemplates(ExplanationTemplate template, List children) {
-        Iterator it = children.iterator();
+
+    private void addChildTemplates(ExplanationTemplate parent,
+            GraphPatternTreeNode currentPattern) {
+        Iterator it = currentPattern.getChildren().iterator();
         while (it.hasNext()) {
-            ExplanationTemplate child = (ExplanationTemplate) it.next();
-            template.addChild(child);
+            GraphPatternTreeNode child = (GraphPatternTreeNode) it.next();
+            Node rdfTemplate = getRDFExplanationTemplateNode(child);
+            if (rdfTemplate == null) {
+                addChildTemplates(parent, child);
+            } else {
+                parent.addChild(createExplanationTemplate(rdfTemplate, child));
+            }
         }
     }
     
-    private List getChildTemplates(GraphPatternTreeNode node) {
-        Node patternForNode = (Node) this.patternsToTemplateNodes.get(
-                node.getGraphPattern());
-        if (patternForNode == null) {
-            List result = new ArrayList();
-            Iterator it = node.getChildren().iterator();
-            while (it.hasNext()) {
-                GraphPatternTreeNode child = (GraphPatternTreeNode) it.next();
-                result.addAll(getChildTemplates(child));
-            }
-            return result;
-        }
-        ExplanationTemplate template = createExplanationTemplate(patternForNode);
-        return Collections.singletonList(template);
+    private Node getRDFExplanationTemplateNode(GraphPatternTreeNode forPattern) {
+        return (Node) this.patternsToTemplateNodes.get(
+                forPattern.getGraphPattern());        
     }
 }

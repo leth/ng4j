@@ -22,7 +22,7 @@ import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
  * Service for building a {@link PolicySuite} from an RDF graph containing
  * the policy's description using the TPL vocabulary.
  *
- * @version $Id: PolicySuiteFromRDFBuilder.java,v 1.1 2005/02/18 01:45:00 cyganiak Exp $
+ * @version $Id: PolicySuiteFromRDFBuilder.java,v 1.2 2005/03/15 08:59:08 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class PolicySuiteFromRDFBuilder {
@@ -31,14 +31,18 @@ public class PolicySuiteFromRDFBuilder {
     private PrefixMapping prefixes;
     private PolicySuite resultSuite;
     private Node suiteNode;
+    private Collection metricInstances;
     
     /**
      * @param suiteGraph A Jena RDF graph containing a description of a
      *        policy suite using the TPL vocabulary
+     * @param metricInstances A collection of {@link Metric} instances
+     *        that will be available to the policies
      */
-    public PolicySuiteFromRDFBuilder(Graph suiteGraph) {
+    public PolicySuiteFromRDFBuilder(Graph suiteGraph, Collection metricInstances) {
         this.graph.getBulkUpdateHandler().add(suiteGraph);
         this.prefixes = suiteGraph.getPrefixMapping();
+        this.metricInstances = metricInstances;
     }
     
     /**
@@ -82,6 +86,7 @@ public class PolicySuiteFromRDFBuilder {
         Iterator it = policyNodes.iterator();
         while (it.hasNext()) {
             Node policyNode = (Node) it.next();
+            System.out.println(policyNode);
             if (!policyNode.isURI()) {
                 throw new TPLException(
                         "tpl:TrustPolicies must be URIs; " + policyNode + " is not");
@@ -160,7 +165,8 @@ public class PolicySuiteFromRDFBuilder {
     }
     
     private Condition buildCondition(String condition) {
-        return new ConditionParser(condition, this.prefixes).parse();
+        return new ConditionParser(
+                condition, this.prefixes, this.metricInstances).parse();
     }
     
     private void checkForUnlinkedPolicies() {
