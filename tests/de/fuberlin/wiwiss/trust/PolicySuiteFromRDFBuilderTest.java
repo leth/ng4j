@@ -23,7 +23,7 @@ import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
  * TODO: tpl:graphExplanation
  * TODO: Warn when unknown term from the tpl namespace are used
  * 
- * @version $Id: PolicySuiteFromRDFBuilderTest.java,v 1.5 2005/03/22 22:09:04 cyganiak Exp $
+ * @version $Id: PolicySuiteFromRDFBuilderTest.java,v 1.6 2005/03/26 23:56:46 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class PolicySuiteFromRDFBuilderTest extends TestCase {
@@ -296,32 +296,6 @@ public class PolicySuiteFromRDFBuilderTest extends TestCase {
         TrustPolicy policy = this.suite.getTrustPolicy(policy1URI);
         assertEquals("Explanation: {Explanation: 'Foo @@?a@@'}",
                 policy.getExplanationTemplate().toString());
-    }
-    
-    public void testUndefinedVarInGraphPatternExplanation() {
-        addSuiteAndPolicy1();
-        this.graph.add(new Triple(policy1, TPL.graphPattern, pattern1));
-        this.graph.add(new Triple(pattern1, TPL.pattern, Node.createLiteral("?GRAPH (?a ?a ?a)")));
-        this.graph.add(new Triple(pattern1, TPL.textExplanation,
-                Node.createLiteral("Foo @@?undefined@@")));
-        try {
-            buildSuite();
-            fail("Expected TPLException because ?undefined isn't defined anywhere");
-        } catch (TPLException ex) {
-            // is expected
-        }
-    }
-    
-    public void testUndefinedVarInRootExplanation() {
-        addSuiteAndPolicy1();
-        this.graph.add(new Triple(policy1, TPL.textExplanation,
-                Node.createLiteral("Foo @@?undefined@@")));
-        try {
-            buildSuite();
-            fail("Expected TPLException because ?undefined isn't defined anywhere");
-        } catch (TPLException ex) {
-            // is expected
-        }
     }
     
     public void testWarnOnGraphPatternWithMultipleExplanations() {

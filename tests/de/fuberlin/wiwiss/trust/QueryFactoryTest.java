@@ -12,7 +12,7 @@ import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
 import de.fuberlin.wiwiss.ng4j.triql.TriQLQuery;
 
 /**
- * @version $Id: QueryFactoryTest.java,v 1.3 2005/03/22 01:01:21 cyganiak Exp $
+ * @version $Id: QueryFactoryTest.java,v 1.4 2005/03/26 23:56:46 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class QueryFactoryTest extends FixtureWithLotsOfNodes {
@@ -132,6 +132,7 @@ public class QueryFactoryTest extends FixtureWithLotsOfNodes {
 				richard, knows, joe), TrustPolicy.TRUST_EVERYTHING, sysVars);
 		TriQLQuery query = factory.buildQuery();
 		assertEquals(richardNode, query.getPreboundVariableValues().get("USER"));
+		assertTrue(query.getResultVars().contains("USER"));
 	}
 
 	private TriQLQuery buildQuery(Triple findMe, TrustPolicy policy) {

@@ -9,7 +9,7 @@ import junit.framework.TestCase;
 import com.hp.hpl.jena.graph.Node;
 
 /**
- * @version $Id: VariableBindingTest.java,v 1.2 2005/03/21 00:23:24 cyganiak Exp $
+ * @version $Id: VariableBindingTest.java,v 1.3 2005/03/26 23:56:46 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class VariableBindingTest extends TestCase {
@@ -45,7 +45,6 @@ public class VariableBindingTest extends TestCase {
                 Arrays.asList(new String[] {"b", "c"}));
         VariableBinding expected = new VariableBinding();
         expected.setValue("b", Node.createLiteral("b"));
-        expected.setValue("c", null);
         assertEquals(expected, subset);
     }
     
