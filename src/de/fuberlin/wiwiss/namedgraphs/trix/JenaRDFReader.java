@@ -1,5 +1,5 @@
 /*
- * $Id: JenaRDFReader.java,v 1.1 2004/09/13 14:37:27 cyganiak Exp $
+ * $Id: JenaRDFReader.java,v 1.2 2004/09/13 22:36:19 cyganiak Exp $
  */
 package de.fuberlin.wiwiss.namedgraphs.trix;
 
@@ -11,7 +11,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.xml.sax.SAXException;
@@ -30,13 +29,14 @@ import com.hp.hpl.jena.shared.JenaException;
  * <a href="http://www.hpl.hp.com/techreports/2004/HPL-2004-56">TriX
  * specification</a>) to the Jena framework. Does not support
  * TriX's named graph features. It adds all statements from
- * all graphs to a Jena model, ignoring graph names and boundaries.
+ * the first graph to a Jena model, ignoring its name if present,
+ * and ignoring all further graphs if present.
  *
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class JenaRDFReader implements RDFReader, ParserCallback {
 	private Model targetModel;
-	private List statements = new ArrayList();
+	private boolean done = false;
 	private Resource subject;
 	private Property predicate;
 	private RDFNode object;
@@ -48,7 +48,6 @@ public class JenaRDFReader implements RDFReader, ParserCallback {
 		this.targetModel = model;
 		try {
 			new TriXParser().parse(r, new URI(base), this);
-			addTriplesToModel();
 		} catch (IOException e) {
 			throw new JenaException(e);
 		} catch (SAXException e) {
@@ -65,7 +64,6 @@ public class JenaRDFReader implements RDFReader, ParserCallback {
 		this.targetModel = model;
 		try {
 			new TriXParser().parse(r, new URI(base), this);
-			addTriplesToModel();
 		} catch (IOException e) {
 			throw new JenaException(e);
 		} catch (SAXException e) {
@@ -108,16 +106,12 @@ public class JenaRDFReader implements RDFReader, ParserCallback {
 		return null;
 	}
 
-	private void addTriplesToModel() {
-		this.targetModel.add(this.statements);
-	}
-
 	public void startGraph(List uris) {
-		// ignore individual graphs
+		// ignore graph names
 	}
 
 	public void endGraph() {
-		// ignore individual graphs
+		this.done = true;	// ignore all further graphs
 	}
 
 	public void subjectURI(String uri) {
@@ -161,7 +155,10 @@ public class JenaRDFReader implements RDFReader, ParserCallback {
 	}
 	
 	private void addStatement() {
-		this.statements.add(this.targetModel.createStatement(
+		if (this.done) {
+			return;
+		}
+		this.targetModel.add(this.targetModel.createStatement(
 				this.subject, this.predicate, this.object));
 	}
 }
