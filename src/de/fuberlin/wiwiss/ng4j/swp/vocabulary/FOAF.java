@@ -1,6 +1,7 @@
 package de.fuberlin.wiwiss.ng4j.swp.vocabulary;
 
 import com.hp.hpl.jena.rdf.model.*;
+import com.hp.hpl.jena.graph.Node;
  
 /**
  * Vocabulary definitions from /home/erw01r/workspace/dp/FOAF.owl 
@@ -130,7 +131,11 @@ public class FOAF {
      *  has any particular value for foaf:mbox.</p>
      */
     public static final Property mbox = m_model.createProperty( "http://xmlns.com/foaf/0.1/mbox" );
-    
+
+    /** <p>Returns foaf:mbox as a node.</p>
+     */
+	public static final Node mboxNode = Node.createURI( "http://xmlns.com/foaf/0.1/mbox" );
+
     /** <p>An organization funding a project or person.</p> */
     public static final Property fundedBy = m_model.createProperty( "http://xmlns.com/foaf/0.1/fundedBy" );
     
