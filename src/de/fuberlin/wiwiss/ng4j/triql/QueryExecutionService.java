@@ -1,4 +1,4 @@
-// $Id: QueryExecutionService.java,v 1.2 2004/11/02 02:00:24 cyganiak Exp $
+// $Id: QueryExecutionService.java,v 1.3 2004/11/26 03:42:16 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import java.net.MalformedURLException;
@@ -69,7 +69,7 @@ public class QueryExecutionService {
 		}
 		GraphPattern gp =
 				(GraphPattern) this.query.getGraphPatterns().get(index);
-		Node graphName = getPossiblyMatchedNode(gp.getName(), matchedVars);
+		Node graphName = eliminateVariables(gp.getName(), matchedVars);
 		if (!this.source.containsGraph(graphName)) {
 			return;
 		}
@@ -79,9 +79,9 @@ public class QueryExecutionService {
 			Iterator it = this.source.listGraphs();
 			while (it.hasNext()) {
 				NamedGraph graph = (NamedGraph) it.next();
-				if (graphName.isVariable()) {
+				if (gp.getName().isVariable()) {
 					Map matchedVarsCopy = getCopy(matchedVars);
-					matchedVarsCopy.put(graphName.getName(), graph.getGraphName());
+					matchedVarsCopy.put(gp.getName().getName(), graph.getGraphName());
 					matchGraph(index, graph, matchedVarsCopy);
 				} else {
 					matchGraph(index, graph, matchedVars);
@@ -118,13 +118,6 @@ public class QueryExecutionService {
 			}
 			matchTriplePattern(tripleIndex + 1, graphIndex, graph, matchedVarsCopy);
 		}
-	}
-
-	private Node getPossiblyMatchedNode(Node node, Map matchedVars) {
-		if (node.isVariable() && matchedVars.containsKey(node.getName())) {
-			return (Node) matchedVars.get(node.getName());
-		}
-		return node;
 	}
 
 	private Node eliminateVariables(Node node, Map matchedVars) {

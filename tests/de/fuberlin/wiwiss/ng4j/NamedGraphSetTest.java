@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetTest.java,v 1.2 2004/11/02 02:00:35 cyganiak Exp $
+// $Id: NamedGraphSetTest.java,v 1.3 2004/11/26 03:42:17 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.util.ArrayList;
@@ -23,13 +23,13 @@ import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class NamedGraphSetTest extends TestCase {
-	private final static String uri1 = "http://example.org/graph1";
-	private final static String uri2 = "http://example.org/graph2";
-	private final static Node node1 = Node.createURI("http://example.org/graph1");
-	private final static Node node2 = Node.createURI("http://example.org/graph2");
-	private final static Node foo = Node.createURI("http://example.org/#foo");
-	private final static Node bar = Node.createURI("http://example.org/#bar");
-	private final static Node baz = Node.createURI("http://example.org/#baz");
+	protected final static String uri1 = "http://example.org/graph1";
+	protected final static String uri2 = "http://example.org/graph2";
+	protected final static Node node1 = Node.createURI("http://example.org/graph1");
+	protected final static Node node2 = Node.createURI("http://example.org/graph2");
+	protected final static Node foo = Node.createURI("http://example.org/#foo");
+	protected final static Node bar = Node.createURI("http://example.org/#bar");
+	protected final static Node baz = Node.createURI("http://example.org/#baz");
 
 	protected NamedGraphSet set;
 

@@ -1,17 +1,19 @@
-// $Id: MySQLTest.java,v 1.2 2004/11/02 02:26:08 cyganiak Exp $
+// $Id: MySQLTest.java,v 1.3 2004/11/26 03:42:17 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
-import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.mem.GraphMem;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSetTest;
 import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphImpl;
+import de.fuberlin.wiwiss.ng4j.triql.TriQLQuery;
 
 /**
  * Tests for DB persistence. Needs a MySQL database. Connection data must be
@@ -25,8 +27,6 @@ public class MySQLTest extends NamedGraphSetTest {
 	private static final String URL = "jdbc:mysql://localhost/ng4j";
 	private static final String USER = "root";
 	private static final String PW = "";
-	private static final Node node1 = Node.createURI("http://example.org/node1");
-	private static final Node node2 = Node.createURI("http://example.org/node2");
 
 	public void setUp() throws Exception {
 		Class.forName("com.mysql.jdbc.Driver");
@@ -63,5 +63,26 @@ public class MySQLTest extends NamedGraphSetTest {
 		assertFalse(this.set.isEmpty());
 		it.remove();
 		assertTrue(this.set.isEmpty());
+	}
+	
+	public void testTriQL() {
+		List l = new ArrayList();
+		l.add(new Quad(node1, foo, bar, baz));
+		l.add(new Quad(node1, foo, foo, foo));
+		l.add(new Quad(node2, foo, foo, foo));
+		Iterator it = l.iterator();
+		while (it.hasNext()) {
+			Quad q = (Quad) it.next();
+			this.set.addQuad(q);
+		}
+		it = TriQLQuery.exec(this.set, "SELECT * WHERE ?graph (?s ?p ?o)");
+		List actual = new ArrayList();
+		assertTrue(it.hasNext());
+		actual.add(it.next());
+		assertTrue(it.hasNext());
+		actual.add(it.next());
+		assertTrue(it.hasNext());
+		actual.add(it.next());
+		assertFalse(it.hasNext());
 	}
 }
