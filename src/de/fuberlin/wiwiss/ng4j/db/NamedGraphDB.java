@@ -1,4 +1,4 @@
-// $Id: NamedGraphDB.java,v 1.1 2004/11/02 02:00:23 cyganiak Exp $
+// $Id: NamedGraphDB.java,v 1.2 2004/12/17 01:49:50 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.util.Iterator;
@@ -39,7 +39,7 @@ public class NamedGraphDB extends GraphBase implements NamedGraph {
 		this.db.delete(this.graphName, t.getSubject(), t.getPredicate(), t.getObject());
 	}
 
-	public ExtendedIterator find(TripleMatch m) {
+	public ExtendedIterator graphBaseFind(TripleMatch m) {
 		final Iterator quadIt = this.db.find(
 				this.graphName,
 				m.getMatchSubject(),
