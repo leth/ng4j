@@ -5,6 +5,7 @@
 package de.fuberlin.wiwiss.ng4j.swp.util;
 
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 
 import com.hp.hpl.jena.graph.Node;
@@ -13,6 +14,8 @@ import com.hp.hpl.jena.graph.Triple;
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.swp.SWPAuthority;
 import de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraphSet;
+import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPAlgorithmNotSupportedException;
+import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPCertificateException;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPInvalidKeyException;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPNoSuchAlgorithmException;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPNoSuchDigestMethodException;
@@ -70,12 +73,15 @@ public class SWPSignatureUtilitiesTest extends TestCase
 
 	public void testGetCanonicalGraph() 
 	{
-		String canon1a = SWPSignatureUtilities.getCanonicalGraph( g1 );
-		String canon1b = SWPSignatureUtilities.getCanonicalGraph( g1 );
-		String canon2a = SWPSignatureUtilities.getCanonicalGraph( g2 );
-		String canon2b = SWPSignatureUtilities.getCanonicalGraph( g2 );
-		assertEquals(canon1a, canon1b);
-		assertEquals(canon2a, canon2b);
+		String canon1 = SWPSignatureUtilities.getCanonicalGraph( g1 );
+		String canon2 = SWPSignatureUtilities.getCanonicalGraph( g1 );
+		String canon3 = SWPSignatureUtilities.getCanonicalGraph( g2 );
+		String canon4 = SWPSignatureUtilities.getCanonicalGraph( g2 );
+		assertEquals(canon1, canon2);
+		assertNotSame(canon1, canon3);
+		assertNotSame(canon1, canon4);
+		assertNotSame(canon2, canon3);
+		assertNotSame(canon2, canon4);
 	}
 
 	public void testGetCanonicalGraphSet() 
@@ -91,13 +97,60 @@ public class SWPSignatureUtilitiesTest extends TestCase
 	public void testCalculateDigestNamedGraphNode() 
 	throws SWPNoSuchDigestMethodException 
 	{
-		String digest1 = SWPSignatureUtilities.calculateDigest( g1, SWP.JjcRdfC14N_sha1 );
-		String digest2 = SWPSignatureUtilities.calculateDigest( g1, SWP.JjcRdfC14N_sha1 );
-		String digest3 = SWPSignatureUtilities.calculateDigest( g2, SWP.JjcRdfC14N_sha1 );
-		String digest4 = SWPSignatureUtilities.calculateDigest( g2, SWP.JjcRdfC14N_sha1 );
+		String sha1digest1 = SWPSignatureUtilities.calculateDigest( g1, SWP.JjcRdfC14N_sha1 );
+		String sha1digest2 = SWPSignatureUtilities.calculateDigest( g1, SWP.JjcRdfC14N_sha1 );
+		String sha1digest3 = SWPSignatureUtilities.calculateDigest( g2, SWP.JjcRdfC14N_sha1 );
+		String sha1digest4 = SWPSignatureUtilities.calculateDigest( g2, SWP.JjcRdfC14N_sha1 );
 		
-		assertEquals( digest1, digest2 );
-		assertEquals( digest3, digest4 );
+		assertEquals( sha1digest1, sha1digest2 );
+		assertEquals( sha1digest3, sha1digest4 );
+		assertNotSame( sha1digest1, sha1digest3 );
+		assertNotSame( sha1digest2, sha1digest3 );
+		assertNotSame( sha1digest2, sha1digest4 );
+		
+		String sha224digest1 = SWPSignatureUtilities.calculateDigest( g1, SWP.JjcRdfC14N_sha224 );
+		String sha224digest2 = SWPSignatureUtilities.calculateDigest( g1, SWP.JjcRdfC14N_sha224 );
+		String sha224digest3 = SWPSignatureUtilities.calculateDigest( g2, SWP.JjcRdfC14N_sha224 );
+		String sha224digest4 = SWPSignatureUtilities.calculateDigest( g2, SWP.JjcRdfC14N_sha224 );
+		
+		assertEquals( sha224digest1, sha224digest2 );
+		assertEquals( sha224digest3, sha224digest4 );
+		assertNotSame( sha224digest1, sha224digest3 );
+		assertNotSame( sha224digest2, sha224digest3 );
+		assertNotSame( sha224digest2, sha224digest4 );
+		
+		String sha256digest1 = SWPSignatureUtilities.calculateDigest( g1, SWP.JjcRdfC14N_sha256 );
+		String sha256digest2 = SWPSignatureUtilities.calculateDigest( g1, SWP.JjcRdfC14N_sha256 );
+		String sha256digest3 = SWPSignatureUtilities.calculateDigest( g2, SWP.JjcRdfC14N_sha256 );
+		String sha256digest4 = SWPSignatureUtilities.calculateDigest( g2, SWP.JjcRdfC14N_sha256 );
+		
+		assertEquals( sha256digest1, sha256digest2 );
+		assertEquals( sha256digest3, sha256digest4 );
+		assertNotSame( sha256digest1, sha256digest3 );
+		assertNotSame( sha256digest2, sha256digest3 );
+		assertNotSame( sha256digest2, sha256digest4 );
+		
+		String sha384digest1 = SWPSignatureUtilities.calculateDigest( g1, SWP.JjcRdfC14N_sha384 );
+		String sha384digest2 = SWPSignatureUtilities.calculateDigest( g1, SWP.JjcRdfC14N_sha384 );
+		String sha384digest3 = SWPSignatureUtilities.calculateDigest( g2, SWP.JjcRdfC14N_sha384 );
+		String sha384digest4 = SWPSignatureUtilities.calculateDigest( g2, SWP.JjcRdfC14N_sha384 );
+		
+		assertEquals( sha384digest1, sha384digest2 );
+		assertEquals( sha384digest3, sha384digest4 );
+		assertNotSame( sha384digest1, sha384digest3 );
+		assertNotSame( sha384digest2, sha384digest3 );
+		assertNotSame( sha384digest2, sha384digest4 );
+		
+		String sha512digest1 = SWPSignatureUtilities.calculateDigest( g1, SWP.JjcRdfC14N_sha512 );
+		String sha512digest2 = SWPSignatureUtilities.calculateDigest( g1, SWP.JjcRdfC14N_sha512 );
+		String sha512digest3 = SWPSignatureUtilities.calculateDigest( g2, SWP.JjcRdfC14N_sha512 );
+		String sha512digest4 = SWPSignatureUtilities.calculateDigest( g2, SWP.JjcRdfC14N_sha512 );
+		
+		assertEquals( sha512digest1, sha512digest2 );
+		assertEquals( sha512digest3, sha512digest4 );
+		assertNotSame( sha512digest1, sha512digest3 );
+		assertNotSame( sha512digest2, sha512digest3 );
+		assertNotSame( sha512digest2, sha512digest4 );
 	}
 
 	/*
@@ -114,27 +167,53 @@ public class SWPSignatureUtilitiesTest extends TestCase
 	/*
 	 * Class under test for String calculateSignature(NamedGraph, Node, PrivateKey)
 	 */
-	public void testCalculateSignatureNamedGraphNodePrivateKey() throws Exception { 
+	public void testCalculateSignatureNamedGraphNodePrivateKey() 
+	throws SWPInvalidKeyException, 
+	SWPSignatureException, 
+	SWPNoSuchAlgorithmException, 
+	SWPValidationException, 
+	SWPAlgorithmNotSupportedException, 
+	SWPCertificateException 
+	{
 		g1signature = SWPSignatureUtilities.calculateSignature( g1, 
-															SWP.JjcRdfC14N_rsa_sha1, 
+															SWP.JjcRdfC14N_rsa_sha224, 
 															PKCS12Utils.decryptPrivateKey( keystore, password ) );
-		assertTrue(SWPSignatureUtilities.validateSignature(
-		        g1, SWP.JjcRdfC14N_rsa_sha1, g1signature,
-		        (X509Certificate) PKCS12Utils.getCertChain(keystore, password)[0]));
+		testValidateSignatureNamedGraphNodeStringString();
 	}
 
 	/*
 	 * Class under test for String calculateSignature(NamedGraphSet, Node, PrivateKey)
 	 */
-	public void testCalculateSignatureNamedGraphSetNodePrivateKey() throws Exception	{
+	public void testCalculateSignatureNamedGraphSetNodePrivateKey() 
+	throws SWPInvalidKeyException, 
+	SWPSignatureException, 
+	SWPNoSuchAlgorithmException, 
+	SWPValidationException 
+	{
 		setSignature = SWPSignatureUtilities.calculateSignature( this.set, 
 															SWP.JjcRdfC14N_rsa_sha1, 
 															PKCS12Utils.decryptPrivateKey( keystore, password ) );
-//doesn't work yet
-//		assertTrue(SWPSignatureUtilities.validateSignature(
-//		        this.set, SWP.JjcRdfC14N_rsa_sha1, g1signature,
-//		        (X509Certificate) PKCS12Utils.getCertChain(keystore, password)[0]));
 	}
+
+	/*
+	 * Class under test for boolean validateSignature(NamedGraph, Node, String, String)
+	 */
+	public void testValidateSignatureNamedGraphNodeStringString() 
+	throws SWPInvalidKeyException, 
+	SWPSignatureException, 
+	SWPNoSuchAlgorithmException, 
+	SWPValidationException, 
+	SWPCertificateException 
+	{
+		Certificate[] certs = PKCS12Utils.getCertChain( keystore, password );
+		String signature = "Q5giVuVAnlhxj9XEDws5erZA4yBmPHyzrh+BaI/7aIOAH9inXcaav1+yluhA5IG898ycUZsSqQLw" +
+				"JdVtQhaZOvEUVggv7WWO0/RpjJnrrm1BpVFKGF8Wb/9mls+FDFAPFR03nPxCvWzpU+n4RRMbWqtf" +
+				"6laHEeKwHV64f4L6tcw=";
+		assertTrue( SWPSignatureUtilities.validateSignature( g1, 
+															SWP.JjcRdfC14N_rsa_sha224, signature, 
+															(X509Certificate )certs[0] ) );
+	}
+	
 
 	/*
 	 * Class under test for boolean validateSignature(NamedGraph, Node, String, X509Certificate, ArrayList)
@@ -190,3 +269,31 @@ public class SWPSignatureUtilitiesTest extends TestCase
 	}
 
 }
+
+/*
+ *  (c)   Copyright 2004, 2005 Rowland Watkins (rowland@grid.cx) 
+ *   	  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. The name of the author may not be used to endorse or promote products
+ *    derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
