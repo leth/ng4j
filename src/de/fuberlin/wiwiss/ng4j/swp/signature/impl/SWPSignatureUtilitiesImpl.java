@@ -59,6 +59,8 @@ import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.CertificateValidationExc
  * University of Southampton,
  * Southampton,
  * SO17 1BJ
+ * 
+ * Based on code by Svetlin Nakov
  */
 public class SWPSignatureUtilitiesImpl 
 implements SWPSignatureUtilities 
