@@ -1,4 +1,5 @@
-﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+﻿<!-- saved from url=(0022)http://internet.e-mail -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <?xml version="1.0" encoding="utf-8"?><HTML lang=en xml:lang="en" 
 xmlns="http://www.w3.org/1999/xhtml"><HEAD><TITLE>NG4J - Named Graphs API for Jena</TITLE>
 <META http-equiv=Content-Type content="text/html; charset=utf-8">
@@ -185,15 +186,8 @@ P.footer {
 </div>
 <DIV class=head> 
   <H1 id=title>NG4J - Named Graphs API for Jena</H1>
-  <DIV class=nav> 
-    <P><STRONG>Contents:</STRONG> <A 
-href="#intro">Introduction</A> | <A 
-href="#example">Usage Example</A> | <A 
-href="javadoc/index.html">JavaDoc</A> | <A href="#Download">Download</A> | <A href="#feedback">Feedback</A> 
-      | </P>
-  </DIV>
-  <DIV class=nav> 
-    <P><STRONG>Nearby:</STRONG> <A 
+  <DIV class=nav>
+<P><STRONG>Nearby:</STRONG> <A 
 href="http://www.w3.org/2004/03/trix/" target="_blank">W3C Named Graphs Webite</A> 
       | <A 
 href="http://jena.sourceforge.net/" target="_blank">Jena - Semantic Web toolkit</A> 
@@ -210,47 +204,70 @@ href="http://www.w3.org/RDF/">RDF</A> | </P>
   <P>The Named Graphs API for Jena (NG4J) is an extension to the Jena Semantic 
     Web framework for parsing, manipulating and serializing sets of Named Graphs. 
   </P>
-  <P>NG4J V0.1 extends Jena with these features:</P>
+  <P>NG4J V0.2 extends Jena with:</P>
   </DIV>
 <ul>
   <li> graph-centric methods for manipulating sets of Named Graphs</li>
   <li>quad-centric methods for manipulating sets of Named Graphs</li>
   <li>viewing graphsets as Jena models and Jena graphs</li>
   <li>provenance-enabled Jena statements</li>
+  <li>querying of Named Graphs with the TriQL query language</li>
   <li>integrated parser for the basic TriX syntax</li>
   <li>integrated serializer for the basic TriX syntax</li>
-  <li> in-memory graphset storage</li>
+  <li>in-memory or database-persisted graphset storage</li>
   <li>directory reader for importing existing RDF files.</li>
   <li>directory writer for serializing graph sets a classic RDF files.</li>
 </ul>
-<p>For version 0.2, we plan to add:</p>
+<p>For version 0.3, we plan to add:</p>
 <DIV class=status> 
   <ul>
     <li>a TriG parser </li>
     <li>a TriG serializer</li>
     <li>a TriX parser supporting XSLT transformations</li>
     <li>a TriX serializer supporting XSLT transformations</li>
-    <li>database graphset storage </li>
-    <li>support for the TriQL query language </li>
   </ul>
   <DIV class=status> 
     <P>NG4J is an <strong>exerimental implementation</strong> of the new syntaxes 
       (<a href="http://swdev.nokia.com/trix/TriX.html" target="_blank">TriX</a>, 
       <a href="http://www.wiwiss.fu-berlin.de/suhl/bizer/TriG/" target="_blank">TriG</a>) 
       and query language (<a href="http://www.wiwiss.fu-berlin.de/suhl/bizer/TriQL/" target="_blank">TriQL</a>) 
-      developed within the Semantic Web Interest Group. The whole implementation 
-      and all interfaces might change in future versions.</P>
-    
+      developed within the Semantic Web Interest Group. </P>
   </DIV>
-  <P>&nbsp; </P>
+  <HR>
+  <h2>Contents</h2>
 </DIV>
+<ol>
+  <li> 
+    <DIV class=status> <A 
+href="#intro">Introduction</A></DIV>
+    <ol>
+      <li><a href="#ng-intro">Named Graphs</a></li>
+      <li><a href="#ng4j-intro">NG4J</a></li>
+    </ol>
+  </li>
+  <li> 
+    <DIV class=status><A 
+href="#example">Usage Examples</A> </DIV>
+    <ol>
+      <li><a href="#operations">Operations on GraphSet and Model Level</a></li>
+      <li><A href="#TriQL">Querying Named Graphs with TriQL</A></li>
+      <li><A href="#Persistence">Using Database Persistence</A></li>
+    </ol>
+  </li>
+  <li> 
+    <DIV class=status><A href="#Download">Download</A> </DIV>
+  </li>
+  <li> 
+    <DIV class=status><A href="#feedback">Feedback</A> </DIV>
+  </li>
+</ol>
 <DIV class=contents></DIV>
 <HR>
 
-<h2><A id=intro name=intro>Introduction</A></h2>
+<h2><A id=intro name=intro>1. Introduction</A></h2>
 <P>This section gives an introduction into the ideas behind <a href="#ng-intro">Named 
   Graphs</a> and the <a href="#ng4j-intro">NG4J API</a>.</P>
-<h3><A id=ng-intro name=ng-intro></A>Named Graphs</h3>
+<h3><A id=ng-intro name=ng-intro></A>1.1 Named Graphs</h3>
 <P>The Semantic Web can be seen as a collection of RDF graphs. The RDF recommendation 
   explains the meaning of any one graph, and how to merge a set of graphs into 
   one, but does not provide suitable mechanisms for talking about graphs or relations 
@@ -297,7 +314,7 @@ href="http://www.w3.org/RDF/">RDF</A> | </P>
     and Trust</a>.</li>
 </ul>
 <h3>&nbsp;</h3>
-<h3><A id=ng4j-intro name=ng4j-intro></A>NG4J - Named Graph API for Jena</h3>
+<h3><A id=ng4j-intro name=ng4j-intro></A>1.2 NG4J - Named Graph API for Jena</h3>
 <P>The Named Graphs API for Jena (NG4J) is an extension to the Jena Semantic Web 
   toolkit for parsing, manipulating and serializing sets of Named Graphs. NG4J 
   is an exerimental implementation of the new syntaxes (TriX, TriG) and query 
@@ -468,8 +485,9 @@ href="http://www.w3.org/RDF/">RDF</A> | </P>
 </table>
 <p>&nbsp;</p>
 <HR title="Separator for header">
-<h2><A id=example name=example>Usage Example</A></h2>
-<p>The section gives a NG4J usage example:</p>
+<h2><A id=example name=example>2. Usage Examples</A></h2>
+<h3><a id=operations name=operations></a>2.1 Operations on GraphSet and Model 
+  Level</h3>
 <DIV class="trigInner"> 
   <pre>////////////////////////////////////////////////
 //       Operations on GraphSet Level
@@ -550,15 +568,110 @@ while (it.hasNext()) {
 model.write(out, &quot;TRIX&quot;);
 </pre>
   </DIV>
-<P>&nbsp;</P>
-<HR>
-<h2><A id=Download name=Download>Download</A></h2>
+<p>&nbsp;</p><h3><A id=TriQL name=TriQL>2.2 Querying Named Graphs with TriQL</A></h3>
+
+<p><a href="http://www.wiwiss.fu-berlin.de/suhl/bizer/TriQL/">TriQL</a> is a query 
+  language for querying sets of named graphs. The basic idea of TriQL is using 
+  graph patterns. A graph pattern consists of an optional graph name and a set 
+  of triple patterns. </p>
+<p>TriQL is an extension of the <a href="http://www.w3.org/Submission/2004/SUBM-RDQL-20040109/">RDQL</a> 
+  query language. An RDQL tutorial is available in the <a href="http://www.hpl.hp.com/semweb/doc/tutorial/RDQL/">Jena 
+  documentation</a>. Here is a typical RDQL query:</p>
+
+<DIV class="trigInner">
+  <pre>SELECT ?name, ?email
+WHERE (?me foaf:mbox &lt;mailto:me@example.org&gt;)
+      (?person foaf:knows ?me)
+      (?person foaf:name ?name)
+      (?person foaf:mbox ?email)
+USING foaf FOR http://xmlns.com/foaf/0.1/</pre>
+</DIV>
+<p>This query returns the names and email addresses of all persons who are said to know the person with email address me@example.org.</p>
+<p>TriQL adds two features to RDQL:</p>
+
+<p><strong>1. Combining triple patterns into graph patterns</strong></p>
+<DIV class="trigInner">
+  <pre>SELECT ?name, ?email
+WHERE (?me foaf:mbox &lt;mailto:me@example.org&gt;)
+      (?person foaf:knows ?me)
+      <strong>(?person foaf:name ?name .
+       ?person foaf:mbox ?email)</strong>
+USING foaf FOR http://xmlns.com/foaf/0.1/</pre>
+</DIV>
+<p>The last two triple patterns have been combined into a graph pattern. Now, 
+  a result will only be returned if both the name and the email address occur 
+  in the <u>same</u> named graph.</p>
+
+<p><strong>2. Graph Name Restrictions</strong></p>
+<DIV class="trigInner">
+  <pre>SELECT ?graph
+WHERE  (?me foaf:mbox &lt;mailto:me@example.org&gt;)
+<strong>?graph (?person foaf:knows ?me .
+        ?graph foaf:maker ?person)</strong>
+USING foaf FOR http://xmlns.com/foaf/0.1/</pre>
+</DIV>
+<p>Now the names of the graphs containing the foaf:knows relationships are captured 
+  into the ?graph variable and will be returned as query result. Additionally, 
+  we only take into account those persons who have created a graph (foaf:maker). 
+  Meaning that we get only the persons who personally claim to know me@example.org, 
+  and not those where a third party makes that claim.</p>
+<p>The example shows that graph names can be returned as query results and that 
+  restrictions on the graph name can be formulated in other triple patterns. A 
+  graph pattern can contain variables, URIs or QNames at the graph name position.</p>
+
+<p>More example queries are found in the <a href="http://www.wiwiss.fu-berlin.de/suhl/bizer/TriQL/">TriQL 
+  specification</a>.</p>
+
+<p>Here's the code for running a TriQL query against a NamedGraphSet:</p>
+
+<DIV class="trigInner">
+  <pre>NamedGraphSet set = ...
+Iterator it = TriQLQuery.exec(set, "SELECT * FROM ?graph (?s ?p ?o)");
+while (it.hasNext()) {
+    Map oneResult = (Map) it.next();
+    Node graph = (Node) Map.get("graph");
+    Node s = (Node) Map.get("s");
+    Node p = (Node) Map.get("p");
+    Node o = (Node) Map.get("o");
+    System.out.println(graph + " { " + s + " " + p + " " + o + " . }");
+}</pre>
+</DIV>
+<p>This will run a query and print the results.</p>
+<p>Alternatively, you can create a new TriQLQuery instance and set various parameters 
+  before executing the query. <a href="javadoc/de/fuberlin/wiwiss/ng4j/triql/TriQLQuery.html">See JavaDoc for details.</a></p>
+<p>&nbsp;</p>
+<h3><A id=Persistence name=Persistence>2.3 Using Database Persistence</A></h3>
+<p>NamedGraphSets can be stored in a relational database. As of NG4J v0.2, only 
+  MySQL is supported. To create a persistent NamedGraphSet, you have to set up 
+  a java.sql database connection, and create a new NamedGraphSetDB instance:</p>
+
+
+<DIV class="trigInner">
+  <pre>String URL = "jdbc:mysql://localhost/db_name";
+String USER = "username";
+String PW = "mypassword";
+Class.forName("com.mysql.jdbc.Driver");
+Connection connection = DriverManager.getConnection(URL, USER, PW);
+NamedGraphSet set = new NamedGraphSetDB(connection);
+// ...
+set.close();
+</pre>
+</DIV>
+<p>The resulting NamedGraphSet can be used just like a normal in-memory NamedGraphSet.</p>
+<p>Optionally, you can specify a table prefix that will be stuck in front of all database table names. This allows multiple NamedGraphSets to coexist in the same database. There's also a method for deleting sets from the database.
+<DIV class="trigInner">
+  <pre>NamedGraphSet set = new NamedGraphSetDB(connection, "myapp");
+// ...
+NamedGraphSetDB.delete(connection, "myapp");</pre>
+</DIV>
+<p>&nbsp;</p>
+<hr />
+<h2><A id=Download name=Download>3. Download</A></h2>
 <ul>
   <li>NG4J can be downloaded from Sourceforge: <a href="http://sourceforge.net/projects/ng4j/" target="_blank">http://sourceforge.net/projects/ng4j/ 
     </a></li>
   <li>NG4J requires Jena 2.1. </li>
-  <li>NG4J is lisenced under the terms of the <a href="http://www.gnu.org/licenses/gpl.html" target="_blank">GNU 
-    GENERAL PUBLIC LICENSE (GPL)</a>. </li>
+  <li>NG4J is lisenced under the terms of the Berkeley Software Distribution (BSD) License.</li>
 </ul>
 <TABLE border=1>
   <TBODY>
@@ -568,6 +681,11 @@ model.write(out, &quot;TRIX&quot;);
       <TH>Release Date</TH>
     </TR>
     <TR> 
+      <TD align=middle>V0.2</TD>
+      <TD align=left>TriQL support, MySQL persistence added.</TD>
+      <TD align=middle valign="top">2004-11-02</TD>
+    </TR>
+    <TR> 
       <TD align=middle>V0.1</TD>
       <TD align=left>Initial release.</TD>
       <TD align=middle valign="top">2004-09-14</TD>
@@ -575,8 +693,7 @@ model.write(out, &quot;TRIX&quot;);
   </TBODY>
 </TABLE>
 <p><A href="http://sourceforge.net"> <IMG src="http://sourceforge.net/sflogo.php?group_id=118754&amp;type=5" width="210" height="62" border="0" alt="SourceForge.net Logo" /></A></p>
-<HR>
-<h2><A id=Installation name=Installation>Installation</A></h2>
+<p><A id=Installation name=Installation><strong>Installation</strong></A></p>
 <ol>
   <li>Download and install the <a href="http://jena.sourceforge.net/">Jena Semantic Web Framework</a>.</li>
   <li>Download NG4J and unzip the archive into any directory.</li>
@@ -584,12 +701,9 @@ model.write(out, &quot;TRIX&quot;);
   <li>That's it!</li>
 </ol>
 <HR title="Separator for header">
-<h2><A id=feedback name=feedback>Feedback</A></h2>
+<h2><A id=feedback name=feedback>4. Feedback</A></h2>
 <p>We are very interested in hearing about your experience and your opinion about 
-  NG4J. </p>
-<p>Please send your comments to Chris Bizer and Richard Cyganiak and cc
-  <a href="mailto:www-rdf-interest@w3.org">www-rdf-interest@w3.org</a> 
-  if your comments are of general interest.</p>
+  NG4J. Please send your comments to Chris Bizer and Richard Cyganiak.</p>
 <p>Chris Bizer<br>
   <a href="mailto:chris@bizer.de">chris@bizer.de</a><br>
   <a href="http://www.bizer.de" target="_blank">www.bizer.de </a></p>
@@ -598,7 +712,7 @@ model.write(out, &quot;TRIX&quot;);
   <a href="http://page.mi.fu-berlin.de/%7Ecyganiak/" target="_blank">http://page.mi.fu-berlin.de/~cyganiak/</a><br>
 </p>
 <HR title="Separator for header">
-<p>$Date: 2004/09/14 10:14:40 $<br />
-  $Id: index.html,v 1.5 2004/09/14 10:14:40 bizer Exp $</p>
+<p>$Date: 2004/11/02 02:24:31 $<br />
+  $Id: index.html,v 1.6 2004/11/02 02:24:31 cyganiak Exp $</p>
 </BODY>
 </HTML>
