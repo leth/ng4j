@@ -1,10 +1,8 @@
 //-*- mode: antlr -*-
 
-/* TriG grammar, based on Jena's N3 grammar. Main changes:
- *
- * - Naming operator ":-" allowed only to name formulae ("{ ... }")
- * - Formulae not allowed instead of generic nodes
- * - Formulae are now handled by the graph production
+/* TriG grammar, based on Jena's N3 grammar. Removed formula support,
+ * added graph pattern support. Some more rework of the grammar to
+ * get rid of the dot after a graph pattern.
  */
 
 /* This is part of the Jena RDF Framework.
@@ -88,10 +86,6 @@ tokens
 	private int anonId = 0 ;
 	private String genAnonId() { return "=:"+(anonId++) ; }
 
-	// Forumla zero is the outer context.  Avoid clash with other labels.
-	private int formulaId = 1 ;
-	private String genFormulaId() { return "{}:"+(formulaId++) ; }
-
 	private TriGParserEventHandler handler = null ;
 
 	public void setEventHandler(TriGParserEventHandler h) { this.handler = h ; }
@@ -106,17 +100,16 @@ tokens
 	private void endDocument() { handler.endDocument() ; }
 
 
-	private void startFormula(String context)
+	private void startGraph(AST label)
 	{
-		handler.startFormula(lexer.getLine(), context) ;
+		handler.startGraph(lexer.getLine(), label) ;
 	}
 
-	private void endFormula(String context)
+	private void endGraph(AST label)
 	{
-		handler.endFormula(lexer.getLine(), context) ;
+		handler.endGraph(lexer.getLine(), label) ;
 	}
 
-	private String currentFormula = null ;
 	private AST currentGraphName = null;
 
     private void emitQuad(AST subj, AST prop, AST obj)
@@ -126,16 +119,12 @@ tokens
 
 	private void directive(AST directive, AST arg)
 	{
-		handler.directive(lexer.getLine(),
-						  directive, new AST[]{arg},
-						  currentFormula) ;
+		handler.directive(lexer.getLine(), directive, new AST[]{arg});
 	}
 
 	private void directive(AST directive, AST arg1, AST arg2)
 	{
-		handler.directive(lexer.getLine(),
-						  directive, new AST[]{arg1, arg2},
-						  currentFormula) ;
+		handler.directive(lexer.getLine(), directive, new AST[]{arg1, arg2});
 	}
 
 	public void reportError(RecognitionException ex)
@@ -188,7 +177,7 @@ graphOrPropertyList![AST subj]
 // List of statements without, necessarily, a final SEP.
 // Possible empty
 formulaList!
-	: (statement0|n3Directive0) (SEP formulaList)?
+	: statement0 (SEP formulaList)?
 	| ;
 
 statement0!
@@ -281,26 +270,15 @@ verbReverse
 
 // Label is set if we have seen a :- in a propertyList
 graph[AST label]
-    { String oldCxt = null ; String cxt = null ; }
-
-		// Formula.
-		// Push old formula context, generate new one.
 	: LCURLY!
-		{ oldCxt = currentFormula ;
-		  if (label == null) {
-		  	cxt = null;
-		  } else {
-		      cxt = label.getText() ;
-		  }
+		{
 		  currentGraphName = label;
-		  currentFormula = cxt ;
-		  startFormula(cxt) ;
-		  #graph = label ;
+		  startGraph(label);
+		  #graph = label;
 		}
 		formulaList
 		{
-			endFormula(cxt);
-			currentFormula = oldCxt;
+			endGraph(label);
 			currentGraphName = null;
 		}
 	  RCURLY!

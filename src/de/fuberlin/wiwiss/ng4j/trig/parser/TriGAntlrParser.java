@@ -39,10 +39,6 @@ public class TriGAntlrParser extends antlr.LLkParser       implements TriGAntlrP
 	private int anonId = 0 ;
 	private String genAnonId() { return "=:"+(anonId++) ; }
 
-	// Forumla zero is the outer context.  Avoid clash with other labels.
-	private int formulaId = 1 ;
-	private String genFormulaId() { return "{}:"+(formulaId++) ; }
-
 	private TriGParserEventHandler handler = null ;
 
 	public void setEventHandler(TriGParserEventHandler h) { this.handler = h ; }
@@ -57,17 +53,16 @@ public class TriGAntlrParser extends antlr.LLkParser       implements TriGAntlrP
 	private void endDocument() { handler.endDocument() ; }
 
 
-	private void startFormula(String context)
+	private void startGraph(AST label)
 	{
-		handler.startFormula(lexer.getLine(), context) ;
+		handler.startGraph(lexer.getLine(), label) ;
 	}
 
-	private void endFormula(String context)
+	private void endGraph(AST label)
 	{
-		handler.endFormula(lexer.getLine(), context) ;
+		handler.endGraph(lexer.getLine(), label) ;
 	}
 
-	private String currentFormula = null ;
 	private AST currentGraphName = null;
 
     private void emitQuad(AST subj, AST prop, AST obj)
@@ -77,16 +72,12 @@ public class TriGAntlrParser extends antlr.LLkParser       implements TriGAntlrP
 
 	private void directive(AST directive, AST arg)
 	{
-		handler.directive(lexer.getLine(),
-						  directive, new AST[]{arg},
-						  currentFormula) ;
+		handler.directive(lexer.getLine(), directive, new AST[]{arg});
 	}
 
 	private void directive(AST directive, AST arg1, AST arg2)
 	{
-		handler.directive(lexer.getLine(),
-						  directive, new AST[]{arg1, arg2},
-						  currentFormula) ;
+		handler.directive(lexer.getLine(), directive, new AST[]{arg1, arg2});
 	}
 
 	public void reportError(RecognitionException ex)
@@ -215,21 +206,14 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
 		AST graph_AST = null;
-		String oldCxt = null ; String cxt = null ;
 		
 		match(LCURLY);
 		if ( inputState.guessing==0 ) {
 			graph_AST = (AST)currentAST.root;
-			oldCxt = currentFormula ;
-					  if (label == null) {
-					  	cxt = null;
-					  } else {
-					      cxt = label.getText() ;
-					  }
+			
 					  currentGraphName = label;
-					  currentFormula = cxt ;
-					  startFormula(cxt) ;
-					  graph_AST = label ;
+					  startGraph(label);
+					  graph_AST = label;
 					
 			currentAST.root = graph_AST;
 			currentAST.child = graph_AST!=null &&graph_AST.getFirstChild()!=null ?
@@ -240,8 +224,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		astFactory.addASTChild(currentAST, returnAST);
 		if ( inputState.guessing==0 ) {
 			
-						endFormula(cxt);
-						currentFormula = oldCxt;
+						endGraph(label);
 						currentGraphName = null;
 					
 		}
@@ -480,7 +463,6 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		switch ( LA(1)) {
 		case QNAME:
 		case KW_THIS:
-		case AT_PREFIX:
 		case STRING:
 		case LBRACK:
 		case LPAREN:
@@ -488,31 +470,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		case URIREF:
 		case UVAR:
 		{
-			{
-			switch ( LA(1)) {
-			case QNAME:
-			case KW_THIS:
-			case STRING:
-			case LBRACK:
-			case LPAREN:
-			case NUMBER:
-			case URIREF:
-			case UVAR:
-			{
-				statement0();
-				break;
-			}
-			case AT_PREFIX:
-			{
-				n3Directive0();
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
+			statement0();
 			{
 			switch ( LA(1)) {
 			case SEP:
@@ -573,7 +531,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		n_AST = (AST)returnAST;
 		astFactory.addASTChild(currentAST, returnAST);
 		{
-		_loop23:
+		_loop22:
 		do {
 			switch ( LA(1)) {
 			case PATH:
@@ -608,7 +566,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 			}
 			default:
 			{
-				break _loop23;
+				break _loop22;
 			}
 			}
 		} while (true);
@@ -1285,10 +1243,10 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		AST literalModifier1_AST = null;
 		AST dt_AST = null;
 		
-		boolean synPredMatched40 = false;
+		boolean synPredMatched39 = false;
 		if (((LA(1)==AT_LANG))) {
-			int _m40 = mark();
-			synPredMatched40 = true;
+			int _m39 = mark();
+			synPredMatched39 = true;
 			inputState.guessing++;
 			try {
 				{
@@ -1296,12 +1254,12 @@ public TriGAntlrParser(ParserSharedInputState state) {
 				}
 			}
 			catch (RecognitionException pe) {
-				synPredMatched40 = false;
+				synPredMatched39 = false;
 			}
-			rewind(_m40);
+			rewind(_m39);
 			inputState.guessing--;
 		}
-		if ( synPredMatched40 ) {
+		if ( synPredMatched39 ) {
 			AST tmp30_AST = null;
 			tmp30_AST = astFactory.create(LT(1));
 			astFactory.addASTChild(currentAST, tmp30_AST);
@@ -1309,10 +1267,10 @@ public TriGAntlrParser(ParserSharedInputState state) {
 			literalModifier1_AST = (AST)currentAST.root;
 		}
 		else {
-			boolean synPredMatched42 = false;
+			boolean synPredMatched41 = false;
 			if (((LA(1)==DATATYPE))) {
-				int _m42 = mark();
-				synPredMatched42 = true;
+				int _m41 = mark();
+				synPredMatched41 = true;
 				inputState.guessing++;
 				try {
 					{
@@ -1320,12 +1278,12 @@ public TriGAntlrParser(ParserSharedInputState state) {
 					}
 				}
 				catch (RecognitionException pe) {
-					synPredMatched42 = false;
+					synPredMatched41 = false;
 				}
-				rewind(_m42);
+				rewind(_m41);
 				inputState.guessing--;
 			}
-			if ( synPredMatched42 ) {
+			if ( synPredMatched41 ) {
 				AST tmp31_AST = null;
 				tmp31_AST = astFactory.create(LT(1));
 				astFactory.addASTChild(currentAST, tmp31_AST);
