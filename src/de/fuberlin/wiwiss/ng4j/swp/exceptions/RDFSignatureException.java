@@ -9,7 +9,12 @@ package de.fuberlin.wiwiss.ng4j.swp.exceptions;
  */
 public class RDFSignatureException extends Exception 
 {
-    public RDFSignatureException( String aMessage ) 
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 3257001042850755893L;
+
+	public RDFSignatureException( String aMessage ) 
     {
         super( aMessage );
     }
@@ -21,7 +26,7 @@ public class RDFSignatureException extends Exception
 }
 
 /*
- *  (c)   Copyright 2004 Rowland Watkins (rowland@grid.cx) & University of 
+ *  (c)   Copyright 2004, 2005 Rowland Watkins (rowland@grid.cx) & University of 
  * 		  Southampton, Declarative Systems and Software Engineering Research 
  *        Group, University of Southampton, Highfield, SO17 1BJ
  *   	  All rights reserved.

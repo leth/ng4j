@@ -64,7 +64,7 @@ public interface SWPWarrant {
 }
 
 /*
- *  (c)   Copyright 2004 Chris Bizer (chris@bizer.de) & Rowland Watkins (rowland@grid.cx) 
+ *  (c)   Copyright 2004, 2005 Chris Bizer (chris@bizer.de) & Rowland Watkins (rowland@grid.cx) 
  *   	  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

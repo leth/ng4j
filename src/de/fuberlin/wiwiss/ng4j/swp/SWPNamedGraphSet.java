@@ -8,11 +8,9 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPBadDigestException;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPBadSignatureException;
 
-import java.security.PrivateKey;
 import java.util.ArrayList;
 
 import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 /**
  * 
@@ -270,7 +268,7 @@ public interface SWPNamedGraphSet extends NamedGraphSet
 }
 
 /*
- *  (c)   Copyright 2004 Chris Bizer (chris@bizer.de) & Rowland Watkins (rowland@grid.cx) 
+ *  (c)   Copyright 2004, 2005 Chris Bizer (chris@bizer.de) & Rowland Watkins (rowland@grid.cx) 
  *   	  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

@@ -22,7 +22,7 @@ extends SignatureException
 }
 
 /*
- *  (c)   Copyright 2004 Rowland Watkins (rowland@grid.cx) & University of 
+ *  (c)   Copyright 2004, 2005 Rowland Watkins (rowland@grid.cx) & University of 
  * 		  Southampton, Declarative Systems and Software Engineering Research 
  *        Group, University of Southampton, Highfield, SO17 1BJ
  *   	  All rights reserved.
