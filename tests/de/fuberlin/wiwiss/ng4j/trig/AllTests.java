@@ -1,4 +1,4 @@
-// $Id: AllTests.java,v 1.5 2004/11/26 02:42:56 cyganiak Exp $
+// $Id: AllTests.java,v 1.6 2004/12/17 05:06:31 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import junit.framework.Test;
@@ -15,8 +15,10 @@ public class AllTests {
 		TestSuite suite = new TestSuite("Test for de.fuberlin.wiwiss.ng4j.trig");
 		//$JUnit-BEGIN$
 		suite.addTestSuite(TriGReaderTest.class);
-		suite.addTestSuite(TriGParserTest.class);
+		suite.addTestSuite(TriGWriterTest.class);
 		suite.addTestSuite(SpecExamplesTest.class);
+		suite.addTestSuite(TriGParserTest.class);
+		suite.addTestSuite(PrettyNamespacePrefixMakerTest.class);
 		//$JUnit-END$
 		return suite;
 	}

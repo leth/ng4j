@@ -1,13 +1,13 @@
-// $Id: TriGWriterTest.java,v 1.1 2004/12/13 22:56:31 cyganiak Exp $
+// $Id: TriGWriterTest.java,v 1.2 2004/12/17 05:06:31 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import java.io.StringWriter;
 
+import junit.framework.TestCase;
+
 import com.hp.hpl.jena.graph.Node;
 
-import junit.framework.TestCase;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
-import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
 /**
@@ -51,14 +51,5 @@ public class TriGWriterTest extends TestCase {
 		writer.write(this.set, s, null);
 		assertEquals("<" + EX + "graph1> { }\n\n<" + EX + "graph2> { }\n\n",
 				s.toString());
-	}
-	
-	public void testOneGraphOneStatement() {
-		this.set.addQuad(new Quad(graph1, foo, bar, baz));
-		this.set.addQuad(new Quad(graph1, bar, foo, foo));
-		TriGWriter writer = new TriGWriter();
-		StringWriter s = new StringWriter();
-		writer.write(this.set, s, null);
-		System.out.println(s);
 	}
 }

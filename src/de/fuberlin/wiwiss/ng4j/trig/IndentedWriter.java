@@ -11,7 +11,7 @@ import java.io.* ;
  *  Does not cope with tabs or newlines in output strings.
  * 
  * @author		Andy Seaborne
- * @version 	$Id: IndentedWriter.java,v 1.1 2004/12/13 22:56:28 cyganiak Exp $
+ * @version 	$Id: IndentedWriter.java,v 1.2 2004/12/17 05:06:31 cyganiak Exp $
  */
 
 // Not robust/complete enough for public use
@@ -23,7 +23,8 @@ import java.io.* ;
 	int column ;
 	int row ;
 	int currentIndent ;
-	
+	private int deferredIndent = 0;
+
 	public IndentedWriter(Writer w)
 	{
 		writer = w ;
@@ -41,17 +42,28 @@ import java.io.* ;
 	public void incIndent(int x) { currentIndent += x ; }
 	public void decIndent(int x) { currentIndent -= x ; }
 	public void setIndent(int x) { currentIndent = x ; }
-	
+
+	public void killDeferredIndent() {
+		this.deferredIndent = 0;
+	}
+
 	public void print(String s)
 	{
-		try { writer.write(s); column += s.length() ; }
+		try {
+			while (this.deferredIndent > 0) {
+				writer.write(' ') ;
+				this.deferredIndent--;
+			}
+			writer.write(s);
+			column += s.length();
+		}
 		catch (java.io.IOException ex) {}
 	}
 
 	public void println(String s)
 	{
-		try { writer.write(s);	println() ; }
-		catch (java.io.IOException ex) { }
+		print(s);
+		println();
 	}
 	
 	public void println()
@@ -61,19 +73,23 @@ import java.io.* ;
 			writer.flush() ;
 			column = 0 ;
 			row++ ; 
-			padTo() ;
+			deferredPadTo() ;
 		}
 		catch (java.io.IOException ex) { }
 	}
 	
 	public void padTo() throws IOException
 	{
-		StringBuffer sBuff = new StringBuffer() ;
 		for ( int i = 0 ; i < currentIndent ; i++ )
 			writer.write(' ') ;
 		column = column + currentIndent ;
 	}
 	
+	private void deferredPadTo() throws IOException {
+		this.deferredIndent = this.currentIndent;
+		this.column += this.currentIndent;
+	}
+
 	public void flush() { try { writer.flush() ; } catch (IOException ioEx) {} }
 	public void close() { try { writer.close() ; } catch (IOException ioEx) {} }
 

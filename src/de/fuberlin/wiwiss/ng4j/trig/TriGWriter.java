@@ -1,5 +1,5 @@
 /*
- * $Id: TriGWriter.java,v 1.2 2004/12/13 22:56:28 cyganiak Exp $
+ * $Id: TriGWriter.java,v 1.3 2004/12/17 05:06:31 cyganiak Exp $
  */
 package de.fuberlin.wiwiss.ng4j.trig;
 
@@ -11,11 +11,13 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import com.hp.hpl.jena.graph.Graph;
+import com.hp.hpl.jena.mem.GraphMem;
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.impl.ModelCom;
 import com.hp.hpl.jena.shared.JenaException;
 
@@ -24,24 +26,63 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSetWriter;
 
 /**
- * Serializes a {@link NamedGraphSet} as a TriG file (see
+ * <p>Serializes a {@link NamedGraphSet} as a TriG file (see
  * <a href="http://www.wiwiss.fu-berlin.de/suhl/bizer/TriG/">TriG
- * specification</a>).
+ * specification</a>).</p>
  * 
+ * <p>This class is typically not used directly, but through the
+ * NamedGraphSet.write methods.</p>
+ * 
+ * <p>When used directly, custom namespace prefixes can be defined:</p>
+ * 
+ * <pre>TriGWriter writer = new TriGWriter();
+ * writer.addNamespace("ex", "http://example.org/");
+ * writer.write(myNamedGraphSet, System.out, "http://example.org/baseURI");</pre>
+ *
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class TriGWriter implements NamedGraphSetWriter {
 	private Writer writer;
 	private NamedGraph currentGraph;
+	private PrettyNamespacePrefixMaker prefixMaker;
 
+	/**
+	 * Writes a NamedGraphSet to a Writer. The base URI is optional.
+	 */
 	public void write(NamedGraphSet set, Writer out, String baseURI) {
 		this.writer = new BufferedWriter(out);
+		Iterator graphIt = set.listGraphs();
+		Graph allTriples = graphIt.hasNext() ?
+				set.asJenaGraph(((NamedGraph) graphIt.next()).getGraphName()) :
+				new GraphMem();
+		this.prefixMaker = new PrettyNamespacePrefixMaker(allTriples);
+		this.prefixMaker.setBaseURI(baseURI);
+		this.prefixMaker.addDefaultNamespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+		this.prefixMaker.addDefaultNamespace("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+		this.prefixMaker.addDefaultNamespace("owl", "http://www.w3.org/2002/07/owl#");
+		this.prefixMaker.addDefaultNamespace("xsd", "http://www.w3.org/2001/XMLSchema#");
+		this.prefixMaker.addDefaultNamespace("dc", "http://purl.org/dc/elements/1.1/");
+		this.prefixMaker.addDefaultNamespace("dcterms", "http://purl.org/dc/terms/");
+		this.prefixMaker.addDefaultNamespace("rss", "http://purl.org/rss/1.0/");
+		this.prefixMaker.addDefaultNamespace("foaf", "http://xmlns.com/foaf/0.1/");
+		this.prefixMaker.addDefaultNamespace("contact", "http://www.w3.org/2000/10/swap/pim/contact#");
+		this.prefixMaker.addDefaultNamespace("doap", "http://usefulinc.com/ns/doap#");
+		this.prefixMaker.addDefaultNamespace("cc", "http://web.resource.org/cc/");
+		this.prefixMaker.addDefaultNamespace("swp1", "http://www.w3.org/2004/03/trix/swp-1/");
+		this.prefixMaker.addDefaultNamespace("swp", "http://www.w3.org/2004/03/trix/swp-2/");
+		this.prefixMaker.addDefaultNamespace("rdfg", "http://www.w3.org/2004/03/trix/rdfg-1/");
+		Model namespaceModel = ModelFactory.createDefaultModel();
+		namespaceModel.setNsPrefixes(this.prefixMaker.getPrefixMap());
+		new N3JenaWriterOnlyNamespaces().write(
+				namespaceModel, out, baseURI);
 		Iterator it = getSortedGraphNames(set).iterator();
 		while (it.hasNext()) {
 			String graphName = (String) it.next();
 			this.currentGraph = set.getGraph(graphName);
+			Model aModel = new ModelCom(this.currentGraph);
+			aModel.setNsPrefixes(this.prefixMaker.getPrefixMap());
 			new N3JenaWriterOnlyStatements().write(
-					new ModelCom(this.currentGraph), out, baseURI);
+					aModel, out, baseURI);
 		}
 		try {
 			this.writer.flush();
@@ -50,12 +91,24 @@ public class TriGWriter implements NamedGraphSetWriter {
 		}
 	}
 
+	/**
+	 * Writes a NamedGraphSet to an OutputStream. The base URI is optional.
+	 */
 	public void write(NamedGraphSet set, OutputStream out, String baseURI) {
 		try {
 			write(set, new OutputStreamWriter(out, "utf-8"), baseURI);
 		} catch (UnsupportedEncodingException ueex) {
 			// UTF-8 is always supported
 		}
+	}
+
+	/**
+	 * Adds a custom namespace prefix.
+	 * @param prefix The namespace prefix
+	 * @param namespaceURI The full namespace URI
+	 */
+	public void addNamespace(String prefix, String namespaceURI) {
+		this.prefixMaker.addNamespace(prefix, namespaceURI);
 	}
 
 	private String getCurrentGraphURI() {
@@ -76,6 +129,12 @@ public class TriGWriter implements NamedGraphSetWriter {
 		return sorting;
 	}
 
+	private class N3JenaWriterOnlyNamespaces extends N3JenaWriterCommon {
+		protected void writeModel(Model model) {
+			// don't write body
+		}
+	}
+
 	private class N3JenaWriterOnlyStatements extends N3JenaWriterPP {
 
 		protected void startWriting() {
@@ -85,14 +144,10 @@ public class TriGWriter implements NamedGraphSetWriter {
 				super.startWriting();
 				return;
 			}
-			this.out.println(formatURI(getCurrentGraphURI()) + " {");
-
-			// don't use any prefixes
-			this.prefixMap = new HashMap();
+			this.out.print(formatURI(getCurrentGraphURI()) + " {");
 
 			// indent all statements of the graph
 			this.out.setIndent(4);
-			this.out.println();
 
 			super.startWriting();
 		}
@@ -104,8 +159,8 @@ public class TriGWriter implements NamedGraphSetWriter {
 				return;
 			}
 			// return to normal indentation level and close graph
+			this.out.killDeferredIndent();
 			this.out.setIndent(0);
-			this.out.println();
 
 			this.out.println("}");
 			this.out.println();
