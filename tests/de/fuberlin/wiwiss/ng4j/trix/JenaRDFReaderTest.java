@@ -1,5 +1,5 @@
 /*
- * $Id: JenaRDFReaderTest.java,v 1.1 2004/10/23 13:31:23 cyganiak Exp $
+ * $Id: JenaRDFReaderTest.java,v 1.2 2004/12/13 02:05:52 cyganiak Exp $
  */
 package de.fuberlin.wiwiss.ng4j.trix;
 
@@ -80,6 +80,12 @@ public class JenaRDFReaderTest extends TestCase {
 		readIntoModel("ignoreMultipleGraphs.xml");
 		assertSameStatements("ignoreMultipleGraphs.nt");
 		assertEquals(2, this.model.size());
+	}
+
+	public void testSyntacticExtension() {
+		readIntoModel("extended.xml");
+		assertSameStatements("extended.nt");
+		assertEquals(1, this.model.size());
 	}
 
 	private void readIntoModel(String triXFile) {

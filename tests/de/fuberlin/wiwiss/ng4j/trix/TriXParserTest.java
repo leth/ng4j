@@ -1,5 +1,5 @@
 /*
- * $Id: TriXParserTest.java,v 1.1 2004/10/23 13:31:23 cyganiak Exp $
+ * $Id: TriXParserTest.java,v 1.2 2004/12/13 02:05:52 cyganiak Exp $
  */
 package de.fuberlin.wiwiss.ng4j.trix;
 
@@ -16,7 +16,7 @@ import de.fuberlin.wiwiss.ng4j.trix.TriXParser;
 import junit.framework.TestCase;
 
 /**
- * Unit tests for {@link TriXParserTest}
+ * Unit tests for {@link TriXParser}
  *
  * TODO: Missing tests: whitespace normalization on bNodes and URIs;
  * bNodes shared between graphs (forbidden!); what are legal bNodeIDs?

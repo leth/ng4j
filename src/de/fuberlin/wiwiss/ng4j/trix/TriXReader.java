@@ -1,5 +1,5 @@
 /*
- * $Id: TriXReader.java,v 1.1 2004/11/25 22:14:39 cyganiak Exp $
+ * $Id: TriXReader.java,v 1.2 2004/12/13 02:05:51 cyganiak Exp $
  */
 package de.fuberlin.wiwiss.ng4j.trix;
 
@@ -11,6 +11,8 @@ import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.xml.transform.TransformerException;
 
 import org.xml.sax.SAXException;
 
@@ -60,6 +62,8 @@ public class TriXReader implements ParserCallback, NamedGraphSetReader {
 			throw new JenaException(e);
 		} catch (URISyntaxException e) {
 			throw new JenaException(e);
+		} catch (TransformerException e) {
+			throw new JenaException(e);			
 		}
 	}
 
@@ -75,6 +79,8 @@ public class TriXReader implements ParserCallback, NamedGraphSetReader {
 			throw new JenaException(e);
 		} catch (URISyntaxException e) {
 			throw new JenaException(e);
+		} catch (TransformerException e) {
+			throw new JenaException(e);			
 		}
 	}
 

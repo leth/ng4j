@@ -1,5 +1,5 @@
 /*
- * $Id: JenaRDFReader.java,v 1.1 2004/10/23 13:31:24 cyganiak Exp $
+ * $Id: JenaRDFReader.java,v 1.2 2004/12/13 02:05:51 cyganiak Exp $
  */
 package de.fuberlin.wiwiss.ng4j.trix;
 
@@ -12,6 +12,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
+
+import javax.xml.transform.TransformerException;
 
 import org.xml.sax.SAXException;
 
@@ -54,6 +56,8 @@ public class JenaRDFReader implements RDFReader, ParserCallback {
 			throw new JenaException(e);
 		} catch (URISyntaxException e) {
 			throw new JenaException(e);
+		} catch (TransformerException e) {
+			throw new JenaException(e);			
 		}
 	}
 
@@ -70,6 +74,8 @@ public class JenaRDFReader implements RDFReader, ParserCallback {
 			throw new JenaException(e);
 		} catch (URISyntaxException e) {
 			throw new JenaException(e);
+		} catch (TransformerException e) {
+			throw new JenaException(e);			
 		}
 	}
 
