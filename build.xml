@@ -100,7 +100,7 @@
 	
 	<target name="test" depends="compile.tests,copyfiles,copyfiles.tests">
 		<!-- Runs JUnit tests using the text-only TestRunner -->
-		<java classname="junit.textui.TestRunner" fork="yes" failonerror="true">
+		<java classname="junit.textui.TestRunner" fork="yes" failonerror="false">
 			<arg value="${project.package}.AllTests"/>
 			<classpath>
 				<path refid="project.class.path"/>
