@@ -1,31 +1,19 @@
-// $Id: SWPExample.java,v 1.3 2005/02/22 11:40:47 erw Exp $
+// $Id: SWPExample.java,v 1.4 2005/02/24 13:29:58 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.examples;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Iterator;
 import java.util.ArrayList;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Resource;
 
-import de.fuberlin.wiwiss.ng4j.NamedGraph;
-import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
-import de.fuberlin.wiwiss.ng4j.NamedGraphStatement;
 import de.fuberlin.wiwiss.ng4j.Quad;
-import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
-
-import de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraphSet;
+import de.fuberlin.wiwiss.ng4j.swp.SWPAuthority;
 import de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraph;
+import de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPBadDigestException;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPBadSignatureException;
-import de.fuberlin.wiwiss.ng4j.swp.impl.SWPNamedGraphSetImpl;
-import de.fuberlin.wiwiss.ng4j.swp.SWPAuthority;
 import de.fuberlin.wiwiss.ng4j.swp.impl.SWPAuthorityImpl;
-
+import de.fuberlin.wiwiss.ng4j.swp.impl.SWPNamedGraphSetImpl;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.FOAF;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP;
 
@@ -34,7 +22,7 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP;
  */
 public class SWPExample {
 
-	public static void main(String[] args) throws IOException, SWPBadSignatureException, SWPBadDigestException {
+	public static void main(String[] args) throws SWPBadSignatureException, SWPBadDigestException {
 		////////////////////////////////////////////////
 		//		 Do some asserting and quoting
 		////////////////////////////////////////////////
@@ -85,16 +73,7 @@ public class SWPExample {
         graphs.add(Node.createURI("http://www.bizer.de/InformationAboutRichard"));
 		graphset.quoteGraphs(graphs, chris, new ArrayList());
 
-		// Serialize the model to a TriG file +++++++++ Doesn't work :-(
-		//OutputStream out = new FileOutputStream("C:/model.trig");
-		//Model model = graphset.asJenaModel("http://example.org") ;
-		//model.write(out, "TRIG");
-
-		// Serialize the model to a TriG file +++++++++ Doesn't work :-(
-		//OutputStream out = new FileOutputStream("C:/graphset.trig");
-		//graphset.write(out, "TRIG");
-
-        graphset.write(System.out, "TRIX", "");
+        graphset.write(System.out, "TRIG", "");
         System.out.println();
         System.out.println("----------------------------------------");
         System.out.println();
@@ -124,17 +103,22 @@ public class SWPExample {
 		//rowland.setPublicKey();
 
         // Publish Rowland's public key with the warrant
-        // RowlandsPropertiestoBePublished.add(SWP.RSAKeyNode);
-        // or this certificate: RowlandsPropertiestoBePublished.add(SWP.X509CertificateNode);
+        //RowlandsPropertiestoBePublished.add(SWP.RSAKey);
+        // or this certificate: RowlandsPropertiestoBePublished.add(SWP.X509Certificate);
 
-        graphset2.assertWithSignature(rowland, SWP.JjcRdfC14N_rsa_sha1, SWP.JjcRdfC14N_sha1, RowlandsPropertiestoBePublished, "/home/erw01r/software/certificates/erw01r.p12", "dpuser");
+        graphset2.assertWithSignature(rowland,
+                SWP.JjcRdfC14N_rsa_sha1,
+                SWP.JjcRdfC14N_sha1,
+                RowlandsPropertiestoBePublished,
+                "tests/test.p12",
+                "dpuser");
 
-        graphset2.write(System.out, "TRIX", "");
+        graphset2.write(System.out, "TRIG", "");
 
 		// Next step would be verification
 
         // 1. We would have to fill the http://localhost/trustedinformation
-        //    graph with the keys and vertificates which we trust.
+        //    graph with the keys and certificates which we trust.
         //    Maybe we should have a special object for this with methods like addTrustedPublicKey()
         //    which is serialized at the end as the http://localhost/trustedinformation graph.
         //	  Rowland: What do you think?

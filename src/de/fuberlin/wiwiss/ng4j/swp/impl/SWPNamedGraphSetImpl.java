@@ -480,8 +480,6 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     		{	
     			quad = ( Quad )it.next();
     			String warrantQuery = "SELECT * WHERE <"+ng.getGraphName().toString()+"> (<"+ng.getGraphName().toString()+"> swp:signature ?signature) (<"+ng.getGraphName().toString()+"> swp:authority ?authority) (?authority swp:X509Certificate ?certificate) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
-    			System.out.println();
-    			System.out.println();
 	            Iterator witr = TriQLQuery.exec( this, warrantQuery );
 	                while ( witr.hasNext() )
 	                {
@@ -525,9 +523,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
         	                		{
         	                			Quad qud = ( Quad )dit.next();
         	                			String digest = qud.getObject().getLiteral().getLexicalForm();
-        	                			System.out.println( digest );
         	                			String digest1 = SWPSignatureUtilities.calculateDigest( this.getGraph( qud.getSubject() ), SWP.JjcRdfC14N_sha1 );
-        	                			System.out.println( digest1 );
         	                			if ( digest1.equals( digest ) )
         	                			{
         	                				verificationGraph.add( new Triple( qud.getSubject(), SWP_V.successful, Node.createLiteral( "true" ) ) );

@@ -116,7 +116,6 @@ public class SWPSignatureUtilities
     public static String getCanonicalGraphSet( NamedGraphSet set )
     {
     	String graph = "urn:uuid"+ new UUID();
-    	NamedGraphSet sSet = new NamedGraphSetImpl();
     	
     	Model model = set.asJenaModel( graph );
     	ArrayList canonicalTripleList = new RDFC14NImpl( model, "" ).getCanonicalStringsArray();
@@ -125,6 +124,9 @@ public class SWPSignatureUtilities
     	while ( itr.hasNext() )
     	{
     		NamedGraph grph = ( NamedGraph )itr.next();
+    		if (grph.getGraphName().getURI().equals(graph)) {
+    		    continue;
+    		}
     		result.add( grph.getGraphName().toString() );
     	}
     	Collections.sort( result );
