@@ -45,6 +45,10 @@ public class SWPAuthorityImpl implements SWPAuthority
 
 	public SWPAuthorityImpl(){}
 	
+	/**
+	 * 
+	 * @param id
+	 */
     public SWPAuthorityImpl( Node id ) 
     {
     	setID( id );
@@ -55,11 +59,18 @@ public class SWPAuthorityImpl implements SWPAuthority
      * Sets the ID of the authority.
      * Authorities can by identified using a URIref or a bNode
      * 
+     * @param id
+     * 
      */
 	public void setID( Node id ) 
 	{
         this.id = id ;
     }
+	
+	/**
+	 * 
+	 * @return id
+	 */
 	public Node getID() 
 	{
 		return this.id;
@@ -70,11 +81,18 @@ public class SWPAuthorityImpl implements SWPAuthority
      * Sets the Label / Name of the authority.
      * Will be serialized using rdfs:label
      * 
+     * @param label
+     * 
      */
 	public void setLabel( String label ) 
 	{
         this.label = label ;
     }
+	
+	/**
+	 * 
+	 * @return label
+	 */
 	public String getLabel()  
 	{
 		return this.label;
@@ -85,11 +103,18 @@ public class SWPAuthorityImpl implements SWPAuthority
      * Sets the eMail address of the authority.
      * Will be serialized using foaf:mbox
      * 
+     * @param email
+     * 
      */
 	public void setEmail( String email )
 	{
         this.email = email ;
     }
+	
+	/**
+	 * 
+	 * @return email
+	 */
 	public String getEmail() 
 	{
 		return this.email;
@@ -100,12 +125,18 @@ public class SWPAuthorityImpl implements SWPAuthority
      * Sets the public key of the authority.
      * Will be serialized using swp:hasKey
      * 
+     * @param key
+     * 
      */
 	public void setPublicKey( PublicKey key ) 
 	{
         this.publickey = key ;
     }
 	
+	/**
+	 * 
+	 * @return publickey
+	 */
 	public PublicKey getPublicKey()
 	{
 		return this.publickey;
@@ -115,11 +146,19 @@ public class SWPAuthorityImpl implements SWPAuthority
      * 
      * Sets the certificate of the authority.
      * 
+     * @param certificate
+     * 
      */
 	public void setCertificate( X509Certificate certificate )
 	{
         this.certificate = certificate ;
     }
+	
+	/**
+	 * 
+	 * @return certificate
+	 * 
+	 */
 	public X509Certificate getCertificate() 
 	{
 		return this.certificate;
@@ -128,6 +167,9 @@ public class SWPAuthorityImpl implements SWPAuthority
     /**
      * 
      * Adds an additional property of the authority.
+     * 
+     * @param predicate
+     * @param object
      * 
      */
 	public void addProperty( Node predicate, Node object ) 
@@ -146,6 +188,8 @@ public class SWPAuthorityImpl implements SWPAuthority
      * 
      * Returns an iterator over all property values (nodes) for a given property.
      * 
+     * @return predicate
+     * 
      */
 	public ExtendedIterator getProperty( Node predicate )
 	{
@@ -158,14 +202,20 @@ public class SWPAuthorityImpl implements SWPAuthority
      * 
      * The listOfAuthorityProperties determines which information
      * about the authority is added.
-	 * @throws SWPMissingAuthorityPropertyException 
+     * 
+     * @param graph
+     * @param listOfAuthorityProperties
+     * @throws SWPMissingAuthorityPropertyException
+     * 
+     * @return boolean
+	 *  
      * 
      */
 	public boolean addDescriptionToGraph( NamedGraph graph, ArrayList listOfAuthorityProperties ) 
 	{
 		// Add swp:authority
-		graph.add( new Triple( graph.getGraphName(), SWP.authority.asNode(), this.getID() ) );
-		graph.add( new Triple( this.getID(), RDF.type.asNode(), SWP.Authority.asNode() ) );
+		graph.add( new Triple( graph.getGraphName(), SWP.authority, this.getID() ) );
+		
 		
 		BASE64Encoder encoder = new BASE64Encoder();
         // Check if the eMail address has to be added.
@@ -173,7 +223,6 @@ public class SWPAuthorityImpl implements SWPAuthority
 		{
              graph.add( new Triple(this.getID(), FOAF.mbox.asNode(), Node.createURI( "mailto:" + this.getEmail() ) ) );
 		}
-		
 		
 		
 		if ( listOfAuthorityProperties != null)
@@ -192,22 +241,22 @@ public class SWPAuthorityImpl implements SWPAuthority
 			}
 
         
-			if ( listOfAuthorityProperties.contains( ( Object ) SWP.RSAKey.asNode() ) ) 
+			if ( listOfAuthorityProperties.contains( ( Object ) SWP.RSAKey ) ) 
         	{
 				// We need code for publishing information about a RSA key here, using the SWP-2 and the XML-Sig vocabulary
 				graph.add( new Triple( this.getID(), 
-        								SWP.RSAKey.asNode(), 
+        								SWP.RSAKey, 
         								Node.createLiteral( encoder.encode( this.getPublicKey().getEncoded() ), 
         													null, 
         													XSDDatatype.XSDbase64Binary) ) );
         	}
 
-			if ( listOfAuthorityProperties.contains( ( Object ) SWP.X509Certificate.asNode() ) ) 
+			if ( listOfAuthorityProperties.contains( ( Object ) SWP.X509Certificate ) ) 
 			{
 				// We need code for publishing information about a X509 certificate here, using the SWP-2 and the XML-Sig vocabulary
         		try {
         			graph.add( new Triple( this.getID(), 
-											SWP.X509Certificate.asNode(), 
+											SWP.X509Certificate, 
 											Node.createLiteral( encoder.encode( this.getCertificate().getEncoded() ), 
 																null, 
 																XSDDatatype.XSDbase64Binary ) ) );
@@ -230,7 +279,7 @@ public class SWPAuthorityImpl implements SWPAuthority
 		{
 			try {
 				graph.add( new Triple( this.getID(), 
-						SWP.X509Certificate.asNode(), 
+						SWP.X509Certificate, 
 						Node.createLiteral( encoder.encode( this.getCertificate().getEncoded() ), 
 											null, 
 											XSDDatatype.XSDbase64Binary ) ) );
@@ -254,6 +303,8 @@ public class SWPAuthorityImpl implements SWPAuthority
 	/**
      * 
      * Returns a graph containing all information about the authority.
+     * 
+     * @return graph
      *
      */
 	public Graph getGraph() 

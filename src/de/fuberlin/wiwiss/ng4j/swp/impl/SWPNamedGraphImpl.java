@@ -42,11 +42,11 @@ public class SWPNamedGraphImpl extends NamedGraphImpl implements SWPNamedGraph {
     public boolean swpAssert(SWPAuthority authority, ArrayList listOfAuthorityProperties) {
 
 		// Check if the graph is already a warrant graph.
-		if (!this.contains(this.getGraphName(), SWP.assertedBy.asNode(), this.getGraphName()) &&
-            !this.contains(this.getGraphName(), SWP.quotedBy.asNode(), this.getGraphName())) {
+		if (!this.contains(this.getGraphName(), SWP.assertedBy, this.getGraphName()) &&
+            !this.contains(this.getGraphName(), SWP.quotedBy, this.getGraphName())) {
 
 			// Graph is no warrant graph => make it a warrant graph
-            this.add(new Triple(this.getGraphName(), SWP.assertedBy.asNode(), this.getGraphName()));
+            this.add(new Triple(this.getGraphName(), SWP.assertedBy, this.getGraphName()));
             // Add a description of the authorty to the graph
             authority.addDescriptionToGraph(this, listOfAuthorityProperties);
 			return true;
@@ -65,11 +65,11 @@ public class SWPNamedGraphImpl extends NamedGraphImpl implements SWPNamedGraph {
      */
     public boolean swpQuote(SWPAuthority authority, ArrayList listOfAuthorityProperties) {
         // Check if the graph is already a warrant graph.
-		if (!this.contains(this.getGraphName(), SWP.assertedBy.asNode(), this.getGraphName()) &&
-            !this.contains(this.getGraphName(), SWP.quotedBy.asNode(), this.getGraphName())) {
+		if (!this.contains(this.getGraphName(), SWP.assertedBy, this.getGraphName()) &&
+            !this.contains(this.getGraphName(), SWP.quotedBy, this.getGraphName())) {
 
 			// Graph is no warrant graph => make it a warrant graph
-            this.add(new Triple(this.getGraphName(), SWP.quotedBy.asNode(), this.getGraphName()));
+            this.add(new Triple(this.getGraphName(), SWP.quotedBy, this.getGraphName()));
 			// Add a description of the authorty to the graph
             authority.addDescriptionToGraph(this, listOfAuthorityProperties);
 			return true;
