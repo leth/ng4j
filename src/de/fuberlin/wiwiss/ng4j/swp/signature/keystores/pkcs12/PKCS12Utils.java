@@ -12,6 +12,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 
 import org.apache.log4j.Category;
 
@@ -26,20 +27,37 @@ public class PKCS12Utils {
 	 */
 	
 	static final Category log = Category.getInstance( PKCS12Utils.class );
-	public static KeyStore loadAndDecryptPKCS12( String keyStoreFileName, String password ) throws Exception
+	private static final String KEY_STORE_TYPE_PKCS12 = "PKCS12";
+	
+	public static KeyStore loadAndDecryptPKCS12( String keyStoreFileName, String password ) throws RDFSignatureException
 	{
 		try 
 		{
 			// Load the keystore
-			KeyStore ks = KeyStore.getInstance( "PKCS12" );
+			KeyStore ks = KeyStore.getInstance( KEY_STORE_TYPE_PKCS12 );
 			FileInputStream fis = new FileInputStream( keyStoreFileName );
 			ks.load( fis, password.toCharArray() );
 			return ks;
 		} 
 		catch ( FileNotFoundException fnfex ) 
 		{
-			String message = "File: " + keyStoreFileName + " could not be found.";
+		    String message = "File: " + keyStoreFileName + " could not be found.";
 			throw new RDFSignatureException( message, fnfex );
+		}
+		catch ( NoSuchAlgorithmException nsaex )
+		{
+		    String message = "No such algorithm: "+nsaex.getMessage();
+			throw new RDFSignatureException( message, nsaex );
+		}
+		catch ( CertificateException cex )
+		{
+		    String message = "Error accessing certificate: "+cex.getMessage();
+			throw new RDFSignatureException( message, cex );
+		}
+		catch ( KeyStoreException ksex ) 
+		{
+			String message = "Error initialising keystore with " + keyStoreFileName+ ksex.getMessage();
+			throw new RDFSignatureException( message, ksex );
 		} 
 		catch ( IOException ioex ) 
 		{

@@ -25,6 +25,7 @@ import org.bouncycastle.util.encoders.Hex;
 
 import sun.misc.BASE64Encoder;
 
+import com.eaio.uuid.UUID;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -325,7 +326,7 @@ public class NGRDFSignature
     private void appendSignature( SignatureReport signatureReport ) 
     		throws Exception
 	{
-    	String warrantGraphName = "urn:sha1:" + getDigest( canonicalTripleList.toString() );
+    	String warrantGraphName = "urn:uuid:" + new UUID();
     	Model warrantModel = cleanNGSet.asJenaModel( warrantGraphName );
     	
     	/*

@@ -85,7 +85,7 @@ public class RDFC14NImpl
          * @param base see Jena model.read() documentation
          */
 
-        public RDFC14NImpl( File rdffile,String base ) 
+        public RDFC14NImpl( File rdffile, String base ) 
         		throws FileNotFoundException 
 				
 		{
@@ -93,7 +93,7 @@ public class RDFC14NImpl
         	doit( model, base );
         }
         
-        public RDFC14NImpl( Model model,String base )
+        public RDFC14NImpl( Model model, String base )
         {
         	doit( model, base );
         }
