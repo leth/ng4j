@@ -244,6 +244,7 @@ href="#example">Usage Examples</A> </DIV>
       <li><a href="#operations">Operations on GraphSet and Model Level</a></li>
       <li><A href="#TriQL">Querying Named Graphs with TriQL</A></li>
       <li><A href="#Persistence">Using Database Persistence</A></li>
+      <li><A href="#SWP">Semantic Web Publishing (SWP) API and Digital Signatures</A></li>
     </ol>
   </li>
   <li> 
@@ -663,7 +664,198 @@ set.close();
 NamedGraphSetDB.delete(connection, "myapp");</pre>
 </DIV>
 <p>&nbsp;</p>
+
+<h3 id="SWP">Semantic Web Publishing (SWP) API and Digital Signatures</h3>
+<p><strong>Working with Digital Signatures and Named Graphs</strong></p>
+
+<p>The Semantic Web Publishing Vocabulary (SWP) is used for publishing Named Graphs on the Web. It allows authorities to indicate whether they assert or quote a graph and to sign graphs using digital signatures. More information about the SWP vocabulary is available on the <a href="http://www.wiwiss.fu-berlin.de/suhl/bizer/TriQLP/">TriQL.P Trust Architecture</a> page.</p>
+
+<p>The SWP API in NG4J builds on the NamedGraphSet inferface. Named Graphs are asserted or quoted by an SWPAuthority, a service or person that is able to publish information. The authority must have a valid X.509 certificate in order to be able to sign Named Graphs.</p>
+
+<p><strong>Signing Named Graphs</strong></p>
+
+<p>The general algorithm for signing and recording the digital signature of a Named Graph is as follows:</p>
+
+<ul>
+<li>Take a Named Graph and find its canonical representation (see <a href="http://www.hpl.hp.com/techreports/2003/HPL-2003-142.pdf">Jeremy Carroll: Signing RDF Graphs</a>).</li>
+<li>Using a common secure hash (SHA-1 or stronger), record the digest of the canonical Named Graph.</li>
+<li>We place the digest into a separate Named Graph which we call a Warrant Graph. Besides asserting or quoting the original graph, the Warrant Graph also <em>asserts itself</em>. More on Warrant Graphs in section 5 of the <a href="http://www.hpl.hp.com/techreports/2004/HPL-2004-57">Named Graphs paper</a>.</li>
+<li>Finally, take the canonical representation of the Warrant Graph and sign it with the SWPAuthority's private key, using a common secure method (SHA1WithDSA or SHA1WithRSA). Add the signature to the Warrant Graph.</li>
+<li>Now, the signed Warrant Graph can be published.</li>
+</ul>
+
+<p><strong>Verifying Signatures</strong></p>
+
+<p>Named Graph digital signatures can be verified in the following manner:</p>
+
+<ul>
+<li>Retrieve the Named Graph's Warrant Graph and extract the digital signature and X.509 certificate. We retrieve the X.509 certificate, because we want to have access to the SWPAuthority's public key.</li>
+<li>Verify the signature on the Warrant Graph using the public key. If this verification succeeds, we know that the SWPAuthority has published the Named Graph.</li>
+<li>Again, find the Named Graph's canonical representation and its digest.</li>
+<li>Compare the digest to the one recorded int the Warrant Graph. If they don't match, then the Named Graph has changed it's contents since it was signed. We count this as a verification failure.</li>
+<li>If the digests did match, verification was successful.</li>
+</ul>
+
+<table width="100%" border="1" cellspacing="0" cellpadding="3">
+  <tr> 
+    <td colspan="2"><strong><a href="javadoc/de/fuberlin/wiwiss/ng4j/swp/SWPNamedGraphSet.html">SWPNamedGraphSet</a></strong></td>
+  </tr>
+  <tr> 
+    <td colspan="2">An extension to <a href="javadoc/de/fuberlin/wiwiss/ng4j/NamedGraphSet.html">NamedGraphSet</a> that handles various types of digital signature; options include signing each graph in the set or the NamedGraphSet as a whole. </td>
+  </tr>
+
+  <tr> 
+    <td valign="top"><b>swpAssert</b>(SWPAuthority authority)</td>
+    <td><em>Assert</em> all graphs in the graphset with the given Authority, but don't sign the resulting Warrant.</td>
+  </tr>
+
+  <tr> 
+    <td valign="top"><b>swpQuote</b>(SWPAuthority authority) <br /> </td>
+    <td><em>Quote</em> all graphs in the graphset with the given Authority, but don't sign the resulting Warrant.</td>
+  </tr>
+  <tr> 
+    <td valign="top"><b>assertWithSignature</b>(SWPAuthority authority, <br />
+    					Node signatureMethod, <br />
+    					Node digestMethod, <br />
+    					ArrayList listOfAuthorityProperties, <br />
+    					String keystore, <br />
+    					String password )</td>
+    <td><em>Assert</em> all graphs in the graphset with the given Authority and sign the asserted graph with a digital signature according to the specified signatureMethod.</td>
+  </tr>
+  <tr> 
+    <td valign="top"><b>quoteWithSignature</b>( SWPAuthority authority, <br />
+    					Node signatureMethod, <br />
+    					Node digestMethod, <br />
+    					ArrayList listOfAuthorityProperties, <br />
+    					String keystore, <br />
+    					String password ) </td>
+    <td><em>Quote</em> all graphs in the graphset with the given Authority and sign the asserted graph with a digital signature according to the specified signatureMethod.</td>
+  </tr>
+  <tr>
+    <td valign="top"><b>verifyAllSignatures</b>()</td>
+    <td>Verify all signatures and graph digests in the NamedGraphSet.</td>
+  </tr>
+  <tr>
+    <td colspan="2"><a href="javadoc/de/fuberlin/wiwiss/ng4j/swp/SWPNamedGraphSet.html#method_summary">More ...</a></td>
+  </tr>
+</table>
+<br />
+
+<table width="100%" border="1" cellspacing="0" cellpadding="3">
+  <tr> 
+    <td colspan="2"><strong><a href="javadoc/de/fuberlin/wiwiss/ng4j/swp/SWPAuthority.html">SWPAuthority</a></strong></td>
+  </tr>
+  <tr> 
+    <td colspan="2">Represents a person or service that is able to publish information.</td>
+  </tr>
+  <tr> 
+    <td width="28%" valign="top"><b>setID</b>(Node id) </td>
+    <td width="72%">Sets the ID of the authority. Authorities can by identified using a URIref or a bNode </td>
+  </tr>
+  <tr> 
+    <td valign="top"><b>setLabel</b>(String label)</td>
+    <td> Sets the Label / Name of the authority. Will be serialized using rdfs:label</td>
+  </tr>
+  <tr> 
+    <td valign="top"><b>setEmail</b>(String email)</td>
+    <td> Sets the eMail address of the authority. Will be serialized using foaf:mbox<br /></td>
+  </tr>
+  <tr>
+    <td valign="top"><b>setPublicKey</b>(PublicKey key)</td>
+    <td>Sets the public key of the authority. Will be serialized using swp:hasKey</td>
+  </tr>
+  <tr>
+    <td valign="top"><b>setCertificate</b>(X509Certificate cert)</td>
+    <td>Sets the X.509 certificate of the authority.</td>
+  </tr>
+  <tr>
+    <td valign="top"><b>addProperty</b>(Node predicate, Node object)</td>
+    <td>Adds an additional property of the authority.</td>
+  </tr>
+  <tr>
+    <td valign="top"><b>addDescriptionToGraph</b>(NamedGraph graph, ArrayList listOfAuthorityProperties)</td>
+    <td>Given a NamedGraph and an arraylist of properties, add properties and Authority properties to the NamedGraph.</td>
+  </tr>
+  <tr>
+    <td colspan="2"><a href="javadoc/de/fuberlin/wiwiss/ng4j/swp/SWPNamedGraphSet.html#method_summary">More ...</a></td>
+  </tr>
+</table>
+<br />
+<p><strong>Usage Example</strong></p>
+<DIV class="trigInner">
+  <pre>SWPNamedGraphSet set = new SWPNamedGraphSetImpl();
+	
+//Create an SWPAuthority so we can assert/quote graphs
+SWPAuthority auth = new SWPAuthorityImpl();
+
+// set the email addr of the authority (FOAF vocabulary)
+auth.setEmail("mailto:rowland@grid.cx");
+
+// set the ID of the authority
+auth.setID(Node.createURI("http://grid.cx/rowland"));
+
+// set the X.509 certificate using the users' PKCS #12 keystore
+Certificate[] chain = de.fuberlin.wiwiss.ng4j.swp.utils.PKCS12Utils.getCertChain(keystore, password);
+auth.setCertificate((X509Certificate )chain[0]);
+
+String keystore = "/path/to/your/pkcs12/keystore";
+String password = "passwd";
+
+// Assert all graphs in the NamedGraphSet
+// We provide an Authority, a Node specifying the signature algorithm (SHA1WithRSA),
+// a Node specifying the digest method (SHA-1), a null list of properties,
+// a path the a PKCS #12 keystore, and its password.
+set.assertWithSignature(auth, 
+			SWP.JjcRdfC14N_rsa_sha1, 
+			SWP.JjcRdfC14N_sha1, 
+			null, 
+			keystore, 
+			password);
+
+// Verify all signatures in the NamedGraphSet
+set.verifyAllSignatures();
+
+// print out the resulting NamedGraphSet
+set.write(System.out, "TRIG", "");</pre>
+</DIV>
+<p>The output might look <a href="http://www.wiwiss.fu-berlin.de/suhl/bizer/TriQLP/swp/SWP2-AssertWithSignature-Example.trig">like this</a>.</p>
+
+<p>&nbsp;</p>
+
+<p><strong>Manipulating PKCS #12 keystores</strong></p>
+
+The SWP Framework relies heavily on the PKI (Public Key Infrastructure) to provide reliable cryptographic digital signatures, and non-repudiation of signatures.
+
+<strong>Generating PKCS #12 keystores</strong> 
+
+<p>Unless you are willing to write certificate management tools yourself, using Bouncy Castle, Cryptix or IAIK, you will most likely want to use OpenSSL to generate and manage your certificates.</p>
+
+<p>While OpenSSL provides a wide range of options got generating DSA and RSA keys with other features, it can be very cumbersome to use. Each OpenSSL distribution should contain a perl script called <a href="http://www.openssl.org/docs/apps/CA.pl.html">CA.pl</a> which makes life a little bit easier.</p>
+
+<p>Before you can generate your own certificates, you need to have a Certificate Authority (CA) that can be used to vouch for the veracity of your certificate. Unless you already have a CA, you will want to make your own.</p>
+
+<p><strong>Generating the CA</strong>: The CA can can be generated using the CA.pl script using the following command:</p>
+<div class="trigInner">
+<pre>./CA.pl -newca</pre>
+</div>
+
+<p><strong>User certifcates</strong> can be generated by first creating a certificate request, to be signed by the CA:</p>
+
+<div class="trigInner">
+<pre>./CA.pl -newreq
+./CA.pl -sign</pre>
+</div>
+
+<p>Once you have your certicate request signed, you can then package it into a <strong>PKCS #12 keystore</strong>. The following command will achieve this:</p>
+<div class="trigInner">
+<pre>./CA.pl -pkcs12</pre>
+</div>
+
+<p>You should now have a file called <tt>newcert.p12</tt>. This is the file that you should use as input to any of the methods in SWPNamedGraphSet.</p>
+
+<p>&nbsp;</p>
 <hr />
+
 <h2><A id=Download name=Download>3. Download</A></h2>
 <ul>
   <li>NG4J can be downloaded from Sourceforge: <a href="http://sourceforge.net/projects/ng4j/" target="_blank">http://sourceforge.net/projects/ng4j/ 
@@ -717,7 +909,7 @@ NamedGraphSetDB.delete(connection, "myapp");</pre>
   <a href="http://page.mi.fu-berlin.de/%7Ecyganiak/" target="_blank">http://page.mi.fu-berlin.de/~cyganiak/</a><br>
 </p>
 <HR title="Separator for header">
-<p>$Date: 2004/12/17 11:34:51 $<br />
-  $Id: index.html,v 1.13 2004/12/17 11:34:51 cyganiak Exp $</p>
+<p>$Date: 2005/02/24 08:38:47 $<br />
+  $Id: index.html,v 1.14 2005/02/24 08:38:47 cyganiak Exp $</p>
 </BODY>
 </HTML>
