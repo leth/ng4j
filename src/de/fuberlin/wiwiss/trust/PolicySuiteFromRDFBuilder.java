@@ -22,7 +22,7 @@ import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
  * Service for building a {@link PolicySuite} from an RDF graph containing
  * the policy's description using the TPL vocabulary.
  *
- * @version $Id: PolicySuiteFromRDFBuilder.java,v 1.3 2005/03/21 00:23:28 cyganiak Exp $
+ * @version $Id: PolicySuiteFromRDFBuilder.java,v 1.4 2005/03/22 22:09:11 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class PolicySuiteFromRDFBuilder {
@@ -131,7 +131,7 @@ public class PolicySuiteFromRDFBuilder {
             }
         }
         
-        Collection constraints = getAllObjects(policyNode, TPL.condition);
+        Collection constraints = getAllObjects(policyNode, TPL.constraint);
         it = constraints.iterator();
         while (it.hasNext()) {
             Node constraintNode = (Node) it.next();
@@ -170,7 +170,7 @@ public class PolicySuiteFromRDFBuilder {
     
     private void checkForUnlinkedPolicies() {
         inferTypeFromDomain(TPL.TrustPolicy, TPL.graphPattern);
-        inferTypeFromDomain(TPL.TrustPolicy, TPL.condition);
+        inferTypeFromDomain(TPL.TrustPolicy, TPL.constraint);
         Collection unlinkedPolicyNodes = getAllSubjects(RDF.Nodes.type, TPL.TrustPolicy);
         unlinkedPolicyNodes.removeAll(getAllObjects(this.suiteNode, TPL.includesPolicy));
         Iterator it = unlinkedPolicyNodes.iterator();

@@ -97,7 +97,7 @@
                                  ?graph2 swp:assertedBy ?graph2 .
                                  ?graph2 swp:authority exdata:Crawler )""" ;
     ] ;
-    tpl:condition "?y > '2004/1/1'^^xsd:date" .
+    tpl:constraint "?y > '2004/1/1'^^xsd:date" .
 
 
 
@@ -162,7 +162,7 @@
     tpl:policyName "Only grpahs with more positive than negative ratings." ;
     tpl:policyDescription "Only grpahs with more positive than negative ratings." ; 
     tpl:textExplanation "The information has been stated in @@?GRAPH@@. And @@?GRAPH@@ got more positive than negative ratings:" .
-#    tpl:condition "METRIC(tpl:MorePositiveThanNegative, ?GRAPH)" .
+#    tpl:constraint "METRIC(tpl:MorePositiveThanNegative, ?GRAPH)" .
 
 
 
@@ -194,4 +194,4 @@
     tpl:graphPattern [ # Project involves programming
         tpl:pattern "?graph3 (?project ex:topic ex:programming )" ;
     ] .
-#    tpl:condition "COUNT(?project) >= 2" .
+#    tpl:constraint "COUNT(?project) >= 2" .

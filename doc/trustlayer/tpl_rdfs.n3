@@ -44,7 +44,7 @@
 # -----------------------------------------------
 #
 # A trust policy defines rules for accepting or rejecting RDF statements.
-# A policy consists of graph patterns and conditions. Taken together,
+# A policy consists of graph patterns and constraints. Taken together,
 # they form an implicit TriQL.P query. A statement is trusted if it matches
 # the query. The policy also provides explanations templates which
 # can generate an explanation stating why a particular statement was trusted
@@ -73,8 +73,8 @@
                     rdfs:domain :TrustPolicy ;
                     rdfs:range :GraphPattern
                     .
-:condition          rdf:type rdf:Property ;
-                    rdfs:label "condition" ;
+:constraint         rdf:type rdf:Property ;
+                    rdfs:label "constraint" ;
                     rdfs:comment "A TriQL.P expression, matching the Expression production, which trusted data must fulfill" ;
                     rdfs:domain :TrustPolicy
                     .

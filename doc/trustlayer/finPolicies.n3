@@ -119,7 +119,7 @@
          tpl:pattern """?graph2 (?news fin:newsSource ?auth .
 					    ?news dc:date ?date)""" ;
     ] ;
-    tpl:condition "?date > '2004-03-01T00:00+01:00'^^dtype:date" .
+    tpl:constraint "?date > '2004-03-01T00:00+01:00'^^dtype:date" .
 
 
 
@@ -144,7 +144,7 @@
         tpl:pattern """?graph3 (?c rdf:type iso:Country .
 					  ?c iso:name ?name )""" ;
     ] ;
-    tpl:condition "?name EQ ' UNITED KINGDOM '" .
+    tpl:constraint "?name EQ ' UNITED KINGDOM '" .
 
 
 
@@ -244,7 +244,7 @@
     tpl:graphPattern [
         tpl:pattern """?graph2 (?news fin:newsSource ?authority)""" ;
     ] ;
-    tpl:condition "COUNT(?news) >= 3" .
+    tpl:constraint "COUNT(?news) >= 3" .
 
 
 # ----------------------------------------------------
@@ -268,7 +268,7 @@
         tpl:pattern """ ?graph3 (?news fin:newsAbout ?about)""" ;
     ] ;
 
-    tpl:condition "?about NE ?authority" .  
+    tpl:constraint "?about NE ?authority" .  
 
 
 # ----------------------------------------------------
@@ -312,4 +312,4 @@
     tpl:graphPattern [
         tpl:pattern """ ?graph3 (?author foaf:name ?name )""" ;
     ] ;
-    tpl:condition "?name EQ ' Reuters '" .
+    tpl:constraint "?name EQ ' Reuters '" .

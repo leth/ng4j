@@ -7,7 +7,7 @@ import com.hp.hpl.jena.graph.Node;
  * <a href="http://www.wiwiss.fu-berlin.de/suhl/bizer/TriQLP/#blocks">Trust Policy
  * Language</a> vocabulary
  *
- * @version $Id: TPL.java,v 1.1 2005/02/18 01:44:59 cyganiak Exp $
+ * @version $Id: TPL.java,v 1.2 2005/03/22 22:09:11 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class TPL {
@@ -25,7 +25,7 @@ public class TPL {
     public static final Node policyDescription = Node.createURI(ns + "policyDescription");
     public static final Node graphPattern = Node.createURI(ns + "graphPattern");
     public static final Node pattern = Node.createURI(ns + "pattern");
-    public static final Node condition = Node.createURI(ns + "condition");
+    public static final Node constraint = Node.createURI(ns + "constraint");
     public static final Node textExplanation = Node.createURI(ns + "textExplanation");
     public static final Node graphExplanation = Node.createURI(ns + "graphExplanation");
     
