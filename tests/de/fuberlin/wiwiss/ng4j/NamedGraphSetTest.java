@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetTest.java,v 1.1 2004/10/23 13:31:25 cyganiak Exp $
+// $Id: NamedGraphSetTest.java,v 1.2 2004/11/02 02:00:35 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.util.ArrayList;
@@ -31,10 +31,14 @@ public class NamedGraphSetTest extends TestCase {
 	private final static Node bar = Node.createURI("http://example.org/#bar");
 	private final static Node baz = Node.createURI("http://example.org/#baz");
 
-	private NamedGraphSet set;
+	protected NamedGraphSet set;
 
-	public void setUp() {
-		this.set = new NamedGraphSetImpl();
+	public void setUp() throws Exception {
+		setSet(new NamedGraphSetImpl());
+	}
+
+	private void setSet(NamedGraphSet set) {
+		this.set = set;
 	}
 
 	public void testFixture() {
@@ -66,13 +70,12 @@ public class NamedGraphSetTest extends TestCase {
 		graph1.add(new Triple(foo, bar, baz));
 		NamedGraph graph2 = createGraph(uri1);
 		graph2.add(new Triple(baz, foo, bar));
-		assertNotSame(graph1, graph2);
 		this.set.addGraph(graph1);
-		assertSame(graph1, this.set.getGraph(uri1));
+		assertTrue(this.set.getGraph(uri1).contains(foo, bar, baz));
 		assertTrue(this.set.containsQuad(new Quad(node1, foo, bar, baz)));
 		assertFalse(this.set.containsQuad(new Quad(node1, baz, foo, bar)));
 		this.set.addGraph(graph2);
-		assertSame(graph2, this.set.getGraph(uri1));
+		assertTrue(this.set.getGraph(uri1).contains(baz, foo, bar));
 		assertFalse(this.set.containsQuad(new Quad(node1, foo, bar, baz)));
 		assertTrue(this.set.containsQuad(new Quad(node1, baz, foo, bar)));
 	}
@@ -118,7 +121,6 @@ public class NamedGraphSetTest extends TestCase {
 		assertNull(this.set.getGraph(uri1));
 		NamedGraph graph = createGraph(uri1);
 		this.set.addGraph(graph);
-		assertSame(graph, this.set.getGraph(uri1));
 		this.set.getGraph(uri1).add(new Triple(foo, bar, baz));
 		assertTrue(this.set.containsQuad(new Quad(node1, foo, bar, baz)));
 	}
@@ -154,7 +156,7 @@ public class NamedGraphSetTest extends TestCase {
 		try {
 			this.set.createGraph(Node.createAnon());
 			fail();
-		} catch (IllegalArgumentException iex) {
+		} catch (Exception iex) {
 			// expected since graph names must be URIs
 		}
 	}
@@ -162,19 +164,19 @@ public class NamedGraphSetTest extends TestCase {
 	public void testListGraphs() {
 		assertNotNull(this.set.listGraphs());
 		assertFalse(this.set.listGraphs().hasNext());
-		NamedGraph graph1 = this.set.createGraph(uri1);
+		this.set.createGraph(uri1);
 		assertTrue(this.set.listGraphs().hasNext());
-		assertSame(graph1, this.set.listGraphs().next());
+		assertEquals(node1, ((NamedGraph) this.set.listGraphs().next()).getGraphName());
 		Collection graphs = new ArrayList();
-		NamedGraph graph2 = this.set.createGraph(uri2);
+		this.set.createGraph(uri2);
 		Iterator it = this.set.listGraphs();
 		assertTrue(it.hasNext());
-		graphs.add(it.next());
+		graphs.add(((NamedGraph) it.next()).getGraphName());
 		assertTrue(it.hasNext());
-		graphs.add(it.next());
+		graphs.add(((NamedGraph) it.next()).getGraphName());
 		assertFalse(it.hasNext());
-		assertTrue(graphs.contains(graph1));
-		assertTrue(graphs.contains(graph2));
+		assertTrue(graphs.contains(node1));
+		assertTrue(graphs.contains(node2));
 		this.set.removeGraph(Node.ANY);
 		assertFalse(this.set.listGraphs().hasNext());
 	}
@@ -204,13 +206,13 @@ public class NamedGraphSetTest extends TestCase {
 		try {
 			this.set.addQuad(new Quad(Node.ANY, foo, bar, baz));
 			fail();
-		} catch (IllegalArgumentException iaex) {
+		} catch (Exception iaex) {
 			// expected because added quad contains wildcard
 		}
 		try {
 			this.set.addQuad(new Quad(node1, Node.ANY, bar, baz));
 			fail();
-		} catch (IllegalArgumentException iaex) {
+		} catch (Exception iaex) {
 			// expected because added quad contains wildcard
 		}
 	}
