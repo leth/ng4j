@@ -34,7 +34,7 @@ import de.fuberlin.wiwiss.ng4j.trig.parser.TriGAntlrParser;
  * 
  * @author		Andy Seaborne
  * @author Richard Cyganiak (richard@cyganiak.de)
- * @version 	$Id: NamedGraphSetPopulator.java,v 1.7 2004/12/17 05:06:31 cyganiak Exp $
+ * @version 	$Id: NamedGraphSetPopulator.java,v 1.8 2005/03/22 22:12:28 cyganiak Exp $
  */
 public class NamedGraphSetPopulator implements TriGParserEventHandler
 {
@@ -96,10 +96,11 @@ public class NamedGraphSetPopulator implements TriGParserEventHandler
 	public void startGraph(int line, AST graphName) {
 		Node node = createGraphNameNode(line, graphName);
 		if (node.isBlank()) {
-			error("Line " + line + ": Graph names must be URIRefs or QNames");
+			error("Line " + line
+			        + ": Graph names must be URIRefs or QNames: '" + graphName + "'");
 		}
 		if (this.previousGraphNames.contains(node)) {
-			error("Line " + line + ": Graph names must be unique within file");
+			error("Line " + line + ": Graph names must be unique within file: " + node);
 		}
 		this.previousGraphNames.add(node);
 		if (!this.namedGraphSet.containsGraph(node)) {
