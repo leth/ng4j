@@ -543,7 +543,58 @@ public class SWPSignatureUtilities
     	return signature;
     }
     
-    
+    public static Signature getSignatureAlgorithm( Node signatureMethod ) 
+	throws SWPNoSuchAlgorithmException
+	{
+		Security.addProvider( new BouncyCastleProvider() );
+		Signature sig = null;
+		if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha1 ) ) 
+    	{
+			sig = new JDKDigestSignature.SHA1WithRSAEncryption();
+    		log.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA1withRSA );
+    	}
+    	else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha224 ) ) 
+    	{
+			sig = new JDKDigestSignature.SHA224WithRSAEncryption();
+    		log.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA224withRSA );
+    	}
+    	else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha256 ) ) 
+    	{
+			sig = new JDKDigestSignature.SHA256WithRSAEncryption();
+    		log.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA256withRSA );
+    	}
+		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha384 ) ) 
+    	{
+			sig = new JDKDigestSignature.SHA384WithRSAEncryption();
+    		log.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA384withRSA );
+    	}
+    	else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha512 ) ) 
+    	{
+			sig = new JDKDigestSignature.SHA512WithRSAEncryption();
+    		log.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA512withRSA );
+    	}
+    	else if ( signatureMethod.equals( SWP.JjcRdfC14N_dsa_sha1 ) ) 
+    	{
+			try 
+			{
+				sig = Signature.getInstance( ALG_ID_SIGNATURE_SHA1withDSA, new BouncyCastleProvider() );
+			}
+			catch ( NoSuchAlgorithmException e )
+	    	{
+	    		log.fatal( ALG_ID_SIGNATURE_SHA1withDSA +" not found! " +e.getMessage() );
+	    		throw new SWPNoSuchAlgorithmException( "The signature" +
+	    				"method: "+signatureMethod+" does not exist.", e ); 
+	    	}
+    		log.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA1withDSA );
+    	}
+    	else 
+    	{
+    		throw new SWPNoSuchAlgorithmException("The signature" +
+    				"method: "+signatureMethod+" does not exist.");
+    	}
+		
+		return sig;
+	}
 
     /**
      * 
