@@ -1,4 +1,4 @@
-// $Id: NamedGraphSet.java,v 1.1 2004/09/13 14:37:25 cyganiak Exp $
+// $Id: NamedGraphSet.java,v 1.2 2004/09/13 22:26:04 cyganiak Exp $
 package de.fuberlin.wiwiss.namedgraphs;
 
 import java.io.InputStream;
@@ -223,7 +223,7 @@ public interface NamedGraphSet {
 	 * 		adding triples; must be an URI
 	 * @return A Model view on the NamedGraphSet
 	 */
-	public NamedGraphModel asJenaModel(Node defaultGraphForAdding);	
+	public NamedGraphModel asJenaModel(String defaultGraphForAdding);	
 
 //	=== IO and other methods ========================	
 	

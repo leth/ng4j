@@ -1,4 +1,4 @@
-// $Id: NamedGraphModelTest.java,v 1.1 2004/09/13 14:37:30 cyganiak Exp $
+// $Id: NamedGraphModelTest.java,v 1.2 2004/09/13 22:26:04 cyganiak Exp $
 package de.fuberlin.wiwiss.namedgraphs;
 
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ public class NamedGraphModelTest extends TestCase {
 
 	protected void setUp() throws Exception {
 		this.set = new NamedGraphSetImpl();
-		this.model = this.set.asJenaModel(node1);
+		this.model = this.set.asJenaModel(uri1);
 		super.setUp();
 	}
 

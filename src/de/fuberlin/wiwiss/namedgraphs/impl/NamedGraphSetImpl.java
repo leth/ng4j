@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetImpl.java,v 1.1 2004/09/13 14:37:27 cyganiak Exp $
+// $Id: NamedGraphSetImpl.java,v 1.2 2004/09/13 22:26:03 cyganiak Exp $
 package de.fuberlin.wiwiss.namedgraphs.impl;
 
 import java.io.InputStream;
@@ -190,11 +190,11 @@ public class NamedGraphSetImpl implements NamedGraphSet {
 		return unionGraph;
 	}
 
-	public NamedGraphModel asJenaModel(Node defaultGraphForAdding) {
+	public NamedGraphModel asJenaModel(String defaultGraphForAdding) {
 		if (defaultGraphForAdding == null) {
 			return new NamedGraphModel(this, null);
 		}
-		return new NamedGraphModel(this, defaultGraphForAdding.getURI());
+		return new NamedGraphModel(this, defaultGraphForAdding);
 	}
 
 	public void close() {
