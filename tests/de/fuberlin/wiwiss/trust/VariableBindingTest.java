@@ -1,15 +1,15 @@
 package de.fuberlin.wiwiss.trust;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import junit.framework.TestCase;
 
 import com.hp.hpl.jena.graph.Node;
 
-import de.fuberlin.wiwiss.trust.VariableBinding;
-
 /**
- * @version $Id: VariableBindingTest.java,v 1.1 2005/02/18 01:44:59 cyganiak Exp $
+ * @version $Id: VariableBindingTest.java,v 1.2 2005/03/21 00:23:24 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class VariableBindingTest extends TestCase {
@@ -66,5 +66,17 @@ public class VariableBindingTest extends TestCase {
         assertTrue(candidate.isSubsetOf(binding));
         candidate.setValue("foo", Node.createLiteral("fooValue1"));
         assertFalse(candidate.isSubsetOf(binding));
+    }
+    
+    public void testAsMap() {
+        VariableBinding binding = new VariableBinding();
+        Node fooValue = Node.createLiteral("fooValue");
+        Node barValue = Node.createLiteral("barValue");
+        binding.setValue("foo", fooValue);
+        binding.setValue("bar", barValue);
+        Map expected = new HashMap();
+        expected.put("foo", fooValue);
+        expected.put("bar", barValue);
+        assertEquals(expected, binding.asMap());
     }
 }

@@ -11,19 +11,15 @@ import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.rdf.model.AnonId;
+import com.hp.hpl.jena.shared.impl.PrefixMappingImpl;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
-import de.fuberlin.wiwiss.trust.EXPL;
-import de.fuberlin.wiwiss.trust.Explanation;
-import de.fuberlin.wiwiss.trust.QueryResult;
-import de.fuberlin.wiwiss.trust.TrustEngine;
-import de.fuberlin.wiwiss.trust.TrustPolicy;
 
 /**
- * @version $Id: TrustEngineTest.java,v 1.1 2005/02/18 01:44:59 cyganiak Exp $
+ * @version $Id: TrustEngineTest.java,v 1.2 2005/03/21 00:23:24 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class TrustEngineTest extends FixtureWithLotsOfNodes {
@@ -138,8 +134,10 @@ public class TrustEngineTest extends FixtureWithLotsOfNodes {
 	    this.source.addQuad(new Quad(graph1, node2, node2, Node.createLiteral("foo")));
 
 	    TrustPolicy policy = new TrustPolicy("http://example.org/policy1");
-	    policy.addMetricConstraint(new IsFooMetric(),
-	            Collections.singletonList(TrustPolicy.OBJ));
+	    policy.addConstraint(new ConstraintParser(
+	            "METRIC(<http://example.org/metrics#IsFoo>, ?OBJ)",
+	            new PrefixMappingImpl(),
+	            Collections.singletonList(new IsFooMetric())).parse());
 	    
 	    List results = iteratorToList(
 	            this.trustEngine.find(anyTriple,

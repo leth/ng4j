@@ -1,7 +1,6 @@
 package de.fuberlin.wiwiss.trust;
 
 import java.util.Collections;
-import java.util.HashMap;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
@@ -10,12 +9,9 @@ import com.hp.hpl.jena.shared.impl.PrefixMappingImpl;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
-import de.fuberlin.wiwiss.trust.Condition;
-import de.fuberlin.wiwiss.trust.TrustPolicy;
-import de.fuberlin.wiwiss.trust.VariableBinding;
 
 /**
- * @version $Id: TrustPolicyTest.java,v 1.1 2005/02/18 01:44:59 cyganiak Exp $
+ * @version $Id: TrustPolicyTest.java,v 1.2 2005/03/21 00:23:24 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class TrustPolicyTest extends FixtureWithLotsOfNodes {
@@ -57,30 +53,34 @@ public class TrustPolicyTest extends FixtureWithLotsOfNodes {
 	
 	public void testConditions() {
 	    TrustPolicy policy = new TrustPolicy("http://example.org/policies#Policy1");
-	    policy.addCondition(ConditionFixture.getCondition("true"));
-	    assertEquals(1, policy.getConditions().size());
-	    assertTrue(((Condition) policy.getConditions().iterator().next()).isSatisfiedBy(new HashMap()));
+	    policy.addConstraint(ConstraintFixture.getConstraint("true"));
+	    assertEquals(1, policy.getConstraints().size());
+	    assertTrue(((Constraint) policy.getConstraints().iterator().next()).isSatisfiedBy(new VariableBinding()));
 	    
 	    policy = new TrustPolicy("http://example.org/policies#Policy1");
-	    policy.addCondition(ConditionFixture.getCondition("false"));
-	    assertFalse(((Condition) policy.getConditions().iterator().next()).isSatisfiedBy(new HashMap()));
+	    policy.addConstraint(ConstraintFixture.getConstraint("false"));
+	    assertFalse(((Constraint) policy.getConstraints().iterator().next()).isSatisfiedBy(new VariableBinding()));
 	}
 	
 	public void testAddMetricConstraint() {
-	    Node var1 = Node.createVariable("var1");
-	    Node var2 = Node.createVariable("var2");
 	    TrustPolicy policy = new TrustPolicy("http://example.org/policies#Policy1");
-	    policy.addMetricConstraint(new IsFooMetric(), Collections.singletonList(var1));
-	    policy.addMetricConstraint(new IsFooMetric(), Collections.singletonList(var2));
+	    policy.addConstraint(new ConstraintParser(
+	            "METRIC(<http://example.org/metrics#IsFoo>, ?var1)",
+	            new PrefixMappingImpl(),
+	            Collections.singletonList(new IsFooMetric())).parse());
+	    policy.addConstraint(new ConstraintParser(
+	            "METRIC(<http://example.org/metrics#IsFoo>, ?var2)",
+	            new PrefixMappingImpl(),
+	            Collections.singletonList(new IsFooMetric())).parse());
 
 	    VariableBinding vb = new VariableBinding();
 	    vb.setValue("var1", Node.createLiteral("foo"));
 	    vb.setValue("var2", Node.createLiteral("foo"));
-	    assertTrue(policy.matchesMetricConstraints(vb));
+	    assertTrue(policy.matchesConstraints(vb));
 
 	    vb = new VariableBinding();
 	    vb.setValue("var1", Node.createLiteral("foo"));
 	    vb.setValue("var2", Node.createLiteral("bar"));
-	    assertFalse(policy.matchesMetricConstraints(vb));
+	    assertFalse(policy.matchesConstraints(vb));
 	}
 }

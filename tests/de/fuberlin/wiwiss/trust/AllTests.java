@@ -6,7 +6,7 @@ import junit.framework.TestSuite;
 /**
  * JUnit test suite for entire project
  *
- * @version $Id: AllTests.java,v 1.1 2005/02/18 01:44:59 cyganiak Exp $
+ * @version $Id: AllTests.java,v 1.2 2005/03/21 00:23:24 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class AllTests {
@@ -19,7 +19,7 @@ public class AllTests {
         TestSuite suite = new TestSuite("JUnit test suite for trust");
         //$JUnit-BEGIN$
         suite.addTestSuite(ExplanationTemplateTest.class);
-        suite.addTestSuite(ConditionParserTest.class);
+        suite.addTestSuite(ConstraintParserTest.class);
         suite.addTestSuite(ExplanationTest.class);
         suite.addTestSuite(PolicySuiteTest.class);
         suite.addTestSuite(TrustPolicyTest.class);

@@ -2,9 +2,7 @@ package de.fuberlin.wiwiss.trust;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import junit.framework.TestCase;
 
@@ -18,12 +16,12 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
 /**
- * Tests for {@link de.fuberlin.wiwiss.trust.ConditionParser}.
+ * Tests for {@link de.fuberlin.wiwiss.trust.ConstraintParser}.
  *
- * @version $Id: ConditionParserTest.java,v 1.2 2005/03/15 08:57:14 cyganiak Exp $
+ * @version $Id: ConstraintParserTest.java,v 1.1 2005/03/21 00:23:24 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
-public class ConditionParserTest extends TestCase {
+public class ConstraintParserTest extends TestCase {
     private Metric isFooMetric;
     private Metric equalsMetric;
     
@@ -34,41 +32,41 @@ public class ConditionParserTest extends TestCase {
         this.equalsMetric.setup(new NamedGraphSetImpl());
     }
     
-    public void testTrueCondition() {
-        assertTrue(ConditionFixture.getCondition("true").isSatisfiedBy(new HashMap()));
+    public void testTrueConstraint() {
+        assertTrue(ConstraintFixture.getConstraint("true").isSatisfiedBy(new VariableBinding()));
     }
 
-    public void testFalseCondition() {
-        assertFalse(ConditionFixture.getCondition("false").isSatisfiedBy(new HashMap()));
+    public void testFalseConstraint() {
+        assertFalse(ConstraintFixture.getConstraint("false").isSatisfiedBy(new VariableBinding()));
     }
 
-    public void testMinimalCondition() {
-        Condition condition = new ConditionParser(
+    public void testMinimalConstraint() {
+        Constraint condition = new ConstraintParser(
                 "(?a > 0)", new PrefixMappingImpl(), Collections.EMPTY_LIST).parse();
         
-        Map map = new HashMap();
-        map.put("a", Node.createLiteral("17", null, XSDDatatype.XSDinteger));
-        assertTrue(condition.isSatisfiedBy(map));
-        map.put("a", Node.createLiteral("-5", null, XSDDatatype.XSDinteger));
-        assertFalse(condition.isSatisfiedBy(map));
+        VariableBinding binding = new VariableBinding();
+        binding.setValue("a", Node.createLiteral("17", null, XSDDatatype.XSDinteger));
+        assertTrue(condition.isSatisfiedBy(binding));
+        binding.setValue("a", Node.createLiteral("-5", null, XSDDatatype.XSDinteger));
+        assertFalse(condition.isSatisfiedBy(binding));
     }
     
-    public void testSimpleMetricCondition() {
-        ConditionParser parser = new ConditionParser(
+    public void testSimpleMetricConstraint() {
+        ConstraintParser parser = new ConstraintParser(
                 "METRIC(<http://example.org/metrics#IsFoo>, ?a)",
                 new PrefixMappingImpl(),
                 Arrays.asList(new Metric[] {this.isFooMetric}));
-        Condition condition = parser.parse();
+        Constraint condition = parser.parse();
 
-        Map map = new HashMap();
-        map.put("a", Node.createLiteral("foo"));
-        assertTrue(condition.isSatisfiedBy(map));
-        map.put("a", Node.createLiteral("bar"));
-        assertFalse(condition.isSatisfiedBy(map));
+        VariableBinding binding = new VariableBinding();
+        binding.setValue("a", Node.createLiteral("foo"));
+        assertTrue(condition.isSatisfiedBy(binding));
+        binding.setValue("a", Node.createLiteral("bar"));
+        assertFalse(condition.isSatisfiedBy(binding));
     }
     
     public void testUnknownMetric() {
-        ConditionParser parser = new ConditionParser(
+        ConstraintParser parser = new ConstraintParser(
                 "METRIC(<http://example.com/metrics#unknown>, ?a)",
                 new PrefixMappingImpl(),
                 Collections.EMPTY_LIST);
@@ -83,7 +81,7 @@ public class ConditionParserTest extends TestCase {
     public void testQNameInMetricURI() {
         PrefixMapping prefixes = new PrefixMappingImpl();
         prefixes.setNsPrefix("ex", "http://example.org/metrics#");
-        ConditionParser parser = new ConditionParser(
+        ConstraintParser parser = new ConstraintParser(
                 "METRIC(ex:IsFoo, ?a)",
                 prefixes,
                 Arrays.asList(new Metric[] {this.isFooMetric}));
@@ -91,19 +89,19 @@ public class ConditionParserTest extends TestCase {
     }
 
     public void testMetricParameters() {
-        ConditionParser parser = new ConditionParser(
+        ConstraintParser parser = new ConstraintParser(
                 "METRIC(<http://example.org/metrics#Equals>, 5, 5)",
                 new PrefixMappingImpl(),
                 Arrays.asList(new Metric[] {this.equalsMetric}));
-        Condition condition = parser.parse();
-        assertTrue(condition.isSatisfiedBy(Collections.EMPTY_MAP));
+        Constraint condition = parser.parse();
+        assertTrue(condition.isSatisfiedBy(new VariableBinding()));
 
-        parser = new ConditionParser(
+        parser = new ConstraintParser(
                 "METRIC(<http://example.org/metrics#Equals>, 4, 5)",
                 new PrefixMappingImpl(),
                 Arrays.asList(new Metric[] {this.equalsMetric}));
         condition = parser.parse();
-        assertFalse(condition.isSatisfiedBy(Collections.EMPTY_MAP));
+        assertFalse(condition.isSatisfiedBy(new VariableBinding()));
     }
     
     class EqualsMetric implements Metric {

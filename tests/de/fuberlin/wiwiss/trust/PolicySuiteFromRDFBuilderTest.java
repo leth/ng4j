@@ -3,9 +3,7 @@ package de.fuberlin.wiwiss.trust;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import junit.framework.TestCase;
 
@@ -18,12 +16,6 @@ import com.hp.hpl.jena.rdf.model.AnonId;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
-import de.fuberlin.wiwiss.trust.Condition;
-import de.fuberlin.wiwiss.trust.PolicySuite;
-import de.fuberlin.wiwiss.trust.PolicySuiteFromRDFBuilder;
-import de.fuberlin.wiwiss.trust.TPL;
-import de.fuberlin.wiwiss.trust.TPLException;
-import de.fuberlin.wiwiss.trust.TrustPolicy;
 
 /**
  * Tests for {@link PolicySuiteFromRDFBuilder}
@@ -31,7 +23,7 @@ import de.fuberlin.wiwiss.trust.TrustPolicy;
  * TODO: tpl:graphExplanation
  * TODO: Warn when unknown term from the tpl namespace are used
  * 
- * @version $Id: PolicySuiteFromRDFBuilderTest.java,v 1.2 2005/03/15 08:57:14 cyganiak Exp $
+ * @version $Id: PolicySuiteFromRDFBuilderTest.java,v 1.3 2005/03/21 00:23:24 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class PolicySuiteFromRDFBuilderTest extends TestCase {
@@ -209,16 +201,16 @@ public class PolicySuiteFromRDFBuilderTest extends TestCase {
         this.graph.add(new Triple(policy1, TPL.condition, Node.createLiteral("?date >= 2005 && ?date < 2006")));
         buildSuite();
         
-        assertEquals(1, this.suite.getTrustPolicy(policy1URI).getConditions().size());
-        Condition condition = (Condition) this.suite.getTrustPolicy(policy1URI)
-        			.getConditions().iterator().next();
-        Map map = new HashMap();
-        map.put("date", Node.createLiteral("2005", null, XSDDatatype.XSDinteger));
-        assertTrue(condition.isSatisfiedBy(map));
-        map.put("date", Node.createLiteral("2004", null, XSDDatatype.XSDinteger));
-        assertFalse(condition.isSatisfiedBy(map));
-        map.put("date", Node.createLiteral("2006", null, XSDDatatype.XSDinteger));
-        assertFalse(condition.isSatisfiedBy(map));
+        assertEquals(1, this.suite.getTrustPolicy(policy1URI).getConstraints().size());
+        Constraint condition = (Constraint) this.suite.getTrustPolicy(policy1URI)
+        			.getConstraints().iterator().next();
+        VariableBinding binding = new VariableBinding();
+        binding.setValue("date", Node.createLiteral("2005", null, XSDDatatype.XSDinteger));
+        assertTrue(condition.isSatisfiedBy(binding));
+        binding.setValue("date", Node.createLiteral("2004", null, XSDDatatype.XSDinteger));
+        assertFalse(condition.isSatisfiedBy(binding));
+        binding.setValue("date", Node.createLiteral("2006", null, XSDDatatype.XSDinteger));
+        assertFalse(condition.isSatisfiedBy(binding));
     }
 
     public void testTwoConditions() {
@@ -231,17 +223,17 @@ public class PolicySuiteFromRDFBuilderTest extends TestCase {
         this.graph.add(new Triple(policy1, TPL.condition, Node.createLiteral("?date < 2006")));
         buildSuite();
 
-        assertEquals(2, this.suite.getTrustPolicy(policy1URI).getConditions().size());
-        Iterator it = this.suite.getTrustPolicy(policy1URI).getConditions().iterator();
-        Condition condition1 = (Condition) it.next();
-        Condition condition2 = (Condition) it.next();
-        Map map = new HashMap();
-        map.put("date", Node.createLiteral("2005", null, XSDDatatype.XSDinteger));
-        assertTrue(condition1.isSatisfiedBy(map) && condition2.isSatisfiedBy(map));
-        map.put("date", Node.createLiteral("2004", null, XSDDatatype.XSDinteger));
-        assertFalse(condition1.isSatisfiedBy(map) && condition2.isSatisfiedBy(map));
-        map.put("date", Node.createLiteral("2006", null, XSDDatatype.XSDinteger));
-        assertFalse(condition1.isSatisfiedBy(map) && condition2.isSatisfiedBy(map));
+        assertEquals(2, this.suite.getTrustPolicy(policy1URI).getConstraints().size());
+        Iterator it = this.suite.getTrustPolicy(policy1URI).getConstraints().iterator();
+        Constraint condition1 = (Constraint) it.next();
+        Constraint condition2 = (Constraint) it.next();
+        VariableBinding binding = new VariableBinding();
+        binding.setValue("date", Node.createLiteral("2005", null, XSDDatatype.XSDinteger));
+        assertTrue(condition1.isSatisfiedBy(binding) && condition2.isSatisfiedBy(binding));
+        binding.setValue("date", Node.createLiteral("2004", null, XSDDatatype.XSDinteger));
+        assertFalse(condition1.isSatisfiedBy(binding) && condition2.isSatisfiedBy(binding));
+        binding.setValue("date", Node.createLiteral("2006", null, XSDDatatype.XSDinteger));
+        assertFalse(condition1.isSatisfiedBy(binding) && condition2.isSatisfiedBy(binding));
     }
 
     public void testMetric() {
@@ -252,14 +244,14 @@ public class PolicySuiteFromRDFBuilderTest extends TestCase {
                 this.graph, Arrays.asList(new Metric[] {new IsFooMetric()}));
         this.suite = builder.buildPolicySuite();
         
-        assertEquals(1, this.suite.getTrustPolicy(policy1URI).getConditions().size());
-        Condition condition = (Condition) this.suite.getTrustPolicy(policy1URI)
-        			.getConditions().iterator().next();
-        Map map = new HashMap();
-        map.put("a", Node.createLiteral("foo"));
-        assertTrue(condition.isSatisfiedBy(map));
-        map.put("a", Node.createLiteral("bar"));
-        assertFalse(condition.isSatisfiedBy(map));
+        assertEquals(1, this.suite.getTrustPolicy(policy1URI).getConstraints().size());
+        Constraint condition = (Constraint) this.suite.getTrustPolicy(policy1URI)
+        			.getConstraints().iterator().next();
+        VariableBinding binding = new VariableBinding();
+        binding.setValue("a", Node.createLiteral("foo"));
+        assertTrue(condition.isSatisfiedBy(binding));
+        binding.setValue("a", Node.createLiteral("bar"));
+        assertFalse(condition.isSatisfiedBy(binding));
     }
 
     public void testPolicyWithoutExplanation() {
