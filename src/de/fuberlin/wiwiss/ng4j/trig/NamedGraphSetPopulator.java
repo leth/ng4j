@@ -32,7 +32,7 @@ import de.fuberlin.wiwiss.ng4j.trig.parser.TriGAntlrParser;
  * 
  * @author		Andy Seaborne
  * @author Richard Cyganiak (richard@cyganiak.de)
- * @version 	$Id: NamedGraphSetPopulator.java,v 1.3 2004/11/25 22:14:38 cyganiak Exp $
+ * @version 	$Id: NamedGraphSetPopulator.java,v 1.4 2004/11/25 23:49:03 cyganiak Exp $
  */
 public class NamedGraphSetPopulator implements TriGParserEventHandler
 {
@@ -63,7 +63,6 @@ public class NamedGraphSetPopulator implements TriGParserEventHandler
 	String base = null ;
 	final String anonPrefix = "_" ;
 
-	private boolean inGraph = false;
 	private Node defaultGraphName;
 
 	public NamedGraphSetPopulator(NamedGraphSet ngs, String _base,
@@ -90,18 +89,22 @@ public class NamedGraphSetPopulator implements TriGParserEventHandler
 	public void deprecated(Exception ex, String message)	{ throw new TriGException(message) ; }
 	public void deprecated(String message)					{ deprecated(null, message) ; }
 	
-	public void startFormula(int line, String context) {
-		if (this.inGraph) {
-			error("Line " + line + ": nested graphs");
+	public void startGraph(int line, AST graphName) {
+		// create the graph so it exists even if the graph pattern is empty
+		if (graphName != null) {
+			Node node = createNode(line, graphName);
+			if (!node.isURI()) {
+				error("Line " + line + ": Graph names must be URIRefs or QNames");
+			}
+			this.namedGraphSet.createGraph(node);
 		}
-		this.inGraph = true;
 	}
-					
-	public void endFormula(int line, String context) {
-		this.inGraph = false;
+
+	public void endGraph(int line, AST graphName) {
+		// don't have to do anything
 	}
 	
-	public void directive(int line, AST directive, AST[] args, String context)
+	public void directive(int line, AST directive, AST[] args)
 	{
 		if ( directive.getType() == TriGParser.AT_PREFIX )
 		{

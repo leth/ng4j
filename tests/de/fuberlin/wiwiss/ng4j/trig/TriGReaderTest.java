@@ -1,9 +1,7 @@
-// $Id: TriGReaderTest.java,v 1.2 2004/11/25 22:48:02 cyganiak Exp $
+// $Id: TriGReaderTest.java,v 1.3 2004/11/25 23:49:03 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringReader;
 
 import junit.framework.TestCase;
 

@@ -1,17 +1,17 @@
-// $Id: TriGParserTest.java,v 1.4 2004/11/25 22:48:02 cyganiak Exp $
+// $Id: TriGParserTest.java,v 1.5 2004/11/25 23:49:03 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import java.io.Reader;
 import java.io.StringReader;
 
+import junit.framework.TestCase;
+
 import com.hp.hpl.jena.graph.Node;
 
-import junit.framework.TestCase;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSetReader;
 import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
-import de.fuberlin.wiwiss.ng4j.trix.NamedGraphSetWriter;
 
 /**
  * Tests for TriG parsing
@@ -72,7 +72,6 @@ public class TriGParserTest extends TestCase {
 			fail();
 		} catch (TriGException ex) {
 			// is expected since ex:foo is not the graph naming operator :-
-			// TODO: Better error message
 		}
 	}
 	
@@ -160,7 +159,44 @@ public class TriGParserTest extends TestCase {
 			// there must be no dot after a graph
 		}	
 	}
-	
+
+	public void testEmptyGraph() throws Exception {
+		String triG = "@prefix ex: <http://example.com/ex#> .\n" +
+				"ex:graph1 {}";
+		NamedGraphSet ngs = parseTriG(triG);
+		assertEquals(0, ngs.countQuads());
+		assertTrue(ngs.containsGraph(graph1Node));
+	}
+
+	public void testURIGraphName() throws Exception {
+		String triG = "@prefix ex: <http://example.com/ex#> .\n" +
+				"<http://example.com/ex#graph1> { ex:a ex:a ex:a }";
+		NamedGraphSet ngs = parseTriG(triG);
+		assertTrue(ngs.containsGraph(graph1Node));
+	}
+
+	public void testBlankGraphName() throws Exception {
+		String triG = "@prefix ex: <http://example.com/ex#> .\n" +
+				"_:foo { ex:a ex:b ex:c } .";
+		try {
+			parseTriG(triG);
+			fail();
+		} catch (TriGException ex) {
+			// blank nodes are not allowed as graph names
+		}	
+	}
+
+	public void testLiteralGraphName() throws Exception {
+		String triG = "@prefix ex: <http://example.com/ex#> .\n" +
+				"\"abc\" { ex:a ex:b ex:c } .";
+		try {
+			parseTriG(triG);
+			fail();
+		} catch (TriGException ex) {
+			// literal nodes are not allowed as graph names
+		}	
+	}
+
 	public void testReadFromReader() {
 		String trig = "@prefix : <http://example.com/ns#> .\n" +
 				":graph1 { :a :a \"ŠšŸ\" . }";

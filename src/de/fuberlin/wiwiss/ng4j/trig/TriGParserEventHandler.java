@@ -11,26 +11,20 @@ import antlr.collections.AST;
  * 
  * @author		Andy Seaborne
  * @author Richard Cyganiak (richard@cyganiak.de)
- * @version 	$Id: TriGParserEventHandler.java,v 1.1 2004/11/22 00:46:19 cyganiak Exp $
+ * @version 	$Id: TriGParserEventHandler.java,v 1.2 2004/11/25 23:49:03 cyganiak Exp $
  */
-public interface TriGParserEventHandler
-{
-	
+public interface TriGParserEventHandler {
 	public void startDocument() ;
 	public void endDocument() ;
 	
 	// The string message will be informative as to position.
 	public void error(Exception ex, String message) ;
-	//public void warning(Exception ex, String message) ;
-	//public void deprecated(Exception ex, String message) ;
 	
-	// The id identifies the formula found.
-
-	public void startFormula(int line, String context);
-	public void endFormula(int line, String context);
+	public void startGraph(int line, AST graphName);
+	public void endGraph(int line, AST graphName);
 	
-	public void quad(int line, AST subj, AST prop, AST obj, AST graphName) ;
-	public void directive(int line, AST directive, AST[] args, String context) ;
+	public void quad(int line, AST subj, AST prop, AST obj, AST graphName);
+	public void directive(int line, AST directive, AST[] args);
 }
 
 /*
