@@ -1,6 +1,8 @@
 package de.fuberlin.wiwiss.trust;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -29,7 +31,7 @@ import de.fuberlin.wiwiss.trust.TrustPolicy;
  * TODO: tpl:graphExplanation
  * TODO: Warn when unknown term from the tpl namespace are used
  * 
- * @version $Id: PolicySuiteFromRDFBuilderTest.java,v 1.1 2005/02/18 01:44:59 cyganiak Exp $
+ * @version $Id: PolicySuiteFromRDFBuilderTest.java,v 1.2 2005/03/15 08:57:14 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class PolicySuiteFromRDFBuilderTest extends TestCase {
@@ -242,6 +244,24 @@ public class PolicySuiteFromRDFBuilderTest extends TestCase {
         assertFalse(condition1.isSatisfiedBy(map) && condition2.isSatisfiedBy(map));
     }
 
+    public void testMetric() {
+        addSuiteAndPolicy1();
+        this.graph.getPrefixMapping().setNsPrefix("ex", "http://example.org/metrics#");
+        this.graph.add(new Triple(policy1, TPL.condition, Node.createLiteral("METRIC(ex:IsFoo, ?a)")));
+        PolicySuiteFromRDFBuilder builder = new PolicySuiteFromRDFBuilder(
+                this.graph, Arrays.asList(new Metric[] {new IsFooMetric()}));
+        this.suite = builder.buildPolicySuite();
+        
+        assertEquals(1, this.suite.getTrustPolicy(policy1URI).getConditions().size());
+        Condition condition = (Condition) this.suite.getTrustPolicy(policy1URI)
+        			.getConditions().iterator().next();
+        Map map = new HashMap();
+        map.put("a", Node.createLiteral("foo"));
+        assertTrue(condition.isSatisfiedBy(map));
+        map.put("a", Node.createLiteral("bar"));
+        assertFalse(condition.isSatisfiedBy(map));
+    }
+
     public void testPolicyWithoutExplanation() {
         addSuiteAndPolicy1();
         buildSuite();
@@ -331,7 +351,8 @@ public class PolicySuiteFromRDFBuilderTest extends TestCase {
     }
 
     private void buildSuite() {
-        PolicySuiteFromRDFBuilder builder = new PolicySuiteFromRDFBuilder(this.graph);
+        PolicySuiteFromRDFBuilder builder = new PolicySuiteFromRDFBuilder(
+                this.graph, Collections.EMPTY_LIST);
         this.suite = builder.buildPolicySuite();
         if (this.expectedWarnings != builder.getWarnings().size()) {
             StringBuffer warnings = new StringBuffer();

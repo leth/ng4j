@@ -397,7 +397,7 @@ _:k a fin:Author ;
  fin:newsAbout <urn:DUNS:000000001> ;
  dc:date " 2004-09-27T09:34+00:00 "^^dtype:date ;
  dc:description " Article about Deutsche Bank "^^dtype:string ;
- fin:text " Deutsche Bank under investigationA window being cleaned at Deutsche Bank's headquartersDeutsche Bank is Germany's biggest banking institutionGermany's biggest bank - Deutsche Bank - is being investigated on suspicion it may have manipulated its balance sheet.The investigation is in connection to a long-running legal dispute with the now-defunct Kirch media group.Deutsche Bank is alleged not to have set aside provisions to cover damages and compensation that a court ordered it to pay to Kirch.Kirch imploded in 2002 shortly after Deutsche's former boss questioned its creditworthiness in a TV interview.ViolationA probe had been launched against \"Deutsche Bank officials\", a spokesman for state prosecutors said, without providing any further details.Back in December 2003, a court in Munich ruled that Deutsche Bank's then chairman Rolf Breuer had violated his duty of client confidentiality by publicly questioning Kirch Group's creditworthiness on television in 2002.The court ordered Deutsche Bank to pay unspecified compensation to Kirch, but the bank has challenged this ruling.Shortly after Mr Breuer's remarks, banks began to refuse to lend Kirch any more money and KirchMedia, the main pillar of the Kirch Group, filed for insolvency in April 2002.Deutsche Bank declined to comment.  " .
+ fin:text " Deutsche Bank under investigation. A window being cleaned at Deutsche Bank's headquartersDeutsche Bank is Germany's biggest banking institutionGermany's biggest bank - Deutsche Bank - is being investigated on suspicion it may have manipulated its balance sheet.The investigation is in connection to a long-running legal dispute with the now-defunct Kirch media group.Deutsche Bank is alleged not to have set aside provisions to cover damages and compensation that a court ordered it to pay to Kirch.Kirch imploded in 2002 shortly after Deutsche's former boss questioned its creditworthiness in a TV interview.ViolationA probe had been launched against \"Deutsche Bank officials\", a spokesman for state prosecutors said, without providing any further details.Back in December 2003, a court in Munich ruled that Deutsche Bank's then chairman Rolf Breuer had violated his duty of client confidentiality by publicly questioning Kirch Group's creditworthiness on television in 2002.The court ordered Deutsche Bank to pay unspecified compensation to Kirch, but the bank has challenged this ruling.Shortly after Mr Breuer's remarks, banks began to refuse to lend Kirch any more money and KirchMedia, the main pillar of the Kirch Group, filed for insolvency in April 2002.Deutsche Bank declined to comment.  " .
 
 
 <http://news.bbc.co.uk/1/hi/business/4166935.stm> a fin:News ;
@@ -622,10 +622,7 @@ _:k a fin:Author ;
 
  _:TonySmith a fin:Author ;
   foaf:name " Tony Smith "^^dtype:string ;
-  vcard:TITLE " Hardware Editor "^^dtype:string ;
-  vcard:EMAIL " tony.smith@theregister.co.uk "^^dtype:string .
-
-
+  vcard:TITLE " Hardware Editor "^^dtype:string .
 
 
 
@@ -706,16 +703,45 @@ _:k a fin:Author ;
 }
 
 
-# published by: DiscussionForums 
+# published by: DiscussionForums and newsgroups
 
-<#graphDiscuss> {
 
-######################Source######################
 
- _:GoogleGroups a fin:NewsGroup ;
+<#graphNG_warrant> {
+    <#graphNG> swp:assertedBy <#graphNG_warrant> .
+    <#graphNG_warrant> swp:assertedBy <#graphNG_warrant> .
+    <#graphNG_warrant> swp:authority <http://groups-beta.google.com> .
+}
+
+<#graphNG> {
+
+_:GoogleGroups a fin:NewsGroup ;
   foaf:name " comp.sys.ibm.pc.hardware.chips, comp.sys.intel "^^dtype:string ;
   dc:description " Usenet newsgroup about financial topics. "^^dtype:string . 
 
+<http://groups.google.de/groups?hl=de&lr=&selm=Wuqdnbgcco63Th_cRVn-uA%40rogers.com&rnum=3> a fin:Posting ;
+ fin:newsSource _:GoogleGroups ;
+ fin:author _:YousufKahn ;
+ fin:newsAbout <urn:DUNS:047897855> ;
+ dc:date " 2004-10-29T16:32-10:00 "^^dtype:date ;
+ dc:description " Posting about Intel "^^dtype:string ;
+ fin:text " Positions of Smaller Chipset Makers Strengthening, Says Reportby Anton Shilov10/29/2004 | 03:21 PMIntel Corp. lost 6.7% of the chipset market to companies like VIA Technologies, SiS and ATI, who produce chipsets, during the third quarter of the year according to a report from Merril Lynch analyst cited by DigiTimes web-site in Taiwan.During the Q3 2004 Intel Corp. supplied 62.1% of all chipsets shipped worldwide, VIA Technologies commanded 18.5% of the market, Silicon Integrated Systems Corp. shipped 9.9% of core-logic products in Q3 2004, while ATI Technologies and NVIDIA Corp. only occupied 4.5% and 4.2% of the market.According to Merrill Lynch analyst Den Heyler VIA's third-quarter 3.6% market share gains become possible as shipments of core-logic chipsets supporting Intel and Advanced Micro Devices microprocessors rose 17% and 67%, respectively, from the second quarter of 2004. Shares of ATI, NVIDIA and SiS also increase 1% each in Q3. Still, chipset business of companies like VIA, SiS and ATI, who supply the majority of their core-logic products for PCs running Intel Pentium 4 processors, is under fire, as Intel Corp. competes fiercely in the entry-level and mainstream chipset market segments, which puts pricing pressure on third-party core-logic makers.ATI, SiS and VIA supply chipsets designed for both widely available platforms: Intel and AMD. In contrast, NVIDIA Corp. ships chipsets only for AMD-based computers, as it does not have license to make core-logic for Intel's central processing units. Intel only makes chipsets for its own processors.This quarter ATI, NVIDIA and VIA are expected to initiate commercial shipments of the first breed of PCI Express chipsets targeted at AMD64 infrastructure. SiS and VIA are also expected to begin volume supplies of PCI Express and DDR2 products designed for Intel's Pentium 4 processors in weeks.\"http://www.xbitlabs.com/news/chipsets/display/20041029152027.htmlKinda surprising considering Intel makes the overwhelming majority of chipsets for its own platforms. I didn't think there was much of a market for Intel chipsets for VIA, SIS, or ATI. Yousuf Khan " . 
+
+ _:YousufKahn a fin:Author ;
+  foaf:name " Yousuf Kahn "^^dtype:string ;
+  vcard:EMAIL " bbbl67@ezrs.com "^^dtype:string .
+
+
+}
+
+
+<#graphYa_warrant> {
+    <#graphYa> swp:assertedBy <#graphYa_warrant> .
+    <#graphYa_warrant> swp:assertedBy <#graphYa_warrant> .
+    <#graphYa_warrant> swp:authority <http://messages.yahoo.com/yahoo/Business___Finance/index.html> .
+}
+
+<#graphYa> {
 
 <http://messages.yahoo.com/yahoo/Business___Finance/index.html> a fin:DiscussionForum ;
   fin:country <iso:US> ;
@@ -723,52 +749,34 @@ _:k a fin:Author ;
   foaf:name " Yahoo Finance Message Boards "^^dtype:string ;
   dc:description " Discussionforum about financial topics "^^dtype:string .
 
+<http://finance.messages.yahoo.com/bbs?.mm=FN&action=m&board=1603257709&tid=si&sid=1603257709&mid=2391> a fin:Posting ;
+ fin:newsSource <http://ragingbull.lycos.com/cgi-bin/static.cgi/a=index.txt&d=mainpages> ;
+ fin:author _:zipter12 ;
+ fin:newsAbout <urn:DUNS:316067164> ;
+ dc:date " 2005-01-27T21:07-05:00 "^^dtype:date ;
+ dc:description " Posting about Siemens "^^dtype:string ;
+ fin:text "  Mobile Phones by: zipter12 01/27/05 09:07 pm | 2004: Fix, close, sell2005: Fix, close, sell, cooperate2006: Nothing to fix, nothing to close, nothing to sell, no one left to cooperate.Von Pierer, who said in the text of a speech he would not present a concrete solution for Siemens' ailing handsets business at Thursday's shareholder meeting, declined to rule out shutting the unit.\"I have been as specific as I want to be,\" he said. Siemens has said repeatedly its options for the unit are \"fix, close, sell or cooperate.\" ".
+
+_:zipter12 a fin:Author ;  
+  foaf:name " zipter12 "^^dtype:string ;
+  vcard:TITLE " Discussionforum user "^^dtype:string .
+
+}
+
+
+<#graphRa_warrant> {
+    <#graphRa> swp:assertedBy <#graphRa_warrant> .
+    <#graphRa_warrant> swp:assertedBy <#graphRa_warrant> .
+    <#graphRa_warrant> swp:authority <http://ragingbull.lycos.com/cgi-bin/static.cgi/a=index.txt&d=mainpages> .
+}
+
+<#graphRa> {
 
 <http://ragingbull.lycos.com/cgi-bin/static.cgi/a=index.txt&d=mainpages> a fin:DiscussionForum ;
   fin:country <iso:US> ;
   foaf:homepage " http://ragingbull.lycos.com/cgi-bin/static.cgi/a=index.txt&d=mainpages "^^dtype:string ;
   foaf:name " Lycos Raging Bull "^^dtype:string ;
   dc:description " Discussionforum about stocks "^^dtype:string .
-
-<http://boards.stockselector.com/community.asp> a fin:DiscussionForum ;
-  fin:country <iso:US> ;
-  foaf:homepage " http://boards.stockselector.com/community.asp "^^dtype:string ;
-  foaf:name " StockSelector.com "^^dtype:string ;
-  dc:description " Discussionforum about stocks "^^dtype:string .
-
-
-
-_:Got_rich_by_shorting_stocks a fin:Author ;  
-  foaf:name " Got_rich_by_shorting_stocks "^^dtype:string ;
-  vcard:TITLE " Discussionforum user "^^dtype:string .  
-
-
-
-_:dubya_kicksyourbutt a fin:Author ;  
-  foaf:name " dubya_kicksyourbutt "^^dtype:string ;
-  vcard:TITLE " Discussionforum user "^^dtype:string .
-
-
-_:zipter12 a fin:Author ;  
-  foaf:name " zipter12 "^^dtype:string ;
-  vcard:TITLE " Discussionforum user "^^dtype:string .
-
-
-_:Hupalo_is_clueless a fin:Author ;  
-  foaf:name " Hupalo_is_clueless "^^dtype:string ;
-  vcard:TITLE " Discussionforum user "^^dtype:string .
-
-_:dadean7 a fin:Author ;  
-  foaf:name " dadean7 "^^dtype:string ;
-  vcard:TITLE " Discussionforum user "^^dtype:string .
-
-
- _:YousufKahn a fin:Author ;
-  foaf:name " Yousuf Kahn "^^dtype:string ;
-  vcard:EMAIL " bbbl67@ezrs.com "^^dtype:string .
-
-######################News######################
-
 
 <http://ragingbull.lycos.com/mboard/boards.cgi?board=AMD&read=117988> a fin:Posting ;
  fin:newsSource <http://ragingbull.lycos.com/cgi-bin/static.cgi/a=index.txt&d=mainpages> ;
@@ -786,23 +794,30 @@ _:dadean7 a fin:Author ;
  dc:description " Posting about Intel share "^^dtype:string ;
  fin:text "  What an idiot you are. INTC will never go down to $12 or even close to it. As a matter of fact, it is on it's way to a new high this year pal. Don't you read the news?(Voluntary Disclosure: Position- Long; ST Rating- Strong Buy; LT Rating- Strong Buy) " .
 
-<http://finance.messages.yahoo.com/bbs?.mm=FN&action=m&board=1603257709&tid=si&sid=1603257709&mid=2391> a fin:Posting ;
- fin:newsSource <http://ragingbull.lycos.com/cgi-bin/static.cgi/a=index.txt&d=mainpages> ;
- fin:author _:zipter12 ;
- fin:newsAbout <urn:DUNS:316067164> ;
- dc:date " 2005-01-27T21:07-05:00 "^^dtype:date ;
- dc:description " Posting about Siemens "^^dtype:string ;
- fin:text "  Mobile Phones by: zipter12 01/27/05 09:07 pm | 2004: Fix, close, sell2005: Fix, close, sell, cooperate2006: Nothing to fix, nothing to close, nothing to sell, no one left to cooperate.Von Pierer, who said in the text of a speech he would not present a concrete solution for Siemens' ailing handsets business at Thursday's shareholder meeting, declined to rule out shutting the unit.\"I have been as specific as I want to be,\" he said. Siemens has said repeatedly its options for the unit are \"fix, close, sell or cooperate.\" ".
+_:dubya_kicksyourbutt a fin:Author ;  
+  foaf:name " dubya_kicksyourbutt "^^dtype:string ;
+  vcard:TITLE " Discussionforum user "^^dtype:string .
+
+_:dadean7 a fin:Author ;  
+  foaf:name " dadean7 "^^dtype:string ;
+  vcard:TITLE " Discussionforum user "^^dtype:string .
+
+}
 
 
-<http://groups.google.de/groups?hl=de&lr=&selm=Wuqdnbgcco63Th_cRVn-uA%40rogers.com&rnum=3> a fin:Posting ;
- fin:newsSource _:GoogleGroups ;
- fin:author _:YousufKahn ;
- fin:newsAbout <urn:DUNS:047897855> ;
- dc:date " 2004-10-29T16:32-10:00 "^^dtype:date ;
- dc:description " Posting about Intel "^^dtype:string ;
- fin:text " Positions of Smaller Chipset Makers Strengthening, Says Reportby Anton Shilov10/29/2004 | 03:21 PMIntel Corp. lost 6.7% of the chipset market to companies like VIA Technologies, SiS and ATI, who produce chipsets, during the third quarter of the year according to a report from Merril Lynch analyst cited by DigiTimes web-site in Taiwan.During the Q3 2004 Intel Corp. supplied 62.1% of all chipsets shipped worldwide, VIA Technologies commanded 18.5% of the market, Silicon Integrated Systems Corp. shipped 9.9% of core-logic products in Q3 2004, while ATI Technologies and NVIDIA Corp. only occupied 4.5% and 4.2% of the market.According to Merrill Lynch analyst Den Heyler VIA's third-quarter 3.6% market share gains become possible as shipments of core-logic chipsets supporting Intel and Advanced Micro Devices microprocessors rose 17% and 67%, respectively, from the second quarter of 2004. Shares of ATI, NVIDIA and SiS also increase 1% each in Q3. Still, chipset business of companies like VIA, SiS and ATI, who supply the majority of their core-logic products for PCs running Intel Pentium 4 processors, is under fire, as Intel Corp. competes fiercely in the entry-level and mainstream chipset market segments, which puts pricing pressure on third-party core-logic makers.ATI, SiS and VIA supply chipsets designed for both widely available platforms: Intel and AMD. In contrast, NVIDIA Corp. ships chipsets only for AMD-based computers, as it does not have license to make core-logic for Intel's central processing units. Intel only makes chipsets for its own processors.This quarter ATI, NVIDIA and VIA are expected to initiate commercial shipments of the first breed of PCI Express chipsets targeted at AMD64 infrastructure. SiS and VIA are also expected to begin volume supplies of PCI Express and DDR2 products designed for Intel's Pentium 4 processors in weeks.\"http://www.xbitlabs.com/news/chipsets/display/20041029152027.htmlKinda surprising considering Intel makes the overwhelming majority of chipsets for its own platforms. I didn't think there was much of a market for Intel chipsets for VIA, SIS, or ATI. Yousuf Khan " . 
+<#graphStS_warrant> {
+    <#graphStS> swp:assertedBy <#graphStS_warrant> .
+    <#graphStS_warrant> swp:assertedBy <#graphStS_warrant> .
+    <#graphStS_warrant> swp:authority <http://boards.stockselector.com/community.asp> .
+}
 
+<#graphStS> {
+
+<http://boards.stockselector.com/community.asp> a fin:DiscussionForum ;
+  fin:country <iso:US> ;
+  foaf:homepage " http://boards.stockselector.com/community.asp "^^dtype:string ;
+  foaf:name " StockSelector.com "^^dtype:string ;
+  dc:description " Discussionforum about stocks "^^dtype:string .
 
 <http://www.stockselector.com/message.asp?mid=78379&symbol=AMD> a fin:Posting ;
  fin:newsSource <http://boards.stockselector.com/community.asp> ;
@@ -820,6 +835,14 @@ _:dadean7 a fin:Author ;
  dc:description " Posting about Intel share "^^dtype:string ;
  fin:text "  Time to sell INTEL???? As all of you are aware, Intel has earnings coming up this week. It is never a good idea to hold over earnings BUT...what really worries me is that AMD also has earnings coming up and when AMD misses and their stock slides, they could take Intel right down with them.Peraps this explains the already strongs elling we have seen on both Intel but especially Amd. Also notice that insiders and institutions have been dumping shares of Amd like crazy.I AM MOVING my rating on Intel from hold to sell at least for now. You can always pick up shares a whole lot cheaper later on. Longs may want to buy puts and/or sell calls. " .
 
+_:Got_rich_by_shorting_stocks a fin:Author ;  
+  foaf:name " Got_rich_by_shorting_stocks "^^dtype:string ;
+  vcard:TITLE " Discussionforum user "^^dtype:string .  
+
+
+_:Hupalo_is_clueless a fin:Author ;  
+  foaf:name " Hupalo_is_clueless "^^dtype:string ;
+  vcard:TITLE " Discussionforum user "^^dtype:string .
 
 }
 

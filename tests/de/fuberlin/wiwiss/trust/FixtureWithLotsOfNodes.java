@@ -14,7 +14,7 @@ import junit.framework.TestCase;
 /**
  * Provides lots of test data to several test cases which extend this class
  *
- * @version $Id: FixtureWithLotsOfNodes.java,v 1.1 2005/02/18 01:44:59 cyganiak Exp $
+ * @version $Id: FixtureWithLotsOfNodes.java,v 1.2 2005/03/15 08:57:13 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public abstract class FixtureWithLotsOfNodes extends TestCase {
@@ -35,6 +35,7 @@ public abstract class FixtureWithLotsOfNodes extends TestCase {
 	protected static final Node PPD = Node.createURI("http://xmlns.com/foaf/0.1/PersonalProfileDocument");
 
 	protected static final Node varWarrant = Node.createVariable("warrant");
+	protected static final Node varAuthority = Node.createVariable("authority");
 	protected static final Node varAnyAuthority = Node.createVariable("anyAuthority");
 	protected static final Node varOtherWarrant = Node.createVariable("otherWarrant");
 	protected static final Node varUserWarrant = Node.createVariable("userWarrant");
