@@ -629,7 +629,7 @@ USING foaf FOR http://xmlns.com/foaf/0.1/</pre>
 
 <DIV class="trigInner">
   <pre>NamedGraphSet set = ...
-Iterator it = TriQLQuery.exec(set, "SELECT * FROM ?graph (?s ?p ?o)");
+Iterator it = TriQLQuery.exec(set, "SELECT * WHERE ?graph (?s ?p ?o)");
 while (it.hasNext()) {
     Map oneResult = (Map) it.next();
     Node graph = (Node) oneResult.get("graph");
@@ -715,7 +715,7 @@ NamedGraphSetDB.delete(connection, "myapp");</pre>
   <a href="http://page.mi.fu-berlin.de/%7Ecyganiak/" target="_blank">http://page.mi.fu-berlin.de/~cyganiak/</a><br>
 </p>
 <HR title="Separator for header">
-<p>$Date: 2004/11/10 21:58:22 $<br />
-  $Id: index.html,v 1.8 2004/11/10 21:58:22 cyganiak Exp $</p>
+<p>$Date: 2004/11/12 16:11:48 $<br />
+  $Id: index.html,v 1.9 2004/11/12 16:11:48 cyganiak Exp $</p>
 </BODY>
 </HTML>
