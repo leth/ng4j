@@ -21,7 +21,7 @@ import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
  * can generate an explanation stating why a particular statement was trusted
  * (but not why a statement was rejected).
  *
- * @version $Id: TrustPolicy.java,v 1.3 2005/03/21 21:51:59 cyganiak Exp $
+ * @version $Id: TrustPolicy.java,v 1.4 2005/03/22 01:01:48 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class TrustPolicy {
@@ -161,7 +161,7 @@ public class TrustPolicy {
 	    Iterator it = this.constraints.iterator();
 	    while (it.hasNext()) {
             Constraint constraint = (Constraint) it.next();
-            MetricResult result = constraint.evaluate(binding);
+            EvaluationResult result = constraint.evaluate(binding);
             if (!result.getResult()) {
                 return false;
             }

@@ -11,7 +11,7 @@ package de.fuberlin.wiwiss.trust.metric;
  *
  * @author  Oliver Maresch (oliver-maresch@gmx.de)
  */
-public class MetricResult implements de.fuberlin.wiwiss.trust.MetricResult {
+public class MetricResult implements de.fuberlin.wiwiss.trust.EvaluationResult {
     
     
     private boolean result;

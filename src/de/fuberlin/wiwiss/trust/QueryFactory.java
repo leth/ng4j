@@ -13,19 +13,22 @@ import de.fuberlin.wiwiss.ng4j.triql.TriQLQuery;
  * Builds a {@link TriQLQuery} from a {@link NamedGraphSet}, a find query pattern,
  * and a {@link TrustPolicy}. 
  *
- * @version $Id: QueryFactory.java,v 1.3 2005/03/21 21:51:59 cyganiak Exp $
+ * @version $Id: QueryFactory.java,v 1.4 2005/03/22 01:01:48 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class QueryFactory {
 	private NamedGraphSet source;
 	private Triple findMe;
 	private TrustPolicy policy;
+	private VariableBinding systemVariables;
 	private TriQLQuery query;
 
-	public QueryFactory(NamedGraphSet source, Triple findMe, TrustPolicy policy) {
+	public QueryFactory(NamedGraphSet source, Triple findMe, TrustPolicy policy,
+	        VariableBinding systemVariables) {
 		this.source = source;
 		this.findMe = findMe;
 		this.policy = policy;
+		this.systemVariables = systemVariables;
 	}
 	
 	public TriQLQuery buildQuery() {
@@ -58,6 +61,12 @@ public class QueryFactory {
             String prefix = (String) it.next();
             String uri = this.policy.getPrefixMapping().getNsPrefixURI(prefix);
             this.query.setPrefix(prefix, uri);
+        }
+		
+		it = this.systemVariables.variableNames().iterator();
+		while (it.hasNext()) {
+            String varName = (String) it.next();
+            this.query.prebindVariableValue(varName, this.systemVariables.value(varName));
         }
 		return this.query;
 	}

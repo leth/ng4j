@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.hp.hpl.jena.graph.Graph;
+import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.graph.TripleMatch;
 import com.hp.hpl.jena.graph.impl.GraphBase;
@@ -19,7 +20,7 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 /**
  * TODO: Write documentation and tests!
  * 
- * @version $Id: TrustLayerGraph.java,v 1.1 2005/03/15 08:59:08 cyganiak Exp $
+ * @version $Id: TrustLayerGraph.java,v 1.2 2005/03/22 01:01:47 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class TrustLayerGraph extends GraphBase {
@@ -30,9 +31,10 @@ public class TrustLayerGraph extends GraphBase {
     private TrustPolicy currentPolicy = TrustPolicy.TRUST_EVERYTHING;
     private boolean policiesParsed = false;
     private Map explanationCache = new HashMap();
+    private VariableBinding systemVariables = new VariableBinding();
     
     public TrustLayerGraph(NamedGraphSet untrustedDatasource, Graph policySuite) {
-        this.engine = new TrustEngine(untrustedDatasource);
+        this.engine = new TrustEngine(untrustedDatasource, this.systemVariables);
         this.policySuiteGraph = policySuite;
     }
     
@@ -81,6 +83,10 @@ public class TrustLayerGraph extends GraphBase {
     
     public void clearExplanationCache() {
         this.explanationCache.clear();
+    }
+    
+    public void setSystemVariable(String varName, Node varValue) {
+        this.systemVariables.setValue(varName, varValue);
     }
     
     public void registerMetricImplementation(Class metricImplementationClass) {

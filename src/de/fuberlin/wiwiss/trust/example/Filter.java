@@ -3,6 +3,7 @@ package de.fuberlin.wiwiss.trust.example;
 import java.util.Iterator;
 
 import com.hp.hpl.jena.graph.Graph;
+import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.impl.ModelCom;
@@ -14,7 +15,7 @@ import de.fuberlin.wiwiss.trust.TrustLayerGraph;
 import de.fuberlin.wiwiss.trust.metric.TidalTrustMetric;
 
 /**
- * @version $Id: Filter.java,v 1.1 2005/03/15 08:59:08 cyganiak Exp $
+ * @version $Id: Filter.java,v 1.2 2005/03/22 01:01:49 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class Filter {
@@ -40,6 +41,9 @@ public class Filter {
         tlg.registerMetricImplementation(IsFooMetric.class);
         tlg.registerMetricImplementation(TidalTrustMetric.class);
 
+        // Set a system variable, will be available to policies as ?USER
+        tlg.setSystemVariable("USER", Node.createURI("http://example.com/users#Oliver"));
+        
         // Print available policies
         Iterator it = tlg.getAllTrustPolicyURIs().iterator();
         while (it.hasNext()) {

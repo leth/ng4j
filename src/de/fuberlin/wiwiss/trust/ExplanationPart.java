@@ -12,7 +12,7 @@ import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 /**
- * @version $Id: ExplanationPart.java,v 1.1 2005/02/18 01:44:59 cyganiak Exp $
+ * @version $Id: ExplanationPart.java,v 1.2 2005/03/22 01:01:48 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class ExplanationPart {
@@ -29,6 +29,14 @@ public class ExplanationPart {
     
     public void addPart(ExplanationPart part) {
         this.parts.add(part);
+    }
+    
+    public Collection parts() {
+        return this.parts;
+    }
+    
+    public List explanationNodes() {
+        return this.explanation;
     }
     
     public void writeAsRDF(Node parent, Graph target) {

@@ -22,7 +22,7 @@ import de.fuberlin.wiwiss.ng4j.triql.parser.Q_MetricExpression;
  * binding to be trusted. This is a boolean expression that can
  * use all variables occuring in the graph patterns. 
  *
- * @version $Id: Constraint.java,v 1.2 2005/03/21 21:51:59 cyganiak Exp $
+ * @version $Id: Constraint.java,v 1.3 2005/03/22 01:01:48 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class Constraint {
@@ -37,11 +37,11 @@ public class Constraint {
      * @param binding A variable binding
      * @return A boolean result and explanations from metrics
      */
-    public MetricResult evaluate(VariableBinding binding) {
+    public EvaluationResult evaluate(VariableBinding binding) {
         final MetricResultCollector metricResultCollector = new MetricResultCollector();
         final boolean result = isSatisfied(metricResultCollector,
                 createResultBindingFrom(binding));
-        return new MetricResult() {
+        return new EvaluationResult() {
             public boolean getResult() {
                 return result;
             }
@@ -93,29 +93,29 @@ public class Constraint {
      * pass around a MetricResultCollector instance. The
      * {@link Q_MetricExpression} implementation then casts
      * the Query parameter to MetricResultCollector and passes
-     * the {@link MetricResult} to the collector. Added benefit
+     * the {@link EvaluationResult} to the collector. Added benefit
      * of passing MetricResult instead of the explanation itself:
      * We keep the ability to generate the explanation on demand.
      * 
-     * @version $Id: Constraint.java,v 1.2 2005/03/21 21:51:59 cyganiak Exp $
+     * @version $Id: Constraint.java,v 1.3 2005/03/22 01:01:48 cyganiak Exp $
      * @author Richard Cyganiak (richard@cyganiak.de)
      */
     public class MetricResultCollector extends Query {
         private Collection metricResults = new ArrayList();
         
-        public void collectMetricResult(MetricResult result) {
+        public void collectMetricResult(EvaluationResult result) {
             this.metricResults.add(result);
         }
         
         public ExplanationPart getTextExplanation() {
             if (this.metricResults.size() == 1) {
-                MetricResult result = (MetricResult) this.metricResults.iterator().next();
+                EvaluationResult result = (EvaluationResult) this.metricResults.iterator().next();
                 return result.getTextExplanation();
             }
             ExplanationPart result = new ExplanationPart();
             Iterator it = this.metricResults.iterator();
             while (it.hasNext()) {
-                MetricResult metricResult = (MetricResult) it.next();
+                EvaluationResult metricResult = (EvaluationResult) it.next();
                 result.addPart(metricResult.getTextExplanation());
             }
             return result;

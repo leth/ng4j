@@ -31,7 +31,7 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
  * {@link ExplanationPart} instances, or as generic application-specifc
  * RDF graphs.</p>
  * 
- * @version $Id: Metric.java,v 1.1 2005/02/18 01:44:59 cyganiak Exp $
+ * @version $Id: Metric.java,v 1.2 2005/03/22 01:01:48 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public interface Metric {
@@ -60,5 +60,5 @@ public interface Metric {
      * @throws MetricException if the number or type of input arguments
      * 		are incorrect
      */
-    public MetricResult calculateMetric(List arguments) throws MetricException;
+    public EvaluationResult calculateMetric(List arguments) throws MetricException;
 }

@@ -11,7 +11,7 @@ import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 import de.fuberlin.wiwiss.trust.EXPL;
 import de.fuberlin.wiwiss.trust.ExplanationPart;
 import de.fuberlin.wiwiss.trust.Metric;
-import de.fuberlin.wiwiss.trust.MetricResult;
+import de.fuberlin.wiwiss.trust.EvaluationResult;
 
 
 /**
@@ -39,11 +39,13 @@ public class TidalTrustTest {
         
         Metric metric = new TidalTrustMetric();
         metric.setup(data);
-        MetricResult result = metric.calculateMetric(arguments);
+        EvaluationResult result = metric.calculateMetric(arguments);
 
         
         // print explanations of all triples
         ExplanationPart part = result.getTextExplanation();
+//        System.out.println(ExplanationToHTMLRenderer.renderExplanationPart(part));
+
         System.out.println("Question: Should the source <" + source.toString() + "> trust the sink <" + sink.toString() + ">?\nAnswer: " + (result.getResult()?"Yes.\n":"No.\n"));
         System.out.println("Explanation:");
         

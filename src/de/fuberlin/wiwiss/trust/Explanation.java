@@ -12,7 +12,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 /**
- * @version $Id: Explanation.java,v 1.1 2005/02/18 01:44:59 cyganiak Exp $
+ * @version $Id: Explanation.java,v 1.2 2005/03/22 01:01:47 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class Explanation {
@@ -78,5 +78,13 @@ public class Explanation {
             part.writeAsRDF(explanation, result);
         }
         return result;
+    }
+    
+    public Triple getExplainedTriple() {
+        return this.triple;
+    }
+    
+    public Node getPolicyURI() {
+        return Node.createURI(this.policy.getURI());
     }
 }

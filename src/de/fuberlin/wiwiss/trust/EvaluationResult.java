@@ -7,10 +7,10 @@ import com.hp.hpl.jena.graph.Graph;
  * the two parts of the result -- the boolean result, and the explanation,
  * which might be an RDF graph or textual.
  *
- * @version $Id: MetricResult.java,v 1.1 2005/02/18 01:44:59 cyganiak Exp $
+ * @version $Id: EvaluationResult.java,v 1.1 2005/03/22 01:01:48 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
-public interface MetricResult {
+public interface EvaluationResult {
     
     /**
      * @return The result

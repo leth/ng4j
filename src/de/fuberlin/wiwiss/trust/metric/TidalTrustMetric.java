@@ -129,7 +129,7 @@ public final class TidalTrustMetric implements Metric{
      * @throws MetricException if the number or type of input arguments
      * 		are incorrect
      */
-    public de.fuberlin.wiwiss.trust.MetricResult calculateMetric(java.util.List arguments) 
+    public de.fuberlin.wiwiss.trust.EvaluationResult calculateMetric(java.util.List arguments) 
     throws de.fuberlin.wiwiss.trust.MetricException {
         
         // Contains the result rating
@@ -178,7 +178,7 @@ public final class TidalTrustMetric implements Metric{
      * @param threshold The minimum trust value, for trusted sinks
      * @return result and explanation
      */ 
-    private de.fuberlin.wiwiss.trust.MetricResult calcTidalTrust(Node source, Node sink, float threshold)
+    private de.fuberlin.wiwiss.trust.EvaluationResult calcTidalTrust(Node source, Node sink, float threshold)
     throws de.fuberlin.wiwiss.trust.MetricException { 
         
         // Explanation generation section begin -------------------------------------
