@@ -1,5 +1,5 @@
 /*
- * $Id: JenaRDFReaderTest.java,v 1.1 2004/09/13 14:37:31 cyganiak Exp $
+ * $Id: JenaRDFReaderTest.java,v 1.2 2004/09/13 22:45:13 cyganiak Exp $
  */
 package de.fuberlin.wiwiss.namedgraphs.trix;
 
@@ -76,10 +76,10 @@ public class JenaRDFReaderTest extends TestCase {
 		assertFalse(expected.isIsomorphicWith(this.model));
 	}
 
-	public void testEliminateDuplicatesFromMultipleGraphs() {
-		readIntoModel("duplicatesFromMultipleGraphs.xml");
-		assertSameStatements("duplicatesFromMultipleGraphs.nt");
-		assertEquals(3, this.model.size());
+	public void testIgnoreMultipleGraphs() {
+		readIntoModel("ignoreMultipleGraphs.xml");
+		assertSameStatements("ignoreMultipleGraphs.nt");
+		assertEquals(2, this.model.size());
 	}
 
 	private void readIntoModel(String triXFile) {
