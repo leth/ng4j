@@ -5,3 +5,4 @@ ng4j.zip
 .classpath
 .project
 .DS_Store
+build-tests

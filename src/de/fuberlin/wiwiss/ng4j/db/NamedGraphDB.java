@@ -1,49 +1,65 @@
-// $Id: GraphPattern.java,v 1.2 2004/11/02 02:00:24 cyganiak Exp $
-package de.fuberlin.wiwiss.ng4j.triql;
+// $Id: NamedGraphDB.java,v 1.1 2004/11/02 02:00:23 cyganiak Exp $
+package de.fuberlin.wiwiss.ng4j.db;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.rdql.QueryException;
+import com.hp.hpl.jena.graph.TripleMatch;
+import com.hp.hpl.jena.graph.impl.GraphBase;
+import com.hp.hpl.jena.util.iterator.ExtendedIterator;
+import com.hp.hpl.jena.util.iterator.NiceIterator;
+
+import de.fuberlin.wiwiss.ng4j.NamedGraph;
+import de.fuberlin.wiwiss.ng4j.Quad;
 
 /**
- * TODO: Describe this type
- *
+ * A database-backed Named Graph implementation which is
+ * handed out by {@link NamedGraphSetDB#getGraph(Node)}.
+ * The real work is done by a {@link QuadDB} instance. This class
+ * provides a NamedGraph view onto the QuadDB interface for a
+ * fixed graph name.
+ * 
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
-public class GraphPattern {
-	private Node name;
-	private List triples = new ArrayList();
+public class NamedGraphDB extends GraphBase implements NamedGraph {
+	private QuadDB db;
+	private Node graphName;
+	
+	public NamedGraphDB(QuadDB db, Node graphName) {
+		this.db = db;
+		this.graphName = graphName;
+	}
 
-	public GraphPattern(Node name) {
-		this.name = name;
+	public Node getGraphName() {
+		return this.graphName;
 	}
-	
-	public void addTriplePattern(Node s, Node p, Node o) {
-		if (areSameVariable(s, p) || areSameVariable(s, o) || areSameVariable(p, o)) {
-			throw new QueryException("Currently, multiple occurences of the same " +
-					"variable in the same TriQL triple pattern are not supported. " +
-					"If you need this, please tell us.");
-		}
-		this.triples.add(new Triple(s, p, o));
+
+	public void performDelete(Triple t) {
+		this.db.delete(this.graphName, t.getSubject(), t.getPredicate(), t.getObject());
 	}
-	
-	public Node getName() {
-		return this.name;
+
+	public ExtendedIterator find(TripleMatch m) {
+		final Iterator quadIt = this.db.find(
+				this.graphName,
+				m.getMatchSubject(),
+				m.getMatchPredicate(),
+				m.getMatchObject());
+		return new NiceIterator() {
+			public boolean hasNext() {
+				return quadIt.hasNext();
+			}
+			public Object next() {
+				return ((Quad) quadIt.next()).getTriple();
+			}
+			public void remove() {
+				quadIt.remove();
+			}
+		};
 	}
-	
-	public int getTripleCount() {
-		return this.triples.size();
-	}
-	
-	public Triple getTriple(int index) {
-		return (Triple) this.triples.get(index);
-	}
-	
-	private boolean areSameVariable(Node v1, Node v2) {
-		return v1.isVariable() && v2.isVariable() && v1.getName().equals(v2.getName());
+
+	public void performAdd(Triple t) {
+		this.db.insert(this.graphName, t.getSubject(), t.getPredicate(), t.getObject());
 	}
 }
 

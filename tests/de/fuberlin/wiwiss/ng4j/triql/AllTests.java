@@ -5,17 +5,13 @@
 
 package de.fuberlin.wiwiss.ng4j.triql;
 
-import de.fuberlin.wiwiss.ng4j.NamedGraphModelTest;
-import de.fuberlin.wiwiss.ng4j.NamedGraphSetTest;
-import de.fuberlin.wiwiss.ng4j.NamedGraphStatementIteratorTest;
-import de.fuberlin.wiwiss.ng4j.UnionGraphTest;
-import junit.framework.*;
+import junit.framework.TestSuite;
 
 /**
  * All the TriQL and RDQL tests 
  * @author		Andy Seaborne
  * @author Richard Cyganiak (richard@cyganiak.de)
- * @version 	$Id: AllTests.java,v 1.1 2004/10/26 07:17:40 cyganiak Exp $
+ * @version 	$Id: AllTests.java,v 1.2 2004/11/02 02:00:24 cyganiak Exp $
  */
 
 public class AllTests extends TestSuite {
@@ -28,7 +24,8 @@ public class AllTests extends TestSuite {
 		suite.addTest(QueryTestProgrammatic.suite());
 		suite.addTest(TestExpressions.suite());
 		suite.addTest(QueryTestScripts.suite());
-		suite.addTestSuite(TriQLTest.class);
+		suite.addTestSuite(TriQLGraphTest.class);
+		suite.addTestSuite(SpecExampleTest.class);
 		//$JUnit-END$
 		return suite;
 	}

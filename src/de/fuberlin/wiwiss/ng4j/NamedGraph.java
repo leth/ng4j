@@ -1,56 +1,32 @@
-
-// $Id: NamedGraph.java,v 1.1 2004/10/23 13:31:23 cyganiak Exp $
-
+// $Id: NamedGraph.java,v 1.2 2004/11/02 02:00:23 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j;
-
-
 
 import com.hp.hpl.jena.graph.Graph;
 
 import com.hp.hpl.jena.graph.Node;
 
-
-
 /**
-
- * A collection of RDF triples which is named by an URI. 
-
+ * <p>A collection of RDF triples which is named by an URI. 
  * For details about Named Graphs see the
-
- * <a href="http://www.w3.org/2004/03/trix/">Named Graphs homepage</a>.
-
- * <p>
-
- * The core interface is small (add, delete, find, contains) and
-
+ * <a href="http://www.w3.org/2004/03/trix/">Named Graphs homepage</a>.</p>
+ * 
+ * <p>The core interface is small (add, delete, find, contains) and
  * is augmented by additional classes to handle more complicated matters
-
  * such as reification, query handling, bulk update, event management,
-
- * and transaction handling.
-
+ * and transaction handling.</p>
+ * 
+ * TODO: Implement equals()
  *
-
  * @author Chris Bizer
-
  */
-
 public interface NamedGraph extends Graph {
 
-
-
 	/**
-
 	 * Returns the URI of the named graph. The returned Node
-
 	 * instance is always an URI and cannot be a blank node
-
 	 * or literal.
-
 	 */
-
 	public Node getGraphName();
-
 }
 
 /*

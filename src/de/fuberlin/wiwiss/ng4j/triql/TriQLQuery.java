@@ -1,4 +1,4 @@
-// $Id: TriQLQuery.java,v 1.1 2004/10/26 07:17:39 cyganiak Exp $
+// $Id: TriQLQuery.java,v 1.2 2004/11/02 02:00:24 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import java.io.File;
@@ -19,8 +19,26 @@ import de.fuberlin.wiwiss.ng4j.triql.parser.Q_Query;
 import de.fuberlin.wiwiss.ng4j.triql.parser.TriQLParser;
 
 /**
- * TODO: Describe this type
+ * <p>A <a href="http://www.wiwiss.fu-berlin.de/suhl/bizer/TriQL/">TriQL</a>
+ * query. The data source can be a {@link NamedGraphSet}, or any RDF document
+ * given in the query's FROM clause.</p>
+ * 
+ * <p>A query is executed by creating a
+ * new TriQLQuery instance and calling its {@link #getResults()} method.
+ * The static {@link #exec(String)} and {@link #exec(NamedGraphSet, String)} methods
+ * combine both steps into a single call.</p>
+ * 
+ * <p>TriQL query results are iterators over a list of maps. The map's keys are
+ * the names of the result variables. The map's values are the corresponding
+ * result values.</p> 
  *
+ * <p>The class provides methods for assembling a query programmatically. This
+ * is an alternative to creating the query from a String. For example, one can
+ * add prefix bindings using the {@link #setPrefix(String, String)} method,
+ * instead of the ususal USING ... FOR clauses.</p>
+ * 
+ * TODO: Documentation
+ * 
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class TriQLQuery {
@@ -56,6 +74,16 @@ public class TriQLQuery {
 		this.prefixes.put("owl", "http://www.w3.org/2002/07/owl#");
 	}
 	
+	public static Iterator exec(NamedGraphSet dataSource, String queryString) {
+		TriQLQuery query = new TriQLQuery(dataSource, queryString);
+		return query.getResults();
+	}
+	
+	public static Iterator exec(String queryString) {
+		TriQLQuery query = new TriQLQuery(queryString);
+		return query.getResults();
+	}
+
 	public Iterator getResults() {
 		return getResultsAsList().iterator();
 	}
@@ -168,3 +196,31 @@ public class TriQLQuery {
 		}
 	}
 }
+
+/*
+ *  (c)   Copyright 2004 Christian Bizer (chris@bizer.de)
+ *   All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. The name of the author may not be used to endorse or promote products
+ *    derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
