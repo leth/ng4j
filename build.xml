@@ -8,6 +8,7 @@
 	<property name="src" value="src"/>
 	<property name="src.tests" value="tests"/>
 	<property name="src.triql.grammar" value="${src}/${project.path}/triql/parser"/>
+	<property name="src.trig.grammar" value="${src}/${project.path}/trig/parser"/>
 	<property name="build" value="build"/>
 	<property name="build.tests" value="build-tests"/>
 	<property name="lib" value="lib"/>
@@ -123,6 +124,24 @@
 		<javacc target="${src.triql.grammar}/triql.jj"
 				outputdirectory="${src.triql.grammar}"
 				javacchome="${javacc.home}"/>
+	</target>
+
+	<target name="grammar.trig">
+		<!-- Re-generates the TriG parser from the trig.g file;
+			is not part of the regular build process and must be
+			called explicitly when the trig.g file has changed -->
+<!--
+		<antlr target="${src.trig.grammar}/trig.g"
+				outputdirectory="${src.trig.grammar}" />
+-->
+		<java classname="antlr.Tool" fork="yes" failonerror="true">
+			<arg value="-o"/>
+			<arg value="${src.trig.grammar}"/>
+			<arg value="${src.trig.grammar}/trig.g"/>
+			<classpath>
+				<path refid="project.class.path"/>
+			</classpath>
+		</java>
 	</target>
 
 	<target name="javadoc">
