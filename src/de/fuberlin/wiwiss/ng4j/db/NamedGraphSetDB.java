@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetDB.java,v 1.3 2004/12/12 17:30:26 cyganiak Exp $
+// $Id: NamedGraphSetDB.java,v 1.4 2004/12/17 05:05:55 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -212,7 +212,7 @@ public class NamedGraphSetDB extends NamedGraphSetIO implements NamedGraphSet {
 	}
 
 	public Graph asJenaGraph(final Node defaultGraphForAdding) {
-		if (!containsGraph(defaultGraphForAdding)) {
+		if (defaultGraphForAdding != null && !containsGraph(defaultGraphForAdding)) {
 			createGraph(defaultGraphForAdding);
 		}
 		return new NamedGraphDB(this.db, Node.ANY) {

@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetTest.java,v 1.5 2004/12/14 13:30:15 cyganiak Exp $
+// $Id: NamedGraphSetTest.java,v 1.6 2004/12/17 05:05:54 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.util.ArrayList;
@@ -384,14 +384,7 @@ public class NamedGraphSetTest extends TestCase {
 	}
 
 	public void testAsJenaGraphNull() {
-		try {
-			this.set.asJenaGraph(null);
-			fail();
-		} catch (NullPointerException npex) {
-			// We don't really care what kind of exception is thrown,
-		} catch (IllegalArgumentException iaex) {
-			// but it should fail
-		}
+		assertNotNull(this.set.asJenaGraph(null));
 	}
 
 	/**

@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetImpl.java,v 1.4 2004/12/17 01:44:30 cyganiak Exp $
+// $Id: NamedGraphSetImpl.java,v 1.5 2004/12/17 05:05:54 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import java.util.ArrayList;
@@ -182,11 +182,13 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 	}
 
 	public Graph asJenaGraph(Node defaultGraphForAdding) {
-		if (!containsGraph(defaultGraphForAdding)) {
+		if (defaultGraphForAdding != null && !containsGraph(defaultGraphForAdding)) {
 			createGraph(defaultGraphForAdding);
 		}
 		MultiUnion unionGraph = new UnionGraph(this.graphs);
-		unionGraph.setBaseGraph(getGraph(defaultGraphForAdding));
+		if (defaultGraphForAdding != null) {
+			unionGraph.setBaseGraph(getGraph(defaultGraphForAdding));
+		}
 		return unionGraph;
 	}
 
