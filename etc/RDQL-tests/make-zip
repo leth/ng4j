@@ -1,0 +1,24 @@
+#!/bin/bash
+# Create a zip file of all the tests for separate distribution.
+
+ZIP="rdql-tests.zip"
+
+if [ -e "$ZIP" ]
+then
+    print "Zip file '$ZIP' already exists - will not overwrite" 1>&2
+    exit 1
+    fi
+
+# Include the following:
+# Documentation: README-RDQL-tests.txt 
+# Manifest file : rdql-tests.n3
+# Tests : query-dump test-?-??
+# Expected results by test : result-?-??.n3
+# Input data : model?.*
+# Data from Jena tutorial (test data): vc-db-?.rdf
+
+
+
+zip -q "$ZIP"  README-RDQL-tests.txt rdql-tests.n3 \
+    test-?-?? query-dump result-?-??.n3 model*.* vc-db-?.rdf
+
