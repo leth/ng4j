@@ -1,0 +1,389 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE RDF [
+   <!ENTITY rdf  "http://www.w3.org/1999/02/22-rdf-syntax-ns">
+   <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema">
+   <!ENTITY xsd  "http://www.w3.org/2001/XMLSchema">
+   <!ENTITY rdfg "http://www.w3.org/2004/03/trix/rdfg-1">
+   <!ENTITY xmlsig "http://www.w3.org/2000/09/xmldsig">
+   <!ENTITY swp  "http://www.w3.org/2004/03/trix/swp-2">
+]>
+
+<!--
+   
+########################################################
+         Semantic Web Publishing Vocabulary
+########################################################   
+   
+Version: 0.2.1
+Date: Nov 30, 2004
+
+Authors: 
+   Jeremy J. Carroll, 
+   Christian Bizer, 
+   Patrick Hayes,
+   Patrick Stickler
+   
+Contents:
+   1. SWP Base Vocabulary
+   2. SWP Signature-Related Vocabulary
+   3. SWP Signature-Related Algorithms
+
+        
+Changes:
+   Nov 30, 2004: Added signature related vocabulary and algorithms.
+   May 20, 2004: Initial version of the vocabulary.
+         
+-->
+
+<rdf:RDF
+  xml:base="&swp;/"
+   xmlns:rdf="&rdf;#"
+   xmlns:rdfs="&rdfs;#"
+   xmlns:xsd="&xsd;#"
+   xmlns:rdfg="&rdfg;/"
+   xmlns:swp="&swp;/">
+
+
+<!-- 
+########################################################  
+           1. SWP Base Vocabulary 
+########################################################  
+-->
+
+   <rdfs:Class rdf:about="&swp;/Authority">
+      <rdfs:label>Authority</rdfs:label>
+      <rdfs:comment>
+An authority, or origin, of a graph; such as a person or company.
+      </rdfs:comment>
+   </rdfs:Class>
+
+   <rdfs:Class rdf:about="&swp;/Warrant">
+      <rdfs:label>Warrant</rdfs:label>
+      <rdfs:comment>
+A relationship between an authority and a graph, in which the authority is in
+some way an origin of that graph. Warrants may include a digital signature of
+the graph by the authority.
+      </rdfs:comment>
+   </rdfs:Class>
+
+   <rdf:Property rdf:about="&swp;/assertedBy">
+      <rdfs:label>asserted by</rdfs:label>
+      <rdfs:comment>
+The subject graph originates from and is asserted by the authority specified
+for the object warrant. The statements expressed in the graph are taken to be
+claims made by that authority. This property has performative semantics.
+      </rdfs:comment>
+      <rdfs:domain rdf:resource="&rdfg;/Graph"/>
+      <rdfs:range rdf:resource="&swp;/Warrant"/>
+   </rdf:Property>
+
+   <rdf:Property rdf:about="&swp;/quotedBy">
+      <rdfs:label>quoted by</rdfs:label>
+      <rdfs:comment>
+The subject graph originates from the authority specified for the object warrant.
+The statements expressed in the graph are not taken to be claims made by that
+authority, insofar as any statement using this property is concerned.
+      </rdfs:comment>
+      <rdfs:domain rdf:resource="&rdfg;/Graph"/>
+      <rdfs:range rdf:resource="&swp;/Warrant"/>
+   </rdf:Property>
+
+   <rdf:Property rdf:about="&swp;/authority">
+      <rdfs:label>authority</rdfs:label>
+      <rdfs:comment>
+The object authority is the origin of the graph with which the subject warrant
+is associated.
+      </rdfs:comment>
+      <rdfs:domain rdf:resource="&swp;/Warrant"/>
+      <rdfs:range rdf:resource="&swp;/Authority"/>
+   </rdf:Property>
+   
+   <rdf:Property rdf:about="&swp;/validUntil">
+      <rdfs:label>valid from</rdfs:label>
+      <rdfs:comment>
+Defines a point in time until which the warrant is valid.
+      </rdfs:comment>
+      <rdfs:domain rdf:resource="&swp;/Warrant"/>
+      <rdfs:range rdf:resource="&xsd;#dateTime"/>
+   </rdf:Property>
+
+   <rdf:Property rdf:about="&swp;/validFrom">
+      <rdfs:label>valid from</rdfs:label>
+      <rdfs:comment>
+Defines a point in time after which the warrant is valid.
+      </rdfs:comment>
+      <rdfs:domain rdf:resource="&swp;/Warrant"/>
+      <rdfs:range rdf:resource="&xsd;#dateTime"/>
+   </rdf:Property>
+
+<!-- 
+########################################################  
+       2. SWP Signature Related Vocabulary 
+########################################################  
+-->
+
+<!-- Signing Warrants -->
+
+   <rdf:Property rdf:about="&swp;/signature">
+      <rdfs:label>signature</rdfs:label>
+      <rdfs:comment>
+The object is the signature to be used to authenticate the graph with which the
+subject warrant is associated.
+      </rdfs:comment>
+      <rdfs:domain rdf:resource="&swp;/Warrant"/>
+      <rdfs:range rdf:resource="&xsd;#base64Binary"/>
+   </rdf:Property>
+
+   <rdf:Property rdf:about="&swp;/signatureMethod">
+      <rdfs:label>signature method</rdfs:label>
+      <rdfs:comment>
+The object is the signature method by which the signature specified for the
+warrant subject was constructed.
+      </rdfs:comment>
+      <rdfs:domain rdf:resource="&swp;/Warrant"/>
+      <rdfs:range rdf:resource="&swp;/SignatureMethod"/>
+   </rdf:Property>
+
+
+<!-- Defining Signature Methods -->
+
+   <rdfs:Class rdf:about="&swp;/SignatureMethod">
+      <rdfs:label>Signature Method</rdfs:label>
+      <rdfs:comment>
+A method used for creating a signature used to authenticate a graph.
+Signature methods define an canonicalization method and a signature algorithm.
+      </rdfs:comment>
+   </rdfs:Class>
+
+   <rdfs:Class rdf:about="&swp;/CanonicalizationAlgorithm">
+      <rdfs:label>Canonicalization Algorithm</rdfs:label>
+      <rdfs:comment>
+An algorithm used to transform a graph to a canonical form.
+      </rdfs:comment>
+   </rdfs:Class>
+
+   <rdfs:Class rdf:about="&swp;/SignatureAlgorithm">
+      <rdfs:label>Signature Algorithm</rdfs:label>
+      <rdfs:comment>
+An algorithm to compute a hash digest from some data and to sign the digest.
+      </rdfs:comment>
+   </rdfs:Class>
+
+   <rdf:Property rdf:about="&swp;/canonicalizationAlgorithm">
+      <rdfs:label>canonicalization algorithm</rdfs:label>
+      <rdfs:comment>
+Canonicalization method used by this signature or digest method.
+      </rdfs:comment>
+      <rdfs:range rdf:resource="&swp;/CanonicalizationAlgorithm"/>
+   </rdf:Property>
+
+   <rdf:Property rdf:about="&swp;/signatureAlgorithm">
+      <rdfs:label>signature algorithm</rdfs:label>
+      <rdfs:comment>
+Signature algorithm used by this signature method.
+      </rdfs:comment>
+      <rdfs:domain rdf:resource="&swp;/SignatureMethod"/>
+      <rdfs:range rdf:resource="&swp;/SignatureAlgorithm"/>
+   </rdf:Property>
+
+
+<!-- Graph Digests -->
+
+   <rdf:Property rdf:about="&swp;/digest">
+      <rdfs:label>digest</rdfs:label>
+      <rdfs:comment>
+The object contains a digest value for the subject graph.
+      </rdfs:comment>
+      <rdfs:domain rdf:resource="&rdfg;/Graph"/>
+      <rdfs:range rdf:resource="&xsd;#base64Binary"/>
+   </rdf:Property>
+
+   <rdf:Property rdf:about="&swp;/digestMethod">
+      <rdfs:label>digest method</rdfs:label>
+      <rdfs:comment>
+The object is the digest method by which the digest value specified for the
+graph subject was constructed.
+      </rdfs:comment>
+      <rdfs:domain rdf:resource="&rdfg;/Graph"/>
+      <rdfs:range rdf:resource="&swp;/DigestMethod"/>
+   </rdf:Property>
+
+
+<!-- Defining Digest Methods -->
+
+   <rdfs:Class rdf:about="&swp;/DigestMethod">
+      <rdfs:label>Digest Method</rdfs:label>
+      <rdfs:comment>
+A method used for computing a digest a graph.
+Digest method defines a canonicalization alorithm and a digest algorithm.
+      </rdfs:comment>
+   </rdfs:Class>
+
+   <rdfs:Class rdf:about="&swp;/DigestAlgorithm">
+      <rdfs:label>Digest Algorithm</rdfs:label>
+      <rdfs:comment>
+A hash algorithm to compute a digest from some data.
+      </rdfs:comment>
+   </rdfs:Class>
+
+   <rdf:Property rdf:about="&swp;/digestAlgorithm">
+      <rdfs:label>signature algorithm</rdfs:label>
+      <rdfs:comment>
+Digest algorithm used by this digest method.
+      </rdfs:comment>
+      <rdfs:domain rdf:resource="&swp;/DigestMethod"/>
+      <rdfs:range rdf:resource="&swp;/DigestAlgorithm"/>
+   </rdf:Property>
+
+
+<!-- Publishing Key and Certification Information -->
+
+   <rdf:Property rdf:about="&swp;/hasKey">
+      <rdfs:label>has key</rdfs:label>
+      <rdfs:comment>
+The object is some kind of public key which belongs to the authority.
+      </rdfs:comment>
+      <rdfs:domain rdf:resource="&swp;/Authority"/>
+      <rdfs:range rdf:resource="&swp;/Key"/>
+   </rdf:Property>
+
+   <rdf:Property rdf:about="&swp;/keyInfo">
+      <rdfs:label>key info</rdfs:label>
+      <rdfs:comment>
+The object is some kind of public key which can be used to validate the signature attached to the warrant.
+      </rdfs:comment>
+      <rdfs:domain rdf:resource="&swp;/Warrant"/>
+      <rdfs:range rdf:resource="&swp;/Key"/>
+   </rdf:Property>
+
+   <rdf:Property rdf:about="&swp;/certificate">
+      <rdfs:label>certificate</rdfs:label>
+      <rdfs:comment>
+The object is a binary (ASN.1 DER) X.509 certificate containing the public key of the authority.
+This property is similar to the xmldsig#rawX509Certificate property. 
+An alternative to the use of this property is to use swp:hasKey together with swp:X509Certificate.
+      </rdfs:comment>
+      <rdfs:domain rdf:resource="&swp;/Authority"/>
+      <rdfs:range rdf:resource="&xsd;#base64Binary"/>
+   </rdf:Property>
+
+<!-- Representing Keys and Certificates -->
+
+   <rdfs:Class rdf:about="&swp;/Key">
+      <rdfs:label>Key</rdfs:label>
+      <rdfs:comment>
+Superclass of all classes representing cryptographic key information.
+      </rdfs:comment>
+   </rdfs:Class>
+
+   <rdfs:Class rdf:about="&swp;/DSAKey">
+      <rdfs:label>DSA key</rdfs:label>
+      <rdfs:subClassOf rdf:resource="&swp;/Key"/>
+      <rdfs:comment>
+A DSA key as defined by XML-Signature in http://www.w3.org/TR/xmldsig-core/
+The XML-Signature P Q G Y J Seed and PgenCounter properties should be used to describe the key.
+      </rdfs:comment>
+   </rdfs:Class>
+
+   <rdfs:Class rdf:about="&swp;/RSAKey">
+      <rdfs:label>RSA key</rdfs:label>
+      <rdfs:subClassOf rdf:resource="&swp;/Key"/>
+      <rdfs:comment>
+A RSA key as defined by XML-Signature in http://www.w3.org/TR/xmldsig-core/
+The XML-Signature Modulus and Exponent properties should be used to describe the key.
+      </rdfs:comment>
+   </rdfs:Class>
+
+   <rdfs:Class rdf:about="&swp;/PGPKey">
+      <rdfs:label>PGP key</rdfs:label>
+      <rdfs:subClassOf rdf:resource="&swp;/Key"/>
+      <rdfs:comment>
+A PGP key as defined by XML-Signature in http://www.w3.org/TR/xmldsig-core/
+The XML-Signature PGPKeyID and PGPKeyPacket properties should be used to describe the key.
+      </rdfs:comment>
+   </rdfs:Class>
+
+   <rdfs:Class rdf:about="&swp;/X509Certificate">
+      <rdfs:label>X509 Certificate</rdfs:label>
+      <rdfs:subClassOf rdf:resource="&swp;/Key"/>
+      <rdfs:comment>
+A X509 certificate as defined by XML-Signature in http://www.w3.org/TR/xmldsig-core/
+The XML-Signature X509IssuerSerial X509SubjectName X509SKI X509Certificate properties 
+should be used to describe the certificate.
+      </rdfs:comment>
+   </rdfs:Class>
+
+   <rdf:Property rdf:about="&swp;/certificationAuthority">
+      <rdfs:label>certification authority</rdfs:label>
+      <rdfs:comment>
+The object is the certification authority which issed the X509 certificate.
+      </rdfs:comment>
+      <rdfs:domain rdf:resource="&swp;/X509Certificate"/>
+      <rdfs:range rdf:resource="&swp;/CertificationAuthority"/>
+   </rdf:Property>
+
+   <rdfs:Class rdf:about="&swp;/CertificationAuthority">
+      <rdfs:label>Certification Authority</rdfs:label>
+      <rdfs:comment>
+An authority which issues certificates.
+      </rdfs:comment>
+   </rdfs:Class>
+
+
+<!-- 
+########################################################  
+        3. SWP Signature Related Algorithms 
+########################################################  
+-->
+
+   <swp:CanonicalizationAlgorithm rdf:about="&swp;/JjcRdfC14N">
+      <rdfs:label>Jeremy Carroll's RDF C14N Method</rdfs:label>
+      <rdfs:comment>Jeremy Carroll's RDF C14N method described in 'Signing RDF Graphs' 
+      http://www.hpl.hp.com/techreports/2003/HPL-2003-142.html</rdfs:comment>
+   </swp:CanonicalizationAlgorithm>
+
+   <swp:CanonicalizationAlgorithm rdf:about="&swp;/SaKaRdfC14N">
+      <rdfs:label>Craig Sayers and Alan H. Karp's RDF C14N Method</rdfs:label>
+      <rdfs:comment>Craig Sayers and Alan H. Karp's RDF C14N method described in 
+       'Computing the digest of an RDF graph' http://www.hpl.hp.com/techreports/2003/HPL-2003-235.pdf</rdfs:comment>
+   </swp:CanonicalizationAlgorithm>
+
+   <swp:DigestAlgorithm rdf:about="&xmlsig;#sha1">
+      <rdfs:label>SHA1</rdfs:label>
+      <rdfs:comment>SHA1 as defined by XML-Signature in http://www.w3.org/TR/xmldsig-core/</rdfs:comment>
+   </swp:DigestAlgorithm>
+
+   <swp:SignatureAlgorithm rdf:about="&xmlsig;#dsa-sha1">
+      <rdfs:label>DSA with SHA1(DSS)</rdfs:label>
+      <rdfs:comment>DSA with SHA1 as defined by XML-Signature in http://www.w3.org/TR/xmldsig-core/</rdfs:comment>
+   </swp:SignatureAlgorithm>
+
+   <swp:SignatureAlgorithm rdf:about="&xmlsig;#rsa-sha1">
+      <rdfs:label>RSA with SHA1</rdfs:label>
+      <rdfs:comment>RSA with SHA1 as defined by XML-Signature in http://www.w3.org/TR/xmldsig-core/</rdfs:comment>
+   </swp:SignatureAlgorithm>
+
+   <swp:SignatureMethod rdf:about="&swp;/JjcRdfC14N-dsa-sha1">
+      <rdfs:label>JjcRdfC14N-dsa-sha1</rdfs:label>
+      <rdfs:comment>Jeremy's C14N method together with SHA1 and DSA</rdfs:comment>
+      <swp:canonicalizationAlgorithm rdf:resource="&swp;/JjcRdfC14N"/>
+      <swp:signatureAlgorithm rdf:resource="&xmlsig;#dsa-sha1"/>
+   </swp:SignatureMethod>
+
+   <swp:SignatureMethod rdf:about="&swp;/JjcRdfC14N-rsa-sha1">
+      <rdfs:label>JjcRdfC14N-rsa-sha1</rdfs:label>
+      <rdfs:comment>Jeremy's C14N method together with SHA1 and RSA</rdfs:comment>
+      <swp:canonicalizationAlgorithm rdf:resource="&swp;/JjcRdfC14N"/>
+      <swp:signatureAlgorithm rdf:resource="&xmlsig;#rsa-sha1"/>
+   </swp:SignatureMethod>
+
+   <swp:DigestMethod rdf:about="&swp;/JjcRdfC14N-sha1">
+      <rdfs:label>JjcRdfC14N-sha1</rdfs:label>
+      <rdfs:comment>Jeremy's C14N method together with SHA1</rdfs:comment>
+      <swp:canonicalizationAlgorithm rdf:resource="&swp;/JjcRdfC14N"/>
+      <swp:digestAlgorithm rdf:resource="&xmlsig;#sha1"/>
+   </swp:DigestMethod>
+
+</rdf:RDF>
+
