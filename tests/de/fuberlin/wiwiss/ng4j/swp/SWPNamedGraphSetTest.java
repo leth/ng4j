@@ -18,7 +18,7 @@ import de.fuberlin.wiwiss.ng4j.swp.impl.SWPNamedGraphSetImpl;
 import de.fuberlin.wiwiss.ng4j.swp.SWPAuthority;
 import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPBadDigestException;
 import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPBadSignatureException;
-import de.fuberlin.wiwiss.ng4j.swp.signature.keystores.pkcs12.PKCS12Utils;
+import de.fuberlin.wiwiss.ng4j.swp.utils.PKCS12Utils;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP;
 
 import junit.framework.TestCase;
@@ -34,12 +34,9 @@ public class SWPNamedGraphSetTest extends TestCase
 
 	protected final static String uri1 = "http://example.org/graph1";
 	protected final static String uri2 = "http://example.org/graph2";
-	//protected final static Node node1 = Node.createURI("http://example.org/graph1");
-	//protected final static Node node2 = Node.createURI("http://example.org/graph2");
 	protected final static Node foo = Node.createURI("http://example.org/#foo");
 	protected final static Node bar = Node.createURI("http://example.org/#bar");
 	protected final static Node baz = Node.createURI("http://example.org/#baz");
-	protected final static Node variableA = Node.createVariable("a");
 	protected final static String keystore = "/home/erw01r/software/certificates/erw01r.p12";
 	protected final static String password = "dpuser";
 	
@@ -95,30 +92,42 @@ public class SWPNamedGraphSetTest extends TestCase
 	{
 		//TODO Implement swpQuote().
 	}
-
-	public void testAssertWithSignature() throws SWPBadSignatureException, SWPBadDigestException 
+	/*
+	 *  Class under test for boolean assertWithSignature(SWPAuthority, Node, Node, ArrayList, String, String)
+	 */
+	public void testAssertWithSignature() 
+	throws SWPBadSignatureException, 
+	SWPBadDigestException 
 	{
 		assertTrue( set.assertWithSignature( getAuthority( keystore, password ), 
-				SWP.JjcRdfC14N_rsa_sha1.asNode(), 
-				SWP.JjcRdfC14N_sha1.asNode(), 
+				SWP.JjcRdfC14N_rsa_sha1, 
+				SWP.JjcRdfC14N_sha1, 
 				null, 
 				keystore, 
 				password ) );
-		//set.write(System.out, "TRIG", "");
 		testVerifyAllSignatures() ;
 	}
 
-	public void testQuoteWithSignature() throws SWPBadSignatureException, SWPBadDigestException 
+	/*
+	 * Class under test for boolean quoteWithSignature(SWPAuthority, Node, Node, ArrayList, String, String)
+	 */
+	public void testQuoteWithSignature() 
+	throws SWPBadSignatureException, 
+	SWPBadDigestException 
 	{
-		//assertTrue( set.quoteWithSignature( getAuthority( keystore, password ), 
-		//		SWP.JjcRdfC14N_rsa_sha1.asNode(), 
-		//		SWP.JjcRdfC14N_sha1.asNode(), 
-		//		null, 
-		//		keystore, 
-		//		password ) );
-		//set.write(System.out, "TRIG", "");
+		assertTrue( set.quoteWithSignature( getAuthority( keystore, password ), 
+				SWP.JjcRdfC14N_rsa_sha1, 
+				SWP.JjcRdfC14N_sha1, 
+				null, 
+				keystore, 
+				password ) );
+		testVerifyAllSignatures();
 	}
 
+	
+	/*
+	 * 
+	 */
 	public void testAssertGraphs() 
 	{
 		//TODO Implement assertGraphs().
@@ -138,7 +147,8 @@ public class SWPNamedGraphSetTest extends TestCase
 	{
 		assertTrue( set.verifyAllSignatures() );
 	}
-
+	
+	/*
 	public void testGetAllWarrants() 
 	{
 		//TODO Implement getAllWarrants().
@@ -149,10 +159,12 @@ public class SWPNamedGraphSetTest extends TestCase
 		//TODO Implement getAllAssertedGraphs().
 	}
 
+	
 	public void testGetAllquotedGraphs() 
 	{
 		//TODO Implement getAllquotedGraphs().
 	}
+	*/
 	
 	public SWPAuthority getAuthority( String keystore, String password )
 	{
