@@ -1,6 +1,10 @@
 //-*- mode: antlr -*-
 
-/* TriG grammar, based on Jena's N3 grammar.
+/* TriG grammar, based on Jena's N3 grammar. Main changes:
+ *
+ * - Naming operator ":-" allowed only to name formulae ("{ ... }")
+ * - Formulae not allowed instead of generic nodes
+ * - Formulae are now handled by the graph production
  */
 
 /* This is part of the Jena RDF Framework.
@@ -150,7 +154,7 @@ tokens
 // The top level rule
 document!: 
 		{ startDocument() ; }
-		(n3Directive | statement)*	// Not a statementList: must end in a SEP
+		(n3Directive | graph[null] | statement)*	// Not a statementList: must end in a SEP
 		{ endDocument() ; }
 		EOF ;
 
@@ -189,7 +193,8 @@ subject
 	: item ;
 
 propertyList![AST subj]
-	: NAME_OP! anonnode[subj] propertyList[subj]
+	: NAME_OP! graph[subj] propertyList[subj]
+	| graph[subj] propertyList[subj]
 	| propValue[subj] (SEMI propertyList[subj])?
 	| 		// void : allows for [ :a :b ] and empty list "; .".
 	;
@@ -272,6 +277,33 @@ verbReverse
 	;
 
 // Label is set if we have seen a :- in a propertyList
+graph[AST label]
+    { String oldCxt = null ; String cxt = null ; }
+
+		// Formula.
+		// Push old formula context, generate new one.
+	: LCURLY!
+		{ oldCxt = currentFormula ;
+		  if (label == null) {
+		  	cxt = null;
+		  } else {
+		      cxt = label.getText() ;
+		  }
+		  currentGraphName = label;
+		  currentFormula = cxt ;
+		  startFormula(cxt) ;
+		  #graph = label ;
+		}
+		formulaList
+		{
+			endFormula(cxt);
+			currentFormula = oldCxt;
+			currentGraphName = null;
+		}
+	  RCURLY!
+	;
+
+// Label is set if we have seen a :- in a propertyList
 anonnode[AST label]
     { String oldCxt = null ; String cxt = null ; }
 		// BNode
@@ -282,27 +314,6 @@ anonnode[AST label]
 		}
 		propertyList[label]
 	  RBRACK!
-
-		// Formula.
-		// Push old formula context, generate new one.
-	| LCURLY!
-		{ oldCxt = currentFormula ;
-		  if (label == null) {
-		  	reportError("missing graph label");
-		  }
-		  currentGraphName = label;
-	      cxt = label.getText() ;
-		  currentFormula = cxt ;
-		  startFormula(cxt) ;
-		  #anonnode = label ;
-		}
-		formulaList
-		{
-			endFormula(cxt);
-			currentFormula = oldCxt;
-			currentGraphName = null;
-		}
-	  RCURLY!
 
 		// List syntax
 	| LPAREN!

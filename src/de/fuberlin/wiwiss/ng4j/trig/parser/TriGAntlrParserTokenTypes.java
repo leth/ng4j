@@ -37,10 +37,10 @@ public interface TriGAntlrParserTokenTypes {
 	int ARROW_L = 29;
 	int ARROW_PATH_L = 30;
 	int ARROW_PATH_R = 31;
-	int LBRACK = 32;
-	int RBRACK = 33;
-	int LCURLY = 34;
-	int RCURLY = 35;
+	int LCURLY = 32;
+	int RCURLY = 33;
+	int LBRACK = 34;
+	int RBRACK = 35;
 	int LPAREN = 36;
 	int RPAREN = 37;
 	int NUMBER = 38;

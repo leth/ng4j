@@ -1,4 +1,4 @@
-// $Id: TriGParserTest.java,v 1.1 2004/11/22 00:46:19 cyganiak Exp $
+// $Id: TriGParserTest.java,v 1.2 2004/11/22 02:48:52 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import java.io.Reader;
@@ -41,6 +41,14 @@ public class TriGParserTest extends TestCase {
 		String n3 = "@prefix ex: <http://example.com/ex#> .\n" +
 				"ex:a ex:b ex:c .";
 		NamedGraphSet ngs = parseTriG(n3);
+		assertTrue(ngs.containsQuad(new Quad(baseNode, aNode, bNode, cNode)));
+		assertEquals(1, ngs.countQuads());
+	}
+	
+	public void testUnlabelledGraph() throws Exception {
+		String triG = "@prefix ex: <http://example.com/ex#> .\n" +
+				"{ ex:a ex:b ex:c }";
+		NamedGraphSet ngs = parseTriG(triG);
 		assertTrue(ngs.containsQuad(new Quad(baseNode, aNode, bNode, cNode)));
 		assertEquals(1, ngs.countQuads());
 	}
@@ -113,5 +121,13 @@ public class TriGParserTest extends TestCase {
 		assertTrue(ngs.containsQuad(new Quad(baseNode, bNode, bNode, bNode)));
 		assertTrue(ngs.containsQuad(new Quad(baseNode, cNode, cNode, cNode)));
 		assertEquals(5, ngs.countQuads());
+	}
+	
+	public void testWithoutGraphNamingOperator() throws Exception {
+		String triG = "@prefix ex: <http://example.com/ex#> .\n" +
+				"ex:graph1 { ex:a ex:b ex:c } .";
+		NamedGraphSet ngs = parseTriG(triG);
+		assertTrue(ngs.containsQuad(new Quad(graph1Node, aNode, bNode, cNode)));
+		assertEquals(1, ngs.countQuads());
 	}
 }

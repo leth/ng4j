@@ -31,7 +31,7 @@ import de.fuberlin.wiwiss.ng4j.Quad;
  * 
  * @author		Andy Seaborne
  * @author Richard Cyganiak (richard@cyganiak.de)
- * @version 	$Id: NamedGraphSetPopulator.java,v 1.1 2004/11/22 00:46:19 cyganiak Exp $
+ * @version 	$Id: NamedGraphSetPopulator.java,v 1.2 2004/11/22 02:48:50 cyganiak Exp $
  */
 public class NamedGraphSetPopulator implements TriGParserEventHandler
 {
@@ -258,7 +258,7 @@ public class NamedGraphSetPopulator implements TriGParserEventHandler
                 if ( text.indexOf('.') >= 0 )
                     // The choice of XSD:double is for compatibility with N3/cwm.
                     xsdType = XSDDatatype.XSDdouble ;
-                if ( text.indexOf('e') >= 0 )
+                if ( text.indexOf('e') >= 0 || text.indexOf('E') >= 0)
                     xsdType = XSDDatatype.XSDdouble ;
                 return Node.createLiteral(text, null, xsdType);
                 
