@@ -1,4 +1,4 @@
-// $Id: GraphReaderService.java,v 1.3 2004/11/25 22:14:39 cyganiak Exp $
+// $Id: GraphReaderService.java,v 1.4 2004/11/26 00:52:09 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import java.io.File;
@@ -77,6 +77,7 @@ public class GraphReaderService {
 		this.mimeTypes.put("text/rdf+xml", "RDF/XML");
 		this.mimeTypes.put("application/n3", "N3");
 		this.mimeTypes.put("application/x-turtle", "N3");
+		this.mimeTypes.put("application/x-trig", "TRIG");
 //		mimeTypes.put("text/plain", "N-TRIPLES");	// too error-prone
 		this.fileExtensions.put("rdf", "RDF/XML");
 		this.fileExtensions.put("rdfs", "RDF/XML");
