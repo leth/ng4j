@@ -775,8 +775,10 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     		if ( it.hasNext() )
     		{	
     			quad = ( Quad )it.next();
-    			String warrantQuery = "SELECT * WHERE <"+ng.getGraphName().toString()+"> (<"+ng.getGraphName().toString()+"> swp:signature ?signature) (<"+ng.getGraphName().toString()+"> swp:signatureMethod ?smethod) (<"+ng.getGraphName().toString()+"> swp:authority ?authority) (?authority swp:X509Certificate ?certificate) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
+    			String warrantQuery = "SELECT * WHERE <"+ng.getGraphName().toString()+"> (<"+ng.getGraphName().toString()+"> swp:signature ?signature . <"+ng.getGraphName().toString()+"> swp:signatureMethod ?smethod . <"+ng.getGraphName().toString()+"> swp:authority ?authority . ?authority swp:X509Certificate ?certificate) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
 	            Iterator witr = TriQLQuery.exec( this, warrantQuery );
+				if ( witr.hasNext() )
+				{
 	                while ( witr.hasNext() )
 	                {
 	                    Map result = ( Map ) witr.next();
@@ -816,9 +818,9 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
         	                    	System.out.println( "Warrant graph " + ng.getGraphName().toString() + " successfully verified." );
 									verificationGraph.add( new Triple( ng.getGraphName(), SWP_V.successful, Node.createLiteral( "true" ) ) );
 									
-									String asserteddigestQuery = "SELECT * WHERE (?graph swp:assertedBy <"+ng.getGraphName().toString()+">) (?graph swp:digest ?digest) (?graph swp:digestMethod ?dmethod) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
+									String asserteddigestQuery = "SELECT * WHERE (?graph swp:assertedBy <"+ng.getGraphName().toString()+"> . ?graph swp:digest ?digest . ?graph swp:digestMethod ?dmethod) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
 						            Iterator ditr = TriQLQuery.exec( this, asserteddigestQuery );
-									String quoteddigestQuery = "SELECT * WHERE (?graph swp:quotedBy <"+ng.getGraphName().toString()+">) (?graph swp:digest ?digest) (?graph swp:digestMethod ?dmethod) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
+									String quoteddigestQuery = "SELECT * WHERE (?graph swp:quotedBy <"+ng.getGraphName().toString()+"> . ?graph swp:digest ?digest . ?graph swp:digestMethod ?dmethod) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
 									Iterator qitr = TriQLQuery.exec( this, quoteddigestQuery );
 									if ( ditr.hasNext() )
 									{
@@ -892,7 +894,18 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 								return false;
 							}
         	            }
+        	            else
+						{
+							System.out.println( "Warrant graph " + ng.getGraphName().toString() + " verification failure!" );
+	                    	verificationGraph.add( new Triple( ng.getGraphName(), SWP_V.notSuccessful, Node.createLiteral( "true" ) ) );
+						}
 	                }
+    			}	
+				else
+				{
+					System.out.println( "Warrant graph " + ng.getGraphName().toString() + " verification failure!" );
+                	verificationGraph.add( new Triple( ng.getGraphName(), SWP_V.notSuccessful, Node.createLiteral( "true" ) ) );
+				}
     		}
     		else
     			continue;
