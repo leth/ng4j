@@ -1,5 +1,5 @@
 /*
- * $Id: AllTests.java,v 1.1 2004/10/23 13:31:25 cyganiak Exp $
+ * $Id: AllTests.java,v 1.2 2004/10/26 07:17:39 cyganiak Exp $
  */
 package de.fuberlin.wiwiss.ng4j;
 
@@ -27,6 +27,7 @@ public class AllTests {
 		suite.addTestSuite(NamedGraphStatementIteratorTest.class);
 		//$JUnit-END$
 		suite.addTest(de.fuberlin.wiwiss.ng4j.trix.AllTests.suite());
+		suite.addTest(de.fuberlin.wiwiss.ng4j.triql.AllTests.suite());
 		return suite;
 	}
 }

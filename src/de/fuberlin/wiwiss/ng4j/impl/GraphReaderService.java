@@ -1,4 +1,4 @@
-// $Id: GraphReaderService.java,v 1.1 2004/10/23 13:31:27 cyganiak Exp $
+// $Id: GraphReaderService.java,v 1.2 2004/10/26 07:17:40 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import java.io.File;
@@ -183,7 +183,7 @@ public class GraphReaderService {
 			// (Problem is there can be other languages than TriX here but our code just assumes it is TriX)
 			NamedGraphSetReader ngsReader = new NamedGraphSetReader();
 			if (this.url != null) {
-				ngsReader.read(set, this.url, this.url);
+				ngsReader.read(set, getFixedURL(this.url), getFixedURL(this.url));
 			} else if (this.reader != null) {
 				ngsReader.read(set, this.reader, this.baseURI, this.baseURI);
 			} else if (this.inputStream != null) {
@@ -209,7 +209,7 @@ public class GraphReaderService {
 		makeSureWeHaveLanguage();
 		RDFReader rdfReader = this.readerFactory.getReader(this.lang);
 		if (this.url != null) {
-			rdfReader.read(model, this.url);
+			rdfReader.read(model, getFixedURL(this.url));
 		} else if (this.reader != null) {
 			rdfReader.read(model, this.reader, this.baseURI);
 		} else if (this.inputStream != null) {
@@ -281,9 +281,9 @@ public class GraphReaderService {
 			URLConnection conn = realURL.openConnection();
 			return conn.getContentType();
 		} catch (MalformedURLException ex) {
-			throw new JenaException(ex);
+			return null;
 		} catch (IOException ex) {
-			throw new JenaException(ex);			
+			return null;			
 		}
 	}
 	
@@ -303,6 +303,13 @@ public class GraphReaderService {
 			// ignore, URI validation should be done somewhere else
 			return null;
 		}
+	}
+	
+	private String getFixedURL(String aUrl) {
+		if (aUrl.indexOf(":") < 0) {
+			return "file:" + aUrl;
+		}
+		return aUrl;
 	}
 }
 
