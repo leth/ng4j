@@ -632,10 +632,10 @@ USING foaf FOR http://xmlns.com/foaf/0.1/</pre>
 Iterator it = TriQLQuery.exec(set, "SELECT * FROM ?graph (?s ?p ?o)");
 while (it.hasNext()) {
     Map oneResult = (Map) it.next();
-    Node graph = (Node) Map.get("graph");
-    Node s = (Node) Map.get("s");
-    Node p = (Node) Map.get("p");
-    Node o = (Node) Map.get("o");
+    Node graph = (Node) oneResult.get("graph");
+    Node s = (Node) oneResult.get("s");
+    Node p = (Node) oneResult.get("p");
+    Node o = (Node) oneResult.get("o");
     System.out.println(graph + " { " + s + " " + p + " " + o + " . }");
 }</pre>
 </DIV>
@@ -715,7 +715,7 @@ NamedGraphSetDB.delete(connection, "myapp");</pre>
   <a href="http://page.mi.fu-berlin.de/%7Ecyganiak/" target="_blank">http://page.mi.fu-berlin.de/~cyganiak/</a><br>
 </p>
 <HR title="Separator for header">
-<p>$Date: 2004/11/02 15:01:15 $<br />
-  $Id: index.html,v 1.7 2004/11/02 15:01:15 cyganiak Exp $</p>
+<p>$Date: 2004/11/10 21:58:22 $<br />
+  $Id: index.html,v 1.8 2004/11/10 21:58:22 cyganiak Exp $</p>
 </BODY>
 </HTML>
