@@ -1,8 +1,6 @@
 /*
  * Created on 24-Nov-2004
  *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 package de.fuberlin.wiwiss.ng4j.swp.signature;
 
@@ -11,16 +9,14 @@ import de.fuberlin.wiwiss.ng4j.swp.signature.SWPAuthority;
 
 import java.util.ArrayList;
 
-import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 /**
- * @author rowland
- *
- * Declarative Systems & Software Engineering Group,
- * School of Electronics & Computer Science,
- * University of Southampton,
- * Southampton,
- * SO17 1BJ
+ * 
+ * @author chris bizer
+ * @author rowland watkins
+ * 
  */
 public interface SWPNamedGraphSet extends NamedGraphSet
 {
@@ -29,12 +25,35 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * Given an SWP Authority, assert all graphs in the 
      * graphset with this Authority.
      * 
+     * This will add a warrant graph asserting all
+     * other graphs to the graph set.
+     * 
+     * The listOfAuthorityProperties contains list of properties 
+     * describing the authority. These properties will be included 
+     * into the warrant graph, e.g. foaf:name, foaf:mbox
+     * 
+     * Example:
+     * 
+     * :Timestamp { :G1 swp:assertedBy :Timestamp .
+	 *		        :G2 swp:assertedBy :Timestamp .
+     *              :Timestamp swp:assertedBy :Timestamp .
+     *              :Timestamp swp:authority <http://www.bizer.de/me> .
+     *              <http://www.bizer.de/me> foaf:mbox <mailto:chris@bizer.de> }
+     * 
+     * The new graph will be named using the baseURI together with the current
+     * timestamp in miliseconds. Or should we use a UUID generator ???
+     * 
+     * If the Authority doesn't have a URI, then a blank node will be used to
+     * identify the authority and a additional triple containing the foaf:mbox
+     * adress of the authority will be added.
+     *  
      * Return true if successful.
      * 
-     * @param authority
+     * @param authority 
+     * @param listOfAuthorityProperties
      * @return
      */
-    public boolean swpAssert( SWPAuthority authority );
+    public boolean swpAssert( SWPAuthority authority, ArrayList listOfAuthorityProperties );
     
     /**
      * 
@@ -46,12 +65,24 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * information, i.e. the Authority is not the creator
      * of the original graph.
      * 
+     * The listOfAuthorityProperties contains list of properties 
+     * describing the authority. These properties will be included 
+     * into the warrant graph, e.g. foaf:name, foaf:mbox,
+     * 
+     * Example:
+     * 
+     * :Timestamp { :G1 swp:quotedBy :Timestamp .
+	 *		        :G2 swp:quotedBy :Timestamp .
+     *              :Timestamp swp:assertedBy :Timestamp .
+     *              :Timestamp swp:authority <http://www.bizer.de/me> .
+     *              <http://www.bizer.de/me> foaf:mbox <mailto:chris@bizer.de> }
+     *  
      * Return true if successful.
      * 
      * @param authority
      * @return
      */
-    public boolean swpQuote( SWPAuthority authority );
+    public boolean swpQuote( SWPAuthority authority, ArrayList listOfAuthorityProperties );
    
     /**
      * 
@@ -60,13 +91,32 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * graph with a digital signature according to
      * the specified signatureMethod.
      * 
+     * Example:
+     * 
+     * :Timestamp { :G1 swp:assertedBy :Timestamp .
+     *              :G1 swp:digestMethod swp:JjcRdfC14N-sha1 .
+     *              :G1 swp:digest "..." .
+	 *		        :G2 swp:assertedBy :Timestamp .
+     *              :G2 swp:digestMethod swp:JjcRdfC14N-sha1 .
+     *              :G2 swp:digest "..." .
+	 *		        :Timestamp swp:assertedBy :Timestamp .
+     *              :Timestamp swp:authority <http://www.bizer.de/me> .
+     *              :Timestamp swp:signatureMethod swp:JjcRdfC14N-rsa-sha1 .
+     *              :Timestamp swp:signature "..." } 
+     * 
+     * The listOfAuthorityProperties contains list of properties 
+     * describing the authority. These properties will be included 
+     * into the warrant graph, e.g. foaf:name, foaf:mbox, swp:key, swp:certificate
+     * 
      * Return true is successful.
      * 
      * @param authority
      * @param signatureMethod
+     * @param digestMethod
+     * @param listOfAuthorityProperties
      * @return
      */
-    public boolean assertWithSignature( SWPAuthority authority, Resource signatureMethod );
+    public boolean assertWithSignature( SWPAuthority authority, Node signatureMethod, Node digestMethod, ArrayList listOfAuthorityProperties );
     
     /**
      * 
@@ -75,13 +125,32 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * with a digital signature according to the
      * specified signatureMethod.
      * 
+     * Example:
+     * 
+     * :Timestamp { :G1 swp:quotedBy :Timestamp .
+     *              :G1 swp:digestMethod swp:JjcRdfC14N-sha1 .
+     *              :G1 swp:digest "..." .
+	 *		        :G2 swp:quotedBy :Timestamp .
+     *              :G2 swp:digestMethod swp:JjcRdfC14N-sha1 .
+     *              :G2 swp:digest "..." .
+	 *		        :Timestamp swp:assertedBy :Timestamp .
+     *              :Timestamp swp:authority <http://www.bizer.de/me> .
+     *              :Timestamp swp:signatureMethod swp:JjcRdfC14N-rsa-sha1 .
+     *              :Timestamp swp:signature "..." } 
+     * 
+     * The listOfAuthorityProperties contains list of properties 
+     * describing the authority. These properties will be included 
+     * into the warrant graph, e.g. foaf:name, foaf:mbox, swp:key, swp:certificate
+     * 
      * Return true of successful.
      * 
      * @param authority
      * @param signatureMethod
+     * @param digestMethod
+     * @param listOfAuthorityProperties
      * @return
      */
-    public boolean quoteWithSignature( SWPAuthority authority, Resource signatureMethod );
+    public boolean quoteWithSignature( SWPAuthority authority, Node signatureMethod, Node digestMethod, ArrayList listOfAuthorityProperties );
    
     /**
      * 
@@ -96,9 +165,10 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * 
      * @param listOfGraphURIs
      * @param authority
+     * @param listOfAuthorityProperties
      * @return
      */
-    public boolean assertGraphs( ArrayList listOfGraphURIs, SWPAuthority authority );
+    public boolean assertGraphs( ArrayList listOfGraphURIs, SWPAuthority authority, ArrayList listOfAuthorityProperties );
     
     /**
      * 
@@ -111,26 +181,64 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * @param authority
      * @return
      */
-    public boolean assertGraphsWithSignature( ArrayList listOfGraphURIs, SWPAuthority authority );
+    public boolean assertGraphsWithSignature( ArrayList listOfGraphURIs, SWPAuthority authority, Node signatureMethod, Node digestMethod, ArrayList listOfAuthorityProperties );
    
     /**
      * 
      * For all signature graphs in the set,
      * verify all signatures.
      * 
+     * Calling this method requires adding a graph called 
+     * <http://localhost/trustedinformation> before.
+     * This graph has to contain the public keys and 
+     * certificates of authorities or root certificates by CAs
+     * trusted by the user. The content of this graph will we
+     * treated as trustworthy information in the signature 
+     * verification process.
+     * 
+     * The results of the signature verification process will be
+     * added as a new graph called <http://localhost/verifiedSignatures>
+     * to the graphset.
+     * 
+     * Example graph <http://localhost/verifiedSignatures>
+     * 
+     * <http://localhost/verifiedSignatures> { 
+     *              :Warrent1 swp:signatureVerification swp:sucessful .
+     *              :Warrent2 swp:signatureVerification swp:notSucessful .
+     *              :Warrent3 swp:signatureVerification swp:sucessful  } 
+     * 
      * Return true if successful.
      * 
      * @return
      */
     public boolean verifyAllSignatures();
+    
+    
+	/**
+     * 
+     * Returns an iterator over all SWPWarrants for a given authority.
+     * 
+     */
+    public ExtendedIterator getAllWarrants( SWPAuthority authority );
+    
+	/**
+     * 
+     * Returns an iterator over all named graphs asserted by a given authority.
+     * 
+     */
+    public ExtendedIterator getAllAssertedGraphs( SWPAuthority authority );
+	/**
+     * 
+     * Returns an iterator over all named graphs quoted by a given authority.
+     * 
+     */
+    public ExtendedIterator getAllquotedGraphs( SWPAuthority authority );
    
 
 }
 
 /*
- *  (c)   Copyright 2004 Rowland Watkins (rowland@grid.cx) & University of 
- * 		  Southampton, Declarative Systems and Software Engineering Research 
- *        Group, University of Southampton, Highfield, SO17 1BJ
+ *  (c)   Copyright 2004 Chris Bizer (chris@bizer.de) & Rowland Watkins (rowland@grid.cx) 
  *   	  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

@@ -6,36 +6,35 @@
  */
 package de.fuberlin.wiwiss.ng4j.swp.signature;
 
-import java.security.cert.X509Certificate;
-
 import com.hp.hpl.jena.graph.Node;
+import java.security.Signature;
 
 /**
- * @author rowland
+ * 
+ * Represents an SWP signature
+ * 
+ * @author chris bizer
+ * @author rowland watkins
  *
- * Declarative Systems & Software Engineering Group,
- * School of Electronics & Computer Science,
- * University of Southampton,
- * Southampton,
- * SO17 1BJ
  */
-public interface SWPSignature 
-{
+public class SWPSignature extends Signature {
+	
+	private Node sigMethod;
+	
+    public void setSignatureMethod(Node sigMethod) {
+    		this.sigMethod = sigMethod;
+    	}
     
-    public Node getSignatureMethod();
-    
-    public Node getC14NAlgorithm();
-    
-    public Node getHashAlgorithm();
-    
-    public X509Certificate getAuthorityCertificate();
+    public Node getSignatureMethod() {
+    	   return null;
+    	}
+  
+ 
 
 }
 
 /*
- *  (c)   Copyright 2004 Rowland Watkins (rowland@grid.cx) & University of 
- * 		  Southampton, Declarative Systems and Software Engineering Research 
- *        Group, University of Southampton, Highfield, SO17 1BJ
+ *  (c)   Copyright 2004 Chris Bizer (chris@bizer.de) & Rowland Watkins (rowland@grid.cx) 
  *   	  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

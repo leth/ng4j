@@ -6,26 +6,102 @@
  */
 package de.fuberlin.wiwiss.ng4j.swp.signature;
 
+import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.graph.Graph;
+import com.hp.hpl.jena.util.iterator.ExtendedIterator;
+
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.cert.Certificate;
 /**
- * @author rowland
- *
- * Declarative Systems & Software Engineering Group,
- * School of Electronics & Computer Science,
- * University of Southampton,
- * Southampton,
- * SO17 1BJ
+ * 
+ * An SWPAuthority represents information about an authoirty 
+ * like id, label, eMail, keys and certificates 
+ * 
+ * @author chris bizer
+ * @author rowland watkins
+ * 
  */
 public interface SWPAuthority {
 
-    public SWPWarrant getAllWarrants( SWPNamedGraphSet set );
-    public SWPNamedGraphSet getAllAssertedGraphs( SWPNamedGraphSet set );
+    /**
+     * 
+     * Sets the ID of the authority.
+     * Authorities can by identified using a URIref or a bNode
+     * 
+     */
+	public void setID(Node Id);
+	public Node getID();
+	
+	/**
+     * 
+     * Sets the Label / Name of the authority.
+     * Will be serialized using rdfs:label
+     * 
+     */
+	public void setLabel(String label);
+	public String getLabel();
+
+    /**
+     * 
+     * Sets the eMail adress of the authority.
+     * Will be serialized using foaf:mbox
+     * 
+     */
+	public void setEmail(String label);
+	public String getEmail();
+	
+    /**
+     * 
+     * Sets the public key of the authority.
+     * Will be serialized using swp:hasKey
+     * 
+     */
+	public void setPublicKey(PublicKey key);
+	public PublicKey getPublicKey();
+
+    /**
+     * 
+     * Sets the private key of the authority.
+     * 
+     */
+	public void setPrivateKey(PrivateKey key);
+	public PrivateKey getPrivateKey();	
+
+    /**
+     * 
+     * Sets the certificate of the authority.
+     * 
+     */
+	public void setCertificate(Certificate key);
+	public Certificate getCertificate();		
+	
+    /**
+     * 
+     * Adds an additional property of the authority.
+     * 
+     */
+	public void addProperty(Node predicate, Node object);
+
+	/**
+     * 
+     * Returns an iterator over all property values (nodes) for a given property.
+     * 
+     */
+	public ExtendedIterator getProperty(Node predicate);
+	
+	/**
+     * 
+     * Returns a graph containing all information about the authorty.
+     * Excluding its private key :-)
+     * 
+     */
+	public Graph getGraph();
 
 }
 
 /*
- *  (c)   Copyright 2004 Rowland Watkins (rowland@grid.cx) & University of 
- * 		  Southampton, Declarative Systems and Software Engineering Research 
- *        Group, University of Southampton, Highfield, SO17 1BJ
+ *  (c)   Copyright 2004 Chris Bizer (chris@bizer.de) & Rowland Watkins (rowland@grid.cx) 
  *   	  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

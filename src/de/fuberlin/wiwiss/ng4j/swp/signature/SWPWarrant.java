@@ -6,34 +6,63 @@
  */
 package de.fuberlin.wiwiss.ng4j.swp.signature;
 
-import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
+import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 /**
- * @author rowland
- *
- * Declarative Systems & Software Engineering Group,
- * School of Electronics & Computer Science,
- * University of Southampton,
- * Southampton,
- * SO17 1BJ
+ * 
+ * @author chris bizer
+ * @author rowland watkins
+ * 
  */
 public interface SWPWarrant {
     
-    public NamedGraphSet getGraphs();
-    
+	
+    /**
+     * Returns an iterator over all named graphs which are asserted or quoted by this warrant.
+     * 
+     * @return
+     */
+    public ExtendedIterator getGraphs();
+
+    /**
+     * Returns an iterator over all named graphs which are asserted by this warrant.
+     * 
+     * @return
+     */
+    public ExtendedIterator getAssertedGraphs();
+
+    /**
+     * Returns an iterator over all named graphs which are quoted by this warrant.
+     * 
+     * @return
+     */    
+    public ExtendedIterator getQuotedGraphs();
+
+    /**
+     * Returns the authority of this warrant.
+     * 
+     * @return
+     */        
     public SWPAuthority getAuthority();
-    
+
+    /**
+     * Returns the signature of this warrant or null if the warrant is not signed.
+     * 
+     * @return
+     */     
     public SWPSignature getSignature();
-    
+
+    /**
+     * Returns true if the warrant is signed.
+     * 
+     * @return
+     */  
     public boolean isSigned();
 
-    public boolean signatureVerifiable();
 }
 
 /*
- *  (c)   Copyright 2004 Rowland Watkins (rowland@grid.cx) & University of 
- * 		  Southampton, Declarative Systems and Software Engineering Research 
- *        Group, University of Southampton, Highfield, SO17 1BJ
+ *  (c)   Copyright 2004 Chris Bizer (chris@bizer.de) & Rowland Watkins (rowland@grid.cx) 
  *   	  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

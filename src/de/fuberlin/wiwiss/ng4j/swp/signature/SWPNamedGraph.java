@@ -1,24 +1,19 @@
 /*
  * Created on 24-Nov-2004
  *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 package de.fuberlin.wiwiss.ng4j.swp.signature;
 
+import java.util.ArrayList;
+
 import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.rdf.model.Resource;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 
 /**
- * @author rowland
- *
- * Declarative Systems & Software Engineering Group,
- * School of Electronics & Computer Science,
- * University of Southampton,
- * Southampton,
- * SO17 1BJ
+ * @author rowland watkins
+ * @author chris bizer
+ * 
  */
 public interface SWPNamedGraph extends NamedGraph 
 {
@@ -27,40 +22,128 @@ public interface SWPNamedGraph extends NamedGraph
      * Given an SWP Authority, assert the current
      * graph with this Authority.
      * 
+     * If the current graph is not a warrant graph, then
+     * it will be turned into a warrant graph and the
+     * warranting information will be added directly into the graph.
+     * 
+     * Example:
+     * 
+     * 		:G1 { :Monica foaf:name "Monica Murphy" }
+     * 
+     * would become:
+     * 
+     *		:G1 { :Monica foaf:name "Monica Murphy" .
+     *			  :G1  swp:assertedBy :G1 .
+     *			  :G1 swp:authority <http://www.bizer.de/me> }
+     * 
+     * If the current graph is already a warrant graph, then a
+     * new warrant graph will be added to the graph set.
+     * 
+     * Example:
+     * 
+     *		:G1 { :Monica foaf:name "Monica Murphy" .
+     *			  :G1  swp:assertedBy :G1 .
+     *			  :G1 swp:authority <http://www.MrX.net/me> }
+     *
+     *  would become:
+     *
+     *		:G1 { :Monica foaf:name "Monica Murphy" .
+     *			  :G1  swp:assertedBy :G1 .
+     *			  :G1 swp:authority <http://www.MrX.net/me> }
+     *
+     *      :Timestamp { :G1 swp:assertedBy :Timestamp .		        
+     *              :Timestamp swp:assertedBy :Timestamp .
+     *              :Timestamp swp:authority <http://www.bizer.de/me> }   
+     * 
+     * The listOfAuthorityProperties contains list of properties 
+     * describing the authority. These properties will be included 
+     * into the warrant graph, e.g. foaf:name, foaf:mbox
+     * 
+     * The new graph will be named using the baseURI together with the current
+     * timestamp in miliseconds.
+     * 
+     * If the Authority doesn't have a URI, then a blank node will be used to
+     * identify the authority and a additional triple containing the foaf:mbox
+     * adress of the authority will be added.
+     * 
      * Return true if successful.
      * 
      * @param authority
      * @return
      */
-    public boolean swpAssert(SWPAuthority authority);
+    public boolean swpAssert(SWPAuthority authority, ArrayList listOfAuthorityProperties );
     
     /**
      * 
      * Given an SWP Authority, digitally sign the
      * current graph according to the signatureMethod.
      * 
+     * The graph will be turned into a warrant graph and 
+     * warranting and signature information will be added to the graph.
+     * 
+     * Example:
+     * 
+     * :G1 { :Monica foaf:name "Monica Murphy" .
+     * 	     :G1 swp:assertedBy :G1 .
+     *       :G1 swp:authority <http://www.bizer.de/me> 
+     *       :G1 swp:signatureMethod swp:JjcRdfC14N-rsa-sha1 .
+     *       :G1 swp:signature "..." }
+     * 
+     * If the graph is already a warrant graph, then a new warrant graph
+     * will be created.
+     * 
+     * Example:
+     * 
+     * :G1 { :Monica foaf:name "Monica Murphy" .
+     * 	     :G1 swp:assertedBy :G1 .
+     *       :G1 swp:authority <http://www.MrX.net/me> 
+     *       :G1 swp:signatureMethod swp:JjcRdfC14N-rsa-sha1 .
+     *       :G1 swp:signature "..." }
+     * 
+     * :Timestamp { :G1 swp:assertedBy :Timestamp .
+     *              :G1 swp:digestMethod swp:JjcRdfC14N-sha1 .
+     *              :G1 swp:digest "..." .
+	 *		        :Timestamp swp:assertedBy :Timestamp .
+     *              :Timestamp swp:authority <http://www.bizer.de/me> .
+     *              :Timestamp swp:signatureMethod swp:JjcRdfC14N-rsa-sha1 .
+     *              :Timestamp swp:signature "..." } 
+     *       
      * Return true if successful.
      * 
      * @param authority
      * @param signatureMethod
      * @return
      */
-    public boolean assertWithSignature(SWPAuthority authority, Resource signatureMethod);
+    public boolean assertWithSignature(SWPAuthority authority, Node signatureMethod, ArrayList listOfAuthorityProperties );
 
     /**
+     * Returns an array of all warrants about the graph.
      * 
      * @return
      */
     public SWPWarrant[] getWarrants();
     
     /**
+     * Returns an array of all warrants with a verifiable signature about the graph.
+     * 
+     * Calling this method requires adding a graph called 
+     * <http://localhost/trustedinformation> before.
+     * This graph has to contain the public keys and 
+     * certificates of authorities or root certificates by CAs
+     * trusted by the user. The content of this graph will we
+     * treated as trustworthy information in the signature 
+     * verification process.
+     * 
+     * The results of the signature verification process will also be
+     * added to the verification caching graph <http://localhost/verifiedSignatures> .
+     * The content of the verification caching graph is also used to speed the verification
+     * process.
      * 
      * @return
      */
     public SWPWarrant[] getWarrantsWithVerifyableSignature();
     
     /**
-     * 
      * @return
      */
     public SWPAuthority[] getAssertingAuthorities();
@@ -80,10 +163,8 @@ public interface SWPNamedGraph extends NamedGraph
 }
 
 /*
- *  (c)   Copyright 2004 Rowland Watkins (rowland@grid.cx) & University of 
- * 		  Southampton, Declarative Systems and Software Engineering Research 
- *        Group, University of Southampton, Highfield, SO17 1BJ
- *   	  All rights reserved.
+ *  (c)   Copyright 2004 Chris Bizer (chris@bizer.de) & Rowland Watkins (rowland@grid.cx)
+ *   	  All rights reserved. 
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
