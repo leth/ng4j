@@ -1,0 +1,36 @@
+# ----------------------------------------------------
+# Test Policies for the Metrics
+# ----------------------------------------------------
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix swp: <http://www.w3.org/2004/03/trix/swp-2/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix ex: <http:// www.example.org/vocabulary#> .
+@prefix tpl: <http://www.wiwiss.fu-berlin.de/suhl/bizer/TPL/> .
+@prefix tprefsl: <http://www.wiwiss.fu-berlin.de/suhl/bizer/TPrefsL/> .
+@prefix : <http://www.fu-berlin/suhl/bizer/financialscenario/policies/test/> .
+
+
+<>  rdf:type tpl:TrustPolicySuite;
+    tpl:suiteName "Test Policies" ;
+    tpl:includesPolicy :Policy1 .
+
+
+# ----------------------------------------------------
+# TidalTrust Metric Test Policy
+#
+# ----------------------------------------------------
+:Policy1 rdf:type tpl:TrustPolicy ;
+    tpl:policyName "Trust only rating agencies" ;
+    tpl:textExplanation "The information is stated in the document" ;
+    tpl:graphPattern [
+        tpl:pattern """(?GRAPH swp:assertedBy ?warrant .
+                        ?warrant swp:authority ?authority )""" ;
+        tpl:textExplanation "@@?GRAPH@@, which is asserted by the agent @@?authority@@ and you trust @@?authority@@." ;
+    ] ;
+    tpl:condition "METRIC(tpl:TidalTrustMetric, ?USER, ?authority, 0.5)" .
+
+
+
