@@ -1,4 +1,4 @@
-// $Id: SWPExample.java,v 1.2 2005/02/19 18:03:47 erw Exp $
+// $Id: SWPExample.java,v 1.3 2005/02/22 11:40:47 erw Exp $
 package de.fuberlin.wiwiss.ng4j.examples;
 
 import java.io.FileOutputStream;
@@ -20,12 +20,12 @@ import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
 import de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraph;
+import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPBadDigestException;
+import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPBadSignatureException;
 import de.fuberlin.wiwiss.ng4j.swp.impl.SWPNamedGraphSetImpl;
 import de.fuberlin.wiwiss.ng4j.swp.SWPAuthority;
 import de.fuberlin.wiwiss.ng4j.swp.impl.SWPAuthorityImpl;
 
-import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPBadDigestException;
-import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPBadSignatureException;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.FOAF;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP;
 

@@ -21,7 +21,7 @@ import sun.misc.BASE64Encoder;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.swp.SWPAuthority;
-import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPMissingAuthorityPropertyException;
+import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPMissingAuthorityPropertyException;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.FOAF;
 
