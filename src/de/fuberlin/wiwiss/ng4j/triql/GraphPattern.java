@@ -1,8 +1,11 @@
-// $Id: GraphPattern.java,v 1.5 2005/01/17 23:30:14 cyganiak Exp $
+// $Id: GraphPattern.java,v 1.6 2005/02/14 23:37:15 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
@@ -35,6 +38,27 @@ public class GraphPattern {
 	
 	public Triple getTriple(int index) {
 		return (Triple) this.triples.get(index);
+	}
+	
+	public Set getAllVariables() {
+	    Set result = new HashSet();
+	    if (this.name.isVariable()) {
+	        result.add(this.name);
+	    }
+	    Iterator it = this.triples.iterator();
+	    while (it.hasNext()) {
+            Triple triple = (Triple) it.next();
+            if (triple.getSubject().isVariable()) {
+                result.add(triple.getSubject());
+            }
+            if (triple.getPredicate().isVariable()) {
+                result.add(triple.getPredicate());
+            }
+            if (triple.getObject().isVariable()) {
+                result.add(triple.getObject());
+            }
+        }
+	    return result;
 	}
 }
 
