@@ -21,7 +21,7 @@ import de.fuberlin.wiwiss.trust.TrustPolicy;
 import de.fuberlin.wiwiss.trust.VariableBinding;
 
 /**
- * @version $Id: ExplanationTest.java,v 1.1 2005/02/18 01:44:59 cyganiak Exp $
+ * @version $Id: ExplanationTest.java,v 1.2 2005/03/22 01:01:21 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class ExplanationTest extends TestCase {
@@ -253,6 +253,12 @@ public class ExplanationTest extends TestCase {
         expected.addBinding(this.binding1);
         expected.addBinding(this.binding3);
         assertEquals(expected, table);
+    }
+
+    public void testExplanationGetTripleAndPolicyURI() {
+        Explanation expl = new Explanation(abc1, new TrustPolicy(ex + "Policy"));
+        assertEquals(abc1, expl.getExplainedTriple());
+        assertEquals(Node.createURI(ex + "Policy"), expl.getPolicyURI());
     }
     
     private ExplanationPart createExplanationPart(Node explanation) {

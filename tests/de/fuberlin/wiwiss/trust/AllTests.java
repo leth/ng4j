@@ -6,7 +6,7 @@ import junit.framework.TestSuite;
 /**
  * JUnit test suite for entire project
  *
- * @version $Id: AllTests.java,v 1.3 2005/03/21 21:51:59 cyganiak Exp $
+ * @version $Id: AllTests.java,v 1.4 2005/03/22 01:01:21 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class AllTests {
@@ -33,6 +33,7 @@ public class AllTests {
         suite.addTestSuite(QueryFactoryTest.class);
         suite.addTestSuite(TrustEngineTest.class);
         suite.addTestSuite(ConstraintParserTest.class);
+        suite.addTestSuite(ExplanationToHTMLRendererTest.class);
         //$JUnit-END$
         return suite;
     }

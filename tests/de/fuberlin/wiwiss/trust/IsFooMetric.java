@@ -10,12 +10,12 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.trust.ExplanationPart;
 import de.fuberlin.wiwiss.trust.Metric;
 import de.fuberlin.wiwiss.trust.MetricException;
-import de.fuberlin.wiwiss.trust.MetricResult;
+import de.fuberlin.wiwiss.trust.EvaluationResult;
 
 /**
  * Metric that returns true if the first argument is the literal node "foo".
  *  
- * @version $Id: IsFooMetric.java,v 1.1 2005/02/18 01:44:59 cyganiak Exp $
+ * @version $Id: IsFooMetric.java,v 1.2 2005/03/22 01:01:21 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class IsFooMetric implements Metric {
@@ -28,11 +28,11 @@ public class IsFooMetric implements Metric {
         return "http://example.org/metrics#IsFoo";
     }
 
-    public MetricResult calculateMetric(final List arguments) throws MetricException {
+    public EvaluationResult calculateMetric(final List arguments) throws MetricException {
         if (arguments.size() != 1) {
             throw new MetricException();
         }
-        return new MetricResult() {
+        return new EvaluationResult() {
             public boolean getResult() {
                 return ((Node) arguments.get(0)).equals(Node.createLiteral("foo"));
             }

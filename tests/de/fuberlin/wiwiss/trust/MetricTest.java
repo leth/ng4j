@@ -15,7 +15,7 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
 /**
- * @version $Id: MetricTest.java,v 1.3 2005/03/21 21:51:59 cyganiak Exp $
+ * @version $Id: MetricTest.java,v 1.4 2005/03/22 01:01:21 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class MetricTest extends TestCase {
@@ -118,9 +118,9 @@ public class MetricTest extends TestCase {
         public String getURI() {
             return "http://example.org/metrics#Equals";
         }
-        public MetricResult calculateMetric(final List arguments)
+        public EvaluationResult calculateMetric(final List arguments)
         			throws MetricException {
-            return new MetricResult() {
+            return new EvaluationResult() {
                 public boolean getResult() {
                     return arguments.get(0).equals(arguments.get(1));
                 }
@@ -135,9 +135,9 @@ public class MetricTest extends TestCase {
     }
     
     class TrueMetric implements Metric {
-        public MetricResult calculateMetric(final List arguments)
+        public EvaluationResult calculateMetric(final List arguments)
                 throws MetricException {
-            return new MetricResult() {
+            return new EvaluationResult() {
                 public boolean getResult() {
                     return true;
                 }

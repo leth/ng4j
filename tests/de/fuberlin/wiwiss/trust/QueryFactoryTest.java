@@ -12,7 +12,7 @@ import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
 import de.fuberlin.wiwiss.ng4j.triql.TriQLQuery;
 
 /**
- * @version $Id: QueryFactoryTest.java,v 1.2 2005/03/21 21:51:59 cyganiak Exp $
+ * @version $Id: QueryFactoryTest.java,v 1.3 2005/03/22 01:01:21 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class QueryFactoryTest extends FixtureWithLotsOfNodes {
@@ -20,7 +20,8 @@ public class QueryFactoryTest extends FixtureWithLotsOfNodes {
 	public void testTrustEverything() {
 		NamedGraphSet source = new NamedGraphSetImpl();
 		Triple findMe = new Triple(node1, node2, node3);
-		QueryFactory factory = new QueryFactory(source, findMe, TrustPolicy.TRUST_EVERYTHING);
+		QueryFactory factory = new QueryFactory(
+		        source, findMe, TrustPolicy.TRUST_EVERYTHING, new VariableBinding());
 		TriQLQuery query = factory.buildQuery();
 		assertTrue(query.getConstraints().isEmpty());
 		assertEquals(source, query.getSource());
@@ -35,7 +36,8 @@ public class QueryFactoryTest extends FixtureWithLotsOfNodes {
 
 	public void testTrustEverythingFindAnyTriple() {
 		NamedGraphSet source = new NamedGraphSetImpl();
-		QueryFactory factory = new QueryFactory(source, anyTriple, TrustPolicy.TRUST_EVERYTHING);
+		QueryFactory factory = new QueryFactory(
+		        source, anyTriple, TrustPolicy.TRUST_EVERYTHING, new VariableBinding());
 		TriQLQuery query = factory.buildQuery();
 		assertEquals(4, query.getResultVars().size());
 		assertTrue(query.getResultVars().contains("GRAPH"));
@@ -48,7 +50,7 @@ public class QueryFactoryTest extends FixtureWithLotsOfNodes {
 	public void testTrustEverythingFindWithWildcards() {
 		NamedGraphSet source = new NamedGraphSetImpl();
 		QueryFactory factory = new QueryFactory(source, new Triple(
-				Node.ANY, knows, Node.ANY), TrustPolicy.TRUST_EVERYTHING);
+				Node.ANY, knows, Node.ANY), TrustPolicy.TRUST_EVERYTHING, new VariableBinding());
 		TriQLQuery query = factory.buildQuery();
 		assertEquals(3, query.getResultVars().size());
 		assertTrue(query.getResultVars().contains("GRAPH"));
@@ -61,7 +63,7 @@ public class QueryFactoryTest extends FixtureWithLotsOfNodes {
 	public void testTrustEverythingFindWithoutWildcards() {
 		NamedGraphSet source = new NamedGraphSetImpl();
 		QueryFactory factory = new QueryFactory(source, new Triple(
-				richard, knows, joe), TrustPolicy.TRUST_EVERYTHING);
+				richard, knows, joe), TrustPolicy.TRUST_EVERYTHING, new VariableBinding());
 		TriQLQuery query = factory.buildQuery();
 		assertEquals(1, query.getResultVars().size());
 		assertTrue(query.getResultVars().contains("GRAPH"));
@@ -121,9 +123,20 @@ public class QueryFactoryTest extends FixtureWithLotsOfNodes {
 	    assertNull(query.getPrefixMapping().getNsPrefixURI("foo"));
 	}
 	
+	public void testSystemVariables() {
+		NamedGraphSet source = new NamedGraphSetImpl();
+		VariableBinding sysVars = new VariableBinding();
+		Node richardNode = Node.createURI("http://example.org/#Richard");
+		sysVars.setValue("USER", richardNode);
+		QueryFactory factory = new QueryFactory(source, new Triple(
+				richard, knows, joe), TrustPolicy.TRUST_EVERYTHING, sysVars);
+		TriQLQuery query = factory.buildQuery();
+		assertEquals(richardNode, query.getPreboundVariableValues().get("USER"));
+	}
+
 	private TriQLQuery buildQuery(Triple findMe, TrustPolicy policy) {
 		NamedGraphSet source = new NamedGraphSetImpl();
-		QueryFactory factory = new QueryFactory(source, findMe, policy);
+		QueryFactory factory = new QueryFactory(source, findMe, policy, new VariableBinding());
 		return factory.buildQuery();
 	}
 }

@@ -2,6 +2,7 @@ package de.fuberlin.wiwiss.trust;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -21,7 +22,7 @@ import de.fuberlin.wiwiss.trust.TrustPolicy;
 import de.fuberlin.wiwiss.trust.VariableBinding;
 
 /**
- * @version $Id: ExplanationPartTest.java,v 1.1 2005/02/18 01:44:59 cyganiak Exp $
+ * @version $Id: ExplanationPartTest.java,v 1.2 2005/03/22 01:01:21 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class ExplanationPartTest extends TestCase {
@@ -40,6 +41,7 @@ public class ExplanationPartTest extends TestCase {
         List list = new ArrayList();
         list.add(Node.createLiteral("foo"));
         ExplanationPart part = new ExplanationPart(list);
+        assertEquals(list, part.explanationNodes());
         assertEquals("Part[\"foo\"]", part.toString());
     }
     
@@ -56,6 +58,7 @@ public class ExplanationPartTest extends TestCase {
         ExplanationPart child = new ExplanationPart();
         part.addPart(child);
         assertEquals("Part[] <Part[]>", part.toString());
+        assertEquals(Collections.singletonList(child), part.parts());
     }
     
     public void testEqualityOfExplanation() {
