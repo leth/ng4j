@@ -17,7 +17,7 @@ import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
-import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPMissingAuthorityPropertyException;
+import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPMissingAuthorityPropertyException;
 
 /**
  * 
@@ -50,7 +50,7 @@ public interface SWPAuthority {
 
     /**
      * 
-     * Sets the eMail adress of the authority.
+     * Sets the eMail address of the authority.
      * Will be serialized using foaf:mbox
      * 
      */
@@ -71,7 +71,7 @@ public interface SWPAuthority {
      * Sets the certificate of the authority.
      * 
      */
-	public void setCertificate(X509Certificate key);
+	public void setCertificate(X509Certificate certificate);
 	public X509Certificate getCertificate();
 	
     /**
