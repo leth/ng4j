@@ -40,6 +40,7 @@ import com.eaio.uuid.UUID;
 
 /**
  * @author Chris Bizer.
+ * @author Rowland Watkins.
  */
 public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedGraphSet
 {
@@ -150,16 +151,6 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 		// Create a new warrant graph.
 		SWPNamedGraph warrantGraph = createNewWarrantGraph();
 		// Assert all graphs in the graphset.
-		/*
-		String currentGraphSetDigest = null;
-		try 
-		{
-			currentGraphSetDigest = SWPSignatureUtilities.calculateDigest( this, digestMethod );
-		} 
-		catch ( SWPNoSuchDigestMethodException e )
-		{
-			return false;
-		}*/
 		
 		authority.addDescriptionToGraph( warrantGraph, listOfAuthorityProperties );
 		
@@ -221,16 +212,23 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
         }  
 
         warrantGraph.add( new Triple( warrantGraph.getGraphName(), SWP.authority, authority.getID() ) );
-        warrantGraph.add( new Triple( warrantGraph.getGraphName(), 
-									SWP.validFrom, 
-									Node.createLiteral( authority.getCertificate().getNotBefore().toString(), 
-														null, 
-														XSDDatatype.XSDdateTime ) ) );
-        warrantGraph.add( new Triple( warrantGraph.getGraphName(), 
-									SWP.validUntil, 
-									Node.createLiteral( authority.getCertificate().getNotAfter().toString(), 
-														null, 
-														XSDDatatype.XSDdateTime ) ) );
+        if ( listOfAuthorityProperties != null )
+        {
+        	if ( listOfAuthorityProperties.contains( ( Object ) SWP.validFrom ) & listOfAuthorityProperties.contains( ( Object ) SWP.validUntil )  ) 
+			{
+        		warrantGraph.add( new Triple( warrantGraph.getGraphName(), 
+						SWP.validFrom, 
+						Node.createLiteral( authority.getCertificate().getNotBefore().toString(), 
+											null, 
+											XSDDatatype.XSDdateTime ) ) );
+        		
+        		warrantGraph.add( new Triple( warrantGraph.getGraphName(), 
+						SWP.validUntil, 
+						Node.createLiteral( authority.getCertificate().getNotAfter().toString(), 
+											null, 
+											XSDDatatype.XSDdateTime ) ) );
+			}
+        }
         
         
         
@@ -283,16 +281,6 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     	//    	 Create a new warrant graph.
 		SWPNamedGraph warrantGraph = createNewWarrantGraph();
 		// Assert all graphs in the graphset.
-		/*
-		String currentGraphSetDigest = null;
-		try 
-		{
-			currentGraphSetDigest = SWPSignatureUtilities.calculateDigest( this, digestMethod );
-		} 
-		catch ( SWPNoSuchDigestMethodException e )
-		{
-			return false;
-		}*/
 		
 		authority.addDescriptionToGraph( warrantGraph, listOfAuthorityProperties );
 		
@@ -466,11 +454,22 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 
     public boolean verifyAllSignatures() 
     {
+    	//First, let's remove any previous verification
+    	//graphs.
+    	if ( this.containsGraph( SWP_V.default_graph ) )
+    	{
+    		this.removeGraph( SWP_V.default_graph );
+    	}
+    	//Now, we can create a new verification graph to record
+    	//results.
     	NamedGraph verificationGraph = this.createGraph( SWP_V.default_graph );
     	String canonicalTripleList;
     	Iterator ngsIt = this.listGraphs();
     	
-    	
+    	// For each NamedGraph in the NamedGraphSet, we will check for 
+    	// the swp:assertedBy triple. We then take the object of that
+    	// triple and query it to find if it contains a signature and
+    	// authority with an associated certificate.
     	while ( ngsIt.hasNext() )
     	{
     		Quad quad = null;
@@ -492,7 +491,11 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
         	            String certificate = cert.getLiteral().getLexicalForm();
         	            String certs = "-----BEGIN CERTIFICATE-----\n" +
         	            					certificate + "\n-----END CERTIFICATE-----";
-        	            
+        	            // If the certificate and signature are not null, we can use these
+        	            // to verify the signature. 
+        	            // We, of course, need to provide the warrant graph as it
+        	            // was *before* adding the signature. We therefore remove,
+        	            // the signature and add back again later.
         	            if ( ( cert != null ) && ( signature != null )  )
         	            {
         	                try 
@@ -507,6 +510,12 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
         	                	{
         	                		ng.delete( ( Triple )i.next() );
         	                	}
+        	                	// If the warrant's signature is ok, we want to test whether the graph
+        	                	// digests of the graphs it asserts are ok. 
+        	                	// We simply take the graphs and get their digests and compare the 
+        	                	// string representations.
+        	                	// After this, we then add to our verification graph the results of
+        	                	// this process.
         	                    if ( SWPSignatureUtilities.validateSignature( ng, SWP.JjcRdfC14N_rsa_sha1, signature.getLiteral().getLexicalForm(), certs ) )
         	                    {
         	                    	log.info( "Warrant graph " + ng.getGraphName().toString() + " successfully verified." );
@@ -530,6 +539,11 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
         	                    {
         	                    	log.info( "Warrant graph " + ng.getGraphName().toString() + " verification failure!" );
         	                    	verificationGraph.add( new Triple( ng.getGraphName(), SWP_V.notSuccessful, Node.createLiteral( "true" ) ) );
+        	                    }
+        	                    
+        	                    for ( Iterator i = li.iterator(); i.hasNext(); )
+        	                    {
+        	                    	ng.add( ( Triple )i.next() );
         	                    }
         	                }
         	                catch ( SWPInvalidKeyException e ) 
@@ -570,14 +584,17 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 		return true;
     }
 
-	protected NamedGraph createNamedGraphInstance(Node graphName) {
-		if (!graphName.isURI()) {
-			throw new IllegalArgumentException("Graph names must be URIs");
+	protected NamedGraph createNamedGraphInstance(Node graphName) 
+	{
+		if ( !graphName.isURI() ) 
+		{
+			throw new IllegalArgumentException( "Graph names must be URIs" );
 		}
-		return new SWPNamedGraphImpl(graphName, new GraphMem());
+		return new SWPNamedGraphImpl( graphName, new GraphMem() );
 	}
 
-    protected SWPNamedGraph createNewWarrantGraph() {
+    protected SWPNamedGraph createNewWarrantGraph() 
+    {
 		Node warrantGraphName = Node.createURI( "urn:uuid:" + new UUID() );
 		SWPNamedGraph warrantGraph = new SWPNamedGraphImpl( warrantGraphName, new GraphMem() );
 		warrantGraph.add( new Triple( warrantGraphName, SWP.assertedBy, warrantGraphName ) );
