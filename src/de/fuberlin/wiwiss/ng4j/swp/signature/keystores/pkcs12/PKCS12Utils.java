@@ -12,10 +12,13 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.UnrecoverableKeyException;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.util.Enumeration;
 
 import org.apache.log4j.Category;
 
+import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.RDFSignatureException;
 import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPCertificateException;
 import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPPKCS12Exception;
 import de.fuberlin.wiwiss.ng4j.swp.signature.exceptions.SWPSignatureException;
@@ -81,6 +84,96 @@ public class PKCS12Utils {
 				UnrecoverableKeyException 
     {
 		return ( PrivateKey ) ks.getKey( alias, password.toCharArray() );
+	}
+	
+	public static PrivateKey decryptPrivateKey( String pkcs12, String password ) throws SWPSignatureException
+	{
+		KeyStore ks = null;
+		PrivateKey pkey = null;
+		
+		
+            try {
+				ks = PKCS12Utils.loadAndDecryptPKCS12( pkcs12, password );
+			/*
+				String errorMessage = "Can not read certificate keystore file (" +
+				    pkcs12 + ").\nThe file is either not in PKCS#12 format (.p12) or is corrupted or the password you entered is invalid.";
+				throw new SWPSignatureException( errorMessage );
+			*/
+				Enumeration aliasesEnum = ks.aliases();
+		        String alias = null;
+		        Certificate[] certChain = null;
+		        while ( aliasesEnum.hasMoreElements() ) 
+		        {
+		            alias = (String)aliasesEnum.nextElement();
+		            certChain = ks.getCertificateChain( alias );
+		        }
+		        
+		              
+				pkey = PKCS12Utils.loadPrivateKey( ks, alias, password );
+				
+			} 
+            catch ( SWPSignatureException e ) 
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+            catch ( SWPCertificateException e ) 
+            {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+            catch ( SWPPKCS12Exception e ) 
+            {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+            catch ( KeyStoreException e ) 
+            {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+            catch ( NoSuchAlgorithmException e ) 
+            {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+            catch ( UnrecoverableKeyException e ) 
+            {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        
+		return pkey;
+	}
+	
+	public static Certificate[] getCertChain( String pkcs12, String password )
+	{
+		    KeyStore ks = null;
+		    String alias = null;
+	        Certificate[] certChain = null;
+			try {
+				ks = PKCS12Utils.loadAndDecryptPKCS12( pkcs12, password );
+				Enumeration aliasesEnum = ks.aliases();
+				while ( aliasesEnum.hasMoreElements() ) 
+		        {
+		            alias = (String)aliasesEnum.nextElement();
+		            certChain = ks.getCertificateChain( alias );
+		        }
+			} catch (SWPSignatureException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SWPCertificateException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SWPPKCS12Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (KeyStoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			        
+	        return certChain;
 	}
 }
 
