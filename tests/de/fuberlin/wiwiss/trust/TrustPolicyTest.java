@@ -11,7 +11,7 @@ import com.hp.hpl.jena.vocabulary.RDF;
 import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
 
 /**
- * @version $Id: TrustPolicyTest.java,v 1.2 2005/03/21 00:23:24 cyganiak Exp $
+ * @version $Id: TrustPolicyTest.java,v 1.3 2005/03/21 21:51:59 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class TrustPolicyTest extends FixtureWithLotsOfNodes {
@@ -55,11 +55,11 @@ public class TrustPolicyTest extends FixtureWithLotsOfNodes {
 	    TrustPolicy policy = new TrustPolicy("http://example.org/policies#Policy1");
 	    policy.addConstraint(ConstraintFixture.getConstraint("true"));
 	    assertEquals(1, policy.getConstraints().size());
-	    assertTrue(((Constraint) policy.getConstraints().iterator().next()).isSatisfiedBy(new VariableBinding()));
+	    assertTrue(((Constraint) policy.getConstraints().iterator().next()).evaluate(new VariableBinding()).getResult());
 	    
 	    policy = new TrustPolicy("http://example.org/policies#Policy1");
 	    policy.addConstraint(ConstraintFixture.getConstraint("false"));
-	    assertFalse(((Constraint) policy.getConstraints().iterator().next()).isSatisfiedBy(new VariableBinding()));
+	    assertFalse(((Constraint) policy.getConstraints().iterator().next()).evaluate(new VariableBinding()).getResult());
 	}
 	
 	public void testAddMetricConstraint() {

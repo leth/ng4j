@@ -23,7 +23,7 @@ import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
  * TODO: tpl:graphExplanation
  * TODO: Warn when unknown term from the tpl namespace are used
  * 
- * @version $Id: PolicySuiteFromRDFBuilderTest.java,v 1.3 2005/03/21 00:23:24 cyganiak Exp $
+ * @version $Id: PolicySuiteFromRDFBuilderTest.java,v 1.4 2005/03/21 21:51:59 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class PolicySuiteFromRDFBuilderTest extends TestCase {
@@ -206,11 +206,11 @@ public class PolicySuiteFromRDFBuilderTest extends TestCase {
         			.getConstraints().iterator().next();
         VariableBinding binding = new VariableBinding();
         binding.setValue("date", Node.createLiteral("2005", null, XSDDatatype.XSDinteger));
-        assertTrue(condition.isSatisfiedBy(binding));
+        assertTrue(condition.evaluate(binding).getResult());
         binding.setValue("date", Node.createLiteral("2004", null, XSDDatatype.XSDinteger));
-        assertFalse(condition.isSatisfiedBy(binding));
+        assertFalse(condition.evaluate(binding).getResult());
         binding.setValue("date", Node.createLiteral("2006", null, XSDDatatype.XSDinteger));
-        assertFalse(condition.isSatisfiedBy(binding));
+        assertFalse(condition.evaluate(binding).getResult());
     }
 
     public void testTwoConditions() {
@@ -229,11 +229,11 @@ public class PolicySuiteFromRDFBuilderTest extends TestCase {
         Constraint condition2 = (Constraint) it.next();
         VariableBinding binding = new VariableBinding();
         binding.setValue("date", Node.createLiteral("2005", null, XSDDatatype.XSDinteger));
-        assertTrue(condition1.isSatisfiedBy(binding) && condition2.isSatisfiedBy(binding));
+        assertTrue(condition1.evaluate(binding).getResult() && condition2.evaluate(binding).getResult());
         binding.setValue("date", Node.createLiteral("2004", null, XSDDatatype.XSDinteger));
-        assertFalse(condition1.isSatisfiedBy(binding) && condition2.isSatisfiedBy(binding));
+        assertFalse(condition1.evaluate(binding).getResult() && condition2.evaluate(binding).getResult());
         binding.setValue("date", Node.createLiteral("2006", null, XSDDatatype.XSDinteger));
-        assertFalse(condition1.isSatisfiedBy(binding) && condition2.isSatisfiedBy(binding));
+        assertFalse(condition1.evaluate(binding).getResult() && condition2.evaluate(binding).getResult());
     }
 
     public void testMetric() {
@@ -249,9 +249,9 @@ public class PolicySuiteFromRDFBuilderTest extends TestCase {
         			.getConstraints().iterator().next();
         VariableBinding binding = new VariableBinding();
         binding.setValue("a", Node.createLiteral("foo"));
-        assertTrue(condition.isSatisfiedBy(binding));
+        assertTrue(condition.evaluate(binding).getResult());
         binding.setValue("a", Node.createLiteral("bar"));
-        assertFalse(condition.isSatisfiedBy(binding));
+        assertFalse(condition.evaluate(binding).getResult());
     }
 
     public void testPolicyWithoutExplanation() {

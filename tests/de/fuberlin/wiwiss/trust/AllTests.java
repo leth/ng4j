@@ -6,7 +6,7 @@ import junit.framework.TestSuite;
 /**
  * JUnit test suite for entire project
  *
- * @version $Id: AllTests.java,v 1.2 2005/03/21 00:23:24 cyganiak Exp $
+ * @version $Id: AllTests.java,v 1.3 2005/03/21 21:51:59 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class AllTests {
@@ -19,19 +19,20 @@ public class AllTests {
         TestSuite suite = new TestSuite("JUnit test suite for trust");
         //$JUnit-BEGIN$
         suite.addTestSuite(ExplanationTemplateTest.class);
-        suite.addTestSuite(ConstraintParserTest.class);
-        suite.addTestSuite(ExplanationTest.class);
+        suite.addTestSuite(ResultTableTest.class);
         suite.addTestSuite(PolicySuiteTest.class);
         suite.addTestSuite(TrustPolicyTest.class);
-        suite.addTestSuite(GraphPatternTreeBuilderTest.class);
         suite.addTestSuite(VariableBindingTest.class);
+        suite.addTestSuite(MetricTest.class);
         suite.addTestSuite(GraphPatternParserTest.class);
+        suite.addTestSuite(ExplanationTest.class);
         suite.addTestSuite(ExplanationPartTest.class);
-        suite.addTestSuite(TrustEngineTest.class);
+        suite.addTestSuite(GraphPatternTreeBuilderTest.class);
         suite.addTestSuite(PolicySuiteFromRDFBuilderTest.class);
-        suite.addTestSuite(QueryFactoryTest.class);
-        suite.addTestSuite(ResultTableTest.class);
         suite.addTestSuite(ExplanationTemplateBuilderTest.class);
+        suite.addTestSuite(QueryFactoryTest.class);
+        suite.addTestSuite(TrustEngineTest.class);
+        suite.addTestSuite(ConstraintParserTest.class);
         //$JUnit-END$
         return suite;
     }

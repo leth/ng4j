@@ -13,7 +13,7 @@ import de.fuberlin.wiwiss.ng4j.triql.TriQLQuery;
  * Builds a {@link TriQLQuery} from a {@link NamedGraphSet}, a find query pattern,
  * and a {@link TrustPolicy}. 
  *
- * @version $Id: QueryFactory.java,v 1.2 2005/03/21 00:23:28 cyganiak Exp $
+ * @version $Id: QueryFactory.java,v 1.3 2005/03/21 21:51:59 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class QueryFactory {
@@ -59,12 +59,6 @@ public class QueryFactory {
             String uri = this.policy.getPrefixMapping().getNsPrefixURI(prefix);
             this.query.setPrefix(prefix, uri);
         }
-		
-		it = this.policy.getConstraints().iterator();
-		while (it.hasNext()) {
-            Constraint condition = (Constraint) it.next();
-            this.query.addConstraint(condition);
-		}
 		return this.query;
 	}
 	

@@ -10,7 +10,7 @@ import java.util.Map;
 import com.hp.hpl.jena.graph.Triple;
 
 /**
- * @version $Id: ResultTable.java,v 1.2 2005/03/21 00:23:28 cyganiak Exp $
+ * @version $Id: ResultTable.java,v 1.3 2005/03/21 21:51:59 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class ResultTable {
@@ -66,6 +66,18 @@ public class ResultTable {
         return selectMatching(binding);
     }
 
+    public ResultTable filterByConstraints(TrustPolicy policy) {
+		ResultTable result = new ResultTable();
+		Iterator it = this.bindings.iterator();
+		while (it.hasNext()) {
+		    VariableBinding binding = (VariableBinding) it.next();
+		    if (policy.matchesConstraints(binding)) {
+		        result.addBinding(binding);
+		    }
+		}
+		return result;
+    }
+    
     public boolean containsBinding(VariableBinding binding) {
         return this.bindings.contains(binding);
     }

@@ -1,9 +1,7 @@
 package de.fuberlin.wiwiss.trust;
 
-import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.rdf.model.impl.StatementImpl;
 import com.hp.hpl.jena.shared.PrefixMapping;
 import com.hp.hpl.jena.shared.impl.PrefixMappingImpl;
 import com.hp.hpl.jena.vocabulary.RDF;
@@ -11,14 +9,10 @@ import com.hp.hpl.jena.vocabulary.RDF;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
-import de.fuberlin.wiwiss.ng4j.triql.ResultBinding;
 import de.fuberlin.wiwiss.ng4j.triql.TriQLQuery;
-import de.fuberlin.wiwiss.ng4j.triql.legacy.Constraint;
-import de.fuberlin.wiwiss.trust.QueryFactory;
-import de.fuberlin.wiwiss.trust.TrustPolicy;
 
 /**
- * @version $Id: QueryFactoryTest.java,v 1.1 2005/02/18 01:44:59 cyganiak Exp $
+ * @version $Id: QueryFactoryTest.java,v 1.2 2005/03/21 21:51:59 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class QueryFactoryTest extends FixtureWithLotsOfNodes {
@@ -125,24 +119,6 @@ public class QueryFactoryTest extends FixtureWithLotsOfNodes {
 	    assertEquals("http://purl.org/dc/elements/1.1/",
 	            query.getPrefixMapping().getNsPrefixURI("dc"));
 	    assertNull(query.getPrefixMapping().getNsPrefixURI("foo"));
-	}
-	
-	public void testPolicyWithConstraint() {
-	    TrustPolicy policy = getPolicyTrustIfRatingGreaterThanThree();
-	    TriQLQuery query = buildQuery(anyTriple, policy);
-
-	    assertEquals(1, query.getConstraints().size());
-	    Constraint constraint = (Constraint) query.getConstraints().get(0);
-
-	    ResultBinding rb = new ResultBinding();
-	    rb.add("rating", StatementImpl.createObject(
-	            Node.createLiteral("5", null, XSDDatatype.XSDinteger), null));
-	    assertTrue(constraint.isSatisfied(null, rb));
-
-	    rb = new ResultBinding();
-	    rb.add("rating", StatementImpl.createObject(
-	            Node.createLiteral("2", null, XSDDatatype.XSDinteger), null));
-	    assertFalse(constraint.isSatisfied(null, rb));
 	}
 	
 	private TriQLQuery buildQuery(Triple findMe, TrustPolicy policy) {
