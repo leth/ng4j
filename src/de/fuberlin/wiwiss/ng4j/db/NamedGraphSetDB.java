@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetDB.java,v 1.1 2004/11/02 02:00:23 cyganiak Exp $
+// $Id: NamedGraphSetDB.java,v 1.2 2004/11/02 02:26:13 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -15,10 +15,10 @@ import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetIO;
 
 /**
- * A {@link NamedGraphSet} implementation backed by a relational database.
- * Instances are created by the {@link #open(Connection)} method. The real work is
- * done by a {@link QuadDB} instance. This class provides a NamedGraphSet view
- * onto the QuadDB.
+ * <p>A {@link NamedGraphSet} implementation backed by a relational database.</p>
+ *
+ * <p>The real work is done by a {@link QuadDB} instance. This class provides a
+ * NamedGraphSet view onto the QuadDB.</p>
  *
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
@@ -27,38 +27,35 @@ public class NamedGraphSetDB extends NamedGraphSetIO implements NamedGraphSet {
 	private QuadDB db;
 
 	/**
-	 * Creates a new NamedGraphSet. Calling {@link #open(Connection)} or
-	 * {@link #open(Connection, String)} might be more convenient.
+	 * Creates a new NamedGraphSet. The necessary tables will be created
+	 * automatically if they don't exist.
 	 * @param db A QuadDB instance which provides persistence for this NamedGraphSet.
 	 */
 	public NamedGraphSetDB(QuadDB db) {
 		this.db = db;
+		if (!this.db.tablesExist()) {
+			this.db.createTables();
+		}
 	}
 
 	/**
-	 * Opens a persistent NamedGraphSet from a database connection. The necessary
+	 * Creates a persistent NamedGraphSet from a database connection. The necessary
 	 * tables will be created automatically if they don't exist.
 	 * @param connection A connection to an SQL database
-	 * @return A new NamedGraphSet instance
 	 */
-	public static NamedGraphSet open(Connection connection) {
-		return NamedGraphSetDB.open(connection, DEFAULT_TABLE_PREFIX);
+	public NamedGraphSetDB(Connection connection) {
+		this(connection, DEFAULT_TABLE_PREFIX);
 	}
 
 	/**
-	 * Opens a persistent NamedGraphSet from a database connection using a table prefix.
+	 * Creates a persistent NamedGraphSet from a database connection using a table prefix.
 	 * The necessary tables will be created if they don't exist. The table prefix
 	 * allows storing multiple NamedGraphSets in a single database.
 	 * @param connection A connection to an SQL database
 	 * @param tablePrefix a prefix for all tables used by the new NamedGraphSet
-	 * @return a new NamedGraphSet instance
 	 */
-	public static NamedGraphSet open(Connection connection, String tablePrefix) {
-		QuadDB db = new QuadDB(connection, tablePrefix);
-		if (!db.tablesExist()) {
-			db.createTables();
-		}
-		return new NamedGraphSetDB(db);
+	public NamedGraphSetDB(Connection connection, String tablePrefix) {
+		this(new QuadDB(connection, tablePrefix));
 	}
 
 	/**
