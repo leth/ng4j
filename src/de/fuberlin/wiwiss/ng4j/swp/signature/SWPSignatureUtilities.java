@@ -6,7 +6,9 @@
  */
 package de.fuberlin.wiwiss.ng4j.swp.signature;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -26,6 +28,7 @@ import java.security.cert.PKIXParameters;
 import java.security.cert.TrustAnchor;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -82,6 +85,7 @@ public class SWPSignatureUtilities
     public static String getCanonicalGraph( NamedGraph graph )
     {
         NamedGraphSet set = new NamedGraphSetImpl();
+        set.addGraph( graph );
         Model model = set.asJenaModel( graph.getGraphName().toString() );
         ArrayList canonicalTripleList = new RDFC14NImpl( model, "" ).getCanonicalStringsArray();
         
@@ -112,7 +116,7 @@ public class SWPSignatureUtilities
     		NamedGraph grph = ( NamedGraph )itr.next();
     		result.add( grph.getGraphName().toString() );
     	}
-    	
+    	Collections.sort( result );
     	set.removeGraph( graph );
     	for ( Iterator it = canonicalTripleList.iterator(); it.hasNext(); )
     	{
@@ -168,8 +172,8 @@ public class SWPSignatureUtilities
         }
         else
         {
-            throw new SWPNoSuchDigestMethodException("The digest method: "+digestMethod +
-            		" does not exist.");
+            throw new SWPNoSuchDigestMethodException( "The digest method: "+digestMethod +
+            		" does not exist." );
         }
         
         BASE64Encoder encoder = new BASE64Encoder();
@@ -212,7 +216,7 @@ public class SWPSignatureUtilities
         {
             sig = Signature.getInstance( algo );
             sig.initSign( key );
-            sig.update( canonicalGraph.getBytes() );
+            sig.update( canonicalGraph.getBytes( "UTF-8" ) );
         } 
         catch ( NoSuchAlgorithmException e )
         {
@@ -229,7 +233,10 @@ public class SWPSignatureUtilities
         {
             log.fatal( "Error updating input data. "+ e3.getMessage() );
             throw new SWPSignatureException( "Error updating input data." );
-        } 
+        } catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
             
         try 
         {
@@ -320,23 +327,25 @@ public class SWPSignatureUtilities
     public static boolean validateSignature( NamedGraph graph, 
             						  Node signatureMethod, 
             						  String signatureValue, 
-            						  PublicKey key ) 
+            						  String pem ) 
     throws SWPNoSuchAlgorithmException,
     SWPValidationException, 
     SWPInvalidKeyException, 
     SWPSignatureException
     {
         String canonicalGraph = getCanonicalGraph( graph );
-        boolean result = false;
+        X509Certificate certificate;
         
-        Signature sig;
-        byte[] signature;
+        Signature sig = null;
+        byte[] signature = null;
         try 
         {
+        	CertificateFactory cf = CertificateFactory.getInstance( "X.509" );
+    		certificate = ( X509Certificate ) cf.generateCertificate( new ByteArrayInputStream( pem.getBytes() ) );
             sig = Signature.getInstance( ALG_ID_SIGNATURE_SHA1withRSA );
             BASE64Decoder decoder = new BASE64Decoder();
         	signature = decoder.decodeBuffer( signatureValue );
-        	sig.initVerify( key );
+        	sig.initVerify( certificate.getPublicKey() );
         	sig.update( canonicalGraph.getBytes( "UTF-8" ) );
         } 
         catch ( NoSuchAlgorithmException e ) 
@@ -361,19 +370,78 @@ public class SWPSignatureUtilities
             log.fatal("Error updating input data. "+ e3.getMessage() );
             throw new SWPSignatureException( "Error updating input data." );
         } 
+    	catch (CertificateException e) 
+        {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
         
     	try 
     	{
-            result = sig.verify( signature );
+            return sig.verify( signature );
         } 
     	catch (SignatureException e4) 
     	{
             log.fatal("Error verifying signature. "+e4.getMessage() );
             throw new SWPSignatureException( "Error verifying signature." );
         }
-    	
-    	return result;
     }
+    
+    public static boolean validateSignature( NamedGraph graph, 
+			  Node signatureMethod, 
+			  String signatureValue, 
+			  X509Certificate certificate ) 
+throws SWPNoSuchAlgorithmException,
+SWPValidationException, 
+SWPInvalidKeyException, 
+SWPSignatureException
+	{
+    	String canonicalGraph = getCanonicalGraph( graph );
+    	boolean result = false;
+    	
+    	Signature sig = null;
+    	byte[] signature = null;
+    	try 
+    	{
+    		sig = Signature.getInstance( ALG_ID_SIGNATURE_SHA1withRSA );
+    		BASE64Decoder decoder = new BASE64Decoder();
+    		signature = decoder.decodeBuffer( signatureValue );
+    		sig.initVerify( certificate.getPublicKey() );
+    		sig.update( canonicalGraph.getBytes() );
+    	} 
+    	catch ( NoSuchAlgorithmException e ) 
+    	{
+    		log.fatal( ALG_ID_SIGNATURE_SHA1withRSA +" not found! " +e.getMessage() );
+    		throw new SWPNoSuchAlgorithmException( "The signature" +
+    				"method: "+signatureMethod+" does not exist.", e ); 
+    	}
+    	catch ( IOException e1 ) 
+    	{	
+    		log.fatal( "Unable to access signature: " +e1.getMessage() );
+    		throw new SWPValidationException( "I/O error: Unable to access " +
+    				"signature value.", e1 );
+    	}
+    	catch (InvalidKeyException e2) 
+    	{
+    		log.fatal("Public key supplied is invalid. "+ e2.getMessage() );
+    		throw new SWPInvalidKeyException( "Public key supplied is invalid." );
+    	}
+    	catch (SignatureException e3) 
+    	{
+    		log.fatal("Error updating input data. "+ e3.getMessage() );
+    		throw new SWPSignatureException( "Error updating input data." );
+    	} 
+
+    	try 
+    	{
+    		return sig.verify( signature );
+    	} 
+    	catch (SignatureException e4) 
+    	{
+    		log.fatal("Error verifying signature. "+e4.getMessage() );
+    		throw new SWPSignatureException( "Error verifying signature." );
+    	}
+	}
 
     public static boolean validateSignature( NamedGraph graph, 
             						  Node signatureMethod, 

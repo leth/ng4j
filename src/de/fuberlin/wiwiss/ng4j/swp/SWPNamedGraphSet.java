@@ -56,7 +56,7 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      */
     public boolean swpAssert( SWPAuthority authority, ArrayList listOfAuthorityProperties );
 
-    public boolean swpAssert(SWPAuthority authority);
+    public boolean swpAssert( SWPAuthority authority );
     
     /**
      * 
@@ -87,7 +87,7 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      */
     public boolean swpQuote( SWPAuthority authority, ArrayList listOfAuthorityProperties );
 
-	public boolean swpQuote(SWPAuthority authority);
+	public boolean swpQuote( SWPAuthority authority );
    
     /**
      * 
@@ -166,7 +166,8 @@ public interface SWPNamedGraphSet extends NamedGraphSet
     									Node signatureMethod, 
     									Node digestMethod, 
     									ArrayList listOfAuthorityProperties, 
-    									PrivateKey pkey ) 
+    									String keystore,
+    									String password ) 
     throws SWPBadSignatureException,
     SWPBadDigestException;
    
@@ -202,7 +203,8 @@ public interface SWPNamedGraphSet extends NamedGraphSet
     										Node signatureMethod, 
     										Node digestMethod, 
     										ArrayList listOfAuthorityProperties, 
-    										PrivateKey pkey ) 
+    										String keystore,
+    										String password ) 
     throws SWPBadSignatureException, 
     SWPBadDigestException;
    
@@ -215,7 +217,7 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * <http://localhost/trustedinformation> before.
      * This graph has to contain the public keys and 
      * certificates of authorities or root certificates by CAs
-     * trusted by the user. The content of this graph will we
+     * trusted by the user. The content of this graph will be
      * treated as trustworthy information in the signature 
      * verification process.
      * 

@@ -33,7 +33,7 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.FOAF;
  * @author chris bizer
  *
  */
-public class SWPAuthorityImpl implements SWPAuthority 
+public class SWPAuthorityImpl implements SWPAuthority
 {
 
     private Node id;
@@ -174,6 +174,8 @@ public class SWPAuthorityImpl implements SWPAuthority
              graph.add( new Triple(this.getID(), FOAF.mbox.asNode(), Node.createURI( "mailto:" + this.getEmail() ) ) );
 		}
 		
+		
+		
 		if ( listOfAuthorityProperties != null)
 		{
 			// Add authority description
@@ -224,10 +226,30 @@ public class SWPAuthorityImpl implements SWPAuthority
         		}
 			}
 		}
+		else if ( this.getCertificate() != null)
+		{
+			try {
+				graph.add( new Triple( this.getID(), 
+						SWP.X509Certificate.asNode(), 
+						Node.createLiteral( encoder.encode( this.getCertificate().getEncoded() ), 
+											null, 
+											XSDDatatype.XSDbase64Binary ) ) );
+			} catch (AddDeniedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (DatatypeFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (CertificateEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
         this.graph = graph;
 
         return true;
 	}
+	
 
 	/**
      * 
