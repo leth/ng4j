@@ -3,18 +3,18 @@
 <project name="namedgraphs" default="all" basedir=".">
 
 	<property name="project" value="ng4j"/>
-	<property name="project.package" value="de.fuberlin.wiwiss.namedgraphs"/>
-	<property name="project.path" value="de/fuberlin/wiwiss/namedgraphs"/>
+	<property name="project.package" value="de.fuberlin.wiwiss.ng4j"/>
+	<property name="project.path" value="de/fuberlin/wiwiss/ng4j"/>
 	<property name="src" value="src"/>
 	<property name="src.tests" value="tests"/>
-	<property name="build" value="bin"/>
-	<property name="build.tests" value="bin-tests"/>
+	<property name="build" value="build"/>
+	<property name="build.tests" value="build-tests"/>
 	<property name="lib" value="lib"/>
 	<property name="doc" value="doc"/>
 	<property name="javadoc" value="${doc}/javadoc"/>
 	<property name="jar" value="${project}.jar"/>
 	<property name="zip" value="${project}.zip"/>
-   
+
 	<path id="project.class.path">
 		<pathelement path="${java.class.path}"/>
 		<fileset dir="${lib}">
@@ -27,14 +27,14 @@
 		<echo>
 	Usage:
 
-	ant help		- shows this message
-	ant compile 	- compiles the java files
-	ant test		- runs JUnit tests
-	ant javadoc 	- creates javadoc documentation
-	ant jar			- creates jar file
-	ant zip   		- creates a release zip file
-	ant all		 - all of the above
-	ant clean   	- cleans everything created by the build process
+	ant help    - shows this message
+	ant compile - compiles the java files
+	ant test    - runs JUnit tests
+	ant javadoc - creates javadoc documentation
+	ant jar     - creates jar file
+	ant zip     - creates a release zip file
+	ant all     - all of the above
+	ant clean   - cleans everything created by the build process
 		</echo>
 	</target>
 	
@@ -51,7 +51,7 @@
 		<!-- Create the build directory structure used by compile -->
 		<mkdir dir="${build}"/>
 	</target>
-	
+
 	<target name="compile" depends="init" description="compiles ${project}">
 		<!-- Compile the java code from ${src} into ${build} -->
 		<javac srcdir="${src}" destdir="${build}" debug="on">
