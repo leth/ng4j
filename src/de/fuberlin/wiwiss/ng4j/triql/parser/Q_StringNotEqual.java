@@ -6,7 +6,8 @@
 package de.fuberlin.wiwiss.ng4j.triql.parser;
 
 import com.hp.hpl.jena.rdql.QueryException;
-import com.hp.hpl.jena.rdql.Value;
+
+import de.fuberlin.wiwiss.ng4j.triql.legacy.Value;
 
 public class Q_StringNotEqual extends Q_StringEqual implements Expr, ExprBoolean
 {

@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetImpl.java,v 1.3 2004/12/12 17:30:30 cyganiak Exp $
+// $Id: NamedGraphSetImpl.java,v 1.4 2004/12/17 01:44:30 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import java.util.ArrayList;
@@ -263,7 +263,7 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 		 * MultiUnion deletes from the baseGraph only; we want to
 		 * delete from all member graphs
 		 */
-		public void delete(Triple t) {
+		public void performDelete(Triple t) {
 			Iterator it = this.m_subGraphs.iterator();
 			while (it.hasNext()) {
 				Graph member = (Graph) it.next();

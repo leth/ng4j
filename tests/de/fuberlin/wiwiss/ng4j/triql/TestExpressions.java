@@ -14,8 +14,8 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import com.hp.hpl.jena.rdql.EvalFailureException;
-import com.hp.hpl.jena.rdql.Value;
 
+import de.fuberlin.wiwiss.ng4j.triql.legacy.Value;
 import de.fuberlin.wiwiss.ng4j.triql.parser.Expr;
 import de.fuberlin.wiwiss.ng4j.triql.parser.ExprBoolean;
 import de.fuberlin.wiwiss.ng4j.triql.parser.ExprNumeric;

@@ -17,11 +17,12 @@ import org.apache.oro.text.regex.Perl5Matcher;
 import com.hp.hpl.jena.rdql.EvalFailureException;
 import com.hp.hpl.jena.rdql.Query;
 import com.hp.hpl.jena.rdql.QueryException;
-import com.hp.hpl.jena.rdql.QueryPrintUtils;
-import com.hp.hpl.jena.rdql.ResultBinding;
-import com.hp.hpl.jena.rdql.Settable;
-import com.hp.hpl.jena.rdql.Value;
-import com.hp.hpl.jena.rdql.WorkingVar;
+
+import de.fuberlin.wiwiss.ng4j.triql.ResultBinding;
+import de.fuberlin.wiwiss.ng4j.triql.legacy.QueryPrintUtils;
+import de.fuberlin.wiwiss.ng4j.triql.legacy.Settable;
+import de.fuberlin.wiwiss.ng4j.triql.legacy.Value;
+import de.fuberlin.wiwiss.ng4j.triql.legacy.WorkingVar;
 //import org.apache.oro.text.perl.Perl5Util ;
 //import org.apache.oro.text.perl.MalformedPerl5PatternException ;
 

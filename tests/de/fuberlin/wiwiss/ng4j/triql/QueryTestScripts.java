@@ -1,7 +1,7 @@
 /*
  * (c) Copyright 2001, 2002, 2003, Hewlett-Packard Development Company, LP
  * [See end of file]
- * $Id: QueryTestScripts.java,v 1.2 2004/12/12 17:30:29 cyganiak Exp $
+ * $Id: QueryTestScripts.java,v 1.3 2004/12/17 01:44:30 cyganiak Exp $
  */
 
 
@@ -10,6 +10,7 @@ package de.fuberlin.wiwiss.ng4j.triql;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -23,26 +24,24 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.rdql.QueryException;
-import com.hp.hpl.jena.rdql.QueryResults;
-import com.hp.hpl.jena.rdql.QueryResultsFormatter;
-import com.hp.hpl.jena.rdql.QueryResultsMem;
-import com.hp.hpl.jena.rdql.QueryResultsRewindable;
 import com.hp.hpl.jena.shared.JenaException;
 import com.hp.hpl.jena.util.FileUtils;
 import com.hp.hpl.jena.util.ModelLoader;
-import com.hp.hpl.jena.util.TestManifestList;
 import com.hp.hpl.jena.vocabulary.TestQuery;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphImpl;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
+import de.fuberlin.wiwiss.ng4j.triql.helpers.QueryResultsFormatter;
+import de.fuberlin.wiwiss.ng4j.triql.helpers.ResultDumpReader;
+import de.fuberlin.wiwiss.ng4j.triql.helpers.TestManifestList;
 
 /** Test scripts for RDQL - loads, executes and checks (with JUnit) a collection of
  *  queries.  New tests added as new featues appera and bugs are reported by
  *  adding new script files.  This class need not change.
  *
  * @author   Andy Seaborne
- * @version  $Id: QueryTestScripts.java,v 1.2 2004/12/12 17:30:29 cyganiak Exp $
+ * @version  $Id: QueryTestScripts.java,v 1.3 2004/12/17 01:44:30 cyganiak Exp $
  */
 
 
@@ -270,68 +269,49 @@ public class QueryTestScripts extends TestSuite
                     query.setSource(ngs) ;
                 }
 
-                ModelLoader.setFileBase(directory) ;
-                ModelLoader.setFileBase(null) ;
                 // Do the query!
-                QueryResults resultsActual = new TriQLQueryResults(query);
+                List results = query.getResultsAsList();
 
                 long finishTime = System.currentTimeMillis();
                 long totalTime = finishTime-startTime ;
-
-                // Turn into a resettable version
-                QueryResultsRewindable results = new QueryResultsMem(resultsActual) ;
-                resultsActual.close() ;
-                resultsActual = null ;
 
                 boolean testingResults = ( resultsFile != null && !resultsFile.equals("") ) ;
 
                 if ( printDetails )
                 {
-                    QueryResultsFormatter fmt = new QueryResultsFormatter(results) ;
+                    QueryResultsFormatter fmt = new QueryResultsFormatter(query, results) ;
                     fmt.printAll(pw, " | ") ;
                     // Must be after the results have been processed
                     pw.println() ;
                     int n = fmt.numRows() ;
                     pw.println("Results: "+((n < 0)?"unknown (one pass format)":n+"")) ;
-                    fmt.close() ;
-                    results.rewind() ;
                 }
 
                 if ( testingResults )
                 {
-                    String rf = convertFilename(resultsFile,directory) ;
-                    QueryResultsMem qr1 = new QueryResultsMem2(results) ;
-                    QueryResultsMem qr2 = new QueryResultsMem2(rf) ;
-                    if ( ! QueryResultsMem2.equivalent(qr1, qr2) )
+                		List expectedResults = ResultDumpReader.readDump(
+                				ModelLoader.loadModel(
+                						convertFilename(resultsFile,directory))) ;
+                    if ( ! equivalent(query, results, expectedResults) )
                     {
                         pw.println() ;
                         pw.println("=======================================") ;
                         pw.println("Failure: "+queryFile) ;
                         pw.println("Got: ----------------------------------") ;
-                        qr1.rewind() ;
-                        qr1.list(pw) ;
-                        qr1.rewind() ;
+                        new QueryResultsFormatter(query, results).dump(pw, false);
                         pw.println("---------------------------------------") ;
-                        qr1.toModel().write(pw, "N3") ;
+                        new QueryResultsFormatter(query, results).toModel().write(pw, "N3") ;
                         pw.flush() ;
-                        qr1.close() ;
 
                         pw.println("Expected: -----------------------------") ;
-                        qr2.rewind() ;
-                        qr2.list(pw) ;
-                        qr2.rewind() ;
+                        new QueryResultsFormatter(query, expectedResults).dump(pw, false);
                         pw.println("---------------------------------------") ;
-                        qr2.toModel().write(pw, "N3") ;
-                        qr2.close() ;
-                        pw.flush() ;
+                        new QueryResultsFormatter(query, expectedResults).toModel().write(pw, "N3") ;
                         Assert.assertTrue("Results do not match: "+queryFile,false) ;
                     }
                     //else
                     //  System.err.println("Test: "+queryFile+" => "+resultsFile+" passed") ;
-                    qr1.close() ;
-                    qr2.close() ;
                 }
-                results.close() ;
             }
             catch (IOException ioEx){ pw.println("IOException: "+ioEx) ; ioEx.printStackTrace(pw) ; pw.flush() ; }
             //catch (JenaException rdfEx) { pw.println("JenaException: "+rdfEx) ; rdfEx.printStackTrace(pw) ; pw.flush() ; }
@@ -344,6 +324,12 @@ public class QueryTestScripts extends TestSuite
 
             }
         }
+    }
+
+    private static boolean equivalent(TriQLQuery query, List results1, List results2) {
+    		Model model1 = new QueryResultsFormatter(query, results1).toModel();
+    		Model model2 = new QueryResultsFormatter(query, results2).toModel();
+    		return model1.isIsomorphicWith(model2);
     }
 
     private static void emptyModel(Model model)
@@ -379,9 +365,7 @@ public class QueryTestScripts extends TestSuite
         String queryString = "SELECT * WHERE (?x, ?y, ?z)" ;
         NamedGraphSet ngs = new NamedGraphSetImpl();
         TriQLQuery query = new TriQLQuery(ngs, queryString);
-        QueryResults qr = new TriQLQueryResults(query);
-        QueryResultsFormatter fmt = new QueryResultsFormatter(qr) ;
-        fmt.consume();
+        QueryResultsFormatter fmt = new QueryResultsFormatter(query, query.getResultsAsList()) ;
     }
 
     // Copied from rdfquery.  Share it!

@@ -7,10 +7,11 @@ package de.fuberlin.wiwiss.ng4j.triql.parser;
 
 import com.hp.hpl.jena.rdql.Printable;
 import com.hp.hpl.jena.rdql.Query;
-import com.hp.hpl.jena.rdql.ResultBinding;
-import com.hp.hpl.jena.rdql.Value;
 
-public interface Expr extends Printable, com.hp.hpl.jena.rdql.parser.Expr
+import de.fuberlin.wiwiss.ng4j.triql.ResultBinding;
+import de.fuberlin.wiwiss.ng4j.triql.legacy.Value;
+
+public interface Expr extends Printable
 {
     public Value eval(Query q, ResultBinding env) ;
 }

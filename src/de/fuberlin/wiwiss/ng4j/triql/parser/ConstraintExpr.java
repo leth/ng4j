@@ -5,10 +5,11 @@
 
 package de.fuberlin.wiwiss.ng4j.triql.parser;
 
-import com.hp.hpl.jena.rdql.Constraint;
 import com.hp.hpl.jena.rdql.EvalFailureException;
 import com.hp.hpl.jena.rdql.Query;
-import com.hp.hpl.jena.rdql.ResultBinding;
+
+import de.fuberlin.wiwiss.ng4j.triql.ResultBinding;
+import de.fuberlin.wiwiss.ng4j.triql.legacy.Constraint;
 
 //import com.hp.hpl.jena.util.* ;
 

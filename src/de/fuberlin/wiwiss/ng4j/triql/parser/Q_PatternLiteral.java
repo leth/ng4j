@@ -11,8 +11,9 @@ import org.apache.oro.text.regex.Perl5Compiler;
 
 import com.hp.hpl.jena.rdql.Query;
 import com.hp.hpl.jena.rdql.QueryException;
-import com.hp.hpl.jena.rdql.ResultBinding;
-import com.hp.hpl.jena.rdql.Value;
+
+import de.fuberlin.wiwiss.ng4j.triql.ResultBinding;
+import de.fuberlin.wiwiss.ng4j.triql.legacy.Value;
 
 
 public class Q_PatternLiteral extends SimpleNode implements Expr

@@ -1,4 +1,4 @@
-// $Id: TriQLQuery.java,v 1.3 2004/11/26 02:42:55 cyganiak Exp $
+// $Id: TriQLQuery.java,v 1.4 2004/12/17 01:44:29 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import java.io.File;
@@ -12,10 +12,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.rdql.Constraint;
 import com.hp.hpl.jena.rdql.QueryException;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
+import de.fuberlin.wiwiss.ng4j.triql.legacy.Constraint;
 import de.fuberlin.wiwiss.ng4j.triql.parser.Q_Query;
 import de.fuberlin.wiwiss.ng4j.triql.parser.TriQLParser;
 

@@ -1,4 +1,4 @@
-// $Id: QueryExecutionService.java,v 1.4 2004/12/12 17:30:29 cyganiak Exp $
+// $Id: QueryExecutionService.java,v 1.5 2004/12/17 01:44:29 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import java.net.MalformedURLException;
@@ -12,18 +12,15 @@ import java.util.Map.Entry;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.impl.LiteralImpl;
-import com.hp.hpl.jena.rdf.model.impl.ResourceImpl;
-import com.hp.hpl.jena.rdql.Constraint;
+import com.hp.hpl.jena.rdf.model.impl.StatementImpl;
 import com.hp.hpl.jena.rdql.QueryException;
-import com.hp.hpl.jena.rdql.ResultBinding;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.GraphReaderService;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
+import de.fuberlin.wiwiss.ng4j.triql.legacy.Constraint;
 
 /**
  * <p>Executes a TriQL query and returns results. This class is used by
@@ -204,14 +201,7 @@ public class QueryExecutionService {
 	}
 
 	private RDFNode convertNodeToRDFNode(Node n) {
-		Model model = null;
-		if (n.isLiteral()) {
-			return new LiteralImpl(n, model);
-		}
-		if (n.isURI() || n.isBlank()) {
-			return new ResourceImpl(n, model);
-		}
-		throw new QueryException("Variable unbound: " + n);
+		return StatementImpl.createObject(n, null);
 	}
 	
 	private Map getCopy(Map original) {

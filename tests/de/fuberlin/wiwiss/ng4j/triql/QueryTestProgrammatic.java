@@ -9,6 +9,7 @@ package de.fuberlin.wiwiss.ng4j.triql;
 // This will be replaced by a more general testing of queries.
 
 import java.util.Iterator;
+import java.util.Map;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -17,9 +18,6 @@ import com.hp.hpl.jena.rdf.model.Bag;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.rdql.QueryResults;
-import com.hp.hpl.jena.rdql.ResultBinding;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphImpl;
@@ -27,7 +25,7 @@ import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
 /** Bunch of programmatic uses of query to complrment the script tests.
  * @author Andy Seaborne
- * @version $Id: QueryTestProgrammatic.java,v 1.1 2004/10/26 07:17:40 cyganiak Exp $
+ * @version $Id: QueryTestProgrammatic.java,v 1.2 2004/12/17 01:44:30 cyganiak Exp $
  */
 
 public class QueryTestProgrammatic extends TestSuite
@@ -51,14 +49,6 @@ public class QueryTestProgrammatic extends TestSuite
             Model model1 = makeModel1() ;
             Model model2 = makeModel2() ;
             //suite.addTest(new TestQuery("RDQL Query "));
-            addTest(new TestProgrammatic("RDQL-Test-Prog-1", model1, "SELECT ?x, ?z WHERE (?x, ?a, ?b), (?b, ?y, ?z)")) ;
-            addTest(new TestProgrammatic("RDQL-Test-Prog-2", model1, "SELECT ?z WHERE (?x, ?y, ?z) AND ?z == 1")) ;
-            addTest(new TestProgrammatic("RDQL-Test-Prog-3", model1, "SELECT ?z WHERE (<http://never/r-1>, <http://never/p-0>, ?z)")) ;
-
-            // Test with anon resources
-            addTest(new TestProgrammatic("RDQL-Test-Prog-4", model2, "SELECT ?x, ?a, ?b, ?y, ?z WHERE (?x, ?a, ?b), (?b, ?y, ?z)")) ;
-            addTest(new TestProgrammatic("RDQL-Test-Prog-5", model2, "SELECT ?z WHERE (?x, ?y, ?z) AND ?z == 1")) ;
-            addTest(new TestProgrammatic("RDQL-Test-Prog-6", model2, "SELECT ?z WHERE (<http://never/r-1>, <http://never/p-0>, ?z)")) ;
             
             // Test templates
             // expect to get one result with ?z = 1+1 = 2
@@ -79,47 +69,6 @@ public class QueryTestProgrammatic extends TestSuite
         // Tests of templates
     }
 
-    static class TestProgrammatic extends TestCase
-    {
-        Model model ;
-        String queryString ;
-        
-        TestProgrammatic(String testName, Model m, String q)
-        {
-            super(testName) ;
-            model = m ;
-            queryString = q ;
-        }
-        
-        protected void runTest() throws Throwable
-        {
-            if ( verbose )
-            {
-                System.out.println() ;
-                System.out.println("Query:") ;
-                System.out.println(queryString) ;
-            }
-            // Currently "success" is executing the query at all!
-            TriQLQuery query = new TriQLQuery(queryString) ;
-            NamedGraphSet ngs = new NamedGraphSetImpl();
-            ngs.addGraph(new NamedGraphImpl("http://example.com/graph1", model.getGraph()));
-            query.setSource(ngs);
-            QueryResults results = new TriQLQueryResults(query);
-
-
-            for ( ; results.hasNext() ; )
-            {
-                 ResultBinding rb = (ResultBinding)results.next() ;
-                 for ( Iterator iter = rb.getTriples().iterator() ; iter.hasNext() ; )
-                 {
-                     Statement s = (Statement)iter.next() ;
-                     assertTrue("Statement not in model", model.contains(s)) ;
-                }
-            }
-            results.close() ;
-        }
-    }
-    
     static class TestQueryTemplate extends TestCase
     {
         Model model ;
@@ -149,11 +98,11 @@ public class QueryTestProgrammatic extends TestSuite
             NamedGraphSet ngs = new NamedGraphSetImpl();
             ngs.addGraph(new NamedGraphImpl("http://example.com/graph1", model.getGraph()));
             query.setSource(ngs);
-            QueryResults results = new TriQLQueryResults(query);
+            Iterator results = query.getResults();
             long count = 0 ;
             for ( ; results.hasNext() ; )
             {
-                ResultBinding rb = (ResultBinding)results.next() ;
+                Map rb = (Map)results.next() ;
                 if ( rb == null )
                     throw new Exception("TestQueryTemplate: found null result binding") ;
                 // Check all the variables are there.
@@ -173,7 +122,6 @@ public class QueryTestProgrammatic extends TestSuite
                           
                 count++ ;
             }
-            results.close() ;
             
             if ( count != numResults )
             {

@@ -14,10 +14,11 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdql.EvalFailureException;
 import com.hp.hpl.jena.rdql.Query;
 import com.hp.hpl.jena.rdql.QueryPrintUtils;
-import com.hp.hpl.jena.rdql.ResultBinding;
-import com.hp.hpl.jena.rdql.Settable;
-import com.hp.hpl.jena.rdql.Value;
 import com.hp.hpl.jena.rdql.ValueException;
+
+import de.fuberlin.wiwiss.ng4j.triql.ResultBinding;
+import de.fuberlin.wiwiss.ng4j.triql.legacy.Settable;
+import de.fuberlin.wiwiss.ng4j.triql.legacy.Value;
 
 // An implementation of value that is created from the parsing process.
 

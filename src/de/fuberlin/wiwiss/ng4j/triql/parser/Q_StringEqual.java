@@ -10,11 +10,12 @@ import java.io.PrintWriter;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdql.Query;
 import com.hp.hpl.jena.rdql.QueryException;
-import com.hp.hpl.jena.rdql.QueryPrintUtils;
-import com.hp.hpl.jena.rdql.ResultBinding;
-import com.hp.hpl.jena.rdql.Settable;
-import com.hp.hpl.jena.rdql.Value;
-import com.hp.hpl.jena.rdql.WorkingVar;
+
+import de.fuberlin.wiwiss.ng4j.triql.ResultBinding;
+import de.fuberlin.wiwiss.ng4j.triql.legacy.QueryPrintUtils;
+import de.fuberlin.wiwiss.ng4j.triql.legacy.Settable;
+import de.fuberlin.wiwiss.ng4j.triql.legacy.Value;
+import de.fuberlin.wiwiss.ng4j.triql.legacy.WorkingVar;
 
 public class Q_StringEqual extends SimpleNode implements Expr, ExprBoolean
 {
