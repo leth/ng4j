@@ -12,6 +12,7 @@
 <!--	<property name="dist" value="dist"/>-->
 	<property name="lib" value="lib"/>
 	<property name="doc" value="doc/javadoc"/>
+	<property name="jar" value="${project}.jar"/>
    
 	<path id="project.class.path">
 		<pathelement path="${java.class.path}"/>
@@ -29,8 +30,8 @@
 	ant compile 	- compiles the java files
 	ant test		- runs JUnit tests
 	ant javadoc 	- creates javadoc documentation
-<!--	ant dist    	- creates jar file
-	ant release 	- creates a release .zip file-->
+	ant jar			- creates jar file
+<!--	ant release 	- creates a release .zip file-->
     ant all         - all of the above
 	ant clean   	- cleans everything created by the build process
 		</echo>
@@ -43,6 +44,7 @@
 <!--		<delete dir="${project}" failonerror="false"/>
 		<delete dir="${dist}" failonerror="false"/>-->
 		<delete dir="${doc}" failonerror="false"/>
+		<delete file="${jar}" failonerror="false"/>
 	</target>
 	
 	<target name="init">
@@ -109,27 +111,7 @@
 		</java>
 	</target>
 	
-<!--	<target name="dist" depends="compile,copyconfig">
-		<!- Creates an executable jar file for the project ->
-		<unjar src="${lib}/jfreechart.jar" dest="${build}" />
-		<mkdir dir="${dist}"/>
-		<jar jarfile="${dist}/${project}.jar" basedir="${build}">
-			<manifest>
-				<attribute name="Main-Class" value="net.sf.${project}.Main"/>
-				<attribute name="Class-Path" value="jcommon-0.6.4.jar jfreechart-0.9.2.jar"/>
-			</manifest>
-		</jar>
-	</target>-->
-	
 <!--
-	<target name="copylibs" depends="init">
-		<copy todir="${dist}">
-		    <fileset dir="${lib}">
-				<include name="**/*.jar"/>
-			</fileset>
-	    </copy>
-	</target>
-	
 	<target name="release" depends="dist">
 		<!- Creates a release zip file ->
 		<mkdir dir="${project}"/>
@@ -160,5 +142,11 @@
 		</javadoc>
 	</target>
 
-    <target name="all" depends="test,javadoc"/>
+	<target name="jar" depends="test">
+		<!-- Creates a distribution jar file from the compiled class
+			 files (without tests) -->
+		<jar jarfile="${jar}" basedir="${build}"/>
+	</target>
+
+    <target name="all" depends="test,javadoc,jar"/>
 </project>

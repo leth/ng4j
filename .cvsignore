@@ -1,5 +1,6 @@
 bin
 bin-tests
+ng4j.jar
 .classpath
 .project
 .DS_Store
