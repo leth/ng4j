@@ -1,4 +1,4 @@
-// $Id: QuadDB.java,v 1.2 2004/12/12 17:30:26 cyganiak Exp $
+// $Id: QuadDB.java,v 1.3 2004/12/14 13:30:03 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -47,6 +47,9 @@ public class QuadDB {
 	}
 
 	public void insert(Node g, Node s, Node p, Node o) {
+		if (find(g, s, p, o).hasNext()) {
+			return;
+		}
 		String sql = "INSERT INTO " + getQuadsTableName() +
 				" (graph, subject, predicate, object, literal, lang, datatype) VALUES (" +
 				"'" + escape(g.getURI()) + "', " +
@@ -56,7 +59,7 @@ public class QuadDB {
 				getLiteralColumn(o) + ", " +
 				getLangColumn(o) + ", " +
 				getDatatypeColumn(o) + ")";
-		execute(sql);		
+		execute(sql);
 	}
 	
 	public void delete(Node g, Node s, Node p, Node o) {
@@ -243,19 +246,25 @@ public class QuadDB {
 		execute("CREATE TABLE " + getGraphNamesTableName() + " (" +
 				"name varchar(160) NOT NULL default '', " +
 				"PRIMARY KEY  (`name`)) TYPE=MyISAM");
-		execute("CREATE TABLE " + getQuadsTableName() + " (" +
-				"graph varchar(160) NOT NULL default ''," +
-				"subject varchar(160) NOT NULL default ''," +
-				"predicate varchar(160) NOT NULL default ''," +
-				"object varchar(160) default NULL," +
-				"literal text," +
-				"lang varchar(10) default NULL," +
-				"datatype varchar(160) default NULL," +
-				"PRIMARY KEY  (`graph`,`subject`,`predicate`)," +
-				"KEY subject (`subject`)," +
-				"KEY predicate (`predicate`)," +
-				"KEY object (`object`)" +
-				") TYPE=MyISAM;");
+		try {
+			executeNoErrorHandling(
+					"CREATE TABLE " + getQuadsTableName() + " (" +
+					"graph varchar(160) NOT NULL default ''," +
+					"subject varchar(160) NOT NULL default ''," +
+					"predicate varchar(160) NOT NULL default ''," +
+					"object varchar(160) default NULL," +
+					"literal text," +
+					"lang varchar(10) default NULL," +
+					"datatype varchar(160) default NULL," +
+					"KEY graph (`graph`)," +
+					"KEY subject (`subject`)," +
+					"KEY predicate (`predicate`)," +
+					"KEY object (`object`)," +
+					") TYPE=MyISAM;");
+		} catch (SQLException ex) {
+			execute("DROP TABLE " + getGraphNamesTableName());
+			throw new JenaException(ex);
+		}
 	}
 	
 	public void deleteTables() {
@@ -305,9 +314,13 @@ public class QuadDB {
 		return "_:" + escape(resource.getBlankNodeId().toString());
 	}
 
+	private void executeNoErrorHandling(String sql) throws SQLException {
+		this.connection.createStatement().execute(sql);		
+	}
+
 	private void execute(String sql) {
 		try {
-			this.connection.createStatement().execute(sql);
+			executeNoErrorHandling(sql);
 		} catch (SQLException ex) {
 			if (ex.getErrorCode() != 1062) {
 				throw new JenaException(ex);
