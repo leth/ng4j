@@ -7,6 +7,8 @@ package de.fuberlin.wiwiss.ng4j.swp.c14n;
 import java.text.DecimalFormat;
 import java.util.Hashtable;
 
+import org.apache.log4j.Category;
+
 import com.hp.hpl.jena.graph.Node;
 
 
@@ -20,6 +22,7 @@ import com.hp.hpl.jena.graph.Node;
 
 public class C14NTriple extends Object implements Comparable
 {
+	static final Category log = Category.getInstance( C14NTriple.class );
 	public Node subject;
 	public Node predicate;
 	public Node object;
@@ -44,7 +47,7 @@ public class C14NTriple extends Object implements Comparable
 		{
         this.subjectID = Node.NULL;
 		}
-        if( object.isBlank())
+        if( object.isBlank() )
         {
         	this.objectID = this.object;
         	this.object = RDFC14NImpl.TILDE;
@@ -163,7 +166,7 @@ public class C14NTriple extends Object implements Comparable
 }
 
 /*
- *  (c)   Copyright 2004 Rowland Watkins (rowland@grid.cx) & University of 
+ *  (c)   Copyright 2004, 2005 Rowland Watkins (rowland@grid.cx) & University of 
  * 		  Southampton, Declarative Systems and Software Engineering Research 
  *        Group, University of Southampton, Highfield, SO17 1BJ
  *   	  All rights reserved.
