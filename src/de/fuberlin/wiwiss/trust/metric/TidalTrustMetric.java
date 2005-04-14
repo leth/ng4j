@@ -1,23 +1,29 @@
 /*
- * TrustMailMetrik.java
+ * TidalTrustMetric.java
  *
  * Created on 23. Februar 2005, 11:32
  */
 
 package de.fuberlin.wiwiss.trust.metric;
 
+import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Node_Literal;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import de.fuberlin.wiwiss.trust.ExplanationPart;
-import de.fuberlin.wiwiss.trust.Metric;
-import de.fuberlin.wiwiss.trust.MetricException;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.shared.PrefixMapping;
+
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 import de.fuberlin.wiwiss.ng4j.triql.TriQLQuery;
+import de.fuberlin.wiwiss.trust.EvaluationResult;
+import de.fuberlin.wiwiss.trust.EXPL;
+import de.fuberlin.wiwiss.trust.ExplanationPart;
+import de.fuberlin.wiwiss.trust.MetricException;
 import de.fuberlin.wiwiss.trust.metric.vocab.MindswapTrust;
+
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -37,13 +43,8 @@ import java.util.Vector;
  *
  * @author  Oliver Maresch (oliver-maresch@gmx.de)
  */
-public final class TidalTrustMetric implements Metric{
+public final class TidalTrustMetric extends Metric implements de.fuberlin.wiwiss.trust.Metric {
     
-    /** 
-     * Contains the data which are available for the evaluating of trust.
-     */  
-    private NamedGraphSet sourceData;
-      
     /**
      * Contains all Nodes from the Trust Vocabulary 
      *  <a href="http://trust.mindswap.org/ont/trust.owl">http://trust.mindswap.org/ont/trust.owl</a>,
@@ -90,31 +91,77 @@ public final class TidalTrustMetric implements Metric{
      * null, if no rating was found.
      */
     private Node cachedSourceGraph = null;
+ 
+    /**
+     * Contains after the run of the TidalTrust algorithm, whether or not the 
+     * sink was found through the trust network.
+     */
+    private boolean foundSink = false;
     
+    /**
+     * Contains after the run of the TidalTrust algorithm, whether or not the
+     * source has a own rating of the sink.
+     */
+    private boolean sourceHasOwnRating = true;
+    
+    /**
+     * Contains the result of the metric;
+     */
+    private boolean sourceTrustsSink = false;
+    
+    /** 
+     * The trust value for the inferred trust between the source and the sink.
+     */
+    private float trustValue = 0f;
+    
+    /**
+     * The minimal path length from the source to the sink.
+     */
+    private int minPathLength = Integer.MAX_VALUE;
+    
+    /**
+     * The maximal path flow form the source to the sink using the pathes with
+     * the minimal path length.
+     */
+    private float maxPathFlow = 0;
+    
+    /**
+     * Maps Nodes to vectors of Path objects. The Path objects contain pathes 
+     * to the sink.
+     */
+    private Map pathesToSink = null;
+
+        /**
+     * The node, which trusts the sink or not.
+     */
+    private Node source = null;
+    
+    /**
+     * The node, which's trust should be evaluated.
+     */
+    private Node sink = null;
+    
+    /**
+     * The threshold value for trusting the sink.
+     */
+    private float threshold = 1f;
+
+    
+    /**
+     * Collects all source information and generates the source summary.
+     */
+    private DataSourcesSummary sourceSummary = null;
     
     /**
      * Creates a new instance of TrustMailMetrik 
      */
     public TidalTrustMetric() {
-        this.sourceData = null;
+        super("http://www.wiwiss.fu-berlin.de/suhl/bizer/TPL/TidalTrustMetric");
+       this.sourceSummary = null;
         
-        trustProperties = new Vector();
-        trustProperties.add(MindswapTrust.trust0);
-        trustProperties.add(MindswapTrust.trust1);
-        trustProperties.add(MindswapTrust.trust2);
-        trustProperties.add(MindswapTrust.trust3);
-        trustProperties.add(MindswapTrust.trust4);
-        trustProperties.add(MindswapTrust.trust5);
-        trustProperties.add(MindswapTrust.trust6);
-        trustProperties.add(MindswapTrust.trust7);
-        trustProperties.add(MindswapTrust.trust8);
-        trustProperties.add(MindswapTrust.trust9);
-        trustProperties.add(MindswapTrust.trust10);
+        trustProperties = MindswapTrust.getTrustProperties();
     }
     
-    public String getURI() {
-        return "http://www.wiwiss.fu-berlin.de/suhl/bizer/TPL/TidalTrustMetric";
-    }
     
     /**
      * Calculates the trust value of a trust source in a trust sink. The trust value
@@ -138,26 +185,26 @@ public final class TidalTrustMetric implements Metric{
         /* The metric evaluates the trust between a trust source and a trust sink. Both are
          * represented by a Node.
          */ 
-        Node trustSource = null;   
-        Node trustSink = null;
+        source = null;   
+        sink = null;
         
-        float threshold = 1;
+        threshold = 1f;
         
         // Check and read the first argument, which should be the Node of the trust source.
         try{
-            trustSource = (Node) arguments.get(0);
+            source = (Node) arguments.get(0);
         }catch(Exception e){
             throw new MetricException("The metric " + getURI() + " expects a Node, which identifies the source of trust as the first argument.");
         }
-        if(!trustSource.isURI()) throw new MetricException("The trust source (first argument) of the metric " + getURI() + " have to be a URI.");
+        if(!source.isURI()) throw new MetricException("The trust source (first argument) of the metric " + getURI() + " have to be a URI.");
         
         // Check and read the second argument, which should be the Node of the trust sink.
         try{
-            trustSink = (Node) arguments.get(1);
+            sink = (Node) arguments.get(1);
         }catch(Exception e){
             throw new MetricException("The metric " + getURI() + " expects a Node, which identifies the sink of trust as the second argument.");
         }
-        if(!trustSink.isURI()) throw new MetricException("The trust sink (second argument) of the metric " + getURI() + " have to be a URI.");
+        if(!sink.isURI()) throw new MetricException("The trust sink (second argument) of the metric " + getURI() + " have to be a URI.");
        
         // Check and read the third argument, which should be the Node with the threshold value inbetween 0 and 1.
         try{
@@ -167,34 +214,31 @@ public final class TidalTrustMetric implements Metric{
         }
        
         
-        return calcTidalTrust(trustSource, trustSink, threshold);
+        return calcTidalTrust();
     }
     
     /**
      * This methode implements the TidalTrust metric algorithm
      * specified by Jennifer Golbeck.
-     * @param source The entity, for which the trust will be computed.
-     * @param sink The entity, which's trustworthiness will be computed.
-     * @param threshold The minimum trust value, for trusted sinks
      * @return result and explanation
      */ 
-    private de.fuberlin.wiwiss.trust.EvaluationResult calcTidalTrust(Node source, Node sink, float threshold)
+    private de.fuberlin.wiwiss.trust.EvaluationResult calcTidalTrust()
     throws de.fuberlin.wiwiss.trust.MetricException { 
         
         // Explanation generation section begin -------------------------------------
         
-        // list of the {@link Node}s of the used graphs in the metric
-        Vector usedGraphs = new Vector();
-        // the authorities of the used graphs (the keys are the graph nodes)
-        Map authorityMap = new java.util.HashMap();
         // contains after the run of the TidalTrust algorithm, whether or not the
         // source has a own rating of the sink.
-        boolean sourceHasOwnRating = true;
+        sourceHasOwnRating = true;
+
         // contains after the run of the TidalTrust algorithm, whether of not the 
         // sink was found through the trust network
-        boolean foundSink = false;
+        foundSink = false;
         // maps Nodes to vectors of Path objects, if pathes to the sink were found
-        Map pathesToSink = new java.util.HashMap();
+        pathesToSink = new java.util.HashMap();
+        
+        // setup a new source summary
+        sourceSummary = new DataSourcesSummary();
         
         // Explanation generation section end ---------------------------------------        
         
@@ -250,7 +294,7 @@ public final class TidalTrustMetric implements Metric{
             
             // get the asserted graphs of n, the graphs are treated as trusted
             // form n points of view
-            AssertedGraphs assertedGraphs = new AssertedGraphs(n, sourceData);
+            AssertedGraphs assertedGraphs = new AssertedGraphs(n, getSourceData());
             NamedGraphSet trustedGraphs = assertedGraphs.getGraphs();
             Map warrantMap = assertedGraphs.getWarrantMap();
             
@@ -260,9 +304,7 @@ public final class TidalTrustMetric implements Metric{
             Iterator graphIt = trustedGraphs.listGraphs();
             while(graphIt.hasNext()){
                 Node graphNode = ((NamedGraph) graphIt.next()).getGraphName();
-                usedGraphs.add(graphNode);
-                // remember the autority which asserted the graph
-                authorityMap.put(graphNode, n);
+                sourceSummary.addDataSource(graphNode, (Node) warrantMap.get(graphNode), n);
             }
             
             // Explanation generation section end ---------------------------------------        
@@ -343,9 +385,9 @@ public final class TidalTrustMetric implements Metric{
         
         
         Float flowSink = (Float) pathFlow.get(sink);
-        float max = (flowSink == null? 0f: flowSink.floatValue());
+        maxPathFlow = (flowSink == null? 0f: flowSink.floatValue());
         depth--;
-        int minPathLength = depth;
+        minPathLength = depth;
         depth--;
         
         
@@ -365,7 +407,7 @@ public final class TidalTrustMetric implements Metric{
         
                 // get the asserted graphs of n, the graphs are treated as trusted
                 // form n points of view
-                AssertedGraphs assertedGraphs = new AssertedGraphs(n, sourceData);
+                AssertedGraphs assertedGraphs = new AssertedGraphs(n, getSourceData());
                 NamedGraphSet trustedGraphs = assertedGraphs.getGraphs();
                 
                 // for all child nodes of n 
@@ -396,7 +438,7 @@ public final class TidalTrustMetric implements Metric{
                     }
                     // Explanation generation section end ---------------------------------------        
 
-                    if(ratingNToN2 >= max &&  ratingN2ToSink != null){
+                    if(ratingNToN2 >= maxPathFlow &&  ratingN2ToSink != null){
                         // use the path from n over its child n2 to the sink for the calulation of the trust value
                         numerator += ratingNToN2 * ratingN2ToSink.floatValue();
                         dominator += ratingNToN2;
@@ -417,76 +459,28 @@ public final class TidalTrustMetric implements Metric{
         
         Float result = (Float) cachedRatingOfSink.get(source);
         // default trust 
-        float trustValue = 0;
+        trustValue = 0;
         // if a infered trust value exit, update trust 
         if(result != null) trustValue = result.floatValue();
+       
+        sourceTrustsSink = trustValue >= threshold;
         
-        boolean sourceTrustsSink = trustValue >= threshold;
-        
-        
-        // Explanation generation section begin -------------------------------------
-        ExplanationPart explComplete;
-        List summary = new java.util.ArrayList();
-        if(foundSink){
-            // Summary
-            if(sourceTrustsSink){
-                summary.add(cl("The TidalTrust trust metric (" + getURI() + ") infered, that the source "));
-                summary.add(source);
-                summary.add(cl(" trusts the sink "));
-                summary.add(sink);
-                if(sourceHasOwnRating){
-                    summary.add(cl(", because the source has a own rating of the sink with the trust value " + trustValue + ", which holds the threshold of " + threshold + "."));
-                }else{
-                    summary.add(cl(", because the infered trust value is " + trustValue + " and holds the threshold of " + threshold + "."));
-                }
-            } else {
-                summary.add(cl("The TidalTrust trust metric (" + getURI() + ") infered, that the source "));
-                summary.add(source);
-                summary.add(cl(" doesn't trust the sink "));
-                summary.add(sink);
-                if(sourceHasOwnRating){
-                    summary.add(cl(", because the source has a own rating of the sink with the trust value " + trustValue + ", which doesn't hold the threshold of " + threshold + "."));
-                }else{
-                    summary.add(cl(", because the infered trust value is " + trustValue + " and doesn't hold the threshold of " + threshold + "."));
-                }
-            }
-        } else {
-            summary.add(cl("The TidalTrust trust metric (" + getURI() + ") couldn't find a path from the source "));
-            summary.add(source);
-            summary.add(cl(" to the sink "));
-            summary.add(sink);
-            summary.add(cl(". Therefore the source doesn't trust the sink."));
-        }
-        explComplete = new ExplanationPart(summary);
-        
-        if(!sourceHasOwnRating && foundSink){
-            // add calculation explanation, if the source have no own rating of the source
-            // and a path to the sink was found.
-            explComplete.addPart(generateCalculationExplanation(source, sink, minPathLength, max, (Vector) pathesToSink.get(source), trustValue));
-        }
-        
-        // add the summary of the used sources
-        explComplete.addPart(generateSourcesSummery(usedGraphs, authorityMap));
-        
-        
-        // Explanation generation section end ---------------------------------------        
-        
-        de.fuberlin.wiwiss.trust.metric.MetricResult metricResult = new de.fuberlin.wiwiss.trust.metric.MetricResult(sourceTrustsSink,explComplete,null);
+        de.fuberlin.wiwiss.trust.metric.MetricResult metricResult = new de.fuberlin.wiwiss.trust.metric.MetricResult(sourceTrustsSink, explain(), explainRDF());
         metricResult.setTrustValue(trustValue);
         return metricResult;
     }
    
     
-    private ExplanationPart generateMinPathLengthExplanation(Node source, int length, Path examplePath){
+    private ExplanationPart generateMinPathLengthExplanation(){
         List explanation = new java.util.ArrayList();
         explanation.add(cl(
-            "The minimum path length between the source and the sink was infered to be " + length + "."));
+            "The minimum path length between the source and the sink was infered to be " + minPathLength + "."));
         ExplanationPart part = new ExplanationPart(explanation);
         
         List exampleExpl = new java.util.ArrayList();
         exampleExpl.add(cl("An example path is: The source "));
         exampleExpl.add(source);
-        Vector edges = (Vector) examplePath.getEdges();
+        Vector edges = (Vector) ((Path) ((Vector) pathesToSink.get(source)).get(0)).getEdges();
         Edge edge = (Edge) edges.get(0);
         exampleExpl.add(cl(" has the rating " + edge.getTrustRating() + " of the entity "));
         exampleExpl.add(edge.getTrustedNode());
@@ -506,11 +500,13 @@ public final class TidalTrustMetric implements Metric{
         return part;
     }
     
-    private ExplanationPart generateMaxPathFlowExplanation(Node source, int length, float maxPathFlow, Vector pathesToSink){
+    private ExplanationPart generateMaxPathFlowExplanation(){
+        Vector pathesFromSourceToSink = (Vector) pathesToSink.get(source);
+        
         List explanation = new java.util.ArrayList();
         explanation.add(cl(
-            "The metric found " + pathesToSink.size() + " trust path(es) with the minimal path length of " + 
-            length + " stations."));
+            "The metric found " + pathesFromSourceToSink.size() + " trust path(es) with the minimal path length of " + 
+            minPathLength + " stations."));
         explanation.add(cl(
             "The maximum pathflow over the trust ratings of those/this path(es) was " + 
             maxPathFlow + "."));
@@ -521,9 +517,9 @@ public final class TidalTrustMetric implements Metric{
         ExplanationPart pathesPart = new ExplanationPart(pathesExpl);
         part.addPart(pathesPart);
         
-        for(int i = 0; i < pathesToSink.size(); i++){
+        for(int i = 0; i < pathesFromSourceToSink.size(); i++){
             List pathExpl = new java.util.ArrayList();
-            Path p = (Path) pathesToSink.get(i);
+            Path p = (Path) pathesFromSourceToSink.get(i);
             Vector edges = p.getEdges();
             pathExpl.add(cl("" + (i + 1) + ". source "));
             pathExpl.add(source);
@@ -543,7 +539,7 @@ public final class TidalTrustMetric implements Metric{
         return part;
     }
     
-    private ExplanationPart generateSelectedPathesExplanation(Node source, float maxPathFlow, Vector selectedPathes){
+    private ExplanationPart generateSelectedPathesExplanation(Vector selectedPathes){
         List explanation = new java.util.ArrayList();
         explanation.add(cl(
             "The metric selects only pathes for the calculation of the weighted average trust value, " +
@@ -579,7 +575,7 @@ public final class TidalTrustMetric implements Metric{
         return part;
     }
     
-    private ExplanationPart generateWeightedAverageExplanation(float trustValue, int selectedPathesCount){
+    private ExplanationPart generateWeightedAverageExplanation(int selectedPathesCount){
         List explanation = new java.util.ArrayList();
         explanation.add(cl(
             "The weighted average trust value of the " + selectedPathesCount + 
@@ -589,20 +585,20 @@ public final class TidalTrustMetric implements Metric{
         return part;
     }
     
-    private ExplanationPart generateCalculationExplanation(Node source, Node sink, int length, float maxPathFlow, Vector pathesToSink, float trustValue){
+    private ExplanationPart generateCalculationExplanation(){
         List calculationSummary = new java.util.ArrayList();
         
         calculationSummary.add(cl("The infered trust value arises from the following calculation."));
         ExplanationPart explCalculation = new ExplanationPart(calculationSummary);
         
         // expl min path length 
-        explCalculation.addPart(generateMinPathLengthExplanation(source, length, (Path) pathesToSink.get(0)));
+        explCalculation.addPart(generateMinPathLengthExplanation());
         
         // max pathflow to sink
-        explCalculation.addPart(generateMaxPathFlowExplanation(source, length, maxPathFlow, pathesToSink));
+        explCalculation.addPart(generateMaxPathFlowExplanation());
         
         Vector selectedPathes = new Vector();
-        Iterator pathes = pathesToSink.iterator();
+        Iterator pathes = ((Vector) pathesToSink.get(source)).iterator();
         while(pathes.hasNext()){
             Path p = (Path) pathes.next();
             if(p.getMinTrustRating() >= maxPathFlow){
@@ -611,36 +607,15 @@ public final class TidalTrustMetric implements Metric{
         }
         
         // remaining pathes due to max path flow criteria
-        explCalculation.addPart(generateSelectedPathesExplanation(source, maxPathFlow, selectedPathes));
+        explCalculation.addPart(generateSelectedPathesExplanation(selectedPathes));
         
         // weighted average calculation
-        explCalculation.addPart(generateWeightedAverageExplanation(trustValue, selectedPathes.size()));
+        explCalculation.addPart(generateWeightedAverageExplanation(selectedPathes.size()));
         
         return explCalculation;
     }
     
-    private ExplanationPart generateSourcesSummery(Vector usedGraphs, Map authorityMap){
-        // generate used source details
-        List sourceDetails = new java.util.ArrayList();
-        sourceDetails.add(cl("The used source graphs are:"));
-        for(int i = 0; i < usedGraphs.size(); i++){
-            Node graph = (Node) usedGraphs.get(i);
-            Node authority = (Node) authorityMap.get(graph);
-            sourceDetails.add(graph);
-            sourceDetails.add(cl(" asserted by "));
-            sourceDetails.add(authority);
-            sourceDetails.add(cl(", "));
-        }
-        ExplanationPart explSourceDetails = new ExplanationPart(sourceDetails);
-        
-        // generate explanation for used sources
-        List sourceSummary = new java.util.ArrayList();
-        sourceSummary.add(cl("The TidalTrust metric used " + usedGraphs.size() + " source graphs."));
-        ExplanationPart explUsedSources = new ExplanationPart(sourceSummary);
-        explUsedSources.addPart(explSourceDetails);
-        return explUsedSources;
-    }
-    
+
     
     /**
      * Checks, whether or not the trusted graphs contain trust statements between the 
@@ -762,7 +737,25 @@ public final class TidalTrustMetric implements Metric{
     }
     
     public void setup(de.fuberlin.wiwiss.ng4j.NamedGraphSet sourceData) {
-        this.sourceData = sourceData;
+        super.setup(sourceData);
+        source = null;
+        sink = null;
+        threshold = 1f;
+
+        foundSink = false;
+        sourceHasOwnRating = true;
+        sourceTrustsSink = false;
+        trustValue = 0f;
+        minPathLength = Integer.MAX_VALUE;
+        maxPathFlow = 0f;
+        pathesToSink = null;
+
+        cachedFoundDirectRating = false;
+        cachedDirectRating = 0f;
+        cachedDirectRatingSinkNode = null;
+        cachedDirectRatingSourceNode = null;
+        cachedSourceGraph = null;
+        cachedSources = null;
     }
 
     /**
@@ -819,7 +812,97 @@ public final class TidalTrustMetric implements Metric{
             return trustRating;
         }
     }
-}
-
-
     
+// Explanation generation section begin -------------------------------------
+        
+    protected Graph explainRDF() {
+        return null;
+    }
+    
+    protected ExplanationPart explain() {
+        ExplanationPart explComplete;
+        List summary = new java.util.ArrayList();
+        if(foundSink){
+            // Summary
+            if(sourceTrustsSink){
+                summary.add(cl("The TidalTrust trust metric (" + getURI() + ") infered, that the source "));
+                summary.add(source);
+                summary.add(cl(" trusts the sink "));
+                summary.add(sink);
+                if(sourceHasOwnRating){
+                    summary.add(cl(", because the source has a own rating of the sink with the trust value " + trustValue + ", which holds the threshold of " + threshold + "."));
+                }else{
+                    summary.add(cl(", because the infered trust value is " + trustValue + " and holds the threshold of " + threshold + "."));
+                }
+            } else {
+                summary.add(cl("The TidalTrust trust metric (" + getURI() + ") infered, that the source "));
+                summary.add(source);
+                summary.add(cl(" doesn't trust the sink "));
+                summary.add(sink);
+                if(sourceHasOwnRating){
+                    summary.add(cl(", because the source has a own rating of the sink with the trust value " + trustValue + ", which doesn't hold the threshold of " + threshold + "."));
+                }else{
+                    summary.add(cl(", because the infered trust value is " + trustValue + " and doesn't hold the threshold of " + threshold + "."));
+                }
+            }
+        } else {
+            summary.add(cl("The TidalTrust trust metric (" + getURI() + ") couldn't find a path from the source "));
+            summary.add(source);
+            summary.add(cl(" to the sink "));
+            summary.add(sink);
+            summary.add(cl(". Therefore the source doesn't trust the sink."));
+        }
+        explComplete = new ExplanationPart(summary);
+        
+        if(!sourceHasOwnRating && foundSink){
+            // add calculation explanation, if the source have no own rating of the source
+            // and a path to the sink was found.
+            explComplete.addPart(generateCalculationExplanation());
+        }
+        
+        // add the summary of the used sources
+        explComplete.addPart(sourceSummary.summarize());
+        
+        return explComplete;
+    }
+ // Explanation generation section end ---------------------------------------        
+    
+    
+    /**
+     * Simple test methode
+     */
+    public static void main(String[] args) throws de.fuberlin.wiwiss.trust.MetricException {
+
+        NamedGraphSet data = new NamedGraphSetImpl();
+        data.read("file:ng4j/doc/trustlayer/finTrustData.trig", "TRIG");
+        
+        // run metric
+        java.util.List arguments = new java.util.LinkedList();
+        Node source = Node.createURI("???");
+        arguments.add(0,source);
+        Node sink = Node.createURI("???");
+        arguments.add(1,sink);
+        Node threshold = Node.createLiteral("0.5", null, com.hp.hpl.jena.datatypes.xsd.XSDDatatype.XSDfloat);
+        arguments.add(2,threshold);
+        
+        Metric metric = new TidalTrustMetric();
+        metric.setup(data);
+        EvaluationResult result = metric.calculateMetric(arguments);
+
+        
+        // print explanations of all triples
+        ExplanationPart part = result.getTextExplanation();
+//        System.out.println(ExplanationToHTMLRenderer.renderExplanationPart(part));
+
+        System.out.println("Question: Should the source <" + source.toString() + "> trust the sink <" + sink.toString() + ">?\nAnswer: " + (result.getResult()?"Yes.\n":"No.\n"));
+        System.out.println("Explanation:");
+        
+        Model m = ModelFactory.createDefaultModel();
+        Graph g = m.getGraph();
+        part.writeAsRDF(Node.createAnon(), g);
+        m.setNsPrefixes(PrefixMapping.Standard);
+        m.setNsPrefix("expl", EXPL.getURI());
+        m.write(System.out, "N3");
+    }
+
+}
