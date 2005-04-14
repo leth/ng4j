@@ -1,4 +1,4 @@
-// $Id: QuadDB.java,v 1.3 2004/12/14 13:30:03 cyganiak Exp $
+// $Id: QuadDB.java,v 1.4 2005/04/14 14:25:27 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -259,7 +259,7 @@ public class QuadDB {
 					"KEY graph (`graph`)," +
 					"KEY subject (`subject`)," +
 					"KEY predicate (`predicate`)," +
-					"KEY object (`object`)," +
+					"KEY object (`object`)" +
 					") TYPE=MyISAM;");
 		} catch (SQLException ex) {
 			execute("DROP TABLE " + getGraphNamesTableName());
