@@ -8,6 +8,8 @@ package de.fuberlin.wiwiss.trust.metric.vocab;
 
 import com.hp.hpl.jena.graph.Node;
 
+import java.util.Vector;
+
 /**
  * This class includes the vocabulary used for the TrustMail trust metrics. 
  * The vocabulary definition is available at 
@@ -58,5 +60,22 @@ public class MindswapTrust {
     public static final Node trustedAgent = Node.createURI( NS + "#trustedAgent" );    
 
     public static final Node trustedPerson = Node.createURI( NS + "#trustedPerson" );    
+    
+    
+    public static Vector getTrustProperties(){
+        Vector trustProperties = new Vector();
+        trustProperties.add(MindswapTrust.trust0);
+        trustProperties.add(MindswapTrust.trust1);
+        trustProperties.add(MindswapTrust.trust2);
+        trustProperties.add(MindswapTrust.trust3);
+        trustProperties.add(MindswapTrust.trust4);
+        trustProperties.add(MindswapTrust.trust5);
+        trustProperties.add(MindswapTrust.trust6);
+        trustProperties.add(MindswapTrust.trust7);
+        trustProperties.add(MindswapTrust.trust8);
+        trustProperties.add(MindswapTrust.trust9);
+        trustProperties.add(MindswapTrust.trust10);  
+        return trustProperties;
+    }
 
 }
