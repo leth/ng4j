@@ -22,8 +22,9 @@ import de.fuberlin.wiwiss.trust.TrustPolicy;
 import de.fuberlin.wiwiss.trust.VariableBinding;
 
 /**
- * @version $Id: ExplanationPartTest.java,v 1.2 2005/03/22 01:01:21 cyganiak Exp $
+ * @version $Id: ExplanationPartTest.java,v 1.3 2005/04/15 11:32:47 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
+ * @author Oliver Maresch (oliver-maresch@gmx.de)
  */
 public class ExplanationPartTest extends TestCase {
     private static final String ex = "http://example.org/#";
@@ -57,8 +58,27 @@ public class ExplanationPartTest extends TestCase {
         ExplanationPart part = new ExplanationPart();
         ExplanationPart child = new ExplanationPart();
         part.addPart(child);
-        assertEquals("Part[] <Part[]>", part.toString());
+        assertEquals("Part[] <Children(Part[])>", part.toString());
         assertEquals(Collections.singletonList(child), part.parts());
+    }
+    
+    public void testDetails() {
+        ExplanationPart part = new ExplanationPart();
+        ExplanationPart details = new ExplanationPart();
+        part.setDetails(details);
+        assertEquals("Part[] <Details(Part[])>", part.toString());
+        assertEquals(details, part.getDetails());
+    }
+
+    public void testDetailsAndChildren(){
+        ExplanationPart part = new ExplanationPart();
+        ExplanationPart child = new ExplanationPart();
+        ExplanationPart details = new ExplanationPart();
+        part.setDetails(details);
+        part.addPart(child);
+        assertEquals("Part[] <Children(Part[]), Details(Part[])>", part.toString());
+        assertEquals(details, part.getDetails());
+        assertEquals(Collections.singletonList(child), part.parts());       
     }
     
     public void testEqualityOfExplanation() {
@@ -91,6 +111,10 @@ public class ExplanationPartTest extends TestCase {
         assertFalse(part1a.equals(part2));
         assertFalse(part1a.equals(part12));
         assertTrue(part12.equals(part21));
+    }
+ 
+    public void testEqualityOfDetails(){
+        //TODO: Equality test for ExplanationPart + details
     }
     
     public void testHashCode() {
@@ -179,4 +203,6 @@ public class ExplanationPartTest extends TestCase {
         assertTrue(graph.contains(Node.ANY, Node.createURI(RDF.getURI() + "_1"), a));
         assertTrue(graph.contains(Node.ANY, Node.createURI(RDF.getURI() + "_2"), b));
     }
+    
+    
 }
