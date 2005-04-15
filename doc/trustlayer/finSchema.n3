@@ -282,7 +282,7 @@ dc:description a rdf:Property ;
  rdfs:label "homepage" ; 	
  rdfs:comment " A fin:Author's, fin:Corporation's or fin:NewsSource's homepage.      " ;
  rdfs:domain fin:Author ;
- rdfs:range dtype:string .
+ rdfs:range foaf:Document .
 
 foaf:name a rdf:Property ;
  rdfs:label "name" ; 
@@ -294,7 +294,7 @@ vcard:email a rdf:Property ;
  rdfs:label "email" ; 
  rdfs:comment " The email adress a fin:Author." ;
  rdfs:domain fin:Author ;
- rdfs:range dtype:string .
+ rdfs:range rdfs:Resource .
  
 vcard:title a rdf:Property ;
  rdfs:label "TITLE" ; 
