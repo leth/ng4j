@@ -12,8 +12,9 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 /**
- * @version $Id: Explanation.java,v 1.2 2005/03/22 01:01:47 cyganiak Exp $
+ * @version $Id: Explanation.java,v 1.3 2005/04/15 11:37:43 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
+ * @author Oliver Maresch
  */
 public class Explanation {
     private Collection parts = new ArrayList();
@@ -75,7 +76,8 @@ public class Explanation {
         Iterator it = this.parts.iterator();
         while (it.hasNext()) {
             ExplanationPart part = (ExplanationPart) it.next();
-            part.writeAsRDF(explanation, result);
+            Node child = part.writeAsRDF(result);
+            result.add(new Triple(explanation, EXPL.parts, child));
         }
         return result;
     }
