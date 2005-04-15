@@ -15,7 +15,7 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
 /**
- * @version $Id: MetricTest.java,v 1.5 2005/03/28 22:31:51 cyganiak Exp $
+ * @version $Id: MetricTest.java,v 1.6 2005/04/15 12:32:38 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class MetricTest extends TestCase {
@@ -103,7 +103,7 @@ public class MetricTest extends TestCase {
     public void testSeveralExplanations() {
         ExpressionConstraint constraint = makeConstraint(
                 "(METRIC(ex:TrueMetric, 'Expl1') && !(METRIC(ex:TrueMetric, 'Expl2')))");
-        assertEquals("Part[] <Part[\"Expl1\"], Part[\"Expl2\"]>",
+        assertEquals("Part[] <Children(Part[\"Expl1\"], Part[\"Expl2\"])>",
                 constraint.evaluate(new VariableBinding()).getTextExplanation().toString());
     }
     
