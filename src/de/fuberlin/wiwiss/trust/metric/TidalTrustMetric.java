@@ -495,7 +495,7 @@ public final class TidalTrustMetric extends Metric implements de.fuberlin.wiwiss
         exampleExpl.add(cl("."));
 
         ExplanationPart examplePart = new ExplanationPart(exampleExpl);
-        part.addPart(examplePart);
+        part.setDetails(examplePart);
 
         return part;
     }
@@ -515,7 +515,7 @@ public final class TidalTrustMetric extends Metric implements de.fuberlin.wiwiss
         List pathesExpl = new java.util.ArrayList();
         pathesExpl.add(cl("The path(es) from the source to the sink are/is: "));
         ExplanationPart pathesPart = new ExplanationPart(pathesExpl);
-        part.addPart(pathesPart);
+        part.setDetails(pathesPart);
         
         for(int i = 0; i < pathesFromSourceToSink.size(); i++){
             List pathExpl = new java.util.ArrayList();
@@ -549,9 +549,9 @@ public final class TidalTrustMetric extends Metric implements de.fuberlin.wiwiss
         ExplanationPart part = new ExplanationPart(explanation);
         
         List pathesExpl = new java.util.ArrayList();
-        pathesExpl.add(cl("The selected path/es) are/is : "));
+        pathesExpl.add(cl("The selected path(es) are/is : "));
         ExplanationPart pathesPart = new ExplanationPart(pathesExpl);
-        part.addPart(pathesPart);
+        part.setDetails(pathesPart);
         
         for(int i = 0; i < selectedPathes.size(); i++){
             List pathExpl = new java.util.ArrayList();
@@ -857,7 +857,7 @@ public final class TidalTrustMetric extends Metric implements de.fuberlin.wiwiss
         if(!sourceHasOwnRating && foundSink){
             // add calculation explanation, if the source have no own rating of the source
             // and a path to the sink was found.
-            explComplete.addPart(generateCalculationExplanation());
+            explComplete.setDetails(generateCalculationExplanation());
         }
         
         // add the summary of the used sources
@@ -874,13 +874,13 @@ public final class TidalTrustMetric extends Metric implements de.fuberlin.wiwiss
     public static void main(String[] args) throws de.fuberlin.wiwiss.trust.MetricException {
 
         NamedGraphSet data = new NamedGraphSetImpl();
-        data.read("file:ng4j/doc/trustlayer/finTrustData.trig", "TRIG");
+        data.read("file:/home/voodoo/Java/project/trustlayer/ng4j/doc/trustlayer/finTrustData.trig", "TRIG");
         
         // run metric
         java.util.List arguments = new java.util.LinkedList();
-        Node source = Node.createURI("???");
+        Node source = Node.createURI("dadean7@lycos.de");
         arguments.add(0,source);
-        Node sink = Node.createURI("???");
+        Node sink = Node.createURI("http://www.reuters.com");
         arguments.add(1,sink);
         Node threshold = Node.createLiteral("0.5", null, com.hp.hpl.jena.datatypes.xsd.XSDDatatype.XSDfloat);
         arguments.add(2,threshold);
@@ -899,7 +899,7 @@ public final class TidalTrustMetric extends Metric implements de.fuberlin.wiwiss
         
         Model m = ModelFactory.createDefaultModel();
         Graph g = m.getGraph();
-        part.writeAsRDF(Node.createAnon(), g);
+        part.writeAsRDF(g);
         m.setNsPrefixes(PrefixMapping.Standard);
         m.setNsPrefix("expl", EXPL.getURI());
         m.write(System.out, "N3");
