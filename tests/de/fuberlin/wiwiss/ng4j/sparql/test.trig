@@ -1,0 +1,24 @@
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+
+<http://example.com/aliceFoaf> {
+    [] a foaf:Person;
+        foaf:mbox <mailto:alice@example.com>;
+        foaf:knows [ foaf:mbox <mailto:bob@example.com> ];
+        foaf:knows [ foaf:mbox <mailto:charlie@example.com> ].
+}
+        
+<http://example.com/bobFoaf> {
+    [] a foaf:Person;
+        foaf:mbox <mailto:bob@example.com>.
+}
+        
+<http://example.com/charileFoaf> {
+    [] a foaf:Person;
+    	foaf:name "Charlie";
+        foaf:mbox <mailto:charile@example.com>.
+}
+        
+<http://example.com/doraFoaf> {
+    [] a foaf:Person;
+        foaf:mbox <mailto:dora@example.com>.
+}
