@@ -1,0 +1,174 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix swp: <http://www.w3.org/2004/03/trix/swp-2/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix ex: <http:// www.example.org/vocabulary#> .
+@prefix tpl: <http://www.wiwiss.fu-berlin.de/suhl/bizer/TPL/> .
+@prefix gb: <http://www.ncbi.nlm.nih.gov/NCBI_GBSeq#> .
+@prefix tprefsl: <http://www.wiwiss.fu-berlin.de/suhl/bizer/TPrefsL/> .
+@prefix vcard: <http://www.w3.org/2001/vcard-rdf/3.0#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix dtype: <http://www.w3.org/2001/XMLSchema#> . 
+@prefix exdata: <http://www.example.org//TPLuseCase1/exampleData#> .
+@prefix fin: <http://www.fu-berlin/suhl/bizer/financialscenario/vocabulary/> .
+@prefix iso: <http://www.daml.org/2001/09/countries/iso-3166-ont#> .
+@prefix : <http://www.fu-berlin/suhl/bizer/financialscenario/policies/trust/> .
+
+
+# ----------------------------------------------------
+# Policy Suite for Trust in the Financial Scenario
+# ----------------------------------------------------
+
+
+<>  rdf:type tpl:TrustPolicySuite;
+    tpl:suiteName "Financial Trust Policies" ;
+    tpl:includesPolicy :Policy1 ;
+    tpl:includesPolicy :Policy2 ;
+    tpl:includesPolicy :Policy3 ;
+    tpl:includesPolicy :Policy4 ;
+    tpl:includesPolicy :Policy5 .
+
+
+# ----------------------------------------------------
+# Policy 1:
+# Trust information form InfoPortals
+# ----------------------------------------------------
+
+:Policy1 rdf:type tpl:TrustPolicy ;
+    tpl:policyName "Trust InfoPortals" ;
+    tpl:textExplanation "The information is stated in the document" ;
+    tpl:graphPattern [
+        tpl:pattern """(?GRAPH swp:assertedBy ?warrant .
+                        ?warrant swp:authority ?authority )""" ;
+        tpl:textExplanation "@@?GRAPH@@, which is asserted by the info portal " ;
+    ] ;
+    tpl:graphPattern [
+        tpl:pattern """(?authority rdf:type fin:InfoPortal)""" ;
+        tpl:textExplanation "@@?authority@@.";
+    ] .
+
+# ----------------------------------------------------
+# Policy 2:
+# Trust only news written by Reuters.
+# ----------------------------------------------------
+
+:Policy2 rdf:type tpl:TrustPolicy ;
+    tpl:policyName "Trust only information form Reuters" ;
+    tpl:textExplanation "The information is stated in the document" ;
+    tpl:graphPattern [
+        tpl:pattern """ ?graph1 (?GRAPH swp:assertedBy ?warrant1 .
+                                 ?warrant1 swp:authority ?authority )""" ;
+        tpl:textExplanation "@@?GRAPH@@, which is asserted by the institution @@?authority@@. " ;
+    ] ;
+    tpl:graphPattern [
+        tpl:pattern """ ?graph2 (?graph3 swp:assertedBy ?warrant2 .
+                                 ?warrant2 swp:authority ?authority )""" ;
+    ] ;
+    tpl:graphPattern [
+        tpl:pattern """ ?graph3 (?SUBJ rdf:type fin:News .
+                                 ?SUBJ fin:newsSource ?authority .
+         			 ?SUBJ fin:author ?author )""" ;
+tpl:textExplanation "The institution @@?authority@@ published the information, which is written by the author " ;
+    ] ;
+    tpl:graphPattern [
+        tpl:pattern """ ?graph4 (?graph5 swp:assertedBy ?warrant3 .
+                                 ?warrant3 swp:authority ?authority )""" ;
+    ] ;
+    tpl:graphPattern [
+        tpl:pattern """ ?graph5 (?author foaf:name ?name )""" ;
+        tpl:textExplanation "@@?name@@." ;
+    ] ;
+    tpl:constraint "?name =~ /Reuters/" .
+
+
+# ----------------------------------------------------
+# Policy 3:
+# Trust only news written by trustworthy authors with a 
+# TidalTrust trust value above 0.5.
+# ----------------------------------------------------
+
+:Policy3 rdf:type tpl:TrustPolicy ;
+    tpl:policyName "Trust only information form Reuters" ;
+    tpl:textExplanation "The information is stated in the document" ;
+    tpl:graphPattern [
+        tpl:pattern """ ?graph1 (?GRAPH swp:assertedBy ?warrant1 .
+                                 ?warrant1 swp:authority ?authority )""" ;
+        tpl:textExplanation "@@?GRAPH@@, which is asserted by the institution @@?authority@@. " ;
+    ] ;
+    tpl:graphPattern [
+        tpl:pattern """ ?graph2 (?graph3 swp:assertedBy ?warrant2 .
+                                 ?warrant2 swp:authority ?authority )""" 
+    ] ;
+    tpl:graphPattern [
+        tpl:pattern """ ?graph3 (?SUBJ rdf:type fin:News .
+                                 ?SUBJ fin:newsSource ?authority .
+         			 ?SUBJ fin:author ?author )""" ;
+    tpl:textExplanation "The institution @@?authority@@ published the information, which is written by the author " ;
+    ] ;
+    tpl:graphPattern [
+        tpl:pattern """ ?graph4 (?graph5 swp:assertedBy ?warrant3 .
+                                 ?warrant3 swp:authority ?authority)""" ;
+    ] ;
+    tpl:graphPattern [
+        tpl:pattern """ ?graph5 (?author foaf:name ?name )""" ;
+        tpl:textExplanation "@@?name@@ and you trust the author.  The author is trustworthy." ;
+    ] ;
+    tpl:constraint "METRIC(tpl:TidalTrustMetric, ?USER, ?author, 0.5) " .
+
+
+
+# ----------------------------------------------------
+# Policy 4:
+# Trust information with authors known by their name.
+# ----------------------------------------------------
+
+:Policy4 rdf:type tpl:TrustPolicy ;
+    tpl:policyName "Trust only information form known authors." ;
+    tpl:textExplanation "The information is stated in the document" ;
+    tpl:graphPattern [
+        tpl:pattern """ ?graph1 (?GRAPH swp:assertedBy ?warrant1 .
+                                 ?warrant1 swp:authority ?authority )""" ;
+        tpl:textExplanation "@@?GRAPH@@, which is asserted by the institution @@?authority@@. " ;
+    ] ;
+    tpl:graphPattern [
+        tpl:pattern """ ?graph2 (?graph3 swp:assertedBy ?warrant2 .
+                                 ?warrant2 swp:authority ?authority )""" 
+    ] ;
+    tpl:graphPattern [
+        tpl:pattern """ ?graph3 (?SUBJ fin:author ?author )""" ;
+    ] ;
+    tpl:graphPattern [
+        tpl:pattern """ ?graph3 (?author foaf:name ?name )""" ;   
+        tpl:textExplanation "The institution @@?authority@@ stated, that @@?name@@ is the author of the information." ;
+    ] .
+
+
+# ----------------------------------------------------
+# Policy 5:
+# Trust information with trustworthy authors, who
+# are known by their name. 
+# ----------------------------------------------------
+
+:Policy5 rdf:type tpl:TrustPolicy ;
+    tpl:policyName "Trust only information form trustworthy authors, who are known by their name." ;
+    tpl:textExplanation "The information is stated in the document" ;
+    tpl:graphPattern [
+        tpl:pattern """ ?graph1 (?GRAPH swp:assertedBy ?warrant1 .
+                                 ?warrant1 swp:authority ?authority )""" ;
+        tpl:textExplanation "@@?GRAPH@@, which is asserted by the institution @@?authority@@. " ;
+    ] ;
+    tpl:graphPattern [
+        tpl:pattern """ ?graph2 (?graph3 swp:assertedBy ?warrant2 .
+                                 ?warrant2 swp:authority ?authority )""" 
+    ] ;
+    tpl:graphPattern [
+        tpl:pattern """ ?graph3 (?SUBJ fin:author ?author )""" ;
+    ] ;
+    tpl:graphPattern [
+        tpl:pattern """ ?graph3 (?author foaf:name ?name )""" ;   
+        tpl:textExplanation "The institution @@?authority@@ stated, that @@?name@@ is the author of the information. The author is trustworthy." ;
+    ] ;
+    tpl:constraint "METRIC(tpl:TidalTrustMetric, ?USER, ?author, 0.5) " .
+
+

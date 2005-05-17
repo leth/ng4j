@@ -1,0 +1,193 @@
+
+# Trust Metric Vocabulary
+@prefix metric: <http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3#> .
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# Classes ----------------------------------------------------------------------
+
+metric:Metric a rdfs:Class ;
+    rdfs:comment "The class of metrics of all kinds" ;
+    rdfs:label "Metric" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" .
+
+metric:TrustMetric a rdfs:Class ;
+    rdfs:subClassOf metric:Metric ;
+    rdfs:comment "The class of metrics, which infer in some way trust between agents or between an agent and a group of agents." ;
+    rdfs:label "Trust Metric" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" .
+
+metric:PathMetric a rdfs:Class ;
+    rdfs:subClassOf metric:Metric ;
+    rdfs:comment "The class of metrics, which use graph data with entities as nodes and relations between the entities as edges. The metric uses pathes of the graph from entity to entity to infer some value." ;
+    rdfs:label "Path-Based Metric" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" .
+
+
+metric:NetworkPerspective a rdfs:Class ;
+    rdfs:comment "The class of network perspectives describes the scopes of a infered metric result." ;
+    rdfs:label "Network Perspective" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" .
+
+metric:MetricDatabase a rdfs:Class ;
+    rdfs:comment "The class of metric databases describes, which kind of input data are neccessary for metrics." ;
+    rdfs:label "Metric Database" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" .
+
+metric:DataCompletness a rdfs:Class ;
+    rdfs:comment "The class of data completeness describes the the completeness of the input data of metric." ;
+    rdfs:label "Completness of the Input Data" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" .
+
+metric:SelectionProcess a rdfs:Class ;
+    rdfs:comment "The class of selection processes describes the processes used to select trustworthy agents." ;
+    rdfs:label "Selection Process for Trustworthy Sources" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" .
+
+metric:EvaluationOfTrustRelationships a rdfs:Class ;
+    rdfs:comment "The class of evaluations of trust realationships describes the methods to infer trust relationships." ;
+    rdfs:label "Evaluation method for Trust Relationships" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" .
+
+metric:MetricArgument a rdfs:Class ;
+    rdfs:comment "An argument of a metric" ;
+    rdfs:label "Metric Argument" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" .
+
+metric:RequiredArgument a rdfs:Class ;
+    rdfs:subClassOf metric:MetricArgument ;
+    rdfs:comment "An required argument of a metric" ;
+    rdfs:label "Required Metric Argument" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" .
+    
+metric:OptionalArgument a rdfs:Class ;
+    rdfs:subClassOf metric:MetricArgument ;
+    rdfs:comment "An optional argument of a metric" ;
+    rdfs:label "Optional Metric Argument" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" .
+    
+metric:MetricArgumentSeq a rdfsClass;
+    rdfs:subClassOf rdf:Seq;
+    rdfs:comment "Sequenze which contains only instacnces of the class metric:MetricArgument." ;
+    rdfs:label "Sequenze of Metric Arguments" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" .
+    
+# Properties ------------------------------------------------------------------
+
+metric:perspectiv a rdfs:Property ;
+    rdfs:comment "Descibes the scope of the metric result." ;
+    rdfs:label "perspective" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" ;
+    rdfs:domain metric:TrustMetric ;
+    rdfs:range metric:NetworkPerspective .
+
+metric:inputData a rdfsProperty ;
+    rdfs:comment "Descripes the basic input data." ;
+    rdfs:label "Database of a Metric" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" ;
+    rdfs:domain metric:Metric ;
+    rdfs:range metric:MetricDatabase .
+    
+metric:completness a rdfs:Property ;
+    rdfs:comment "Describes the the completeness of the input data." ;
+    rdfs:label "Required Completeness of the Input Data" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" ;
+    rdfs:domain metric:Metric ;
+    rdfs:range metric:DataCompletness .
+    
+metric:selection a rdfs:Property ;
+    rdfs:comment "Descibes the kind of way the metric selects trustworthy sources." ;
+    rdfs:label "Selection Process for Trusworthy Sources" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" ;
+    rdfs:domain metric:TrustMetric ;
+    rdfs:range metric:SelectionProcess .
+
+metric:computationalLocus a rdfs:Property ;
+    rdfs:comment "Describes the location, where the metric is executed." ;
+    rdfs:label "Locus of the Metric Computation" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" ;
+    rdfs:domain metric:Metric ;
+    rdfs:range metric:SelectionProcess .
+
+metric:evalutionOfTrustRelationships a rdfs:Property ;
+    rdfs:comment "Describes the kind of way trust relationships are evaluated." ;
+    rdfs:label "Evaluation of Trust Links" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" ;
+    rdfs:domain metric:Metric ;
+    rdfs:range metric:EvaluationOfTrustRelationships .
+
+metric:arguments a rdfs:Property ;
+    rdfs:comment "The sequenze of arguments of a metric" ;
+    rdfs:label "Arguments of a Metric" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" ;
+    rdfs:domain metric:Metric ;
+    rdfs:range rdf:MetricArgumentSeq .
+
+# Instances --------------------------------------------------------------------
+
+metric:GlobalPerspective a metric:NetworkPerspective ;
+    rdfs:comment "Metrics with a global network perspective infer results indipendent from personal views. The same result  will be infered totally equal which entity of the network executes the metric. Therefore those metrics are objectiv." ;
+    rdfs:label "Global Network Perspective" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" .
+
+metric:LocalPerspective a metricNetworkPerspective ;
+    rdfs:comment "The results of metrics with a local network perspective depend on the entity which executes the metric. The local position of the entity in a network influence the result. Therefore those metrics are subjectiv." ;
+    rdfs:label "Local Network Perspective" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" .
+
+metric:TransactionBasedData a metric:MetricDatabase ;
+    rdfs:comment "The databases for a metric execution contains transaction data of actions between agents. It can contain transaction protocols and transaction feetbacks." ;
+    rdfs:label "Transaction-Based Metric Database" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" .
+
+metric:OpinionBasedData a metric:MetricDatabase ;
+    rdfs:comment "The databases for a metric execution contains opinions of agents about other agents or contents." ;
+    rdfs:label "Opinion-Based Metric Database" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" .
+
+metric:CompleteData a metric:DataCompletness ;
+    rdfs:comment "The metric assumes, that the input data are complete." ;
+    rdfs:label "Complete Data" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" .
+
+metric:LocalizedData a metric:Completness ;
+    rdfs:comment "The metric can infer correct results with a incomplete databases, which are a localizes subset of the complete database." ;
+    rdfs:label "Localized Data" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" .
+
+metric:RankBasedSelection a metric:SelectionProcess ;
+    rdfs:comment "In the selection process the results are ordered by its trust rank. The metric does not infer the trustworthiness directly, it just gives the most trustworthy result and its nest trustworthy successors. It is possible, that the most trustworthy result is in absolute trustworthiness also not trustworthy." ;
+    rdfs:label "Rank-Based Selection Process for Trustworthy Sources" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" .
+
+metric:ThresholdBasedSelection a metric:SelectionProcess ;
+    rdfs:comment "The threshold-based selection process uses an inferred absolute trust value to decide about the trustworhiness. The result is trustworthy if the value is greater than the threshold. " ;
+    rdfs:label "Threshold-Based Selection Process for Trustworthy Sources" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" .
+
+metric:TrashholdBasedSelection a metric:SelectionProcess ;
+    rdfs:comment "The trashhold-based selection uses a rank-based selection process and returns the top n ranks as trustworthy." ;
+    rdfs:label "Trashhold-Based Selection Process for Trustworthy Sources" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" .
+
+metric:CentralComputation a metric:ComputationLocus ;
+    rdfs:comment "The computation of the metric is done by one machine of an agent." ;
+    rdfs:label "Central Metric Computation" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" .
+
+metric:DistributedMetricComputation a metric:ComputationLocus ;
+    rdfs:comment "The metric is computed in a distributed manner. A group of agents and their maschines have to cooperate to calculate the metric." ;
+    rdfs:label "Distributed Metric Computation" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" .
+
+metric:GroupBasedEvaluation a metric:EvaluationOfTrustRelationships ;
+    rdfs:comment "The evaluation of the metric gives a result for a group of agents. For example: rank-based metric are inherent group-based trust metrics, because they return a list of agents with ranks. The trustworthiness of one agent has only a meaning in comparison with the other agents in the ranking." ;
+    rdfs:label "Group-Based Evaluation Method" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" .
+
+metric:ScalarEvaluation a metric:EvaluationOfTrustRelationships ; 
+    rdfs:comment "The metric evaluates the trustworthiness of one agent to an other agent or the credibility of a content." ;
+    rdfs:label "Scalar Evaluation Method" ;
+    rdfs:isDefinedBy "http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3" .
+

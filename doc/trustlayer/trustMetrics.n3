@@ -1,0 +1,110 @@
+
+# Trust Metric Description for the TriQL-Trust-Architecure
+@prefix tpl: <http://www.wiwiss.fu-berlin.de/suhl/bizer/TPL/> .
+
+@prefix metric: <http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+
+<>  rdfs:label "Metric Description for the TriQL-Trust-Architecture" ;
+    rdfs:comment "This document describes the metrics used in the TriQL-Trust-Architecture" .
+
+
+tpl:TidalTrustMetric a metric:TrustMetric ;
+    rdfs:label                              "TidalTrustMetric" ;
+    rdfs:comment                            "The TidalTrust metric was founded by Jennifer Goldbeck. It infers an absolute trust value between two agents in a trust network. It searchs shortest pathes between the two agents in a directed labeled graph, where nodes are agents and the outgoing edges are trust opinions with a weights. The found pathes and the weigthed edges are used to calulate the absolute trust value. The implementation for the TriQL-Trust-Architecture uses a threshold to descide whether or not the inferred trust value is high enough to trust the sink." ;  
+    metric:perspecive                       metric:LocalPerspective ;
+    metric:inputData                        metric:OpinionBasedData ;
+    metric:completeness                     metric:LocalizedData ;
+    metric:selection                        metric:ThresholdBasedSelection ;
+    metric:computationalLocus               metric:CentralComputation ;
+    metric:evaluationOfTrustRelationships   metric:ScalarEvaluatoin ;
+    metric:arguments
+        [ a metric:MetricArgumentSeq ;
+            rdf:_1 
+                [ a metric:RequiredArgument;
+                    rdfs:comment "The URI, which identifies the source of the metric evaluation." ;
+                    rdfs:label "Source" ;
+                ];
+            rdf:_2
+                [ a metric:RequiredArgument;
+                    rdfs:comment "The URI, which identifies the sink of the metric evaluation." ;
+                    rdfs:label "Sink" ;
+                ];
+            rdf:_3
+                [ a metric:RequiredArgument;
+                    rdfs:comment "The metric decides that the source trust the sink, if the inferred trust value for the trust relationship between the source and the sink is greater than the threshold. Otherwise the metric returns, that the source does not trust the sink. The threshold have to be in the range of [0,1]." ;
+                    rdfs:label "Threshold" ;
+                ];
+        ].
+
+tpl:AppleseedMetric a metric:TrustMetric;
+    rdfs:label                              "AppleseedMetric" ;
+    rdfs:comment                            "The Appleseed metric was founded by Cai Ziegler and Georg Lausen. Originally it infers a trust ranking of agents in the neighborhood an agent. It uses a directed labeled trust graph, where nodes are agents and the outgoing edges are trust opinions with a weights. In the implementation of the of the TriQL-Trust-Architecture, the top n of agents of the inferred ranking will be trusted. Therefore the implementation is not a rank-based selection, it is a trashhold selection." ;  
+    metric:perspecive                       metric:LocalPerspective ;
+    metric:inputData                        metric:OpinionBasedData ;
+    metric:completeness                     metric:LocalizedData ;
+    metric:selection                        metric:TrashholdBasedSelection ;
+    metric:computationalLocus               metric:CentralComputation ;
+    metric:evaluationOfTrustRelationships   metric:GroupEvaluatoin .
+    metric:arguments
+        [ a metric:MetricArgumentSeq;
+            rdf:_1 
+                [ a metric:RequiredArgument;
+                    rdfs:comment "The URI, which identifies the source of the metric evaluation." ;
+                    rdfs:label "Source" ;
+                ];
+            rdf:_2
+
+/**
+ * <p>
+ * This class implements the Appleseed metric introduced by Cai-Nicolas Ziegler
+ * and Georg Lausen in their paper &quot;Spreading Actication Models of Trust
+ * Propagation&quot" (2004). 
+ * </p>
+ * <p>
+ * The metric has four required and five optional parameters. 
+ * Required are:
+                [ a metric:RequiredArgument;
+                    rdfs:comment "The URI, which identifies the sink of the metric evaluation." ;
+                    rdfs:label "Sink" ;
+                ];
+            rdf:_3
+                [ a metric:RequiredArgument;
+                    rdfs:comment "The number x of trusted nodes. This number is used to select the x nodes with the best rating as trusted." ;
+                    rdfs:label "Number of Trusted Nodes" ;
+                ]
+            rdf:_4
+                [ a metric:RequiredArgument;
+                    rdfs:comment "The amount of trust, that should be speaded over the direct and indirect neighbors. If more trust will be injected more nodes will be ranked." ;
+                    rdfs:label "Trust injection" ;
+                ]
+            rdf:_5
+                [ a metric:OptionalArgument;
+                    rdfs:comment "The spreading factor decides, how much trust a node keeps for itself and how much it gives to its successors. The spreading factor is in the range of [0,1]. If the spreading factor is not set, the default value is 0.85. Each node keeps 15% of the injected trust for itself and spread 85% will be spread among the successor nodes." ;
+                    rdfs:label "Spreading Factor" ;
+                ]
+            rdf:_6
+                [ a metric:OptionalArgument;
+                    rdfs:comment "The threshold decides, if the amount of trust, that should be injected into a successor node is high enough for further calculation. The threshold is a termination condition of the metric. If the threshold is not explicitly set, the default value is 0.05." ;
+                    rdfs:label "Threshold for Minimal Trust Injection" ;
+                ]
+            rdf:_7
+                [ a metric:OptionalArgument;
+                    rdfs:comment "The maximal number of nodes decides, how much nodes a maximal analysed and ranked. The default value of the maximal number of nodes is 200." ;
+                    rdfs:label "Maximal Number of Nodes" ;
+                ]
+            rdf:_8
+                [ a metric:OptionalArgument;
+                    rdfs:comment "The maximal path length defines the maximal path length between the source and a sink. The default value is 6." ;
+                    rdfs:label "Maximal Path Length" ;
+                ]
+            rdf:_9
+                [ a metric:OptionalArgument;
+                    rdfs:comment "The exponent is used to calculate, how trust is spreaded among the successor nodes of a node. An exponent greater than 1 punishes successor nodes with a low rating and rewards nodes with a high rating. A value less than 1 increases the differences of the ratings. The default value is 1" ;
+                    rdfs:label "Exponent for Trust Distribution";
+                ]
+         ]
+    ].
+                    
