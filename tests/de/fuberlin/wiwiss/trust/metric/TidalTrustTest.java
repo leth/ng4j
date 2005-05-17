@@ -51,7 +51,7 @@ public class TidalTrustTest {
         
         Model m = ModelFactory.createDefaultModel();
         Graph g = m.getGraph();
-        part.writeAsRDF(Node.createAnon(), g);
+        part.writeAsRDF(g);
         m.setNsPrefixes(PrefixMapping.Standard);
         m.setNsPrefix("expl", EXPL.getURI());
         m.write(System.out, "N3");
