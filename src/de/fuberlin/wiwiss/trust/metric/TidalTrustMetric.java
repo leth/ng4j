@@ -612,6 +612,9 @@ public final class TidalTrustMetric extends Metric implements de.fuberlin.wiwiss
         // weighted average calculation
         explCalculation.addPart(generateWeightedAverageExplanation(selectedPathes.size()));
         
+        // add the summary of the used sources
+        explCalculation.addPart(sourceSummary.summarize());        
+        
         return explCalculation;
     }
     
@@ -758,15 +761,6 @@ public final class TidalTrustMetric extends Metric implements de.fuberlin.wiwiss
         cachedSources = null;
     }
 
-    /**
-     * Creates a String Literal Node
-     * @param str
-     * @return StringLiteral as a Node
-     */
-    private Node cl(String str){
-        return Node.createLiteral(str);
-    }
-
     private class Path{
         private Vector edges;
         private float minTrustRating;
@@ -859,9 +853,6 @@ public final class TidalTrustMetric extends Metric implements de.fuberlin.wiwiss
             // and a path to the sink was found.
             explComplete.setDetails(generateCalculationExplanation());
         }
-        
-        // add the summary of the used sources
-        explComplete.addPart(sourceSummary.summarize());
         
         return explComplete;
     }
