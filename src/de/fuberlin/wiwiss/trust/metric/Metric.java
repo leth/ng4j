@@ -45,6 +45,16 @@ public abstract class Metric implements de.fuberlin.wiwiss.trust.Metric {
         return sourceData;
     }
     
+    /**
+     * Creates a String Literal Node
+     * @param str
+     * @return StringLiteral as a Node
+     */
+    protected com.hp.hpl.jena.graph.Node cl(String str){
+        return com.hp.hpl.jena.graph.Node.createLiteral(str);
+    } 
+    
+    
     protected abstract ExplanationPart explain();
     
     protected abstract Graph explainRDF();
