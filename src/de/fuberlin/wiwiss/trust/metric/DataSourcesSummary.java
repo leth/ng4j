@@ -52,14 +52,19 @@ public class DataSourcesSummary {
     }
     
     public ExplanationPart summarize(){
-        List expl = new ArrayList();
-        expl.add(util.cl("" + sources.size() + " sources were used to calculate the metric. The sources are: "));
+        List summary = new ArrayList();
+        summary.add(util.cl("" + sources.size() + " sources were used to calculate the metric."));
+        ExplanationPart sourceSummary = new ExplanationPart(summary);
         
-        ExplanationPart sourceSummary = new ExplanationPart(expl);
+        List details = new ArrayList();
+        details.add(util.cl("The Sources are: "));
+        ExplanationPart sourceDetails = new ExplanationPart(details);
         Iterator ss = sources.iterator();
         while(ss.hasNext()){
-            sourceSummary.addPart(((Source) ss.next()).summarize());
+            sourceDetails.addPart(((Source) ss.next()).summarize());
         }
+        sourceSummary.setDetails(sourceDetails);
+        
         return sourceSummary;
     }
     
