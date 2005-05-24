@@ -15,7 +15,7 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.FOAF;
 
 /**
- * @version $Id: ExplanationToHTMLRenderer.java,v 1.3 2005/05/24 13:53:24 maresch Exp $
+ * @version $Id: ExplanationToHTMLRenderer.java,v 1.4 2005/05/24 14:16:06 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class ExplanationToHTMLRenderer {
@@ -155,7 +155,7 @@ public class ExplanationToHTMLRenderer {
     
     private String findLabel(Node_URI uri){
         Triple triple = new Triple(uri, RDFS.Nodes.label , Node.ANY); 
-        tlg.selectTrustPolicy("http://www.wiwiss.fu-berlin.de/suhl/bizer/TPL/TrustEveryting");
+        tlg.selectTrustPolicy("http://www.wiwiss.fu-berlin.de/suhl/bizer/TPL/TrustEverything");
         Iterator it = tlg.find(triple);
         
         if(it.hasNext()){
