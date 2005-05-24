@@ -176,7 +176,7 @@ public final class AppleseedMetric extends Metric  implements de.fuberlin.wiwiss
     public de.fuberlin.wiwiss.trust.EvaluationResult calculateMetric(java.util.List arguments) throws MetricException {
         
         if(arguments == null || arguments.size() < 4){
-            throw new MetricException("The Appleseed metric need at least the node of the source, the node of the sink, the number of trusted nodes on top of the ranking and the trust value for the injection as parameters.");
+            throw new MetricException("The Appleseed metric needs at least the node of the source, the node of the sink, the number of trusted nodes on top of the ranking and the trust value for the injection as parameters.");
         }
         
         // read required arguments
@@ -382,7 +382,9 @@ public final class AppleseedMetric extends Metric  implements de.fuberlin.wiwiss
         Integer rank = getRankOf(sink);
         
         if(rank == null){
-            text.add(cl("The Appleseed metric could not find the sink "));
+            text.add(cl("The "));
+            text.add(com.hp.hpl.jena.graph.Node.createURI(this.getURI()));
+            text.add(cl(" could not find the sink "));
             text.add(sink);
             text.add(cl(" in the analysed local trust network of the source "));
             text.add(source.getJenaNode());
@@ -390,13 +392,17 @@ public final class AppleseedMetric extends Metric  implements de.fuberlin.wiwiss
         }else { 
             int r = rank.intValue() + 1;
             if(r > top){
-                text.add(cl("The Appleseed metric inferred, that the source "));
+                text.add(cl("The "));
+                text.add(com.hp.hpl.jena.graph.Node.createURI(this.getURI()));
+                text.add(cl(" inferred, that the source "));
                 text.add(source.getJenaNode());
                 text.add(cl(" does not trust the sink "));
                 text.add(sink);
                 text.add(cl(". The sink got the rank number " + r + ", which is out of the top " + top + "."));
             }else{
-                text.add(cl("The Appleseed metric inferred, that the source "));
+                text.add(cl("The "));
+                text.add(com.hp.hpl.jena.graph.Node.createURI(this.getURI()));
+                text.add(cl(" inferred, that the source "));
                 text.add(source.getJenaNode());
                 text.add(cl(" trusts the sink "));
                 text.add(sink);

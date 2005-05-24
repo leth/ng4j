@@ -532,7 +532,7 @@ public final class TidalTrustMetric extends Metric implements de.fuberlin.wiwiss
             e = (Edge) edges.get(edges.size()-1);
             pathExpl.add(cl(" -" + e.getTrustRating() + "-> sink "));
             pathExpl.add(e.getTrustedNode());
-            pathExpl.add(cl(" (maxflow of the path: " + p.getMinTrustRating() + ")"));
+            pathExpl.add(cl(" (max pathflow of the path: " + p.getMinTrustRating() + ")"));
             pathesPart.addPart(new ExplanationPart(pathExpl));
         }
         
@@ -568,7 +568,7 @@ public final class TidalTrustMetric extends Metric implements de.fuberlin.wiwiss
             e = (Edge) edges.get(edges.size()-1);
             pathExpl.add(cl(" -" + e.getTrustRating() + "-> sink "));
             pathExpl.add(e.getTrustedNode());
-            pathExpl.add(cl(" (maxflow of the path: " + p.getMinTrustRating() + ")"));
+            pathExpl.add(cl(" (max pathflow of the path: " + p.getMinTrustRating() + ")"));
             pathesPart.addPart(new ExplanationPart(pathExpl));
         }        
         
@@ -819,7 +819,9 @@ public final class TidalTrustMetric extends Metric implements de.fuberlin.wiwiss
         if(foundSink){
             // Summary
             if(sourceTrustsSink){
-                summary.add(cl("The TidalTrust trust metric (" + getURI() + ") infered, that the source "));
+                summary.add(cl("The "));
+                summary.add(com.hp.hpl.jena.graph.Node.createURI(this.getURI()));
+                summary.add(cl(" infered, that the source "));
                 summary.add(source);
                 summary.add(cl(" trusts the sink "));
                 summary.add(sink);
@@ -829,7 +831,9 @@ public final class TidalTrustMetric extends Metric implements de.fuberlin.wiwiss
                     summary.add(cl(", because the infered trust value is " + trustValue + " and holds the threshold of " + threshold + "."));
                 }
             } else {
-                summary.add(cl("The TidalTrust trust metric (" + getURI() + ") infered, that the source "));
+                summary.add(cl("The "));
+                summary.add(com.hp.hpl.jena.graph.Node.createURI(this.getURI()));
+                summary.add(cl(" infered, that the source "));
                 summary.add(source);
                 summary.add(cl(" doesn't trust the sink "));
                 summary.add(sink);
@@ -840,7 +844,9 @@ public final class TidalTrustMetric extends Metric implements de.fuberlin.wiwiss
                 }
             }
         } else {
-            summary.add(cl("The TidalTrust trust metric (" + getURI() + ") couldn't find a path from the source "));
+            summary.add(cl("The "));
+            summary.add(com.hp.hpl.jena.graph.Node.createURI(this.getURI()));
+            summary.add(cl(" couldn't find a path from the source  "));
             summary.add(source);
             summary.add(cl(" to the sink "));
             summary.add(sink);
@@ -883,7 +889,6 @@ public final class TidalTrustMetric extends Metric implements de.fuberlin.wiwiss
         
         // print explanations of all triples
         ExplanationPart part = result.getTextExplanation();
-//        System.out.println(ExplanationToHTMLRenderer.renderExplanationPart(part));
 
         System.out.println("Question: Should the source <" + source.toString() + "> trust the sink <" + sink.toString() + ">?\nAnswer: " + (result.getResult()?"Yes.\n":"No.\n"));
         System.out.println("Explanation:");
