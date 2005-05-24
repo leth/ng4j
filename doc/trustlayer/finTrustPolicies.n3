@@ -23,11 +23,13 @@
 
 <>  rdf:type tpl:TrustPolicySuite;
     tpl:suiteName "Financial Trust Policies" ;
+    tpl:includesPolicy :TrustEverything;
     tpl:includesPolicy :Policy1 ;
     tpl:includesPolicy :Policy2 ;
     tpl:includesPolicy :Policy3 ;
     tpl:includesPolicy :Policy4 ;
-    tpl:includesPolicy :Policy5 .
+    tpl:includesPolicy :Policy5 ;
+    tpl:includesPolicy :Policy6 .
 
 
 # ----------------------------------------------------
@@ -169,6 +171,38 @@ tpl:textExplanation "The institution @@?authority@@ published the information, w
         tpl:pattern """ ?graph3 (?author foaf:name ?name )""" ;   
         tpl:textExplanation "The institution @@?authority@@ stated, that @@?name@@ is the author of the information. The author is trustworthy." ;
     ] ;
-    tpl:constraint "METRIC(tpl:TidalTrustMetric, ?USER, ?author, 0.5) " .
+    tpl:constraint "METRIC(tpl:AppleseedMetric, ?USER, ?author, 20, 200) " .
 
+
+# ----------------------------------------------------
+# Policy 6:
+# Trust information from Infoportals which have more
+# positive than negative ratings. 
+# ----------------------------------------------------
+
+:Policy6 rdf:type tpl:TrustPolicy ;
+    tpl:policyName "Trust only information form info portals, which have more positive than negative ratings." ;
+    tpl:textExplanation "The information is stated in the document " ;
+    tpl:graphPattern [
+        tpl:pattern """ ?graph1 (?GRAPH swp:assertedBy ?warrant1 .
+                                 ?warrant1 swp:authority ?authority )""" ;
+        tpl:textExplanation "@@?GRAPH@@, which is asserted by the institution @@?authority@@, " ;
+    ] ;
+    tpl:graphPattern [
+        tpl:pattern """ ?graph2 (?graph3 swp:assertedBy ?warrant2 .
+                                 ?warrant2 swp:authority ?authority )""" 
+    ] ;
+    tpl:graphPattern [
+        tpl:pattern """ ?graph3 (?authority rdf:type fin:InfoPortal )""" ;
+        tpl:textExplanation "which is a information portal." ;
+    ] ;
+    tpl:constraint "METRIC(tpl:EbayMetric, ?authority) " .
+
+# ----------------------------------------------------
+# Policy 7:
+# Trust everything 
+# ----------------------------------------------------
+
+tpl:TrustEverything rdf:type tpl:TrustPolicy ;
+    tpl:policyName "Trust everything" .
 

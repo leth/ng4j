@@ -45,7 +45,7 @@ tpl:AppleseedMetric a metric:TrustMetric;
     metric:perspecive                       metric:LocalPerspective ;
     metric:inputData                        metric:OpinionBasedData ;
     metric:completeness                     metric:LocalizedData ;
-    metric:selection                        metric:TrashholdBasedSelection ;
+    metric:selection                        metric:ThresholdBasedSelection ;
     metric:computationalLocus               metric:CentralComputation ;
     metric:evaluationOfTrustRelationships   metric:GroupEvaluatoin .
     metric:arguments
@@ -56,16 +56,6 @@ tpl:AppleseedMetric a metric:TrustMetric;
                     rdfs:label "Source" ;
                 ];
             rdf:_2
-
-/**
- * <p>
- * This class implements the Appleseed metric introduced by Cai-Nicolas Ziegler
- * and Georg Lausen in their paper &quot;Spreading Actication Models of Trust
- * Propagation&quot" (2004). 
- * </p>
- * <p>
- * The metric has four required and five optional parameters. 
- * Required are:
                 [ a metric:RequiredArgument;
                     rdfs:comment "The URI, which identifies the sink of the metric evaluation." ;
                     rdfs:label "Sink" ;
@@ -74,37 +64,56 @@ tpl:AppleseedMetric a metric:TrustMetric;
                 [ a metric:RequiredArgument;
                     rdfs:comment "The number x of trusted nodes. This number is used to select the x nodes with the best rating as trusted." ;
                     rdfs:label "Number of Trusted Nodes" ;
-                ]
+                ];
             rdf:_4
                 [ a metric:RequiredArgument;
                     rdfs:comment "The amount of trust, that should be speaded over the direct and indirect neighbors. If more trust will be injected more nodes will be ranked." ;
                     rdfs:label "Trust injection" ;
-                ]
+                ];
             rdf:_5
                 [ a metric:OptionalArgument;
                     rdfs:comment "The spreading factor decides, how much trust a node keeps for itself and how much it gives to its successors. The spreading factor is in the range of [0,1]. If the spreading factor is not set, the default value is 0.85. Each node keeps 15% of the injected trust for itself and spread 85% will be spread among the successor nodes." ;
                     rdfs:label "Spreading Factor" ;
-                ]
+                ];
             rdf:_6
                 [ a metric:OptionalArgument;
                     rdfs:comment "The threshold decides, if the amount of trust, that should be injected into a successor node is high enough for further calculation. The threshold is a termination condition of the metric. If the threshold is not explicitly set, the default value is 0.05." ;
                     rdfs:label "Threshold for Minimal Trust Injection" ;
-                ]
+                ];
             rdf:_7
                 [ a metric:OptionalArgument;
                     rdfs:comment "The maximal number of nodes decides, how much nodes a maximal analysed and ranked. The default value of the maximal number of nodes is 200." ;
                     rdfs:label "Maximal Number of Nodes" ;
-                ]
+                ];
             rdf:_8
                 [ a metric:OptionalArgument;
                     rdfs:comment "The maximal path length defines the maximal path length between the source and a sink. The default value is 6." ;
                     rdfs:label "Maximal Path Length" ;
-                ]
+                ];
             rdf:_9
                 [ a metric:OptionalArgument;
                     rdfs:comment "The exponent is used to calculate, how trust is spreaded among the successor nodes of a node. An exponent greater than 1 punishes successor nodes with a low rating and rewards nodes with a high rating. A value less than 1 increases the differences of the ratings. The default value is 1" ;
                     rdfs:label "Exponent for Trust Distribution";
-                ]
-         ]
-    ].
+                ];
+        ].
+
+
+
+tpl:EbayMetric a metric:TrustMetric;
+    rdfs:label                              "Ebay Metric" ;
+    rdfs:comment                            "The implemetnation of the Ebay Metric in the TriQL-Trust-Architecture is a very simple version of the original Ebay trust metric. It just counts the positive, negative and neutral ratings and evaluates, whether or not their are more positive than negative ratings. The metric counts every rating from every one." ;  
+    metric:perspecive                       metric:GlobalPerspective ;
+    metric:inputData                        metric:TransactionBasedData ;
+    metric:completeness                     metric:CompleteData ;
+    metric:selection                        metric:ThresholdBasedSelection ;
+    metric:computationalLocus               metric:CentralComputation ;
+    metric:evaluationOfTrustRelationships   metric:GroupEvaluatoin .
+    metric:arguments
+        [ a metric:MetricArgumentSeq;
+            rdf:_1 
+                [ a metric:RequiredArgument;
+                    rdfs:comment "The URI, which identifies the sink of the metric evaluation." ;
+                    rdfs:label "Sink" ;
+                ];
+        ].
                     
