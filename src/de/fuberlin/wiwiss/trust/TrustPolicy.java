@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.shared.PrefixMapping;
 
@@ -19,7 +20,7 @@ import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
  * can generate an explanation stating why a particular statement was trusted
  * (but not why a statement was rejected).
  *
- * @version $Id: TrustPolicy.java,v 1.5 2005/03/28 22:31:51 cyganiak Exp $
+ * @version $Id: TrustPolicy.java,v 1.6 2005/05/24 13:50:27 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class TrustPolicy {
@@ -109,6 +110,14 @@ public class TrustPolicy {
 	    while (it.hasNext()) {
             ExpressionConstraint constraint = (ExpressionConstraint) it.next();
             EvaluationResult result = constraint.evaluate(binding);
+            ExplanationPart expl = result.getTextExplanation();
+            if(expl != null){
+                binding.addTextExplanation(expl);
+            }
+            Graph g = result.getGraphExplanation();
+            if(g != null){
+                binding.addGraphExplanation(g);
+            }
             if (!result.getResult()) {
                 return false;
             }
