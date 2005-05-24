@@ -23,7 +23,7 @@
 
 <>  rdf:type tpl:TrustPolicySuite;
     tpl:suiteName "Financial Trust Policies" ;
-    tpl:includesPolicy :TrustEverything;
+    tpl:includesPolicy tpl:TrustEverything;
     tpl:includesPolicy :Policy1 ;
     tpl:includesPolicy :Policy2 ;
     tpl:includesPolicy :Policy3 ;
