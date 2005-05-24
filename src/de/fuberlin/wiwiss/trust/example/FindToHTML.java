@@ -15,7 +15,7 @@ import de.fuberlin.wiwiss.trust.ExplanationToHTMLRenderer;
 import de.fuberlin.wiwiss.trust.TrustLayerGraph;
 
 /**
- * @version $Id: FindToHTML.java,v 1.2 2005/03/26 23:56:56 cyganiak Exp $
+ * @version $Id: FindToHTML.java,v 1.3 2005/05/24 13:53:25 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class FindToHTML {
@@ -55,7 +55,7 @@ public class FindToHTML {
             System.out.println("<h2>Result #" + i + "</h2>");
             i++;
             Explanation expl = tlg.explain(found);
-            ExplanationToHTMLRenderer renderer = new ExplanationToHTMLRenderer(expl);
+            ExplanationToHTMLRenderer renderer = new ExplanationToHTMLRenderer(expl, tlg);
             renderer.setPrefixes(tplModel);
             System.out.println(renderer.getExplanationAsHTML());
         }

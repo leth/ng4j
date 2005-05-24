@@ -19,10 +19,11 @@ import de.fuberlin.wiwiss.trust.Explanation;
 import de.fuberlin.wiwiss.trust.ExplanationToHTMLRenderer;
 import de.fuberlin.wiwiss.trust.TrustLayerGraph;
 import de.fuberlin.wiwiss.trust.metric.AppleseedMetric;
+import de.fuberlin.wiwiss.trust.metric.EbayMetric;
 import de.fuberlin.wiwiss.trust.metric.TidalTrustMetric;
 
 /**
- * @version $Id: FindToHTMLMetric.java,v 1.1 2005/05/17 19:31:49 maresch Exp $
+ * @version $Id: FindToHTMLMetric.java,v 1.2 2005/05/24 13:53:25 maresch Exp $
  * @author Ricard Cyganiak (richard@cyganiak.de)
  */
 public class FindToHTMLMetric {
@@ -63,6 +64,7 @@ public class FindToHTMLMetric {
             // register Metrics
             tlg.registerMetricImplementation(TidalTrustMetric.class);
             tlg.registerMetricImplementation(AppleseedMetric.class);
+            tlg.registerMetricImplementation(EbayMetric.class);
             // select policy
             tlg.selectTrustPolicy(policyURI);
             
@@ -79,7 +81,7 @@ public class FindToHTMLMetric {
                 out.println("<h2>Result #" + i + "</h2>");
                 i++;
                 Explanation expl = tlg.explain(found);
-                ExplanationToHTMLRenderer renderer = new ExplanationToHTMLRenderer(expl);
+                ExplanationToHTMLRenderer renderer = new ExplanationToHTMLRenderer(expl, tlg);
                 renderer.setPrefixes(tplModel);
                 out.println(renderer.getExplanationAsHTML());
                 out.flush();
