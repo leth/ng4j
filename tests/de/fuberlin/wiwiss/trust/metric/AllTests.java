@@ -15,14 +15,19 @@ import junit.framework.*;
  */
 public class AllTests extends TestCase {
     
+    public static final String TESTSPATH= "ng4j/tests/";
+    
     public AllTests(java.lang.String testName) {
         super(testName);
     }
     
     public static Test suite() {
         TestSuite suite = new TestSuite("Test for all Metric Tests");
-        suite.addTestSuite(TidalTrustMetricTest.class);
-        suite.addTestSuite(AssertedGraphsTest.class);
+        suite.addTest(TidalTrustMetricTest.suite());
+        suite.addTest(TidalTrustMetricTestWithPolicy.suite());
+        suite.addTest(AppleseedMetricTest.suite());
+        suite.addTest(EbayMetricTest.suite());
+        suite.addTest(AssertedGraphsTest.suite());
         return suite;
     }
     
