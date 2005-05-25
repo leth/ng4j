@@ -1,16 +1,20 @@
 package de.fuberlin.wiwiss.trust;
 
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.TestCase;
 
+import com.hp.hpl.jena.graph.Factory;
+import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 
 /**
- * @version $Id: VariableBindingTest.java,v 1.3 2005/03/26 23:56:46 cyganiak Exp $
+ * @version $Id: VariableBindingTest.java,v 1.4 2005/05/25 13:12:46 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
+ * @author Oliver Maresch (oliver-maresch@gmx.de)
  */
 public class VariableBindingTest extends TestCase {
 
@@ -77,5 +81,25 @@ public class VariableBindingTest extends TestCase {
         expected.put("foo", fooValue);
         expected.put("bar", barValue);
         assertEquals(expected, binding.asMap());
+    }
+    
+    public void testTextExplanation(){
+        VariableBinding binding = new VariableBinding();
+        assertNotNull(binding.getTextExplanations());
+        assertEquals(java.util.Collections.EMPTY_LIST, binding.getTextExplanations());
+        ExplanationPart expl = new ExplanationPart(new ArrayList());
+        binding.addTextExplanation(expl);
+        assertEquals(1, binding.getTextExplanations().size());
+        assertEquals(expl, binding.getTextExplanations().get(0));
+    }
+    
+    public void testGraphExplanation(){
+        VariableBinding binding = new VariableBinding();
+        assertNotNull(binding.getGraphExplanations());
+        assertEquals(java.util.Collections.EMPTY_LIST, binding.getGraphExplanations());
+        Graph graph = Factory.createDefaultGraph();
+        binding.addGraphExplanation(graph);
+        assertEquals(1, binding.getGraphExplanations().size());
+        assertEquals(graph, binding.getGraphExplanations().get(0));
     }
 }
