@@ -4,20 +4,25 @@ import java.util.Arrays;
 
 import junit.framework.TestCase;
 
+import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.rdf.model.AnonId;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.shared.PrefixMapping;
 import com.hp.hpl.jena.shared.impl.PrefixMappingImpl;
+import com.hp.hpl.jena.vocabulary.RDF;
 
+import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 /**
- * @version $Id: ExplanationToHTMLRendererTest.java,v 1.1 2005/03/22 01:01:21 cyganiak Exp $
+ * @version $Id: ExplanationToHTMLRendererTest.java,v 1.2 2005/05/25 13:15:33 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class ExplanationToHTMLRendererTest extends TestCase {
     private String foo = "http://example.org/foo";
     private Node fooNode = Node.createURI(this.foo);
     private Node literal = Node.createLiteral("literal");
+    private TrustLayerGraph tlg;
     private Explanation expl;
     private ExplanationToHTMLRenderer renderer;
     
@@ -25,7 +30,19 @@ public class ExplanationToHTMLRendererTest extends TestCase {
         this.expl = new Explanation(
                 new Triple(this.fooNode, this.fooNode, this.fooNode),
                 TrustPolicy.TRUST_EVERYTHING);
-        this.renderer = new ExplanationToHTMLRenderer(this.expl);
+
+        String tpl = "http://www.wiwiss.fu-berlin.de/suhl/bizer/TPL/";
+        Node thisSuite = Node.createURI("http://example.com/test/");
+        Node trustEverything = Node.createURI(tpl + "TrustEverything");
+        Graph policy = ModelFactory.createMemModelMaker().getGraphMaker().createGraph();
+        policy.add(new Triple( thisSuite, RDF.Nodes.type, Node.createURI(tpl + "TrustPolicySuite")));
+        policy.add(new Triple( thisSuite, Node.createURI(tpl + "suiteName"), Node.createLiteral("Test Policies")));
+        policy.add(new Triple( thisSuite, Node.createURI(tpl + "includesPolicy"), trustEverything));
+        policy.add(new Triple( trustEverything, RDF.Nodes.type, Node.createURI(tpl + "TrustPolicy")));
+        policy.add(new Triple( trustEverything, Node.createURI(tpl + "policyName"), Node.createLiteral("Trust everything")));
+        
+        this.tlg = new TrustLayerGraph(new NamedGraphSetImpl(), policy);
+        this.renderer = new ExplanationToHTMLRenderer(this.expl, this.tlg);
     }
     
     public void testRenderEmptyExplanation() {
@@ -41,11 +58,6 @@ public class ExplanationToHTMLRendererTest extends TestCase {
         assertEquals(fooLink, this.renderer.getObjectAsHTML());
         assertEquals(policyURILink, this.renderer.getPolicyAsHTML());
         assertEquals(noExplanationHTML, this.renderer.getExplanationPartsAsHTML());
-        assertEquals("<dl><dt>Triple:</dt><dd>"
-                + fooLink + " " + fooLink + " " + fooLink + " .</dd>"
-                + "<dt>Policy:</dt><dd>" + policyURILink + "</dd>"
-                + "<dt>Explanation:</dt><dd>" + noExplanationHTML + "</dd></dl>",
-                this.renderer.getExplanationAsHTML());
     }
     
     public void testUsePrefixes() {
@@ -59,7 +71,7 @@ public class ExplanationToHTMLRendererTest extends TestCase {
         this.expl = new Explanation(
                 new Triple(Node.createAnon(new AnonId("anon")), this.fooNode, this.fooNode),
                 TrustPolicy.TRUST_EVERYTHING);
-        this.renderer = new ExplanationToHTMLRenderer(this.expl);
+        this.renderer = new ExplanationToHTMLRenderer(this.expl, this.tlg);
         assertEquals("<tt>_:anon</tt>", this.renderer.getSubjectAsHTML());
     }
     
@@ -101,9 +113,9 @@ public class ExplanationToHTMLRendererTest extends TestCase {
     
     public void testEscaping() {
         this.expl.addPart(new ExplanationPart(
-                Arrays.asList(new Node[] {Node.createLiteral("foo < bar &")})));
+                Arrays.asList(new Node[] {Node.createLiteral("foo ä Ä ö Ö ü Ü ß < bar &")})));
         assertEquals(
-                "<ul><li>foo &lt; bar &amp;</li></ul>",
+                "<ul><li>foo &auml; &Auml; &ouml; &Ouml; &uuml; &Uuml; &szlig; &lt; bar &amp;</li></ul>",
                 this.renderer.getExplanationPartsAsHTML());
     }
 }
