@@ -1,0 +1,255 @@
+# ==============================================================================
+# !!! Do not change this File !!!
+# It is essential part of the AppleseedMetricTest.
+# ==============================================================================
+
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dtype: <http://www.w3.org/2001/XMLSchema#> . 
+@prefix foaf: <http://xmlns.com/foaf/0.1/#> .
+@prefix vcard: <http://www.w3.org/2001/vcard-rdf/3.0#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/#> .
+@prefix iso: <http://www.daml.org/2001/09/countries/iso-3166-ont#> .
+@prefix cur: <http://www.daml.ecs.soton.ac.uk/ont/currency.daml#> .
+@prefix swp: <http://www.w3.org/2004/03/trix/swp-2/> .
+@prefix trust: <http://trust.mindswap.org/ont/trust.owl#> .
+
+# ==============================================================================
+# TestCase1
+# ==============================================================================
+
+# tc1.testuser1@foo.com ============================================================
+<#graphTc1Testuser1_warrant> {
+    <#graphTc1Testuser1_data> swp:assertedBy <#graphTc1Testuser1_warrant> .
+    <#graphTc1Testuser1_trust> swp:assertedBy <#graphTc1Testuser1_warrant> .
+    <#graphTc1Testuser1_warrant> swp:assertedBy <#graphTc1Testuser1_warrant> .
+    <#graphTc1Testuser1_warrant> swp:authority <tc1.testuser1@foo.com> .
+}
+
+<#graphTc1Testuser1_trust> {
+}
+
+<#graphTc1Testuser1_data> {
+}
+
+# tc1.testuser2@foo.com ============================================================
+<#graphTc1Testuser2_warrant> {
+    <#graphTc1Testuser2_data> swp:assertedBy <#graphTc1Testuser2_warrant> .
+    <#graphTc1Testuser2_trust> swp:assertedBy <#graphTc1Testuser2_warrant> .
+    <#graphTc1Testuser2_warrant> swp:assertedBy <#graphTc1Testuser2_warrant> .
+    <#graphTc1Testuser2_warrant> swp:authority <tc1.testuser2@foo.com> .
+}
+
+<#graphTc1Testuser2_trust> {
+}
+
+<#graphTc1Testuser2_data> {
+    <tc1.testuser2@foo.com> rdfs:label "sink of testcase 1".
+}
+
+# ==============================================================================
+# TestCase2, TestCase8, TestCase9, TestCase10 & TestCase11
+# ==============================================================================
+
+# tc2.testuser1@foo.com ============================================================
+<#graphTc2Testuser1_warrant> {
+    <#graphTc2Testuser1_data> swp:assertedBy <#graphTc2Testuser1_warrant> .
+    <#graphTc2Testuser1_trust> swp:assertedBy <#graphTc2Testuser1_warrant> .
+    <#graphTc2Testuser1_warrant> swp:assertedBy <#graphTc2Testuser1_warrant> .
+    <#graphTc2Testuser1_warrant> swp:authority <tc2.testuser1@foo.com> .
+}
+
+<#graphTc2Testuser1_trust> {
+    <tc2.testuser1@foo.com> trust:trust10 <tc2.testuser2@foo.com> .
+}
+
+<#graphTc2Testuser1_data> {
+}
+
+# tc2.testuser2@foo.com ============================================================
+<#graphTc2Testuser2_warrant> {
+    <#graphTc2Testuser2_data> swp:assertedBy <#graphTc2Testuser2_warrant> .
+    <#graphTc2Testuser2_trust> swp:assertedBy <#graphTc2Testuser2_warrant> .
+    <#graphTc2Testuser2_warrant> swp:assertedBy <#graphTc2Testuser2_warrant> .
+    <#graphTc2Testuser2_warrant> swp:authority <tc2.testuser2@foo.com> .
+}
+
+<#graphTc2Testuser2_trust> {
+}
+
+<#graphTc2Testuser2_data> {
+    <tc2.testuser2@foo.com> rdfs:label "sink of testcase 2".
+    <tc2.testuser2@foo.com> rdfs:label "sink of testcase 8".
+}
+
+# ==============================================================================
+# TestCase3 & TestCase4
+# ==============================================================================
+
+# tc3.testuser1@foo.com ============================================================
+<#graphTc3Testuser1_warrant> {
+    <#graphTc3Testuser1_data> swp:assertedBy <#graphTc3Testuser1_warrant> .
+    <#graphTc3Testuser1_trust> swp:assertedBy <#graphTc3Testuser1_warrant> .
+    <#graphTc3Testuser1_warrant> swp:assertedBy <#graphTc3Testuser1_warrant> .
+    <#graphTc3Testuser1_warrant> swp:authority <tc3.testuser1@foo.com> .
+}
+
+<#graphTc3Testuser1_trust> {
+    <tc3.testuser1@foo.com> trust:trust9 <tc3.testuser2@foo.com> .
+    <tc3.testuser1@foo.com> trust:trust1 <tc3.testuser3@foo.com> .
+}
+
+<#graphTc3Testuser1_data> {
+}
+
+# tc3.testuser2@foo.com ============================================================
+<#graphTc3Testuser2_warrant> {
+    <#graphTc3Testuser2_data> swp:assertedBy <#graphTc3Testuser2_warrant> .
+    <#graphTc3Testuser2_trust> swp:assertedBy <#graphTc3Testuser2_warrant> .
+    <#graphTc3Testuser2_warrant> swp:assertedBy <#graphTc3Testuser2_warrant> .
+    <#graphTc3Testuser2_warrant> swp:authority <tc3.testuser2@foo.com> .
+}
+
+<#graphTc3Testuser2_trust> {
+}
+
+<#graphTc3Testuser2_data> {
+    <tc3.testuser3@foo.com> rdfs:label "sink of testcase 3".
+}
+
+# tc3.testuser3@foo.com ============================================================
+<#graphTc3Testuser3_warrant> {
+    <#graphTc3Testuser3_data> swp:assertedBy <#graphTc3Testuser3_warrant> .
+    <#graphTc3Testuser3_trust> swp:assertedBy <#graphTc3Testuser3_warrant> .
+    <#graphTc3Testuser3_warrant> swp:assertedBy <#graphTc3Testuser3_warrant> .
+    <#graphTc3Testuser3_warrant> swp:authority <tc3.testuser3@foo.com> .
+}
+
+<#graphTc3Testuser3_trust> {
+}
+
+<#graphTc3Testuser3_data> {
+    <tc3.testuser3@foo.com> rdfs:label "sink of testcase 4".
+}
+
+
+# ==============================================================================
+# TestCase5, TestCase6 & TestCase7
+# ==============================================================================
+
+# tc5.testuser1@foo.com ============================================================
+<#graphTc5Testuser1_warrant> {
+    <#graphTc5Testuser1_data> swp:assertedBy <#graphTc5Testuser1_warrant> .
+    <#graphTc5Testuser1_trust> swp:assertedBy <#graphTc5Testuser1_warrant> .
+    <#graphTc5Testuser1_warrant> swp:assertedBy <#graphTc5Testuser1_warrant> .
+    <#graphTc5Testuser1_warrant> swp:authority <tc5.testuser1@foo.com> .
+}
+
+<#graphTc5Testuser1_trust> {
+    <tc5.testuser1@foo.com> trust:trust10 <tc5.testuser2@foo.com> .
+}
+
+<#graphTc5Testuser1_data> {
+}
+
+# tc5.testuser2@foo.com ============================================================
+<#graphTc5Testuser2_warrant> {
+    <#graphTc5Testuser2_data> swp:assertedBy <#graphTc5Testuser2_warrant> .
+    <#graphTc5Testuser2_trust> swp:assertedBy <#graphTc5Testuser2_warrant> .
+    <#graphTc5Testuser2_warrant> swp:assertedBy <#graphTc5Testuser2_warrant> .
+    <#graphTc5Testuser2_warrant> swp:authority <tc5.testuser2@foo.com> .
+}
+
+<#graphTc5Testuser2_trust> {
+    <tc5.testuser2@foo.com> trust:trust10 <tc5.testuser3@foo.com> .
+}
+
+<#graphTc5Testuser2_data> {
+}
+
+# tc5.testuser3@foo.com ============================================================
+<#graphTc5Testuser3_warrant> {
+    <#graphTc5Testuser3_data> swp:assertedBy <#graphTc5Testuser3_warrant> .
+    <#graphTc5Testuser3_trust> swp:assertedBy <#graphTc5Testuser3_warrant> .
+    <#graphTc5Testuser3_warrant> swp:assertedBy <#graphTc5Testuser3_warrant> .
+    <#graphTc5Testuser3_warrant> swp:authority <tc5.testuser3@foo.com> .
+}
+
+<#graphTc5Testuser3_trust> {
+    <tc5.testuser3@foo.com> trust:trust10 <tc5.testuser4@foo.com> .
+}
+
+<#graphTc5Testuser3_data> {
+    <tc5.testuser3@foo.com> rdfs:label "sink of testcase 6".
+}
+
+# tc5.testuser4@foo.com ============================================================
+<#graphTc5Testuser4_warrant> {
+    <#graphTc5Testuser4_data> swp:assertedBy <#graphTc5Testuser4_warrant> .
+    <#graphTc5Testuser4_trust> swp:assertedBy <#graphTc5Testuser4_warrant> .
+    <#graphTc5Testuser4_warrant> swp:assertedBy <#graphTc5Testuser4_warrant> .
+    <#graphTc5Testuser4_warrant> swp:authority <tc5.testuser4@foo.com> .
+}
+
+<#graphTc5Testuser4_trust> {
+}
+
+<#graphTc5Testuser4_data> {
+    <tc5.testuser3@foo.com> rdfs:label "sink of testcase 5".
+    <tc5.testuser3@foo.com> rdfs:label "sink of testcase 7".
+}
+
+
+# ==============================================================================
+# TestCase9, TestCase10 & TestCase11
+# ==============================================================================
+
+# tc9.testuser1@foo.com ============================================================
+<#graphTc9Testuser1_warrant> {
+    <#graphTc9Testuser1_data> swp:assertedBy <#graphTc9Testuser1_warrant> .
+    <#graphTc9Testuser1_trust> swp:assertedBy <#graphTc9Testuser1_warrant> .
+    <#graphTc9Testuser1_warrant> swp:assertedBy <#graphTc9Testuser1_warrant> .
+    <#graphTc9Testuser1_warrant> swp:authority <tc9.testuser1@foo.com> .
+}
+
+<#graphTc9Testuser1_trust> {
+    <tc9.testuser1@foo.com> trust:trust10 <tc9.testuser2@foo.com> .
+}
+
+<#graphTc9Testuser1_data> {
+}
+
+# tc9.testuser2@foo.com ============================================================
+<#graphTc9Testuser2_warrant> {
+    <#graphTc9Testuser2_data> swp:assertedBy <#graphTc9Testuser2_warrant> .
+    <#graphTc9Testuser2_trust> swp:assertedBy <#graphTc9Testuser2_warrant> .
+    <#graphTc9Testuser2_warrant> swp:assertedBy <#graphTc9Testuser2_warrant> .
+    <#graphTc9Testuser2_warrant> swp:authority <tc9.testuser2@foo.com> .
+}
+
+<#graphTc9Testuser2_trust> {
+    <tc9.testuser2@foo.com> trust:trust0 <tc9.testuser3@foo.com> .
+}
+
+<#graphTc9Testuser2_data> {
+}
+
+# tc9.testuser3@foo.com ============================================================
+<#graphTc9Testuser3_warrant> {
+    <#graphTc9Testuser3_data> swp:assertedBy <#graphTc9Testuser3_warrant> .
+    <#graphTc9Testuser3_trust> swp:assertedBy <#graphTc9Testuser3_warrant> .
+    <#graphTc9Testuser3_warrant> swp:assertedBy <#graphTc9Testuser3_warrant> .
+    <#graphTc9Testuser3_warrant> swp:authority <tc9.testuser3@foo.com> .
+}
+
+<#graphTc9Testuser3_trust> {
+}
+
+<#graphTc9Testuser3_data> {
+    <tc9.testuser3@foo.com> rdfs:label "sink of testcase 9".
+    <tc9.testuser3@foo.com> rdfs:label "sink of testcase 10".
+    <tc9.testuser3@foo.com> rdfs:label "sink of testcase 11".
+}
+
+
