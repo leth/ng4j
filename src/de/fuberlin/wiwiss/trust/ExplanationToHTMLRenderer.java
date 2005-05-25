@@ -15,7 +15,7 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.FOAF;
 
 /**
- * @version $Id: ExplanationToHTMLRenderer.java,v 1.4 2005/05/24 14:16:06 maresch Exp $
+ * @version $Id: ExplanationToHTMLRenderer.java,v 1.5 2005/05/25 11:15:35 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class ExplanationToHTMLRenderer {
@@ -145,11 +145,11 @@ public class ExplanationToHTMLRenderer {
     }
     
     private String escape(String s) {
-        s.replaceAll("&", "&amp;").replaceAll("<", "&lt;");
-        s.replaceAll("ä", "&auml;").replaceAll("Ä", "&Auml;");
-        s.replaceAll("ö", "&ouml;").replaceAll("Ö", "&Ouml;");
-        s.replaceAll("ü", "&uuml;").replaceAll("Ü", "&Uuml;");
-        s.replaceAll("ß", "&szlig;");
+        s = s.replaceAll("&", "&amp;").replaceAll("<", "&lt;");
+        s = s.replaceAll("ä", "&auml;").replaceAll("Ä", "&Auml;");
+        s = s.replaceAll("ö", "&ouml;").replaceAll("Ö", "&Ouml;");
+        s = s.replaceAll("ü", "&uuml;").replaceAll("Ü", "&Uuml;");
+        s = s.replaceAll("ß", "&szlig;");
         return s;
     }
     
