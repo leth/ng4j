@@ -358,8 +358,8 @@ _:y a fin:Rating ;
 
     <http://www.ftd.de> trust:trust10 <http://www.ft.com> .
     <http://www.ftd.de> trust:trust9  <http://www.reuters.com> .
-    <http://www.ftd.de> trust:trust10 <ralph.atkins@ftd.com> .
-    <http://www.ftd.de> trust:trust10 <peter.smith@ftd.com> .
+    <http://www.ftd.de> trust:trust10 <mailto:ralph.atkins@ftd.com> .
+    <http://www.ftd.de> trust:trust10 <mailto:peter.smith@ftd.com> .
 }
 
 <#graphFt> {
@@ -593,7 +593,7 @@ _:k a fin:Author ;
 
     <http://www.forbes.com> trust:trust9 <http://www.afxnews.com> .
     <http://www.forbes.com> trust:trust8 <http://www.reuters.com> .
-    <http://www.forbes.com> trust:trust10 <crn@vnu.vom.uk> .
+    <http://www.forbes.com> trust:trust10 <mailto:crn@vnu.vom.uk> .
 }
 
 <#graphForbes> {
@@ -609,11 +609,11 @@ _:k a fin:Author ;
   dc:description " Forbes Online portal. "^^dtype:string .
 
 
-<crn@vnu.vom.uk> a fin:Author ;
+<mailto:crn@vnu.vom.uk> a fin:Author ;
   fin:country <iso:GB> ;
   foaf:homepage <http://www.vnunet.com> ;
   foaf:name " Martin Lynch "^^dtype:string ;
-  vcard:EMAIL <crn@vnu.co.uk> .
+  vcard:EMAIL <mailto:crn@vnu.co.uk> .
 
 <http://www.reuters.com> a fin:Author ;
   fin:country <iso:GB> ;
@@ -639,7 +639,7 @@ _:k a fin:Author ;
 
 <http://www.forbes.com/technology/feeds/general/2005/01/24/generalvnunet_2005_01_24_eng-vnunet_eng-vnunet_072506_8703414931344649178.html> a fin:News ;
  fin:newsSource <http://www.forbes.com> ;
- fin:author <crn@vnu.vom.uk> ;
+ fin:author <mailto:crn@vnu.vom.uk> ;
  fin:newsAbout <urn:DUNS:000000002> ;
  dc:date " 2005-01-24T11:49-05:00 "^^dtype:date ;
  dc:description " Article about AMD "^^dtype:string ;
@@ -682,7 +682,7 @@ _:k a fin:Author ;
 #####################Trust#################################
     <#graphStreet_trust> rdfs:label "Trust Graph of The Street" .
 
-    <http://www.thestreet.com> trust:10 <chris.kraeuter@thestreet.com> .
+    <http://www.thestreet.com> trust:10 <mailto:chris.kraeuter@thestreet.com> .
 }
 
 <#graphStreet> {
@@ -755,9 +755,9 @@ _:k a fin:Author ;
 #####################Trust#################################
     <#graphReg_trust> rdfs:label "Trust Graph of The Register" .
 
-    <http://www.theregister.co.uk> trust:trust10 <tony.smith@theregister.co.uk> .
-    <http://www.theregister.co.uk> trust:trust10 <tim.richardson@theregister.co.uk> .
-    <http://www.theregister.co.uk> trust:trust10 <john.oates@theregister.co.uk> .
+    <http://www.theregister.co.uk> trust:trust10 <mailto:tony.smith@theregister.co.uk> .
+    <http://www.theregister.co.uk> trust:trust10 <mailto:tim.richardson@theregister.co.uk> .
+    <http://www.theregister.co.uk> trust:trust10 <mailto:john.oates@theregister.co.uk> .
 }
 
 <#graphReg> {
@@ -779,10 +779,10 @@ _:k a fin:Author ;
 
 
 
-<tim.richardson@theregister.co.uk> a fin:Author ;
+<mailto:tim.richardson@theregister.co.uk> a fin:Author ;
   foaf:name " Tim Richardson "^^dtype:string ;
   vcard:TITLE " Internet Editor "^^dtype:string ;
-  vcard:EMAIL <tim.richardson@theregister.co.uk> .
+  vcard:EMAIL <mailto:tim.richardson@theregister.co.uk> .
 
 
  _:JohnOates a fin:Author ;
@@ -828,7 +828,7 @@ _:k a fin:Author ;
 
 <http://www.theregister.co.uk/2005/01/21/siemens_lg/> a fin:News ;
  fin:newsSource <http://www.theregister.co.uk> ;
- fin:author <tim.richardson@theregister.co.uk> ;
+ fin:author <mailto:tim.richardson@theregister.co.uk> ;
  fin:newsAbout <urn:DUNS:316067164> ;
  dc:date " 2005-01-21T10:44+00:00 "^^dtype:date ;
  dc:description " Article about Siemens "^^dtype:string ;
@@ -837,7 +837,7 @@ _:k a fin:Author ;
 
 <http://www.theregister.co.uk/2005/01/20/lg_mulls_siemens_handset_purchase/> a fin:News ;
  fin:newsSource <http://www.theregister.co.uk> ;
- fin:author <tim.richardson@theregister.co.uk> ;
+ fin:author <mailto:tim.richardson@theregister.co.uk> ;
  fin:newsAbout <urn:DUNS:316067164> ;
  dc:date " 2005-01-20T15:45+00:00 "^^dtype:date ;
  dc:description " Article about Siemens "^^dtype:string ;
@@ -883,15 +883,15 @@ _:GoogleGroups a fin:NewsGroup ;
 
 <http://groups.google.de/groups?hl=de&lr=&selm=Wuqdnbgcco63Th_cRVn-uA%40rogers.com&rnum=3> a fin:Posting ;
  fin:newsSource _:GoogleGroups ;
- fin:author <bbbl67@ezrs.com> ;
+ fin:author <mailto:bbbl67@ezrs.com> ;
  fin:newsAbout <urn:DUNS:047897855> ;
  dc:date " 2004-10-29T16:32-10:00 "^^dtype:date ;
  dc:description " Posting about Intel "^^dtype:string ;
  fin:text " Positions of Smaller Chipset Makers Strengthening, Says Reportby Anton Shilov10/29/2004 | 03:21 PMIntel Corp. lost 6.7% of the chipset market to companies like VIA Technologies, SiS and ATI, who produce chipsets, during the third quarter of the year according to a report from Merril Lynch analyst cited by DigiTimes web-site in Taiwan.During the Q3 2004 Intel Corp. supplied 62.1% of all chipsets shipped worldwide, VIA Technologies commanded 18.5% of the market, Silicon Integrated Systems Corp. shipped 9.9% of core-logic products in Q3 2004, while ATI Technologies and NVIDIA Corp. only occupied 4.5% and 4.2% of the market.According to Merrill Lynch analyst Den Heyler VIA's third-quarter 3.6% market share gains become possible as shipments of core-logic chipsets supporting Intel and Advanced Micro Devices microprocessors rose 17% and 67%, respectively, from the second quarter of 2004. Shares of ATI, NVIDIA and SiS also increase 1% each in Q3. Still, chipset business of companies like VIA, SiS and ATI, who supply the majority of their core-logic products for PCs running Intel Pentium 4 processors, is under fire, as Intel Corp. competes fiercely in the entry-level and mainstream chipset market segments, which puts pricing pressure on third-party core-logic makers.ATI, SiS and VIA supply chipsets designed for both widely available platforms: Intel and AMD. In contrast, NVIDIA Corp. ships chipsets only for AMD-based computers, as it does not have license to make core-logic for Intel's central processing units. Intel only makes chipsets for its own processors.This quarter ATI, NVIDIA and VIA are expected to initiate commercial shipments of the first breed of PCI Express chipsets targeted at AMD64 infrastructure. SiS and VIA are also expected to begin volume supplies of PCI Express and DDR2 products designed for Intel's Pentium 4 processors in weeks.\"http://www.xbitlabs.com/news/chipsets/display/20041029152027.htmlKinda surprising considering Intel makes the overwhelming majority of chipsets for its own platforms. I didn't think there was much of a market for Intel chipsets for VIA, SIS, or ATI. Yousuf Khan " . 
 
-<bbbl67@ezrs.com> a fin:Author ;
+<mailto:bbbl67@ezrs.com> a fin:Author ;
   foaf:name " Yousuf Kahn "^^dtype:string ;
-  vcard:EMAIL <bbbl67@ezrs.com> .
+  vcard:EMAIL <mailto:bbbl67@ezrs.com> .
 
 
 }
@@ -1425,7 +1425,7 @@ _:z a fin:Rating ;
 
     <#graphJohnOates_trust> swp:assertedBy <#graphJohnOates_warrant> .
     <#graphJohnOates_warrant> swp:assertedBy <#graphJohnOates_warrant> .
-    <#graphJohnOates_warrant> swp:authority <john.oates@theregister.co.uk> .
+    <#graphJohnOates_warrant> swp:authority <mailto:john.oates@theregister.co.uk> .
     <#graphJohnOates_warrant> rdfs:label "Warrant Graph of John Oates".
 }
 
@@ -1433,9 +1433,9 @@ _:z a fin:Rating ;
 #####################Trust#################################
     <#graphJohnOates_trust> rdfs:label "Trust Graph of John Oates" .
 
-    <john.oates@theregister.co.uk> trust:trust9 <tony.smith@theregister.co.uk> .
-    <john.oates@theregister.co.uk> trust:trust9 <tim.richardson@theregister.co.uk> .
-    <john.oates@theregister.co.uk> trust:trust10 <http://www.theregister.co.uk> .
+    <mailto:john.oates@theregister.co.uk> trust:trust9 <mailto:tony.smith@theregister.co.uk> .
+    <mailto:john.oates@theregister.co.uk> trust:trust9 <mailto:tim.richardson@theregister.co.uk> .
+    <mailto:john.oates@theregister.co.uk> trust:trust10 <http://www.theregister.co.uk> .
     
 }
 
@@ -1445,7 +1445,7 @@ _:z a fin:Rating ;
 
     <#graphTonySmith_trust> swp:assertedBy <#graphTonySmith_warrant> .
     <#graphTonySmith_warrant> swp:assertedBy <#graphTonySmith_warrant> .
-    <#graphTonySmith_warrant> swp:authority <tony.smith@theregister.com> .
+    <#graphTonySmith_warrant> swp:authority <mailto:tony.smith@theregister.com> .
     <#graphTonySmith_warrant> rdfs:label "Warrant Graph of Tony Smith" .
 }
 
@@ -1454,9 +1454,9 @@ _:z a fin:Rating ;
 #####################Trust#################################
     <#graphTonySmith_trust> rdfs:label "Trust Graph of Tony Smith" .
 
-    <tony.smith@theregister.co.uk> trust:trust10 <tim.richardson@theregister.co.uk> .
-    <tony.smith@theregister.co.uk> trust:trust7 <john.oates@theregister.co.uk> .
-    <tony.smith@theregister.co.uk> trust:trust10 <http://www.theregister.co.uk> .
+    <mailto:tony.smith@theregister.co.uk> trust:trust10 <mailto:tim.richardson@theregister.co.uk> .
+    <mailto:tony.smith@theregister.co.uk> trust:trust7 <mailto:john.oates@theregister.co.uk> .
+    <mailto:tony.smith@theregister.co.uk> trust:trust10 <http://www.theregister.co.uk> .
 }
 
 
@@ -1465,7 +1465,7 @@ _:z a fin:Rating ;
 
     <#graphTimR_trust> swp:assertedBy <#graphTimR_warrant> .
     <#graphTimR_warrant> swp:assertedBy <#graphTimR_warrant> .
-    <#graphTimR_warrant> swp:authority <tim.richardson@theregister.co.uk> .
+    <#graphTimR_warrant> swp:authority <mailto:tim.richardson@theregister.co.uk> .
     <#graphTimR_warrant> rdfs:label "Warrant Graph of Tim Richardson" .
 }
 
@@ -1473,8 +1473,8 @@ _:z a fin:Rating ;
 #####################Trust#################################
     <#graphTimR_trust> rdfs:label "Trust Graph of Tim Richardson" .
 
-    <tim.richardson@theregister.co.uk> trust:trust9 <tony.smith@theregister.co.uk> .
-    <tim.richardson@theregister.co.uk> trust:trust7 <john.oates@theregister.co.uk> .
+    <mailto:tim.richardson@theregister.co.uk> trust:trust9 <mailto:tony.smith@theregister.co.uk> .
+    <mailto:tim.richardson@theregister.co.uk> trust:trust7 <mailto:john.oates@theregister.co.uk> .
 }
 
 
@@ -1484,7 +1484,7 @@ _:z a fin:Rating ;
 
     <#graphAtkins_trust> swp:assertedBy <#graphAtkins_warrant> .
     <#graphAtkins_warrant> swp:assertedBy <#graphAtkins_warrant> .
-    <#graphAtkins_warrant> swp:authority <ralph.atkins@ftd.de> .
+    <#graphAtkins_warrant> swp:authority <mailto:ralph.atkins@ftd.de>  .
     <#graphAtkins_warrant> rdfs:label "Warrant Graph of Ralph Atkins" .
 }
 
@@ -1492,9 +1492,9 @@ _:z a fin:Rating ;
 #####################Trust#################################
     <#graphAtkins_trust> rdfs:label "Trust Graph of Ralph Atkins" .
 
-    <ralph.atkins@ftd.de> trust:trust8  <peter.smith@ftd.de> .
-    <ralph.atkins@ftd.de> trust:trust9  <http://www.ftd.de> .
-    <ralph.atkins@ftd.de> trust:trust10  <http://www.ft.com> .
+    <mailto:ralph.atkins@ftd.de>  trust:trust8  <mailto:peter.smith@ftd.de> .
+    <mailto:ralph.atkins@ftd.de>  trust:trust9  <http://www.ftd.de> .
+    <mailto:ralph.atkins@ftd.de>  trust:trust10  <http://www.ft.com> .
 }
 
 
@@ -1504,15 +1504,15 @@ _:z a fin:Rating ;
 
     <#graphPSmith_trust> swp:assertedBy <#graphPSmith_warrant> .
     <#graphPSmith_warrant> swp:assertedBy <#graphPSmith_warrant> .
-    <#graphPSmith_warrant> swp:authority <peter.smith@ftd.de> .
+    <#graphPSmith_warrant> swp:authority <mailto:peter.smith@ftd.de> .
 }
 
 <#graphPSmith_trust> {
 #####################Trust#################################
     <#graphPSmith_trust> rdfs:label "Trust Graphof Peter Smith" .
 
-    <peter.smith@ftd.de> trust:trust10 <http://www.ftd.de> .
-    <peter.smith@ftd.de> trust:trust9 <http://www.reuters.com> .
+    <mailto:peter.smith@ftd.de> trust:trust10 <http://www.ftd.de> .
+    <mailto:peter.smith@ftd.de> trust:trust9 <http://www.reuters.com> .
 
 }
 
@@ -1522,7 +1522,7 @@ _:z a fin:Rating ;
 
     <#graphMLynch_trust> swp:assertedBy <#graphMLynch_warrant> .
     <#graphMLynch_warrant> swp:assertedBy <#graphMLynch_warrant> .
-    <#graphMLynch_warrant> swp:authority <crn@vnu.vom.uk> .
+    <#graphMLynch_warrant> swp:authority <mailto:crn@vnu.vom.uk> .
     <#graphMLynch_warrant> rdfs:label "Warrant Graph of Martin Lynch" .
 }
 
@@ -1530,7 +1530,7 @@ _:z a fin:Rating ;
 #####################Trust#################################
     <#graphMLynch_trust> rdfs:label "Trust Graph of Martin Lynch" .
 
-    <crn@vnu.vom.uk> trust:trust6 <http://www.forbes.com> .
+    <mailto:crn@vnu.vom.uk> trust:trust6 <http://www.forbes.com> .
 }
 
 
@@ -1539,7 +1539,7 @@ _:z a fin:Rating ;
 
     <#graphCKraeu_trust> swp:assertedBy <#graphCKraeu_warrant> .
     <#graphCKraeu_warrant> swp:assertedBy <#graphCKraeu_warrant> .
-    <#graphCKraeu_warrant> swp:authority <chris.kraeuter@thestreet.com> .
+    <#graphCKraeu_warrant> swp:authority <mailto:chris.kraeuter@thestreet.com> .
     <#graphCKraeu_warrant> rdfs:label "Warrant Graph of Chris Kraeuter" .
 }
 
@@ -1547,7 +1547,7 @@ _:z a fin:Rating ;
 #####################Trust#################################
     <#graphCKraeu_trust> rdfs:label "Trust Graph of Chris Kraeuter" .
 
-    <chris.kraeuter@thestreet.com> trust:trust9 <http://www.thestreet.com> . 
+    <mailto:chris.kraeuter@thestreet.com> trust:trust9 <http://www.thestreet.com> . 
 }
 
 
@@ -1556,7 +1556,7 @@ _:z a fin:Rating ;
 
     <#graphZipter12_trust> swp:assertedBy <#graphZipter12_warrant> .
     <#graphZipter12_warrant> swp:assertedBy <#graphZipter12_warrant> .
-    <#graphZipter12_warrant> swp:authority <zipter12@yahoo.com> .
+    <#graphZipter12_warrant> swp:authority <mailto:zipter12@yahoo.com> .
     <#graphZipter12_warrant> rdfs:labe "Warrant Graph of zipter12@yahoo.com" .
 }
 
@@ -1564,19 +1564,19 @@ _:z a fin:Rating ;
 #####################Trust#################################
     <#graphZipter12_trust> rdfs:label "Trust Graph of zipter12@yahoo.com" .
 
-    <zipter12@yahoo.com> trust:trust6 <http://www.thestreet.com> .
-    <zipter12@yahoo.com> trust:trust7 <http://www.money.cnn.com> .
-    <zipter12@yahoo.com> trust:trust3 <http://www.ftd.de> .
-    <zipter12@yahoo.com> trust:trust2 <http://news.bbc.co.uk> .
-    <zipter12@yahoo.com> trust:trust8 <http://www.forbes.com> .
-    <zipter12@yahoo.com> trust:trust10 <http://www.newratings.com> .
+    <mailto:zipter12@yahoo.com> trust:trust6 <http://www.thestreet.com> .
+    <mailto:zipter12@yahoo.com> trust:trust7 <http://www.money.cnn.com> .
+    <mailto:zipter12@yahoo.com> trust:trust3 <http://www.ftd.de> .
+    <mailto:zipter12@yahoo.com> trust:trust2 <http://news.bbc.co.uk> .
+    <mailto:zipter12@yahoo.com> trust:trust8 <http://www.forbes.com> .
+    <mailto:zipter12@yahoo.com> trust:trust10 <http://www.newratings.com> .
 
-    <zipter12@yahoo.com> ebay:positiveRating <http://www.thestreet.com> .
-    <zipter12@yahoo.com> ebay:positiveRating <http://www.money.cnn.com> .
-    <zipter12@yahoo.com> ebay:negativeRating <http://www.ftd.de> .
-    <zipter12@yahoo.com> ebay:negativeRating <http://news.bbc.co.uk> .
-    <zipter12@yahoo.com> ebay:positiveRating <http://www.forbes.com> .
-    <zipter12@yahoo.com> ebay:positiveRating <http://www.newratings.com> .
+    <mailto:zipter12@yahoo.com> ebay:positiveRating <http://www.thestreet.com> .
+    <mailto:zipter12@yahoo.com> ebay:positiveRating <http://www.money.cnn.com> .
+    <mailto:zipter12@yahoo.com> ebay:negativeRating <http://www.ftd.de> .
+    <mailto:zipter12@yahoo.com> ebay:negativeRating <http://news.bbc.co.uk> .
+    <mailto:zipter12@yahoo.com> ebay:positiveRating <http://www.forbes.com> .
+    <mailto:zipter12@yahoo.com> ebay:positiveRating <http://www.newratings.com> .
 }
 
 
@@ -1585,7 +1585,7 @@ _:z a fin:Rating ;
 
     <#graphBbbl_trust> swp:assertedBy <#graphBbbl_warrant> .
     <#graphBbbl_warrant> swp:assertedBy <#graphBbbl_warrant> .
-    <#graphBbbl_warrant> swp:authority <bbbl67@ezrs.com> .
+    <#graphBbbl_warrant> swp:authority <mailto:bbbl67@ezrs.com> .
     <#graphBbbl_warrant> rdfs:label "Warrant Graph of Bbbl167@ezrs.com" .
 }
 
@@ -1593,11 +1593,11 @@ _:z a fin:Rating ;
 #####################Trust#################################
     <#graphBbbl_trust>  rdfs:label "Trust Graph of Bbbl167@ezrs.com" .
 
-    <bbbl67@ezrs.com> trust:trust9 <http://www.ftd.de> .
-    <bbbl67@ezrs.com> trust:trust8 <http://www.forbes.com> .
+    <mailto:bbbl67@ezrs.com> trust:trust9 <http://www.ftd.de> .
+    <mailto:bbbl67@ezrs.com> trust:trust8 <http://www.forbes.com> .
 
-    <bbbl67@ezrs.com> ebay:positiveRating <http://www.ftd.de> .
-    <bbbl67@ezrs.com> ebay:positiveRating <http://www.forbes.com> .
+    <mailto:bbbl67@ezrs.com> ebay:positiveRating <http://www.ftd.de> .
+    <mailto:bbbl67@ezrs.com> ebay:positiveRating <http://www.forbes.com> .
 }
 
 
@@ -1606,7 +1606,7 @@ _:z a fin:Rating ;
 
     <#graphDubya_trust> swp:assertedBy <#graphDubya_warrant> .
     <#graphDubya_warrant> swp:assertedBy <#graphDubya_warrant> .
-    <#graphDubya_warrant> swp:authority <dubya@lycos.de> .
+    <#graphDubya_warrant> swp:authority <mailto:dubya@lycos.de> .
     <#graphDubya_warrant> rdfs:label "Warrant Graph of dubya@lycos.de" .
 }
 
@@ -1614,15 +1614,15 @@ _:z a fin:Rating ;
 #####################Trust#################################
     <#graphDubya_trust> rdfs:label "Trust Graph of Dubya@lycos.de" .
 
-    <dubya@lycos.de> trust:trust3 <http://www.thestreet.com> .
-    <dubya@lycos.de> trust:trust10 <http://www.ftd.de> .
-    <dubya@lycos.de> trust:trust9 <http://news.bbc.co.uk> .
-    <dubya@lycos.de> trust:trust0 <dadean7@lycos.de> .
+    <mailto:dubya@lycos.de> trust:trust3 <http://www.thestreet.com> .
+    <mailto:dubya@lycos.de> trust:trust10 <http://www.ftd.de> .
+    <mailto:dubya@lycos.de> trust:trust9 <http://news.bbc.co.uk> .
+    <mailto:dubya@lycos.de> trust:trust0 <mailto:dadean7@lycos.de> .
 
-    <dubya@lycos.de> ebay:negativeRating <http://www.thestreet.com> .
-    <dubya@lycos.de> ebay:positiveRating <http://www.ftd.de> .
-    <dubya@lycos.de> ebay:positiveRating <http://news.bbc.co.uk> .
-    <dubya@lycos.de> ebay:negativeRating <dadean7@lycos.de> .
+    <mailto:dubya@lycos.de> ebay:negativeRating <http://www.thestreet.com> .
+    <mailto:dubya@lycos.de> ebay:positiveRating <http://www.ftd.de> .
+    <mailto:dubya@lycos.de> ebay:positiveRating <http://news.bbc.co.uk> .
+    <mailto:dubya@lycos.de> ebay:negativeRating <mailto:dadean7@lycos.de> .
 }
 
 
@@ -1631,7 +1631,7 @@ _:z a fin:Rating ;
 
     <#graphDadean7_trust> swp:assertedBy <#graphDadean7_warrant> .
     <#graphDadean7_warrant> swp:assertedBy <#graphDadean7_warrant> .
-    <#graphDadean7_warrant> swp:authority <dadean7@lycos.de> .
+    <#graphDadean7_warrant> swp:authority <mailto:dadean7@lycos.de> .
     <#graphDadean7_warrant> rdfs:label "Warrant Graph of dadean7@lycos.de" .
 }
 
@@ -1639,15 +1639,15 @@ _:z a fin:Rating ;
 #####################Trust#################################
     <#graphDadean7_trust> rdfs:label "Trust Graph of dadean7@lycos.de" .
 
-    <dadean7@lycos.de> trust:trust2 <dubya@lycos.de> .
-    <dadean7@lycos.de> trust:trust9 <bbbl67@ezrs.com> .
-    <dadean7@lycos.de> trust:trust7 <zipter12@yahoo.com> .
-    <dadean7@lycos.de> trust:trust6 <got-rich@stockselector.com> .
+    <mailto:dadean7@lycos.de> trust:trust2 <mailto:dubya@lycos.de> .
+    <mailto:dadean7@lycos.de> trust:trust9 <mailto:bbbl67@ezrs.com> .
+    <mailto:dadean7@lycos.de> trust:trust7 <mailto:zipter12@yahoo.com> .
+    <mailto:dadean7@lycos.de> trust:trust6 <mailto:got-rich@stockselector.com> .
 
-    <dadean7@lycos.de> ebay:negativeRating <dubya@lycos.de> .
-    <dadean7@lycos.de> ebay:positiveRating <bbbl67@ezrs.com> .
-    <dadean7@lycos.de> ebay:positiveRating <zipter12@yahoo.com> .
-    <dadean7@lycos.de> ebay:positiveRating <got-rich@stockselector.com> .
+    <mailto:dadean7@lycos.de> ebay:negativeRating <mailto:dubya@lycos.de> .
+    <mailto:dadean7@lycos.de> ebay:positiveRating <mailto:bbbl67@ezrs.com> .
+    <mailto:dadean7@lycos.de> ebay:positiveRating <mailto:zipter12@yahoo.com> .
+    <mailto:dadean7@lycos.de> ebay:positiveRating <mailto:got-rich@stockselector.com> .
 }
 
 
@@ -1656,7 +1656,7 @@ _:z a fin:Rating ;
 
     <#graphGotRich_trust> swp:assertedBy <#graphGotRich_warrant> .
     <#graphGotRich_warrant> swp:assertedBy <#graphGotRich_warrant> .
-    <#graphGotRich_warrant> swp:authority <got-rich@stockselector.com> .
+    <#graphGotRich_warrant> swp:authority <mailto:got-rich@stockselector.com> .
     <#graphGotRich_warrant> rdfs:label "Warrant Graph of got-rich@stockselector.com" .
 }
 
@@ -1664,17 +1664,17 @@ _:z a fin:Rating ;
 #####################Trust#################################
     <#graphGotRich_trust> rdfs:label "Trust Graph of got-rich@stockselector.com" .
 
-    <got-rich@stockselector.com> trust:trust9 <http://www.forbes.com> .
-    <got-rich@stockselector.com> trust:trust6 <http://news.bbc.co.uk> .
-    <got-rich@stockselector.com> trust:trust5 <http://www.ftd.com> .
-    <got-rich@stockselector.com> trust:trust8 <http://www.newratings.com> .
-    <got-rich@stockselector.com> trust:trust6 <hupola@stockselector.com> .
+    <mailto:got-rich@stockselector.com> trust:trust9 <http://www.forbes.com> .
+    <mailto:got-rich@stockselector.com> trust:trust6 <http://news.bbc.co.uk> .
+    <mailto:got-rich@stockselector.com> trust:trust5 <http://www.ftd.com> .
+    <mailto:got-rich@stockselector.com> trust:trust8 <http://www.newratings.com> .
+    <mailto:got-rich@stockselector.com> trust:trust6 <mailto:hupola@stockselector.com> .
 
-    <got-rich@stockselector.com> ebay:positiveRating <http://www.forbes.com> .
-    <got-rich@stockselector.com> ebay:positiveRating <http://news.bbc.co.uk> .
-    <got-rich@stockselector.com> ebay:neutralRating <http://www.ftd.com> .
-    <got-rich@stockselector.com> ebay:positiveRating <http://www.newratings.com> .
-    <got-rich@stockselector.com> ebay:positiveRating <hupola@stockselector.com> .
+    <mailto:got-rich@stockselector.com> ebay:positiveRating <http://www.forbes.com> .
+    <mailto:got-rich@stockselector.com> ebay:positiveRating <http://news.bbc.co.uk> .
+    <mailto:got-rich@stockselector.com> ebay:neutralRating <http://www.ftd.com> .
+    <mailto:got-rich@stockselector.com> ebay:positiveRating <http://www.newratings.com> .
+    <mailto:got-rich@stockselector.com> ebay:positiveRating <mailto:hupola@stockselector.com> .
 }
 
 
@@ -1683,7 +1683,7 @@ _:z a fin:Rating ;
 
     <#graphHupola_trust> swp:assertedBy <#graphHupola_warrant> .
     <#graphHupola_warrant> swp:assertedBy <#graphHupola_warrant> .
-    <#graphHupola_warrant> swp:authority <hupola@stockselector.com> .
+    <#graphHupola_warrant> swp:authority <mailto:hupola@stockselector.com> .
     <#graphHupola_warrant> rdfs:label "Warrant Graph of hupola@stockselector.com" .
 }
 
@@ -1691,15 +1691,15 @@ _:z a fin:Rating ;
 #####################Trust#################################
     <#graphHupola_trust> rdfs:label "Trust Graph of hupola@stockselector.com" .
 
-    <hupola@stockselector.com> trust:trust4 <http://news.bbc.co.uk> .
-    <hupola@stockselector.com> trust:trust7 <http://www.ftd.de> .
-    <hupola@stockselector.com> trust:trust3 <http://www.newratings.com> .
-    <hupola@stockselector.com> trust:trust9 <http://www.theregister.co.uk> .
+    <mailto:hupola@stockselector.com> trust:trust4 <http://news.bbc.co.uk> .
+    <mailto:hupola@stockselector.com> trust:trust7 <http://www.ftd.de> .
+    <mailto:hupola@stockselector.com> trust:trust3 <http://www.newratings.com> .
+    <mailto:hupola@stockselector.com> trust:trust9 <http://www.theregister.co.uk> .
 
-    <hupola@stockselector.com> ebay:neutralRating <http://news.bbc.co.uk> .
-    <hupola@stockselector.com> ebay:positiveRating <http://www.ftd.de> .
-    <hupola@stockselector.com> ebay:negativeRating <http://www.newratings.com> .
-    <hupola@stockselector.com> ebay:positiveRating <http://www.theregister.co.uk> .
+    <mailto:hupola@stockselector.com> ebay:neutralRating <http://news.bbc.co.uk> .
+    <mailto:hupola@stockselector.com> ebay:positiveRating <http://www.ftd.de> .
+    <mailto:hupola@stockselector.com> ebay:negativeRating <http://www.newratings.com> .
+    <mailto:hupola@stockselector.com> ebay:positiveRating <http://www.theregister.co.uk> .
 }
 
 
