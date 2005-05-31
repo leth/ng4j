@@ -10,12 +10,12 @@ import com.hp.hpl.jena.rdf.model.impl.ModelCom;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
-import de.fuberlin.wiwiss.trust.IsFooMetric;
+//import de.fuberlin.wiwiss.trust.IsFooMetric;
 import de.fuberlin.wiwiss.trust.TrustLayerGraph;
 import de.fuberlin.wiwiss.trust.metric.TidalTrustMetric;
 
 /**
- * @version $Id: Filter.java,v 1.2 2005/03/22 01:01:49 cyganiak Exp $
+ * @version $Id: Filter.java,v 1.3 2005/05/31 09:53:56 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class Filter {
@@ -38,7 +38,7 @@ public class Filter {
         TrustLayerGraph tlg = new TrustLayerGraph(source, tplGraph);
 
         // Make some Metric implementations available to be used in policies
-        tlg.registerMetricImplementation(IsFooMetric.class);
+ //       tlg.registerMetricImplementation(IsFooMetric.class);
         tlg.registerMetricImplementation(TidalTrustMetric.class);
 
         // Set a system variable, will be available to policies as ?USER

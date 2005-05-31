@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * A suite of {@link TrustPolicy}s.
  *
- * @version $Id: PolicySuite.java,v 1.1 2005/02/18 01:45:00 cyganiak Exp $
+ * @version $Id: PolicySuite.java,v 1.2 2005/05/31 09:53:56 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class PolicySuite {
@@ -27,6 +27,7 @@ public class PolicySuite {
      */
     public PolicySuite(String suiteName) {
         this.suiteName = suiteName;
+        this.addPolicy(TrustPolicy.TRUST_EVERYTHING.getURI(),"trust everything","",TrustPolicy.TRUST_EVERYTHING);
     }
 
     /**

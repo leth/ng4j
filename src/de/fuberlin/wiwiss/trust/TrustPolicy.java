@@ -20,7 +20,7 @@ import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
  * can generate an explanation stating why a particular statement was trusted
  * (but not why a statement was rejected).
  *
- * @version $Id: TrustPolicy.java,v 1.6 2005/05/24 13:50:27 maresch Exp $
+ * @version $Id: TrustPolicy.java,v 1.7 2005/05/31 09:53:56 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class TrustPolicy {
@@ -30,7 +30,7 @@ public class TrustPolicy {
      * TODO: Assign real URI
      */
 	public static final TrustPolicy TRUST_EVERYTHING = new TrustPolicy(
-	        "http://example.com/trust/policies#TrustEverything");
+	        "http://www.wiwiss.fu-berlin.de/suhl/bizer/TPL/TrustEverything");
 
 	/**
 	 * Node for use in policy graph patterns, representing the Named Graph

@@ -23,14 +23,14 @@ import de.fuberlin.wiwiss.trust.metric.EbayMetric;
 import de.fuberlin.wiwiss.trust.metric.TidalTrustMetric;
 
 /**
- * @version $Id: FindToHTMLMetric.java,v 1.2 2005/05/24 13:53:25 maresch Exp $
+ * @version $Id: FindToHTMLMetric.java,v 1.3 2005/05/31 09:53:56 maresch Exp $
  * @author Ricard Cyganiak (richard@cyganiak.de)
  */
 public class FindToHTMLMetric {
 
     public static void main(String[] args) {
-        String trigFile = "ng4j/doc/trustlayer/finTrustData.trig";
-        String policiesFile = "ng4j/doc/trustlayer/finTrustPolicies.n3";
+        String trigFile = "file:doc/trustlayer/finTrustData.trig";
+        String policiesFile = "file:doc/trustlayer/finTrustPolicies.n3";
         String policyURI = "http://www.fu-berlin/suhl/bizer/financialscenario/policies/trust/Policy3";
         File htmlFile = new File("find2html.html");
         
@@ -68,7 +68,7 @@ public class FindToHTMLMetric {
             // select policy
             tlg.selectTrustPolicy(policyURI);
             
-            tlg.setSystemVariable("USER", Node.createURI("dadean7@lycos.de"));
+            tlg.setSystemVariable("USER", Node.createURI("mailto:dadean7@lycos.de"));
 
             out.println("<h1>FIND results and explanations</h1>");
             out.println("<p>Finding " + findMe + " ...</p>");
@@ -81,7 +81,7 @@ public class FindToHTMLMetric {
                 out.println("<h2>Result #" + i + "</h2>");
                 i++;
                 Explanation expl = tlg.explain(found);
-                ExplanationToHTMLRenderer renderer = new ExplanationToHTMLRenderer(expl, tlg);
+                ExplanationToHTMLRenderer renderer = new ExplanationToHTMLRenderer(expl, source);
                 renderer.setPrefixes(tplModel);
                 out.println(renderer.getExplanationAsHTML());
                 out.flush();

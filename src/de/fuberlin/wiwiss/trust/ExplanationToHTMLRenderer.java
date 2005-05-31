@@ -12,32 +12,34 @@ import com.hp.hpl.jena.shared.PrefixMapping;
 import com.hp.hpl.jena.shared.impl.PrefixMappingImpl;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
+import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
+import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.FOAF;
 
 /**
- * @version $Id: ExplanationToHTMLRenderer.java,v 1.5 2005/05/25 11:15:35 maresch Exp $
+ * @version $Id: ExplanationToHTMLRenderer.java,v 1.6 2005/05/31 09:53:56 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class ExplanationToHTMLRenderer {
     private Explanation expl;
-    private TrustLayerGraph tlg;
+    private NamedGraphSet ngs;
     private PrefixMapping prefixes = new PrefixMappingImpl();
     private List detailsBuffer;
     private long timestamp;
     
-    public ExplanationToHTMLRenderer(Explanation expl, TrustLayerGraph tlg) {
+    public ExplanationToHTMLRenderer(Explanation expl, NamedGraphSet ngs) {
         this.expl = expl;
         this.detailsBuffer = new ArrayList();
         this.timestamp = System.currentTimeMillis();
-        this.tlg = tlg;
+        this.ngs = ngs;
     }
     
-    public static String renderExplanationPart(ExplanationPart part, TrustLayerGraph tlg) {
+    public static String renderExplanationPart(ExplanationPart part, NamedGraphSet ngs) {
         Explanation dummyExpl = new Explanation(
                 new Triple(Node.ANY, Node.ANY, Node.ANY),
                 TrustPolicy.TRUST_EVERYTHING);
         dummyExpl.addPart(part);
-        return new ExplanationToHTMLRenderer(dummyExpl, tlg).getExplanationPartsAsHTML();
+        return new ExplanationToHTMLRenderer(dummyExpl, ngs).getExplanationPartsAsHTML();
     }
     
     public void setPrefixes(PrefixMapping prefixes) {
@@ -154,19 +156,18 @@ public class ExplanationToHTMLRenderer {
     }
     
     private String findLabel(Node_URI uri){
-        Triple triple = new Triple(uri, RDFS.Nodes.label , Node.ANY); 
-        tlg.selectTrustPolicy("http://www.wiwiss.fu-berlin.de/suhl/bizer/TPL/TrustEverything");
-        Iterator it = tlg.find(triple);
+        Quad quad = new Quad(Node.ANY,uri, RDFS.Nodes.label , Node.ANY); 
+        Iterator it = this.ngs.findQuads(quad);
         
         if(it.hasNext()){
             // if at least one label was found, take the first
-            return ((Triple) it.next()).getObject().getLiteral().getLexicalForm();
+            return ((Quad) it.next()).getObject().getLiteral().getLexicalForm();
         } else {
-            triple = new Triple(uri, FOAF.name.getNode(), Node.ANY);
-            it = tlg.find(triple);
+            quad = new Quad(Node.ANY,uri, FOAF.name.getNode(), Node.ANY);
+            it = ngs.findQuads(quad);
             
             if(it.hasNext()){
-                return ((Triple) it.next()).getObject().getLiteral().getLexicalForm();
+                return ((Quad) it.next()).getObject().getLiteral().getLexicalForm();
             } else {
                 // if no label was found try to prefix the uri
                 String label = this.prefixes.qnameFor(uri.getURI());

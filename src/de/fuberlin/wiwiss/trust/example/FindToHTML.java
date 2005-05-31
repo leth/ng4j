@@ -15,7 +15,7 @@ import de.fuberlin.wiwiss.trust.ExplanationToHTMLRenderer;
 import de.fuberlin.wiwiss.trust.TrustLayerGraph;
 
 /**
- * @version $Id: FindToHTML.java,v 1.3 2005/05/24 13:53:25 maresch Exp $
+ * @version $Id: FindToHTML.java,v 1.4 2005/05/31 09:53:56 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class FindToHTML {
@@ -23,7 +23,7 @@ public class FindToHTML {
     public static void main(String[] args) {
         String trigFile = "file:doc/trustlayer/finData.trig";
         String policiesFile = "file:doc/trustlayer/finPolicies.n3";
-        String policyURI = "http://www.fu-berlin/suhl/bizer/financialscenario/policies/Policy2";
+        String policyURI = "http://www.wiwiss.fu-berlin.de/suhl/bizer/TPL/TrustEverything";
 
         Triple findMe = new Triple(
                 Node.ANY,
@@ -55,7 +55,7 @@ public class FindToHTML {
             System.out.println("<h2>Result #" + i + "</h2>");
             i++;
             Explanation expl = tlg.explain(found);
-            ExplanationToHTMLRenderer renderer = new ExplanationToHTMLRenderer(expl, tlg);
+            ExplanationToHTMLRenderer renderer = new ExplanationToHTMLRenderer(expl, source);
             renderer.setPrefixes(tplModel);
             System.out.println(renderer.getExplanationAsHTML());
         }

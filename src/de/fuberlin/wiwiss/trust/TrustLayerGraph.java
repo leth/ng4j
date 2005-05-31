@@ -20,7 +20,7 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 /**
  * TODO: Write documentation and tests!
  * 
- * @version $Id: TrustLayerGraph.java,v 1.3 2005/03/28 13:28:16 cyganiak Exp $
+ * @version $Id: TrustLayerGraph.java,v 1.4 2005/05/31 09:53:56 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class TrustLayerGraph extends GraphBase {
@@ -52,7 +52,7 @@ public class TrustLayerGraph extends GraphBase {
     
     public String getTrustPolicyDescription(String uri) {
         ensurePoliciesParsed();
-        return this.suite.getPolicyName(uri);
+        return this.suite.getPolicyDescription(uri);
     }
 
     public void selectTrustPolicy(String uri) {
