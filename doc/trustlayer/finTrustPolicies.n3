@@ -38,6 +38,7 @@
 
 :Policy1 rdf:type tpl:TrustPolicy ;
     tpl:policyName "Trust InfoPortals" ;
+    tpl:policyDescription "Trust only Information harvested from InfoPortals" ;	
     tpl:textExplanation "The information is stated in the document" ;
     tpl:graphPattern [
         tpl:pattern """(?GRAPH swp:assertedBy ?warrant .
@@ -55,7 +56,8 @@
 # ----------------------------------------------------
 
 :Policy2 rdf:type tpl:TrustPolicy ;
-    tpl:policyName "Trust only information form Reuters" ;
+    tpl:policyName "Trust only information from Reuters" ;
+    tpl:policyDescription "Trust only Information harvested from the news broker Reuters." ;		
     tpl:textExplanation "The information is stated in the document" ;
     tpl:graphPattern [
         tpl:pattern """ ?graph1 (?GRAPH swp:assertedBy ?warrant1 .
@@ -90,7 +92,8 @@ tpl:textExplanation "The institution @@?authority@@ published the information, w
 # ----------------------------------------------------
 
 :Policy3 rdf:type tpl:TrustPolicy ;
-    tpl:policyName "Trust only information form Reuters" ;
+    tpl:policyName "TidalTrust trust above 0.5" ;
+    tpl:policyDescription "Trust only news written by trustworthy authors with a TidalTrust trust value above 0.5. " ;
     tpl:textExplanation "The information is stated in the document" ;
     tpl:graphPattern [
         tpl:pattern """ ?graph1 (?GRAPH swp:assertedBy ?warrant1 .
@@ -125,7 +128,8 @@ tpl:textExplanation "The institution @@?authority@@ published the information, w
 # ----------------------------------------------------
 
 :Policy4 rdf:type tpl:TrustPolicy ;
-    tpl:policyName "Trust only information form known authors." ;
+    tpl:policyName "Known authors" ;
+    tpl:policyDescription "Trust information with authors known by their name." ;
     tpl:textExplanation "The information is stated in the document" ;
     tpl:graphPattern [
         tpl:pattern """ ?graph1 (?GRAPH swp:assertedBy ?warrant1 .
@@ -152,7 +156,8 @@ tpl:textExplanation "The institution @@?authority@@ published the information, w
 # ----------------------------------------------------
 
 :Policy5 rdf:type tpl:TrustPolicy ;
-    tpl:policyName "Trust only information form trustworthy authors, who are known by their name." ;
+    tpl:policyName "Known by name" ;
+    tpl:policyDescription "Trust only information from trustworthy authors, who are known by their name." ;
     tpl:textExplanation "The information is stated in the document" ;
     tpl:graphPattern [
         tpl:pattern """ ?graph1 (?GRAPH swp:assertedBy ?warrant1 .
@@ -180,7 +185,8 @@ tpl:textExplanation "The institution @@?authority@@ published the information, w
 # ----------------------------------------------------
 
 :Policy6 rdf:type tpl:TrustPolicy ;
-    tpl:policyName "Trust only information form info portals, which have more positive than negative ratings." ;
+    tpl:policyName "More positive than negative" ;
+    tpl:policyDescription "Trust only information form info portals, which have more positive than negative ratings." ;
     tpl:textExplanation "The information is stated in the document " ;
     tpl:graphPattern [
         tpl:pattern """ ?graph1 (?GRAPH swp:assertedBy ?warrant1 .
