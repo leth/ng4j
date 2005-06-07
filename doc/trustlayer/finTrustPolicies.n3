@@ -23,7 +23,6 @@
 
 <>  rdf:type tpl:TrustPolicySuite;
     tpl:suiteName "Financial Trust Policies" ;
-    tpl:includesPolicy tpl:TrustEverything;
     tpl:includesPolicy :Policy1 ;
     tpl:includesPolicy :Policy2 ;
     tpl:includesPolicy :Policy3 ;
@@ -197,12 +196,4 @@ tpl:textExplanation "The institution @@?authority@@ published the information, w
         tpl:textExplanation "which is a information portal." ;
     ] ;
     tpl:constraint "METRIC(tpl:EbayMetric, ?authority) " .
-
-# ----------------------------------------------------
-# Policy 7:
-# Trust everything 
-# ----------------------------------------------------
-
-tpl:TrustEverything rdf:type tpl:TrustPolicy ;
-    tpl:policyName "Trust everything" .
 
