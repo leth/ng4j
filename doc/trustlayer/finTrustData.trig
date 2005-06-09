@@ -49,7 +49,7 @@
 _:a 
  vcard:street "  Taunusanlage 12 "^^dtype:string ;
  vcard:locality " Frankfurt am Main "^^dtype:string ;
- vcard:pcode " 60262 "^^dtype:Long ;
+ vcard:pcode " 60262 "^^dtype:long ;
  vcard:country <iso:DE> .
 
 <urn:ISIN:DE0005140008> a fin:Share ;
@@ -68,13 +68,13 @@ _:a
  fin:newsAbout <urn:DUNS:000000001> ;
  foaf:name " Annual Report 2003"^^dtype:string ;
  fin:author <urn:DUNS:000000001> ;
- fin:availableAt " http://www.deutsche-bank.de/ir/pdfs/db_ar03_annual_report_2003.pdf "^^dtype:String ;
+ fin:availableAt " http://www.deutsche-bank.de/ir/pdfs/db_ar03_annual_report_2003.pdf "^^dtype:string ;
  dc:date " 2004-03-01T00:00+01:00 "^^dtype:date .
 
 <http://geschaeftsbericht.deutsche-bank.de/2004/q3/en/consolidatedfinancialstatements/factsheet.php> a fin:FactSheet ;
  fin:newsAbout <urn:DUNS:000000001> ;
  fin:author <urn:DUNS:000000001> ;
- fin:availableAt " http://geschaeftsbericht.deutsche-bank.de/2004/q3/en/consolidatedfinancialstatements/factsheet.php "^^dtype:String ;
+ fin:availableAt " http://geschaeftsbericht.deutsche-bank.de/2004/q3/en/consolidatedfinancialstatements/factsheet.php "^^dtype:string ;
  foaf:name " Fact Sheet "^^dtype:string ;
  fin:newsSource <urn:DUNS:000000001> .
  	
@@ -83,7 +83,7 @@ _:a
  fin:newsAbout <urn:DUNS:000000001> ;
  foaf:name " Interim Report Q3/04"^^dtype:string ;
  fin:author <urn:DUNS:000000001> ;
- fin:availableAt " http://www.deutsche-bank.de/ir/pdfs/04_Q3_E.pdf "^^dtype:String ;
+ fin:availableAt " http://www.deutsche-bank.de/ir/pdfs/04_Q3_E.pdf "^^dtype:string ;
  dc:date " 2004-09-30T00:00+01:00 "^^dtype:date .
 
 <http://www.deutsche-bank.de/ir/pdfs/04_Q2_E.pdf> a fin:InterimReport ;
@@ -91,7 +91,7 @@ _:a
  fin:newsAbout <urn:DUNS:000000001> ;
  foaf:name " Interim Report Q2/04"^^dtype:string ;
  fin:author <urn:DUNS:000000001> ;
- fin:availableAt " http://www.deutsche-bank.de/ir/pdfs/04_Q2_E.pdf "^^dtype:String ;
+ fin:availableAt " http://www.deutsche-bank.de/ir/pdfs/04_Q2_E.pdf "^^dtype:string ;
  dc:date " 2004-06-30T00:00+01:00 "^^dtype:date .
 
 
@@ -100,7 +100,7 @@ _:a
  fin:newsAbout <urn:DUNS:000000001> ;
  foaf:name " Interim Report Q1/04"^^dtype:string ;
  fin:author <urn:DUNS:000000001> ;
- fin:availableAt " http://www.deutsche-bank.de/ir/pdfs/ZB_Q1_04_E.pdf "^^dtype:String ;
+ fin:availableAt " http://www.deutsche-bank.de/ir/pdfs/ZB_Q1_04_E.pdf "^^dtype:string ;
  dc:date " 2004-03-31T00:00+01:00 "^^dtype:date .
 
 
@@ -136,7 +136,7 @@ _:a
 
 _:r 
  vcard:street " 2200 Mission College Blvd. "^^dtype:string ;
- vcard:pobox " 58119 "^^dtype:Integer ;
+ vcard:pobox " 58119 "^^dtype:integer ;
  vcard:locality "   Santa Clara "^^dtype:string ;
  vcard:pcode " 95052"^^dtype:string ;
  vcard:region " California "^^dtype:string ;
@@ -157,7 +157,7 @@ _:r
  fin:newsAbout <urn:DUNS:047897855> ;
  foaf:name " Annual Report 2003"^^dtype:string ;
  fin:author <urn:DUNS:047897855> ;
- fin:availableAt " http://www.intel.com/intel/annual03/ar03.pdf "^^dtype:String ;
+ fin:availableAt " http://www.intel.com/intel/annual03/ar03.pdf "^^dtype:string ;
  dc:date " 2004-02-20T00:00+01:00 "^^dtype:date .
 
 }
@@ -195,7 +195,7 @@ _:r
 _:w 
  vcard:street "   Wittelsbacherplatz 2 "^^dtype:string ;
  vcard:locality " Munich "^^dtype:string ;
- vcard:pcode " 80333 "^^dtype:Integer ;
+ vcard:pcode " 80333 "^^dtype:integer ;
  vcard:country <iso:DE> .
 
 <urn:ISIN:DE0007236101> a fin:Share ;
@@ -217,7 +217,7 @@ _:w
  fin:newsAbout <urn:urn:DUNS:316067164> ;
  foaf:name " Annual Report 2004"^^dtype:string ;
  fin:author <urn:urn:DUNS:316067164> ;
- fin:availableAt " http://www.siemens.com/Daten/siecom/HQ/CC/Internet/Investor_Relations/WORKAREA/ir_ed/templatedata/English/file/binary/Final_20-F_29Nov_1230674.pdf "^^dtype:String ;
+ fin:availableAt " http://www.siemens.com/Daten/siecom/HQ/CC/Internet/Investor_Relations/WORKAREA/ir_ed/templatedata/English/file/binary/Final_20-F_29Nov_1230674.pdf "^^dtype:string ;
  dc:date " 2004-11-17T00:00+01:00 "^^dtype:date .
 
 
@@ -264,9 +264,9 @@ _:w
 
 _:l
  vcard:street " One AMD Place "^^dtype:string ;
- vcard:pobox " 3453 "^^dtype:Integer ;
+ vcard:pobox " 3453 "^^dtype:integer ;
  vcard:locality "  Sunnyvale "^^dtype:string ;
- vcard:pcode " 94088 "^^dtype:Integer ;
+ vcard:pcode " 94088 "^^dtype:integer ;
  vcard:region " California "^^dtype:string ;
  vcard:country <iso:US> .
 
@@ -278,7 +278,7 @@ _:l
  fin:newsAbout <urn:DUNS:000000002> ;
  foaf:name " Annual Report 2003"^^dtype:string ;
  fin:author <urn:DUNS:000000002> ;
- fin:availableAt " http://www.amd.com/us-en/assets/content_type/DownloadableAssets/TK0304.pdf "^^dtype:String ;
+ fin:availableAt " http://www.amd.com/us-en/assets/content_type/DownloadableAssets/TK0304.pdf "^^dtype:string ;
  dc:date " 2004-03-08T00:00+01:00 "^^dtype:date .
 
 
