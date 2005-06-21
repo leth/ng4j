@@ -20,7 +20,7 @@ import de.fuberlin.wiwiss.trust.ExpressionConstraint.MetricResultCollector;
  * A METRIC expression in TriQL.P. This is not used for vanilla TriQL.
  * The Metric instance is set from the outside after parsing has finished.
  * 
- * @version $Id: Q_MetricExpression.java,v 1.4 2005/03/28 22:31:23 cyganiak Exp $
+ * @version $Id: Q_MetricExpression.java,v 1.5 2005/06/21 15:10:19 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class Q_MetricExpression extends SimpleNode implements Expr, ExprBoolean {
@@ -77,6 +77,16 @@ public class Q_MetricExpression extends SimpleNode implements Expr, ExprBoolean 
         } catch (MetricException ex) {
             throw new RuntimeException(ex);
         }
+    }
+    
+    public List evalArgumentExpressions(Query q, ResultBinding env){
+        List args = new ArrayList();
+        Iterator it = this.argumentExpressions.iterator();
+        while (it.hasNext()) {
+            Expr expression = (Expr) it.next();
+            args.add(TriQLHelper.toRDFNode(expression.eval(q, env)));
+        }
+        return args;
     }
     
     public String asInfixString() {
