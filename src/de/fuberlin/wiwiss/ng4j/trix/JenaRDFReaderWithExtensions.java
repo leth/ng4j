@@ -1,5 +1,5 @@
 /*
- * $Id: JenaRDFReader.java,v 1.3 2005/06/21 09:25:35 cyganiak Exp $
+ * $Id$
  */
 package de.fuberlin.wiwiss.ng4j.trix;
 
@@ -12,6 +12,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
+
+import javax.xml.transform.TransformerException;
 
 import org.xml.sax.SAXException;
 
@@ -34,7 +36,7 @@ import com.hp.hpl.jena.shared.JenaException;
  *
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
-public class JenaRDFReader implements RDFReader, ParserCallback {
+public class JenaRDFReaderWithExtensions implements RDFReader, ParserCallback {
 	private Model targetModel;
 	private boolean done = false;
 	private Resource subject;
@@ -47,12 +49,14 @@ public class JenaRDFReader implements RDFReader, ParserCallback {
 	public void read(Model model, Reader r, String base) {
 		this.targetModel = model;
 		try {
-			new TriXParser().parse(r, new URI(base), this);
+			new TriXParserWithExtensions().parse(r, new URI(base), this);
 		} catch (IOException e) {
 			throw new JenaException(e);
 		} catch (SAXException e) {
 			throw new JenaException(e);
 		} catch (URISyntaxException e) {
+			throw new JenaException(e);
+		} catch (TransformerException e) {
 			throw new JenaException(e);
 		}
 	}
@@ -63,12 +67,14 @@ public class JenaRDFReader implements RDFReader, ParserCallback {
 	public void read(Model model, InputStream r, String base) {
 		this.targetModel = model;
 		try {
-			new TriXParser().parse(r, new URI(base), this);
+			new TriXParserWithExtensions().parse(r, new URI(base), this);
 		} catch (IOException e) {
 			throw new JenaException(e);
 		} catch (SAXException e) {
 			throw new JenaException(e);
 		} catch (URISyntaxException e) {
+			throw new JenaException(e);
+		} catch (TransformerException e) {
 			throw new JenaException(e);
 		}
 	}

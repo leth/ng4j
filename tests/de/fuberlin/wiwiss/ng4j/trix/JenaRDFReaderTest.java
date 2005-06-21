@@ -1,5 +1,5 @@
 /*
- * $Id: JenaRDFReaderTest.java,v 1.2 2004/12/13 02:05:52 cyganiak Exp $
+ * $Id: JenaRDFReaderTest.java,v 1.3 2005/06/21 09:25:35 cyganiak Exp $
  */
 package de.fuberlin.wiwiss.ng4j.trix;
 
@@ -25,6 +25,7 @@ public class JenaRDFReaderTest extends TestCase {
 	public void setUp() {
 		this.model = ModelFactory.createDefaultModel();
 		this.model.setReaderClassName("TRIX", JenaRDFReader.class.getName());		
+		this.model.setReaderClassName("TRIX-EXT", JenaRDFReaderWithExtensions.class.getName());		
 	}
 
 	public void testFixture() {
@@ -32,18 +33,18 @@ public class JenaRDFReaderTest extends TestCase {
 	}
 
 	public void testMinimal() {
-		readIntoModel("minimal.xml");
+		readIntoModel("minimal.xml", "TRIX");
 		assertTrue(this.model.isEmpty());
 	}
 	
 	public void testSingleTriple() {
-		readIntoModel("singleTriple.xml");
+		readIntoModel("singleTriple.xml", "TRIX");
 		assertSameStatements("singleTriple.nt");
 	}
 	
 	public void testMalformed() {
 		try {
-			readIntoModel("malformed.xml");
+			readIntoModel("malformed.xml", "TRIX");
 			fail("should have failed");
 		} catch (JenaException jex) {
 			// is expected
@@ -52,24 +53,24 @@ public class JenaRDFReaderTest extends TestCase {
 
 	public void testLiteralSubject() {
 		try {
-			readIntoModel("literalSubject.xml");
+			readIntoModel("literalSubject.xml", "TRIX");
 		} catch (JenaException jex) {
 			// is expected
 		}
 	}
 
 	public void testObjectNodeTypes() {
-		readIntoModel("objectNodeTypes.xml");
+		readIntoModel("objectNodeTypes.xml", "TRIX");
 		assertSameStatements("objectNodeTypes.nt");		
 	}
 
 	public void testBlankNodes() {
-		readIntoModel("blankNodes.xml");
+		readIntoModel("blankNodes.xml", "TRIX");
 		assertSameStatements("blankNodes.nt");		
 	}
 
 	public void testBlankNodes2() {
-		readIntoModel("blankNodes2.xml");
+		readIntoModel("blankNodes2.xml", "TRIX");
 		Model expected = ModelFactory.createDefaultModel();
 		InputStream stream = this.getClass().getResourceAsStream("tests/blankNodes.nt");
 		expected.read(stream, "file:/test", "N-TRIPLE");
@@ -77,21 +78,21 @@ public class JenaRDFReaderTest extends TestCase {
 	}
 
 	public void testIgnoreMultipleGraphs() {
-		readIntoModel("ignoreMultipleGraphs.xml");
+		readIntoModel("ignoreMultipleGraphs.xml", "TRIX");
 		assertSameStatements("ignoreMultipleGraphs.nt");
 		assertEquals(2, this.model.size());
 	}
 
 	public void testSyntacticExtension() {
-		readIntoModel("extended.xml");
+		readIntoModel("extended.xml", "TRIX-EXT");
 		assertSameStatements("extended.nt");
 		assertEquals(1, this.model.size());
 	}
 
-	private void readIntoModel(String triXFile) {
+	private void readIntoModel(String triXFile, String lang) {
 		InputStream stream = this.getClass().getResourceAsStream("tests/" + triXFile);
 		assertNotNull("tests/" + triXFile + " not found", stream);
-		this.model.read(stream, "file:/test", "TRIX");
+		this.model.read(stream, "file:/test", lang);
 	}
 
 	private void assertSameStatements(String nTriplesFile) {

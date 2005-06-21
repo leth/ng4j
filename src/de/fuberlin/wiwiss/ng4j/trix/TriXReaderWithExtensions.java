@@ -1,5 +1,5 @@
 /*
- * $Id: TriXReader.java,v 1.3 2005/06/21 09:25:35 cyganiak Exp $
+ * $Id$
  */
 package de.fuberlin.wiwiss.ng4j.trix;
 
@@ -11,6 +11,8 @@ import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.xml.transform.TransformerException;
 
 import org.xml.sax.SAXException;
 
@@ -39,7 +41,7 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSetReader;
  * 
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
-public class TriXReader implements ParserCallback, NamedGraphSetReader {
+public class TriXReaderWithExtensions implements ParserCallback, NamedGraphSetReader {
 	private NamedGraphSet set;
 	private Node defaultGraph;
 	private NamedGraph currentGraph;
@@ -53,12 +55,14 @@ public class TriXReader implements ParserCallback, NamedGraphSetReader {
 		this.set = namedGraphSet;
 		this.defaultGraph = Node.createURI(defaultGraphName);
 		try {
-			new TriXParser().parse(source, new URI(baseURI), this);
+			new TriXParserWithExtensions().parse(source, new URI(baseURI), this);
 		} catch (IOException e) {
 			throw new JenaException(e);
 		} catch (SAXException e) {
 			throw new JenaException(e);
 		} catch (URISyntaxException e) {
+			throw new JenaException(e);
+		} catch (TransformerException e) {
 			throw new JenaException(e);
 		}
 	}
@@ -68,12 +72,14 @@ public class TriXReader implements ParserCallback, NamedGraphSetReader {
 		this.set = namedGraphSet;
 		this.defaultGraph = Node.createURI(defaultGraphName);
 		try {
-			new TriXParser().parse(source, new URI(baseURI), this);
+			new TriXParserWithExtensions().parse(source, new URI(baseURI), this);
 		} catch (IOException e) {
 			throw new JenaException(e);
 		} catch (SAXException e) {
 			throw new JenaException(e);
 		} catch (URISyntaxException e) {
+			throw new JenaException(e);
+		} catch (TransformerException e) {
 			throw new JenaException(e);
 		}
 	}

@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetImpl.java,v 1.6 2005/04/14 15:23:43 cyganiak Exp $
+// $Id: NamedGraphSetImpl.java,v 1.7 2005/06/21 09:25:35 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import java.util.ArrayList;
@@ -194,9 +194,6 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 	}
 
 	public NamedGraphModel asJenaModel(String defaultGraphForAdding) {
-		if (defaultGraphForAdding == null) {
-			return new NamedGraphModel(this, null);
-		}
 		return new NamedGraphModel(this, defaultGraphForAdding);
 	}
 

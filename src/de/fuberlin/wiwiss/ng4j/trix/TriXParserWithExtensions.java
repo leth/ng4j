@@ -1,17 +1,24 @@
 /*
- * $Id: TriXParser.java,v 1.3 2005/06/21 09:25:35 cyganiak Exp $
+ * $Id$
  */
 package de.fuberlin.wiwiss.ng4j.trix;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.URI;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.stream.StreamResult;
 
+import org.w3c.dom.Document;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -24,12 +31,21 @@ import org.xml.sax.XMLReader;
  * specification</a>). Parsed graphs and triples are passed to a
  * {@link ParserCallback} for further processing.
  * <p>
- * TODO: Deal with TriX XSLT syntactic extensions<br>
+ * The parser supports TriX syntactic extensions, which are XSLT
+ * stylesheets referenced using a processing instructions. The
+ * implementation loads the input document as a DOM tree, finds
+ * the processing instructions, applies the stylesheets if any
+ * are found, re-serializes the tree as XML, then parses again
+ * using a SAX parser. The reason for this waste of resources is
+ * that I didn't find a way to validate a DOM tree against an XML
+ * schema.
+ * <p>
+ * TODO: Implement syntactic extensions in a less braindead way<br>
  * TODO: Have only one parse() method, with InputSource argument
  * 
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
-public class TriXParser {
+public class TriXParserWithExtensions {
 	static final String JAXP_SCHEMA_LANGUAGE =
 			"http://java.sun.com/xml/jaxp/properties/schemaLanguage";
 	static final String W3C_XML_SCHEMA =
@@ -45,9 +61,10 @@ public class TriXParser {
 	 * @param callback receives parsed graphs and triples
 	 * @throws SAXException on XML parse error
 	 * @throws IOException on I/O error when reading from source
+	 * @throws TransformerException on error when applying an XSLT syntactic extension
 	 */
 	public void parse(InputStream source, URI baseURI, ParserCallback callback)
-			throws IOException, SAXException {
+			throws IOException, SAXException, TransformerException {
 		parse(new InputSource(source), baseURI, callback);
 	}
 	
@@ -59,16 +76,31 @@ public class TriXParser {
 	 * @param callback receives parsed graphs and triples
 	 * @throws SAXException on XML parse error
 	 * @throws IOException on I/O error when reading from source
+	 * @throws TransformerException on error when applying an XSLT syntactic extension
 	 */
 	public void parse(Reader source, URI baseURI, ParserCallback callback)
-			throws IOException, SAXException {
+			throws IOException, SAXException, TransformerException {
 		parse(new InputSource(source), baseURI, callback);
 	}
 	
 	private void parse(InputSource source, URI baseURI, ParserCallback callback)
-			throws IOException, SAXException {
-		// I've no idea what I'm doing here ... seems to work for now
+			throws IOException, SAXException, TransformerException {
 		try {
+			// get DOM tree of input document
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			factory.setNamespaceAware(true);
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			registerSilentErrorHandler(builder);
+			Document in = builder.parse(source);
+
+			// resolve syntactic extensions
+			StringWriter out = new StringWriter();
+			StreamResult result = new StreamResult(out);
+			new SyntacticExtensionProcessor(in).process(result);
+			String withoutExtensions = out.toString();
+
+			// feed into SAX parser
+			// I've no idea what I'm doing here ... seems to work for now
 			String schemaSource = this.getClass().getResource("trix.xsd").toString();
 			SAXParserFactory spf = SAXParserFactory.newInstance();
 			spf.setNamespaceAware(true);
@@ -80,13 +112,27 @@ public class TriXParser {
 			SAXHandler handler = new SAXHandler(callback, baseURI);
 			parser.setContentHandler(handler);
 			registerSilentErrorHandler(parser);
-			parser.parse(source);
+			parser.parse(new InputSource(new StringReader(withoutExtensions)));
 		} catch (ParserConfigurationException pcex) {
 			throw new SAXException(pcex);
 		}
 	}
 
 	private void registerSilentErrorHandler(XMLReader parser) {
+		parser.setErrorHandler(new ErrorHandler() {
+			public void error(SAXParseException exception) throws SAXException {
+				throw exception;
+			}
+			public void warning(SAXParseException exception) throws SAXException {
+				// silently ignore
+			}
+			public void fatalError(SAXParseException exception) throws SAXException {
+				throw exception;
+			}
+		});
+	}
+
+	private void registerSilentErrorHandler(DocumentBuilder parser) {
 		parser.setErrorHandler(new ErrorHandler() {
 			public void error(SAXParseException exception) throws SAXException {
 				throw exception;

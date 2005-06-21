@@ -1,4 +1,4 @@
-// $Id: GraphReaderService.java,v 1.5 2004/11/26 01:50:32 cyganiak Exp $
+// $Id: GraphReaderService.java,v 1.6 2005/06/21 09:25:35 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import java.io.File;
@@ -27,7 +27,9 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSetReader;
 import de.fuberlin.wiwiss.ng4j.trig.TriGReader;
 import de.fuberlin.wiwiss.ng4j.trix.JenaRDFReader;
+import de.fuberlin.wiwiss.ng4j.trix.JenaRDFReaderWithExtensions;
 import de.fuberlin.wiwiss.ng4j.trix.TriXReader;
+import de.fuberlin.wiwiss.ng4j.trix.TriXReaderWithExtensions;
 
 /**
  * Reads RDF graphs from external sources (URLs, InputStreams,
@@ -89,6 +91,8 @@ public class GraphReaderService {
 		this.fileExtensions.put("trig", "TRIG");
 		this.readerFactory.setReaderClassName("TRIX",
 				JenaRDFReader.class.getName());
+		this.readerFactory.setReaderClassName("TRIX-EXT",
+				JenaRDFReaderWithExtensions.class.getName());
 	}
 
 	/**
@@ -156,6 +160,7 @@ public class GraphReaderService {
 	 * <li>"<strong>N3</strong>" (can also be used for Turtle files)</li>
 	 * <li>"<strong>N-TRIPLE</strong>"</li>
 	 * <li>"<strong>TRIX</strong>"</li>
+	 * <li>"<strong>TRIX-EXT</strong>" (TriX with syntactic extensions, doesn't scale)</li>
 	 * <li>"<strong>TRIG</strong>"</li>
 	 * </ul>
 	 * Setting the language is optional for URL sources. If no language
@@ -163,7 +168,7 @@ public class GraphReaderService {
 	 * based on MIME types and filename extensions. This will not work
 	 * in all cases and is not tested very well, so it's safest to
 	 * specify the language in any case.
-	 * @param lang "RDF/XML", "N3", "N-TRIPLE", "TRIX" or "TRIG"
+	 * @param lang One of the above language IDs
 	 */
 	public void setLanguage(String lang) {
 		this.lang = lang;
@@ -237,12 +242,16 @@ public class GraphReaderService {
 	}
 
 	private boolean languageSupportsNamedGraphs(String language) {
-		return "TRIX".equals(language) || "TRIG".equals(language);
+		return "TRIX".equals(language)
+			|| "TRIX-EXT".equals(language)
+			|| "TRIG".equals(language);
 	}
 
 	private NamedGraphSetReader createReader(String language) {
 		if ("TRIX".equals(language)) {
 			return new TriXReader();
+		} else if ("TRIX-EXT".equals(language)) {
+			return new TriXReaderWithExtensions();
 		} else if ("TRIG".equals(language)) {
 			return new TriGReader();
 		}
