@@ -82,98 +82,50 @@ import java.util.Vector;
  *
  * @author  Oliver Maresch (oliver-maresch@gmx.de)
  */
-public final class AppleseedMetric extends Metric  implements de.fuberlin.wiwiss.trust.Metric {
-    //TODO: generator for explanations 
-    private List nodes = null;
+public final class AppleseedMetric extends RankBasedMetric implements de.fuberlin.wiwiss.trust.RankBasedMetric { 
+ 
+    public static final String URI = "http://www.wiwiss.fu-berlin.de/suhl/bizer/TPL/AppleseedMetric";
     
     private Vector trustProperties;
-        
-    private Node source = null;
 
-    private com.hp.hpl.jena.graph.Node sink = null;
+    private List inputTable;
     
-    private float T = 0.05f;
+    private NamedGraphSet sourceData;
     
-    private float d = 0.85f;
-    
-    /** 
-     * The power for the non-linear weight normalization.
-     * (Default value 1 for linear normalization)
-     */
-    private float e = 1f;    
-    
-    private int l = 6;
-    
-    private int top;
-    
-    private float injection;
-    
-    private int iterations;
-    
-    /** Maximal number of nodes included in the calculation. Default is 0 (interpretated as infinity). */
-    private int max_num = 0;
-    
-    /**
-     * Contains Vectors of Vectors which contain Nodes. The Vector number i contains 
-     * the nodes added to the analysed trust network in the iteration number i+1.
-     */ 
-    private Vector newNodesPerIteration;
-    
-    /**
-     * Contains Floats which hold the maximum change of the trust values between the iterations.
-     * The Float number i contains the maximal change over all analysed nodes between the iteration 
-     * i and the interation i+1.
-     */
-    private Vector maximalDiffOfTrustPerIteration;
-    
-    /**
-     * Collects all the source information and summerize them.
-     */
-    DataSourcesSummary sourceSummary = null;
- 
+    private AppleseedRankingCache ranking;
     
     public AppleseedMetric(){
-        super("http://www.wiwiss.fu-berlin.de/suhl/bizer/TPL/AppleseedMetric");
-        nodes = null;
+        super(URI);
         trustProperties = MindswapTrust.getTrustProperties();
+        inputTable = null;
+        sourceData = null;
+        ranking = null;
     }
     
-    
-    /**
-     * Ranks begin with zero! Returns null if the node was not ranked.
-     */
-    public Integer getRankOf(com.hp.hpl.jena.graph.Node node){
-        for(int i = 0; i < nodes.size() - 1; i++){
-            if(((Node) nodes.get(i)).equals(node)){
-                return new Integer(i);
+    public NamedGraphSet getSourceData(){
+        return this.sourceData;
+    }
+        
+    public void init(NamedGraphSet source, List inputTable) throws MetricException{
+        this.sourceData = source;
+        this.inputTable = inputTable;
+        
+        Iterator bindings = this.inputTable.iterator();
+        while(bindings.hasNext()){
+            this.ranking = readArguments((List) bindings.next());
+            com.hp.hpl.jena.graph.Node sink = this.ranking.sink;
+            if(hasCachedRanking(ranking)){
+                this.ranking = (AppleseedRankingCache) getCachedRanking(ranking);
+            } else {
+                rank();
             }
+            cache(this.ranking, sink);
         }
-        return null;
     }
-    
-    
-    
-    public int getIterations() {
-        return iterations;
-    }
-    
-    public int getNumberOfRankedNodes(){
-        return nodes.size();
-    }
-    
-    public void setup(NamedGraphSet sourceData) {
-        super.setup(sourceData);
-        nodes = new Vector();
-        // set default values for optional 
-        T = 0.05f;
-        d = 0.85f;
-        e = 1f;    
-        l = 6;
-        max_num = 0;  
-        iterations = 0;
-    }
-    
-    public de.fuberlin.wiwiss.trust.EvaluationResult calculateMetric(java.util.List arguments) throws MetricException {
+     
+   
+    private AppleseedRankingCache readArguments(java.util.List arguments) throws MetricException {
+        AppleseedRankingCache ranking = new AppleseedRankingCache();
         
         if(arguments == null || arguments.size() < 4){
             throw new MetricException("The Appleseed metric needs at least the node of the source, the node of the sink, the number of trusted nodes on top of the ranking and the trust value for the injection as parameters.");
@@ -184,19 +136,19 @@ public final class AppleseedMetric extends Metric  implements de.fuberlin.wiwiss
         // get source node
         {
             com.hp.hpl.jena.graph.Node tmp = (com.hp.hpl.jena.graph.Node) arguments.get(0);
-            source = new SourceNode(tmp);
+            ranking.source = new SourceNode(tmp);
         }
         
         // get sink node
         {
-            sink = (com.hp.hpl.jena.graph.Node) arguments.get(1);
+            ranking.sink = (com.hp.hpl.jena.graph.Node) arguments.get(1);
         }
         
         // get the number of trusted nodes on top of the ranking
         try{
             com.hp.hpl.jena.graph.Node_Literal tmp = (com.hp.hpl.jena.graph.Node_Literal) arguments.get(2);
-            top = Integer.parseInt(tmp.getLiteral().getLexicalForm());
-            if(top < 1) throw new MetricException("The third argument of the Appleseed metric contains the number of trusted nodes. Its value have to be a positive integer (excluding zero) value.");
+            ranking.top = Integer.parseInt(tmp.getLiteral().getLexicalForm());
+            if(ranking.top < 1) throw new MetricException("The third argument of the Appleseed metric contains the number of trusted nodes. Its value have to be a positive integer (excluding zero) value.");
         }catch(Exception e){
             throw new MetricException("The third argument of the Appleseed metric contains the number of trusted nodes. Its value have to be a positive integer (excluding zero) value.");
         }
@@ -204,8 +156,8 @@ public final class AppleseedMetric extends Metric  implements de.fuberlin.wiwiss
         // get the injection
         try{
             com.hp.hpl.jena.graph.Node_Literal tmp = (com.hp.hpl.jena.graph.Node_Literal) arguments.get(3);
-            injection = Float.parseFloat(tmp.getLiteral().getLexicalForm());
-            if(injection < 0f) throw new MetricException("The fourth argument of the Appleseed metric contains the trust injection for the source. Its value have to be a positive float value.");
+            ranking.injection = Float.parseFloat(tmp.getLiteral().getLexicalForm());
+            if(ranking.injection < 0f) throw new MetricException("The fourth argument of the Appleseed metric contains the trust injection for the source. Its value have to be a positive float value.");
         }catch(Exception e){
             throw new MetricException("The fourth argument of the Appleseed metric contains the trust injection for the source. Its value have to be a positive float value.");
         }
@@ -214,8 +166,8 @@ public final class AppleseedMetric extends Metric  implements de.fuberlin.wiwiss
         if(arguments.size() > 4){
             try{
                 com.hp.hpl.jena.graph.Node_Literal tmp = (com.hp.hpl.jena.graph.Node_Literal) arguments.get(4);
-                d = Float.parseFloat(tmp.getLiteral().getLexicalForm());
-                if(d > 1f || d < 0f) throw new MetricException("The optional fifth argument of the Appleseed metric contains the spreading factor. Its value have to be a float value in the range [0,1].");
+                ranking.d = Float.parseFloat(tmp.getLiteral().getLexicalForm());
+                if(ranking.d > 1f || ranking.d < 0f) throw new MetricException("The optional fifth argument of the Appleseed metric contains the spreading factor. Its value have to be a float value in the range [0,1].");
             }catch(Exception e){
                 throw new MetricException("The optional fifth argument of the Appleseed metric contains the spreading factor. Its value have to be a float value in the range [0,1].");
             }
@@ -225,8 +177,8 @@ public final class AppleseedMetric extends Metric  implements de.fuberlin.wiwiss
         if(arguments.size() > 5){
             try{
                 com.hp.hpl.jena.graph.Node_Literal tmp = (com.hp.hpl.jena.graph.Node_Literal) arguments.get(5);
-                T = Float.parseFloat(tmp.getLiteral().getLexicalForm());
-                if(T <= 0f) throw new MetricException("The optional sixth argument of the Appleseed metric contains the threshold. Its value have to be a float value above zero.");
+                ranking.T = Float.parseFloat(tmp.getLiteral().getLexicalForm());
+                if(ranking.T <= 0f) throw new MetricException("The optional sixth argument of the Appleseed metric contains the threshold. Its value have to be a float value above zero.");
             }catch(Exception e){
                 throw new MetricException("The optional sixth argument of the Appleseed metric contains the threshold. Its value have to be a float value above zero.");
             }
@@ -236,8 +188,8 @@ public final class AppleseedMetric extends Metric  implements de.fuberlin.wiwiss
         if(arguments.size() > 6){
             try{
                 com.hp.hpl.jena.graph.Node_Literal tmp = (com.hp.hpl.jena.graph.Node_Literal) arguments.get(6);
-                max_num = Integer.parseInt(tmp.getLiteral().getLexicalForm());
-                if(max_num < 0) throw new MetricException("The optional seventh argument of the Appleseed metric contains the maximal number of nodes to unfold. Its value have to be a positive interger value. Zero is interpretated as positive infinity.");
+                ranking.max_num = Integer.parseInt(tmp.getLiteral().getLexicalForm());
+                if(ranking.max_num < 0) throw new MetricException("The optional seventh argument of the Appleseed metric contains the maximal number of nodes to unfold. Its value have to be a positive interger value. Zero is interpretated as positive infinity.");
             }catch(Exception e){
                 throw new MetricException("The optional seventh argument of the Appleseed metric contains the maximal number of nodes to unfold. Its value have to be a positive interger value. Zero is interpretated as positive infinity.");
             }
@@ -247,8 +199,8 @@ public final class AppleseedMetric extends Metric  implements de.fuberlin.wiwiss
         if(arguments.size() > 7){
             try{
                 com.hp.hpl.jena.graph.Node_Literal tmp = (com.hp.hpl.jena.graph.Node_Literal) arguments.get(7);
-                l = Integer.parseInt(tmp.getLiteral().getLexicalForm());
-                if(l < 0) throw new MetricException("The optional eighth argument of the Appleseed metric contains the maximal path length form the source. Its value have to be a positive interger value. Zero is interpretated as positive infinity.");
+                ranking.l = Integer.parseInt(tmp.getLiteral().getLexicalForm());
+                if(ranking.l < 0) throw new MetricException("The optional eighth argument of the Appleseed metric contains the maximal path length form the source. Its value have to be a positive interger value. Zero is interpretated as positive infinity.");
             }catch(Exception e){
                 throw new MetricException("The optional eighth argument of the Appleseed metric contains the maximal path length form the source. Its value have to be a positive interger value. Zero is interpretated as positive infinity.");
             }
@@ -258,26 +210,23 @@ public final class AppleseedMetric extends Metric  implements de.fuberlin.wiwiss
         if(arguments.size() > 8){
             try{
                 com.hp.hpl.jena.graph.Node_Literal tmp = (com.hp.hpl.jena.graph.Node_Literal) arguments.get(8);
-                e = Float.parseFloat(tmp.getLiteral().getLexicalForm());
-                if(e <= 0f) throw new MetricException("The optional ninth argument of the Appleseed metric contains the exponent for non-linear weight nomalization. Its value have to be a positive float value above zero.");
+                ranking.e = Float.parseFloat(tmp.getLiteral().getLexicalForm());
+                if(ranking.e <= 0f) throw new MetricException("The optional ninth argument of the Appleseed metric contains the exponent for non-linear weight nomalization. Its value have to be a positive float value above zero.");
             }catch(Exception e){
                 throw new MetricException("The optional ninth argument of the Appleseed metric contains the exponent for non-linear weight nomalization. Its value have to be a positive float value above zero.");
             }
-        }       
+        }
         
-        // calculate metric
-        boolean result = this.trust();
-        
-        return new MetricResult(result, explain(), explainRDF());
+        return ranking;
     }    
     
-    private boolean trust(){
+    private void rank(){
         // Explanation generation section begin -------------------------------------
-        this.sourceSummary = new DataSourcesSummary();
+        ranking.sourceSummary = new DataSourcesSummary();
         
-        this.maximalDiffOfTrustPerIteration = new Vector();
+        ranking.maximalDiffOfTrustPerIteration = new Vector();
         
-        this.newNodesPerIteration = new Vector();
+        ranking.newNodesPerIteration = new Vector();
         // Explanation generation section end ---------------------------------------
         
         // the maximal difference of the nodes between the trust value of the 
@@ -285,33 +234,33 @@ public final class AppleseedMetric extends Metric  implements de.fuberlin.wiwiss
         float max_diff = Float.MAX_VALUE;
         
         // add the source node, which initialize this calculation, to the trust network. 
-        nodes.add(source);
+        ranking.nodes.add(ranking.source);
         
         // inject initial trust
-        source.inject(this.injection);
+        ranking.source.inject(ranking.injection);
         
         // init number of other notes in the analysed trust network
         int num = 0;
         
         // counts the iterations
-        iterations = 0;
+        ranking.iterations = 0;
         
 
         do {
-            iterations++;
+            ranking.iterations++;
             
             // reset current number of nodes
-            num = nodes.size();
+            num = ranking.nodes.size();
             // reset maximal difference of trust
             max_diff = 0f;
             
             // make a working copy of the vector of nodes
-            Vector current_nodes = new Vector(nodes);
+            Vector current_nodes = new Vector(ranking.nodes);
             
             // Explanation generation section begin -------------------------------------
             
             Vector newNodes = new Vector();
-            this.newNodesPerIteration.add(newNodes);
+            ranking.newNodesPerIteration.add(newNodes);
             
             // Explanation generation section end ---------------------------------------
             
@@ -334,9 +283,9 @@ public final class AppleseedMetric extends Metric  implements de.fuberlin.wiwiss
                     Node u = x2u.getDestination();
                     
                     // if the successor node is not in the current_nodes vector
-                    if(!nodes.contains(u) && (max_num <= 0 || nodes.size() < max_num)){
+                    if(!ranking.nodes.contains(u) && (ranking.max_num <= 0 || ranking.nodes.size() < ranking.max_num)){
                         // add node to nodes vector
-                        nodes.add(u);
+                        ranking.nodes.add(u);
                         
                         // Explanation generation section begin -------------------------------------
                         newNodes.add(u);
@@ -351,185 +300,19 @@ public final class AppleseedMetric extends Metric  implements de.fuberlin.wiwiss
             }
             
             // Explanation generation section begin -------------------------------------
-            this.maximalDiffOfTrustPerIteration.add(new Float(max_diff));
+            ranking.maximalDiffOfTrustPerIteration.add(new Float(max_diff));
             // Explanation generation section end ---------------------------------------
 
             
         // repeat while new nodes are found or the differences of trust between the current and the
         // last iteration are still greater than the threshold T
-        } while(num < nodes.size() || (max_diff > T));
+        } while(! (num >= ranking.nodes.size() || (ranking.iterations > 1 && max_diff <= ranking.T)));
        
-        java.util.Collections.sort(nodes);
-        java.util.Collections.reverse(nodes);
-
-        Integer rank = getRankOf(sink);
-        
-        if(rank == null){
-            return false;
-        } else if(rank.intValue() >= top){
-            return false;
-        } else {
-            return true;
-        }
+        java.util.Collections.sort(ranking.nodes);
+        java.util.Collections.reverse(ranking.nodes);
     }
     
     
-// Explanation generation section begin -------------------------------------
-    
-    protected ExplanationPart explain(){
-        List text = new ArrayList();
-        
-        Integer rank = getRankOf(sink);
-        
-        if(rank == null){
-            text.add(cl("The "));
-            text.add(com.hp.hpl.jena.graph.Node.createURI(this.getURI()));
-            text.add(cl(" could not find the sink "));
-            text.add(sink);
-            text.add(cl(" in the analysed local trust network of the source "));
-            text.add(source.getJenaNode());
-            text.add(("."));            
-        }else { 
-            int r = rank.intValue() + 1;
-            if(r > top){
-                text.add(cl("The "));
-                text.add(com.hp.hpl.jena.graph.Node.createURI(this.getURI()));
-                text.add(cl(" inferred, that the source "));
-                text.add(source.getJenaNode());
-                text.add(cl(" does not trust the sink "));
-                text.add(sink);
-                text.add(cl(". The sink got the rank number " + r + ", which is out of the top " + top + "."));
-            }else{
-                text.add(cl("The "));
-                text.add(com.hp.hpl.jena.graph.Node.createURI(this.getURI()));
-                text.add(cl(" inferred, that the source "));
-                text.add(source.getJenaNode());
-                text.add(cl(" trusts the sink "));
-                text.add(sink);
-                text.add(cl(". The sink got the rank number " + r + ", which is in the top " + top + "."));
-            }
-        }
-        
-        ExplanationPart explanation = new ExplanationPart(text);
-        explanation.addPart(explainRanking());
-        explanation.addPart(explainIterations());
-        explanation.addPart(sourceSummary.summarize());
-        return explanation;
-    }
-       
-    private ExplanationPart explainIterations(){
-        List text = new ArrayList();
-        
-        text.add(cl("The metric needed " + this.iterations + " to find new neighbors and to rank them.")); 
-        
-        ExplanationPart expl = new ExplanationPart(text);
-        expl.setDetails(explainIterationDetails());
-        
-        return expl;
-    }
-
-    private ExplanationPart explainIterationDetails(){
-        List text = new ArrayList();
-        
-        text.add(cl("The Appleseed metric iterates as long as new neighbors are found or the maximal change of the trust values of the neighbors differ more than the threshold of " + this.T + ". The gathering of new neigbors all new neighbors stops if all new neighbors are beyond the path length limit of " + this.l + " or the number of analysed neighbors exites the maximal number of nodes to analyse (" + this.max_num + ")."));
-        text.add(cl("The iterations had the following bindings:"));
-        
-        ExplanationPart expl = new ExplanationPart(text);        
-
-        for(int i = 0; i < this.iterations; i++){
-            expl.addPart(explainIteration(i));
-        }
-        
-        return expl;
-    }
-    
-    private ExplanationPart explainIteration(int i){
-        List text = new ArrayList();       
-        
-        if(i == iterations -1){
-            text.add(cl("The iteration " + (i+1) + " did not satisfy one of the citeria for starting a new iteration. The iteration process stopped here."));
-        }else{
-            text.add(cl("The iteration " + (i+1) + " satisfy at least one of the criteria for starting a new iteration."));
-        }
-        
-        ExplanationPart expl = new ExplanationPart(text);
-        
-        expl.addPart(explainMaxDiffOfIteration(i));
-        expl.addPart(explainNewNodesOfIteration(i));
-        
-        return expl;
-    }
-    
-    ExplanationPart explainMaxDiffOfIteration(int i){
-        float maxDiff = ((Float) this.maximalDiffOfTrustPerIteration.get(i)).floatValue();
-        List text = new ArrayList();
-
-        text.add(cl("In iteration " + (i+1) + " the maximal change of a trust value of the analysed neighbors differed with " + maxDiff + ". "));
-        if(maxDiff > T){
-            text.add(cl("The maximal difference was greater than the threshold of " + this.T + ". "));
-        }else{
-            text.add(cl("The maximal difference was less/equal than the threshold of " + this.T + ". "));
-        }
-
-        ExplanationPart expl = new ExplanationPart(text);
-        
-        return expl;
-    }
-    
-    
-    ExplanationPart explainNewNodesOfIteration(int i){
-        Vector newNodes = (Vector) this.newNodesPerIteration.get(i);
-        List text = new ArrayList();
-
-        if(this.nodes.size() > this.max_num){
-            text.add(cl("The maximal number of neighbors to analyse (" + this.max_num + ") was reached. No new neighbors could be added. "));
-        }else if(newNodes.size() <= 0){
-            text.add(cl("No new neigbors found. "));
-        }else{
-            text.add(cl("" + newNodes.size() + " new neighbors were found: "));
-            Iterator it = newNodes.iterator();
-            while(it.hasNext()){
-                Node n = (Node) it.next();
-                text.add(n.getJenaNode());
-                text.add(cl(", "));
-            }
-            text.add(cl("."));
-        }
-
-        ExplanationPart expl = new ExplanationPart(text);
-        
-        return expl;
-    }
-
-    private ExplanationPart explainRanking(){
-        List text = new ArrayList();
-        
-        if( this.nodes.size() <= 0){
-            text.add(cl("The ranking could not be computed. "));
-            return new ExplanationPart(text);
-        }
-        text.add(cl("The metric ranked " + (this.nodes.size() - 1) + " direct and indirect neighbors."));
-        text.add(cl("After the last iteration the ranking and the trust values were as follows: "));
-        
-        ExplanationPart expl = new ExplanationPart(text);
-        
-        Iterator nodes = this.nodes.iterator();
-        int i = 1;
-        while(nodes.hasNext()){
-            Node n = (Node) nodes.next();
-            List nt = new ArrayList();
-            nt.add(cl("" + i + ". "));
-            nt.add(n.getJenaNode());
-            nt.add(cl(", " + n.getCurrentTrust()));
-            expl.addPart(new ExplanationPart(nt));
-            i++;
-        }
-        
-        return expl;
-    }
-        
-    
-// Explanation generation section end ---------------------------------------
     
     /**
      * Represents a Node in the local trust network.
@@ -573,12 +356,12 @@ public final class AppleseedMetric extends Metric  implements de.fuberlin.wiwiss
         }
         
         public float calcInjection(float weight){
-            return d * this.getLastInjection() * (((float) Math.pow(weight, e))/this.getSumOfWeights());
+            return ranking.d * this.getLastInjection() * (((float) Math.pow(weight, ranking.e))/this.getSumOfWeights());
         }
         
         public void setupNextIteration(){
             trust_last = trust_current;
-            trust_current = trust_last + (1 - d) * in_current;
+            trust_current = trust_last + (1 - ranking.d) * in_current;
             in_last = in_current;
             in_current = 0;
             
@@ -612,12 +395,12 @@ public final class AppleseedMetric extends Metric  implements de.fuberlin.wiwiss
             edges = new Vector();
             
             // add backward trust edge
-            edges.add(new Edge(source, 1));
+            edges.add(new Edge(ranking.source, 1));
             weightSum = 1f;
                        
             // if the depth of the node is smaller than the path length limit
             // search for edges
-            if(depth < l || l <= 0){
+            if(depth < ranking.l || ranking.l <= 0){
                 AssertedGraphs ag = new AssertedGraphs(node, getSourceData());
                 NamedGraphSet graphs = ag.getGraphs();
                 Map graph2Warrant = ag.getWarrantMap();
@@ -629,7 +412,7 @@ public final class AppleseedMetric extends Metric  implements de.fuberlin.wiwiss
                 while(graphIt.hasNext()){
                     com.hp.hpl.jena.graph.Node source = ((NamedGraph) graphIt.next()).getGraphName();
                     com.hp.hpl.jena.graph.Node warrant = (com.hp.hpl.jena.graph.Node) graph2Warrant.get(source);
-                    sourceSummary.addDataSource(source, warrant, node);
+                    ranking.sourceSummary.addDataSource(source, warrant, node);
                 }
                 // Explanation generation section end ---------------------------------------
 
@@ -641,15 +424,15 @@ public final class AppleseedMetric extends Metric  implements de.fuberlin.wiwiss
                     while(n.hasNext()){
                         Quad q = (Quad) n.next();
                         Node successor;
-                        if(nodes.contains(q.getObject())){
-                            successor = (Node) nodes.get(nodes.indexOf(q.getObject()));
+                        if(ranking.nodes.contains(q.getObject())){
+                            successor = (Node) ranking.nodes.get(ranking.nodes.indexOf(q.getObject()));
                         } else {
                             successor = new Node(q.getObject(), depth + 1);
                         }
                         Edge edge = new Edge(successor, weight);
                         
                         // calculate the sum of weights
-                        weightSum += (float) Math.pow(weight, e);
+                        weightSum += (float) Math.pow(weight, ranking.e);
                         
                         edges.add(edge);
                     }
@@ -701,7 +484,7 @@ public final class AppleseedMetric extends Metric  implements de.fuberlin.wiwiss
         }
         
         public float calcInjection(float weight){
-            return this.getLastInjection() * (((float) Math.pow(weight, e))/this.getSumOfWeights());
+            return this.getLastInjection() * (((float) Math.pow(weight, ranking.e))/this.getSumOfWeights());
         }
     
         public float diffCurrentLastTrust(){
@@ -717,7 +500,7 @@ public final class AppleseedMetric extends Metric  implements de.fuberlin.wiwiss
                         
             // if the depth of the node is smaller than the path length limit
             // search for edges
-            if(depth < l || l <= 0){
+            if(depth < ranking.l || ranking.l <= 0){
                 AssertedGraphs ag = new AssertedGraphs(node, getSourceData());
                 NamedGraphSet graphs = ag.getGraphs();
                 Map graph2Warrant = ag.getWarrantMap();
@@ -729,7 +512,7 @@ public final class AppleseedMetric extends Metric  implements de.fuberlin.wiwiss
                 while(graphIt.hasNext()){
                     com.hp.hpl.jena.graph.Node source = ((NamedGraph) graphIt.next()).getGraphName();
                     com.hp.hpl.jena.graph.Node warrant = (com.hp.hpl.jena.graph.Node) graph2Warrant.get(source);
-                    sourceSummary.addDataSource(source, warrant, node);
+                    ranking.sourceSummary.addDataSource(source, warrant, node);
                 }
                 // Explanation generation section end ---------------------------------------
 
@@ -741,8 +524,8 @@ public final class AppleseedMetric extends Metric  implements de.fuberlin.wiwiss
                     while(n.hasNext()){
                         Quad q = (Quad) n.next();
                         Node successor;
-                        if(nodes.contains(q.getObject())){
-                            successor = (Node) nodes.get(nodes.indexOf(q.getObject()));
+                        if(ranking.nodes.contains(q.getObject())){
+                            successor = (Node) ranking.nodes.get(ranking.nodes.indexOf(q.getObject()));
                         } else {
                             successor = new Node(q.getObject(), depth + 1);
                         }
@@ -781,6 +564,294 @@ public final class AppleseedMetric extends Metric  implements de.fuberlin.wiwiss
         
     }
     
+    
+    private class AppleseedRankingCache implements RankingCache {
+        
+        private List nodes = null;
+
+        private Node source = null;
+
+        private com.hp.hpl.jena.graph.Node sink = null;
+
+        private float T = 0.05f;
+
+        private float d = 0.85f;
+
+        /** 
+         * The power for the non-linear weight normalization.
+         * (Default value 1 for linear normalization)
+         */
+        private float e = 1f;    
+
+        private int l = 6;
+
+        private int top;
+
+        private float injection;
+
+        private int iterations;
+
+        /** Maximal number of nodes included in the calculation. Default is 0 (interpretated as infinity). */
+        private int max_num = 0;
+
+        /**
+         * Contains Vectors of Vectors which contain Nodes. The Vector number i contains 
+         * the nodes added to the analysed trust network in the iteration number i+1.
+         */ 
+        private Vector newNodesPerIteration;
+
+        /**
+         * Contains Floats which hold the maximum change of the trust values between the iterations.
+         * The Float number i contains the maximal change over all analysed nodes between the iteration 
+         * i and the interation i+1.
+         */
+        private Vector maximalDiffOfTrustPerIteration;
+
+        /**
+         * Collects all the source information and summerize them.
+         */
+        DataSourcesSummary sourceSummary = null;
+        
+        NamedGraphSet datasource;
+        
+        public AppleseedRankingCache() {
+            datasource = null;
+            nodes = new Vector();
+            // set default values for optional 
+            T = 0.05f;
+            d = 0.85f;
+            e = 1f;    
+            l = 6;
+            max_num = 0;  
+            iterations = 0;
+        }
+         
+        
+        public boolean equals(Object obj){
+            if(! (obj instanceof AppleseedRankingCache))
+                return false;
+            AppleseedRankingCache cache = (AppleseedRankingCache) obj;
+            return this.source.equals(cache.source) 
+                && this.injection == cache.injection
+                && this.top == cache.top
+                && this.T == cache.T
+                && this.d == cache.d
+                && this.e == cache.e
+                && this.l == cache.l
+                && this.max_num == cache.max_num;
+        }
+        
+        /**
+         * Ranks begin with zero! Returns null if the node was not ranked.
+         */
+        public Integer getRankOf(com.hp.hpl.jena.graph.Node node){
+            for(int i = 0; i < nodes.size() - 1; i++){
+                if(((Node) nodes.get(i)).equals(node)){
+                    return new Integer(i);
+                }
+            }
+            return null;
+        }
+        
+        public int getIterations() {
+            return iterations;
+        }
+
+        public int getNumberOfRankedNodes(){
+            return nodes.size();
+        }
+
+// Explanation generation section begin -------------------------------------
+    
+        public ExplanationPart explain(com.hp.hpl.jena.graph.Node sink){
+            List text = new ArrayList();
+
+            ExplanationPart explanation = new ExplanationPart(text);
+            explanation.addPart(summary(sink));
+            explanation.addPart(explainRanking());
+            explanation.addPart(explainIterations());
+            explanation.addPart(sourceSummary.summarize());
+            return explanation;
+        }
+        
+        private ExplanationPart summary(com.hp.hpl.jena.graph.Node sink){
+            List text = new ArrayList();
+
+            Integer rank = getRankOf(sink);
+
+            if(rank == null){
+                text.add(cl("The "));
+                text.add(com.hp.hpl.jena.graph.Node.createURI(AppleseedMetric.URI));
+                text.add(cl(" could not find the sink "));
+                text.add(sink);
+                text.add(cl(" in the analysed local trust network of the source "));
+                text.add(source.getJenaNode());
+                text.add(("."));            
+            }else { 
+                int r = rank.intValue() + 1;
+                if(r > top){
+                    text.add(cl("The "));
+                    text.add(com.hp.hpl.jena.graph.Node.createURI(AppleseedMetric.URI));
+                    text.add(cl(" inferred, that the source "));
+                    text.add(source.getJenaNode());
+                    text.add(cl(" does not trust the sink "));
+                    text.add(sink);
+                    text.add(cl(". The sink got the rank number " + r + ", which is out of the top " + top + "."));
+                }else{
+                    text.add(cl("The "));
+                    text.add(com.hp.hpl.jena.graph.Node.createURI(AppleseedMetric.URI));
+                    text.add(cl(" inferred, that the source "));
+                    text.add(source.getJenaNode());
+                    text.add(cl(" trusts the sink "));
+                    text.add(sink);
+                    text.add(cl(". The sink got the rank number " + r + ", which is in the top " + top + "."));
+                }
+            }
+            
+            List details = new ArrayList();
+            details.add(cl("The "));
+            details.add(com.hp.hpl.jena.graph.Node.createURI(AppleseedMetric.URI));
+            details.add(cl(" uses a turst graph, whose nodes are the trustees and trusters and whose edges are weighted trust statements between the nodes. The weights differ form \"not trusted\" up to \"blind trust\". The metric uses a iterative process to calculate the amount of trust, which is spreaded among the neighbors of the trust source. The neighbors are ranked by their accumulated amount of trusted."));
+            
+            ExplanationPart summary = new ExplanationPart(text);
+            ExplanationPart detailExpl = new ExplanationPart(details);
+            summary.setDetails(detailExpl);
+            
+            return summary;
+        }
+
+        private ExplanationPart explainIterations(){
+            List text = new ArrayList();
+
+            text.add(cl("The metric needed " + this.iterations + " to find new neighbors and to rank them.")); 
+
+            ExplanationPart expl = new ExplanationPart(text);
+            expl.setDetails(explainIterationDetails());
+
+            return expl;
+        }            List text = new ArrayList();
+
+        private ExplanationPart explainIterationDetails(){
+            List text = new ArrayList();
+
+            text.add(cl("The Appleseed metric iterates as long as new neighbors are found or the maximal change of the trust values of the neighbors differ more than the threshold of " + this.T + ". The gathering of new neigbors all new neighbors stops if all new neighbors are beyond the path length limit of " + this.l + " or the number of analysed neighbors exites the maximal number of nodes to analyse (" + this.max_num + ")."));
+            text.add(cl("The iterations had the following bindings:"));
+
+            ExplanationPart expl = new ExplanationPart(text);        
+
+            for(int i = 0; i < this.iterations; i++){
+                expl.addPart(explainIteration(i));
+            }
+
+            return expl;
+        }
+
+        private ExplanationPart explainIteration(int i){
+            List text = new ArrayList();       
+
+            if(i == iterations -1){
+                text.add(cl("The iteration " + (i+1) + " did not satisfy one of the citeria for starting a new iteration. The iteration process stopped here."));
+            }else{
+                text.add(cl("The iteration " + (i+1) + " satisfy at least one of the criteria for starting a new iteration."));
+            }
+
+            ExplanationPart expl = new ExplanationPart(text);
+
+            expl.addPart(explainMaxDiffOfIteration(i));
+            expl.addPart(explainNewNodesOfIteration(i));
+
+            return expl;
+        }
+
+        ExplanationPart explainMaxDiffOfIteration(int i){
+            float maxDiff = ((Float) this.maximalDiffOfTrustPerIteration.get(i)).floatValue();
+            List text = new ArrayList();
+
+            text.add(cl("In iteration " + (i+1) + " the maximal change of a trust value of the analysed neighbors differed with " + maxDiff + ". "));
+            if(maxDiff > T){
+                text.add(cl("The maximal difference was greater than the threshold of " + this.T + ". "));
+            }else{
+                text.add(cl("The maximal difference was less/equal than the threshold of " + this.T + ". "));
+            }
+
+            ExplanationPart expl = new ExplanationPart(text);
+
+            return expl;
+        }
+
+
+        ExplanationPart explainNewNodesOfIteration(int i){
+            Vector newNodes = (Vector) this.newNodesPerIteration.get(i);
+            List text = new ArrayList();
+
+            if(this.nodes.size() > this.max_num){
+                text.add(cl("The maximal number of neighbors to analyse (" + this.max_num + ") was reached. No new neighbors could be added. "));
+            }else if(newNodes.size() <= 0){
+                text.add(cl("No new neigbors found. "));
+            }else{
+                text.add(cl("" + newNodes.size() + " new neighbors were found: "));
+                Iterator it = newNodes.iterator();
+                while(it.hasNext()){
+                    Node n = (Node) it.next();
+                    text.add(n.getJenaNode());
+                    text.add(cl(", "));
+                }
+                text.add(cl("."));
+            }
+
+            ExplanationPart expl = new ExplanationPart(text);
+
+            return expl;
+        }
+
+        private ExplanationPart explainRanking(){
+            List text = new ArrayList();
+
+            if( this.nodes.size() <= 0){
+                text.add(cl("The ranking could not be computed. "));
+                return new ExplanationPart(text);
+            }
+            text.add(cl("The metric ranked " + (this.nodes.size() - 1) + " direct and indirect neighbors."));
+            text.add(cl("After the last iteration the ranking and the trust values were as follows: "));
+
+            ExplanationPart expl = new ExplanationPart(text);
+
+            for(int i = 0; i < nodes.size()-1; i++){
+                Node n = (Node) nodes.get(i);
+                List nt = new ArrayList();
+                nt.add(cl("" + (i+1) + ". "));
+                nt.add(n.getJenaNode());
+                nt.add(cl(", " + n.getCurrentTrust()));
+                expl.addPart(new ExplanationPart(nt));
+            }
+
+            return expl;
+        }
+        
+
+        
+        public com.hp.hpl.jena.graph.Graph explainRDF(com.hp.hpl.jena.graph.Node sink) {
+            return null;
+        }        
+     
+        /**
+         * Creates a String Literal Node
+         * @param str
+         * @return StringLiteral as a Node
+         */
+        protected com.hp.hpl.jena.graph.Node cl(String str){
+            return com.hp.hpl.jena.graph.Node.createLiteral(str);
+        } 
+// Explanation generation section end ---------------------------------------
+
+        public boolean isAccepted(com.hp.hpl.jena.graph.Node sink) {
+            Integer rank = getRankOf(sink);
+            return rank != null && rank.intValue() < top;
+        }
+                
+    }
+    
+    
     /**
      * Sinple test methode
      */
@@ -796,7 +867,7 @@ public final class AppleseedMetric extends Metric  implements de.fuberlin.wiwiss
         arguments.add(0,source);
         com.hp.hpl.jena.graph.Node sink = com.hp.hpl.jena.graph.Node.createURI("http://www.reuters.com");
         arguments.add(1,sink);
-        com.hp.hpl.jena.graph.Node top = com.hp.hpl.jena.graph.Node.createLiteral("20", null, com.hp.hpl.jena.datatypes.xsd.XSDDatatype.XSDinteger);
+        com.hp.hpl.jena.graph.Node top = com.hp.hpl.jena.graph.Node.createLiteral("30", null, com.hp.hpl.jena.datatypes.xsd.XSDDatatype.XSDinteger);
         arguments.add(2,top);
         com.hp.hpl.jena.graph.Node in = com.hp.hpl.jena.graph.Node.createLiteral("200", null, com.hp.hpl.jena.datatypes.xsd.XSDDatatype.XSDinteger);
         arguments.add(3,in);
@@ -811,13 +882,16 @@ public final class AppleseedMetric extends Metric  implements de.fuberlin.wiwiss
         com.hp.hpl.jena.graph.Node e = com.hp.hpl.jena.graph.Node.createLiteral("1", null, com.hp.hpl.jena.datatypes.xsd.XSDDatatype.XSDinteger);
         arguments.add(8,e);
         
+        java.util.List bindings = new java.util.LinkedList();
+        bindings.add(arguments);
+
         AppleseedMetric metric = new AppleseedMetric();
-        metric.setup(data);
-        EvaluationResult result = metric.calculateMetric(arguments);
+        metric.init(data, bindings);
+        
 
         
         // print explanations of all triples
-        ExplanationPart part = result.getTextExplanation();
+        ExplanationPart part = metric.explain(0);
 
         System.out.println("Explanation:");
         
@@ -829,12 +903,17 @@ public final class AppleseedMetric extends Metric  implements de.fuberlin.wiwiss
         m.write(System.out, "N3");
         // get data source
         
-        System.out.println("Question: Should the source <" + source.toString() + "> trust the sink <" + sink.toString() + ">?\nAnswer: " + (result.getResult()?"Yes.\n":"No.\n"));
-        System.out.println("The algorithm used " + metric.getIterations() + " iterations to calculate the result.");
-    }    
+        System.out.println("Question: Should the source <" + source.toString() + "> trust the sink <" + sink.toString() + ">?\nAnswer: " + (metric.isAccepted(0)?"Yes.\n":"No.\n"));
+    }        
     
-    protected Graph explainRDF() {
-        return null;
+    public int getIterations(int i){
+        AppleseedRankingCache rc = (AppleseedRankingCache) getRankingCache(i);
+        return rc.iterations;        
+    }
+    
+    public int getNumberOfRankedNodes(int i){
+        AppleseedRankingCache rc = (AppleseedRankingCache) getRankingCache(i);
+        return rc.getNumberOfRankedNodes();        
     }
     
 }
