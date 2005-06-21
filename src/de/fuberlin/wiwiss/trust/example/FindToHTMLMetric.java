@@ -20,19 +20,22 @@ import de.fuberlin.wiwiss.trust.ExplanationToHTMLRenderer;
 import de.fuberlin.wiwiss.trust.TrustLayerGraph;
 import de.fuberlin.wiwiss.trust.metric.AppleseedMetric;
 import de.fuberlin.wiwiss.trust.metric.EbayMetric;
+import de.fuberlin.wiwiss.trust.metric.SemanticPageRank;
 import de.fuberlin.wiwiss.trust.metric.TidalTrustMetric;
 
 /**
- * @version $Id: FindToHTMLMetric.java,v 1.3 2005/05/31 09:53:56 maresch Exp $
+ * @version $Id: FindToHTMLMetric.java,v 1.4 2005/06/21 15:01:46 maresch Exp $
  * @author Ricard Cyganiak (richard@cyganiak.de)
  */
 public class FindToHTMLMetric {
 
     public static void main(String[] args) {
-        String trigFile = "file:doc/trustlayer/finTrustData.trig";
-        String policiesFile = "file:doc/trustlayer/finTrustPolicies.n3";
+
+        String trigFile = "file:/home/voodoo/Java/project/trustlayer/ng4j/doc/trustlayer/finTrustData.trig";
+        String policiesFile = "file:/home/voodoo/Java/project/trustlayer/ng4j/doc/trustlayer/finTrustPolicies.n3";
+
         String policyURI = "http://www.fu-berlin/suhl/bizer/financialscenario/policies/trust/Policy3";
-        File htmlFile = new File("find2html.html");
+        File htmlFile = new File("/home/voodoo/tmp/find2html.html");
         
         try{
             // remove html file of the last run
@@ -63,8 +66,9 @@ public class FindToHTMLMetric {
             TrustLayerGraph tlg = new TrustLayerGraph(source, tplGraph);
             // register Metrics
             tlg.registerMetricImplementation(TidalTrustMetric.class);
-            tlg.registerMetricImplementation(AppleseedMetric.class);
             tlg.registerMetricImplementation(EbayMetric.class);
+            tlg.registerMetricImplementation(AppleseedMetric.class);
+            tlg.registerMetricImplementation(SemanticPageRank.class);
             // select policy
             tlg.selectTrustPolicy(policyURI);
             

@@ -7,10 +7,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Triple;
 
+import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
+
 /**
- * @version $Id: ResultTable.java,v 1.3 2005/03/21 21:51:59 cyganiak Exp $
+ * @version $Id: ResultTable.java,v 1.4 2005/06/21 15:01:46 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class ResultTable {
@@ -75,7 +78,52 @@ public class ResultTable {
 		        result.addBinding(binding);
 		    }
 		}
+        
 		return result;
+    }
+    
+    public ResultTable filterByRank(TrustPolicy policy, NamedGraphSet source){
+        Collection constraints = policy.getRankBasedConstraints();
+        if(!constraints.isEmpty()){
+            ResultTable result = new ResultTable();
+
+            // build binding list for RankBasedMetric arguments
+            RankBasedConstraint constraint = (RankBasedConstraint) constraints.iterator().next();
+            List args = constraint.getArgumentBindings(this);
+
+            // use only the first RankeBasedMetric in the list
+            RankBasedMetric metric = constraint.getRankBasedMetric() ;
+
+            // call metric
+            try{
+                metric.init(source, args);
+
+                // filter by results 
+                for(int i = 0; i < this.bindings.size(); i++){
+                    VariableBinding binding = (VariableBinding) this.bindings.get(i);
+
+                    if(metric.isAccepted(i)){
+                        result.addBinding(binding);
+                    }
+
+                    ExplanationPart expl = metric.explain(i);
+                    if(expl != null){
+                        binding.addTextExplanation(expl);
+                    }
+
+                    Graph g = metric.explainRDF(i);
+                    if(g != null){
+                        binding.addGraphExplanation(g);
+                    }
+                }
+            } catch(MetricException e){
+                e.printStackTrace();
+            }
+            
+            return result;
+        } else {
+            return this;
+        }
     }
     
     public boolean containsBinding(VariableBinding binding) {

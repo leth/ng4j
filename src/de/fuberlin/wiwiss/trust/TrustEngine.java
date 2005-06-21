@@ -9,7 +9,7 @@ import de.fuberlin.wiwiss.ng4j.triql.TriQLQuery;
 /**
  * TODO: Describe this type
  *
- * @version $Id: TrustEngine.java,v 1.4 2005/03/22 01:01:47 cyganiak Exp $
+ * @version $Id: TrustEngine.java,v 1.5 2005/06/21 15:01:46 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class TrustEngine {
@@ -36,7 +36,9 @@ public class TrustEngine {
 		TriQLQuery query = new QueryFactory(
 		        this.source, triple, policy, this.systemVariables).buildQuery();
 		ResultTable table = ResultTable.createFromTriQLResult(query.getResults(), triple);
-		return new QueryResult(table.filterByConstraints(policy), policy);
+		table = table.filterByConstraints(policy);
+        table = table.filterByRank(policy , this.source);
+		return new QueryResult(table, policy);
 	}
 	
 	public QueryResult fetch(Node subject) {

@@ -20,8 +20,9 @@ import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
  * Service for building a {@link PolicySuite} from an RDF graph containing
  * the policy's description using the TPL vocabulary.
  *
- * @version $Id: PolicySuiteFromRDFBuilder.java,v 1.6 2005/03/28 22:31:51 cyganiak Exp $
+ * @version $Id: PolicySuiteFromRDFBuilder.java,v 1.7 2005/06/21 15:01:46 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
+ * @author Oliver Maresch (oliver-maresch@gmx.de)
  */
 public class PolicySuiteFromRDFBuilder {
     private Graph graph = new GraphMem();
@@ -30,6 +31,7 @@ public class PolicySuiteFromRDFBuilder {
     private PolicySuite resultSuite;
     private Node suiteNode;
     private Collection metricInstances;
+    private Collection rankBasedMetricInstances;
     
     /**
      * @param suiteGraph A Jena RDF graph containing a description of a
@@ -37,10 +39,11 @@ public class PolicySuiteFromRDFBuilder {
      * @param metricInstances A collection of {@link Metric} instances
      *        that will be available to the policies
      */
-    public PolicySuiteFromRDFBuilder(Graph suiteGraph, Collection metricInstances) {
+    public PolicySuiteFromRDFBuilder(Graph suiteGraph, Collection metricInstances, Collection rankBasedMetricInstances) {
         this.graph.getBulkUpdateHandler().add(suiteGraph);
         this.prefixes = suiteGraph.getPrefixMapping();
         this.metricInstances = metricInstances;
+        this.rankBasedMetricInstances = rankBasedMetricInstances;
     }
     
     /**
@@ -152,9 +155,11 @@ public class PolicySuiteFromRDFBuilder {
     
     private void addConstraintToPolicy(String constraint, TrustPolicy policy) {
         ConstraintParser parser = new ConstraintParser(
-                constraint, this.prefixes, this.metricInstances);
+                constraint, this.prefixes, this.metricInstances, this.rankBasedMetricInstances);
         if (parser.isCountConstraint()) {
             policy.addCountConstraint(parser.parseCountConstraint());
+        } else if(parser.isRankBasedConstraint()){
+            policy.addRankBasedConstraint(parser.parseRankBasedConstraint());
         } else {
             policy.addExpressionConstraint(parser.parseExpressionConstraint());
         }

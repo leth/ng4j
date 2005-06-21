@@ -20,7 +20,7 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 /**
  * TODO: Write documentation and tests!
  * 
- * @version $Id: TrustLayerGraph.java,v 1.4 2005/05/31 09:53:56 maresch Exp $
+ * @version $Id: TrustLayerGraph.java,v 1.5 2005/06/21 15:01:45 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class TrustLayerGraph extends GraphBase {
@@ -28,6 +28,7 @@ public class TrustLayerGraph extends GraphBase {
     private TrustEngine engine;
     private Graph policySuiteGraph;
     private Collection metricInstances = new ArrayList();
+    private Collection rankeBasedMetricInstances = new ArrayList();
     private PolicySuite suite;
     private TrustPolicy currentPolicy = TrustPolicy.TRUST_EVERYTHING;
     private boolean policiesParsed = false;
@@ -96,14 +97,22 @@ public class TrustLayerGraph extends GraphBase {
             throw new IllegalStateException(
                     "Must register metrics before using the TrustLayerGraph");
         }
-        if (!isImplementorOfMetric(metricImplementationClass)) {
+        boolean isMetric = isImplementorOfMetric(metricImplementationClass);
+        boolean isRankBasedMetric = isImplementorOfRankBasedMetric(metricImplementationClass);
+        if (!(isMetric || isRankBasedMetric)) {
             throw new IllegalArgumentException(metricImplementationClass.getName()
-                    + " must implement " + Metric.class.getName());
+                    + " must implement " + Metric.class.getName() 
+                    + " or " + RankBasedMetric.class.getName());
         }
         try {
-            Metric metricInstance = (Metric) metricImplementationClass.newInstance();
-            metricInstance.setup(this.sourceData);
-            this.metricInstances.add(metricInstance);
+            if(isMetric){
+                Metric metricInstance = (Metric) metricImplementationClass.newInstance();
+                metricInstance.setup(this.sourceData);
+                this.metricInstances.add(metricInstance);
+            } else if(isRankBasedMetric){
+                RankBasedMetric metricInstance = (RankBasedMetric) metricImplementationClass.newInstance();
+                this.rankeBasedMetricInstances.add(metricInstance);
+            }
         } catch (InstantiationException ex) {
             throw new RuntimeException(ex);
         } catch (IllegalAccessException ex) {
@@ -123,13 +132,23 @@ public class TrustLayerGraph extends GraphBase {
         }
         this.suite = new PolicySuiteFromRDFBuilder(
                 this.policySuiteGraph,
-                this.metricInstances).buildPolicySuite();
+                this.metricInstances,
+                this.rankeBasedMetricInstances).buildPolicySuite();
         this.policiesParsed = true;
     }
     
     private boolean isImplementorOfMetric(Class aClass) {
         for (int i = 0; i < aClass.getInterfaces().length; i++) {
             if (aClass.getInterfaces()[i] == Metric.class) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private boolean isImplementorOfRankBasedMetric(Class aClass) {
+        for (int i = 0; i < aClass.getInterfaces().length; i++) {
+            if (aClass.getInterfaces()[i] == RankBasedMetric.class) {
                 return true;
             }
         }

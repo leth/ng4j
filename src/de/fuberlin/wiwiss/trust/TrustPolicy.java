@@ -20,8 +20,9 @@ import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
  * can generate an explanation stating why a particular statement was trusted
  * (but not why a statement was rejected).
  *
- * @version $Id: TrustPolicy.java,v 1.7 2005/05/31 09:53:56 maresch Exp $
+ * @version $Id: TrustPolicy.java,v 1.8 2005/06/21 15:01:45 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
+ * @author Oliver Maresch (oliver-maresch@gmx.de)
  */
 public class TrustPolicy {
 
@@ -60,6 +61,7 @@ public class TrustPolicy {
 	private List graphPatterns = new ArrayList();
 	private Collection constraints = new ArrayList();
 	private Collection countConstraints = new ArrayList();
+    private Collection rankBasedConstraints = new ArrayList();
 
 	private PrefixMapping prefixes = PrefixMapping.Standard;
 
@@ -88,6 +90,14 @@ public class TrustPolicy {
 	public Collection getCountConstraints() {
 	    return Collections.unmodifiableCollection(this.countConstraints);
 	}
+    
+    public void addRankBasedConstraint(RankBasedConstraint constraint){
+        this.rankBasedConstraints.add(constraint);
+    }
+    
+    public Collection getRankBasedConstraints(){
+        return this.rankBasedConstraints;
+    }
 	
 	public void setPrefixMapping(PrefixMapping prefixes) {
 	    this.prefixes = prefixes;

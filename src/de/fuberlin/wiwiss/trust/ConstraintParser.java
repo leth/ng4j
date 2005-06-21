@@ -25,14 +25,16 @@ import de.fuberlin.wiwiss.ng4j.triql.parser.TriQLParser;
  * ?date >= '2005-01-01' AND ?date &lt; '2005-12-31'
  * </pre>
  * 
- * @version $Id: ConstraintParser.java,v 1.2 2005/03/28 22:31:51 cyganiak Exp $
+ * @version $Id: ConstraintParser.java,v 1.3 2005/06/21 15:01:46 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class ConstraintParser {
     private String constraint;
     private PrefixMapping prefixes;
-    private Collection metricInstances = new ArrayList();
+    private Collection metricInstances;
+    private Collection rankBasedMetricInstances;
     private SimpleNode resultNode = null;
+    private RankBasedMetric rankBasedMetric = null;
     
     /**
      * @param constraint The string representation of the constraint
@@ -41,15 +43,26 @@ public class ConstraintParser {
      * 		within the constraint
      */
     public ConstraintParser(String constraint, PrefixMapping prefixes,
-            Collection metricInstances) {
+            Collection metricInstances, Collection rankBasedMetricInstances) {
         this.constraint = constraint;
         this.prefixes = prefixes;
         this.metricInstances = metricInstances;
+        this.rankBasedMetricInstances = rankBasedMetricInstances;
     }
     
     public boolean isCountConstraint() {
         ensureParsed();
         return this.resultNode instanceof Q_CountExpression;
+    }
+    
+    public boolean isRankBasedConstraint() {
+        ensureParsed();
+        return this.rankBasedMetric != null;
+    }
+    
+    public RankBasedConstraint parseRankBasedConstraint(){
+        ensureParsed();
+        return new RankBasedConstraint((Q_MetricExpression) this.resultNode, this.rankBasedMetric);
     }
     
     /**
@@ -89,14 +102,31 @@ public class ConstraintParser {
     private void setMetricInstances(Node node) {
         if (node instanceof Q_MetricExpression) {
             Q_MetricExpression metricExpression = (Q_MetricExpression) node;
-            metricExpression.setMetricInstance(getMetricInstance(metricExpression.getURI()));
+            com.hp.hpl.jena.graph.Node metricNode = metricExpression.getURI();
+            
+            Metric metric = findMetricInstance(metricNode);
+            if(metric != null){
+                // if non-rank-based metric
+                metricExpression.setMetricInstance(metric);
+                this.rankBasedMetric = null;
+            } else {
+                // if rank-based metric
+                this.rankBasedMetric = findRankBasedConstraint(metricExpression.getURI());
+                if(this.rankBasedMetric == null){
+                    // if no metric instance could be found
+                    throw new TPLException("No Metric instance found for <" + metricNode.getURI() + ">");
+                }
+            }
         }
         for (int i = 0; i < node.jjtGetNumChildren(); i++) {
             setMetricInstances(node.jjtGetChild(i));
         }
     }
     
-    private Metric getMetricInstance(com.hp.hpl.jena.graph.Node uri) {
+    /**
+     * Return the metric instance identified by the URI Node or null otherwise.
+     */
+    private Metric findMetricInstance(com.hp.hpl.jena.graph.Node uri) {
         Iterator it = this.metricInstances.iterator();
         while (it.hasNext()) {
             Metric metric = (Metric) it.next();
@@ -104,6 +134,22 @@ public class ConstraintParser {
                 return metric;
             }
         }
-        throw new TPLException("No Metric instance found for <" + uri + ">");
+        return null;
     }
+
+    /**
+     * Return the rank-based metric instance identified by the URI Node or null otherwise.
+     */
+    private RankBasedMetric findRankBasedConstraint(com.hp.hpl.jena.graph.Node metric){
+        String uri = metric.getURI();
+        Iterator it = this.rankBasedMetricInstances.iterator();
+        while(it.hasNext()){
+            RankBasedMetric rankBasedMetric = (RankBasedMetric) it.next();
+            if(rankBasedMetric.getURI().equals(uri)){
+                return rankBasedMetric;
+            }
+        }
+        return null;
+    }
+    
 }
