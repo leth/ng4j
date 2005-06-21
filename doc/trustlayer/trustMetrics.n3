@@ -107,7 +107,7 @@ tpl:EbayMetric a metric:TrustMetric;
     metric:completeness                     metric:CompleteData ;
     metric:selection                        metric:ThresholdBasedSelection ;
     metric:computationalLocus               metric:CentralComputation ;
-    metric:evaluationOfTrustRelationships   metric:GroupEvaluatoin .
+    metric:evaluationOfTrustRelationships   metric:ScalarEvaluation .
     metric:arguments
         [ a metric:MetricArgumentSeq;
             rdf:_1 
@@ -116,4 +116,31 @@ tpl:EbayMetric a metric:TrustMetric;
                     rdfs:label "Sink" ;
                 ];
         ].
-                    
+            
+tpl:SemanticPageRank a metric:TrustMetric;
+    rdfs:label                              "Semantic PageRank" ;
+    rdfs:comment                            "The Semantic PageRank metric ranks entities in the graph using the PageRank algorithm. Multiple poperties between nodes can be selected for the calculation. For example, a PageRank using only foaf:knows properties contains the most known People of the users foaf network." ;  
+    metric:perspecive                       metric:GlobalPerspective ;
+    metric:completeness                     metric:CompleteData ;
+    metric:selection                        metric:RankBasedSelection ;
+    metric:computationalLocus               metric:CentralComputation ;
+    metric:evaluationOfTrustRelationships   metric:GroupEvaluation .
+    metric:arguments
+        [ a metric:MetricArgumentSeq;
+            rdf:_1 
+                [ a metric:RequiredArgument;
+                    rdfs:comment "The URI, which identifies the sink of the metric evaluation." ;
+                    rdfs:label "Sink" ;
+                ];
+            rdf:_2
+                [ a metric:RequiredArgument;
+                    rdfs:comment "The number x of trusted nodes. This number is used to select the x nodes with the best rating as trusted." ;
+                    rdfs:label "Number of Trusted Nodes" ;
+                ];
+            rdf:_3
+                [ a metric:OptionalArgument;
+                    rdfs:comment "The URIs of properties, which should be handled as links in the PageRank algorithm." ;
+                    rdfs:label "Link Properties" ;
+                ];
+        ].
+        
