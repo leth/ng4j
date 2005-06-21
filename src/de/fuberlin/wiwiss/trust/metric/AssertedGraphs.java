@@ -47,7 +47,6 @@ public class AssertedGraphs{
                        "WHERE ?warrant (?graph swp:assertedBy ?warrant .\n" +
                                        "?warrant swp:assertedBy ?warrant .\n" +
                                        "?warrant swp:authority  ?authority)\n" +
-        //TODO: was the signature cecked
                        "USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>\n";
         // execute query
         Iterator results = TriQLQuery.exec(sourceData, query);
