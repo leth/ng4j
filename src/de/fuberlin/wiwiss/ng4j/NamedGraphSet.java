@@ -1,4 +1,4 @@
-// $Id: NamedGraphSet.java,v 1.7 2004/12/17 11:37:57 cyganiak Exp $
+// $Id: NamedGraphSet.java,v 1.8 2005/06/21 09:28:44 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.io.InputStream;
@@ -247,7 +247,7 @@ public interface NamedGraphSet {
 
 	/**
 	 * Read Named Graphs from an URL into the NamedGraphSet. 
-	 * Supported RDF serialization languages are "TRIX", "TRIG",
+	 * Supported RDF serialization languages are "TRIX", "TRIX-EXT", "TRIG",
 	 * "RDF/XML", "N-TRIPLE" and "N3".
 	 * <p>
 	 * Serialization languages that support named graphs (like TriX)
@@ -265,7 +265,7 @@ public interface NamedGraphSet {
 	
 	/**
 	 * Read Named Graphs from an InputStream into the NamedGraphSet. 
-	 * Supported RDF serialization languages are "TRIX", "TRIG",
+	 * Supported RDF serialization languages are "TRIX", "TRIX-EXT", "TRIG",
 	 * "RDF/XML", "N-TRIPLE" and "N3".
 	 * <p>
 	 * Serialization languages that support named graphs (like TriX)
@@ -284,7 +284,7 @@ public interface NamedGraphSet {
 	
 	/**
 	 * Read Named Graphs from a Reader into the NamedGraphSet. 
-	 * Supported RDF serialization languages are "TRIX", "TRIG",
+	 * Supported RDF serialization languages are "TRIX", "TRIX-EXT", "TRIG",
 	 * "RDF/XML", "N-TRIPLE" and "N3".
 	 * <p>
 	 * Serialization languages that support named graphs (like TriX)
