@@ -45,6 +45,9 @@ import java.util.Vector;
  */
 public final class TidalTrustMetric extends Metric implements de.fuberlin.wiwiss.trust.Metric {
     
+    
+    public static final String URI = "http://www.wiwiss.fu-berlin.de/suhl/bizer/TPL/TidalTrustMetric";
+    
     /**
      * Contains all Nodes from the Trust Vocabulary 
      *  <a href="http://trust.mindswap.org/ont/trust.owl">http://trust.mindswap.org/ont/trust.owl</a>,
@@ -156,7 +159,7 @@ public final class TidalTrustMetric extends Metric implements de.fuberlin.wiwiss
      * Creates a new instance of TrustMailMetrik 
      */
     public TidalTrustMetric() {
-        super("http://www.wiwiss.fu-berlin.de/suhl/bizer/TPL/TidalTrustMetric");
+        super(URI);
        this.sourceSummary = null;
         
         trustProperties = MindswapTrust.getTrustProperties();
@@ -814,7 +817,21 @@ public final class TidalTrustMetric extends Metric implements de.fuberlin.wiwiss
     }
     
     protected ExplanationPart explain() {
-        ExplanationPart explComplete;
+        List text = new java.util.ArrayList();
+        ExplanationPart explComplete = new ExplanationPart(text);
+        
+        explComplete.addPart(summary());
+        
+        if(!sourceHasOwnRating && foundSink){
+            // add calculation explanation, if the source have no own rating of the source
+            // and a path to the sink was found.
+            explComplete.setDetails(generateCalculationExplanation());
+        }
+        
+        return explComplete;
+    }
+    
+    private ExplanationPart summary(){
         List summary = new java.util.ArrayList();
         if(foundSink){
             // Summary
@@ -852,16 +869,19 @@ public final class TidalTrustMetric extends Metric implements de.fuberlin.wiwiss
             summary.add(sink);
             summary.add(cl(". Therefore the source doesn't trust the sink."));
         }
-        explComplete = new ExplanationPart(summary);
         
-        if(!sourceHasOwnRating && foundSink){
-            // add calculation explanation, if the source have no own rating of the source
-            // and a path to the sink was found.
-            explComplete.setDetails(generateCalculationExplanation());
-        }
+        ExplanationPart summaryExpl = new ExplanationPart(summary);
         
-        return explComplete;
+        List details = new java.util.ArrayList();
+        details.add(cl("The "));
+        details.add( Node.createURI(TidalTrustMetric.URI));
+        details.add(cl(" uses a turst graph, whose nodes are the trustees and trusters and whose edges are weighted trust statements between the nodes. The weights differ form \"not trusted\" up to \"blind trust\". The metric searchs for shortest pathes over the trust graph from the source to the sink. The weights of the egdes along the found shortest pathes are concatenated by multiplication of the weights and the concatenations of the pathes are agregated by the average of the contatenations."));
+        summaryExpl.setDetails(new ExplanationPart(details));
+        
+        return summaryExpl;
+        
     }
+    
  // Explanation generation section end ---------------------------------------        
     
     
@@ -875,7 +895,7 @@ public final class TidalTrustMetric extends Metric implements de.fuberlin.wiwiss
         
         // run metric
         java.util.List arguments = new java.util.LinkedList();
-        Node source = Node.createURI("dadean7@lycos.de");
+        Node source = Node.createURI("mailto:dadean7@lycos.de");
         arguments.add(0,source);
         Node sink = Node.createURI("http://www.reuters.com");
         arguments.add(1,sink);

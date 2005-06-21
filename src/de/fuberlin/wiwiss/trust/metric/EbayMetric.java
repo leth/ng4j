@@ -29,6 +29,8 @@ import de.fuberlin.wiwiss.trust.metric.vocab.EbayTrust;
  */
 public class EbayMetric extends Metric implements de.fuberlin.wiwiss.trust.Metric {
     
+    public static final String URI = "http://www.wiwiss.fu-berlin.de/suhl/bizer/TPL/EbayMetric";
+    
     /** the sink of the current evaluation */
     private Node sink = null;
     
@@ -46,7 +48,7 @@ public class EbayMetric extends Metric implements de.fuberlin.wiwiss.trust.Metri
     
     /** Creates a new instance of the EbayMetric */
     public EbayMetric() {
-        super("http://www.wiwiss.fu-berlin.de/suhl/bizer/TPL/EbayMetric");
+        super(URI);
     }
     
     /** 
@@ -94,6 +96,15 @@ public class EbayMetric extends Metric implements de.fuberlin.wiwiss.trust.Metri
     protected de.fuberlin.wiwiss.trust.ExplanationPart explain() {
         List text = new ArrayList();
         
+        ExplanationPart expl = new ExplanationPart(text);
+        expl.addPart(summary());
+        expl.addPart(generateRatingExpl());
+        return expl;
+    }
+    
+    private ExplanationPart summary(){
+        List text = new ArrayList();
+        
         text.add(cl("The "));
         text.add(Node.createURI(getURI()));
         text.add(cl(" infered, that the sink "));
@@ -103,9 +114,16 @@ public class EbayMetric extends Metric implements de.fuberlin.wiwiss.trust.Metri
         } else {
             text.add(cl(" is not trustworthy, because the metric found more negative than positive ratings of the sink. "));            
         }
-        ExplanationPart expl = new ExplanationPart(text);
-        expl.addPart(generateRatingExpl());
-        return expl;
+        
+        ExplanationPart summary = new ExplanationPart(text);
+        
+        List details = new ArrayList();
+        details.add(cl("The "));
+        details.add(com.hp.hpl.jena.graph.Node.createURI(EbayMetric.URI));
+        details.add(cl(" looks up all positive, negative and neutral ratings of the sink. If the difference of the sums of  positive and negative ratings is positive, than the sink is trustworhy. Otherwise the sink is not trustworthy."));
+        summary.setDetails(new ExplanationPart(details));
+        
+        return summary;
     }
     
     private ExplanationPart generateRatingExpl() {
