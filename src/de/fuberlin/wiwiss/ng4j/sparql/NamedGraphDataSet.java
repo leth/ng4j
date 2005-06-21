@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.query.DataSet;
+import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.impl.ModelCom;
 
@@ -14,7 +14,7 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 /**
  * Implementation of ARQ's DataSet interface on top of an NG4J NamedGraphSet
  */
-public class NamedGraphDataSet implements DataSet {
+public class NamedGraphDataSet implements Dataset {
 	private NamedGraphSet set;
 	private Node defaultGraphName;
 	
@@ -29,7 +29,11 @@ public class NamedGraphDataSet implements DataSet {
 	}
 
 	public Model getDefaultModel() {
-		return new ModelCom(getDefaultGraph());
+		Graph defaultGraph = getDefaultGraph();
+		if (defaultGraph == null) {
+			return null;
+		}
+		return new ModelCom(defaultGraph);
 	}
 
 	public Graph getDefaultGraph() {
@@ -46,6 +50,10 @@ public class NamedGraphDataSet implements DataSet {
 
 	public Graph getNamedGraph(String graphName) {
 		return this.set.getGraph(graphName);
+	}
+
+	public boolean containsNamedGraph(String uri) {
+		return this.set.containsGraph(uri);
 	}
 
 	public Iterator listNames() {
