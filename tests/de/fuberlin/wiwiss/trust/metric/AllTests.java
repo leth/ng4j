@@ -15,7 +15,7 @@ import junit.framework.*;
  */
 public class AllTests extends TestCase {
     
-    public static final String TESTSPATH= "ng4j/tests/";
+    public static final String TESTSPATH= "file:/home/voodoo/Java/project/trustlayer/ng4j/tests/";
     
     public AllTests(java.lang.String testName) {
         super(testName);
@@ -27,6 +27,7 @@ public class AllTests extends TestCase {
         suite.addTest(TidalTrustMetricTestWithPolicy.suite());
         suite.addTest(AppleseedMetricTest.suite());
         suite.addTest(EbayMetricTest.suite());
+        suite.addTest(SemanticPageRankTest.suite());
         suite.addTest(AssertedGraphsTest.suite());
         return suite;
     }

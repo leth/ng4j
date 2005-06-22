@@ -16,6 +16,9 @@ import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 import de.fuberlin.wiwiss.trust.Metric;
 import de.fuberlin.wiwiss.trust.MetricException;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  *
  * @author Oliver Maresch (oliver-maresch@gmx.de)
@@ -48,13 +51,11 @@ public class AppleseedMetricTest extends TestCase {
         suite.addTest(new AppleseedMetricTest("testcase9_testTerminationByThreshold1"));
         suite.addTest(new AppleseedMetricTest("testcase10_testTerminationByThreshold2"));
         suite.addTest(new AppleseedMetricTest("testcase11_testTerminationByThreshold3"));
+        suite.addTest(new AppleseedMetricTest("testcase12_testCache"));
         return suite;
     }
     
-    private MetricResult calcMetric(String source, String sink, int top, float in, float d, float T, int M, int l, float e)
-        throws MetricException {
-     
-        metric.setup(data);
+    private List createArgumentList(String source, String sink, int top, float in, float d, float T, int M, int l, float e) {
         java.util.List arguments = new java.util.LinkedList();
         com.hp.hpl.jena.graph.Node sourceNode = com.hp.hpl.jena.graph.Node.createURI(source);
         arguments.add(0,sourceNode);
@@ -75,136 +76,282 @@ public class AppleseedMetricTest extends TestCase {
         com.hp.hpl.jena.graph.Node eNode = com.hp.hpl.jena.graph.Node.createLiteral(Float.toString(e), null, com.hp.hpl.jena.datatypes.xsd.XSDDatatype.XSDinteger);
         arguments.add(8,eNode);
         
-        return (MetricResult) metric.calculateMetric(arguments);
-        
+        return arguments;        
     }
     
 
     
     public void testcase1_emptyGraph(){
-        MetricResult result = null;
+        List bindings = new LinkedList();
+        List binding = createArgumentList("tc1.testuser1@foo.com", "tc1.testuser2@foo.com", 5, 20, 0.85f, 0.05f, 200, 6, 1f);
+        bindings.add(binding);
+        
         try{
-            result = calcMetric("tc1.testuser1@foo.com", "tc1.testuser2@foo.com", 5, 20, 0.85f, 0.05f, 200, 6, 1f);
-            assertFalse(result.getResult());
-            assertEquals(1, metric.getIterations());
+            metric.init(data, bindings);
+        
+            assertFalse(metric.isAccepted(0));
+            assertEquals(1, metric.getIterations(0));
+            assertNotNull(metric.explain(0));
         }catch(Exception e){
-            System.err.print(e.toString());
+            e.printStackTrace(System.err);
             assertTrue(false);
         }        
     }
     
     public void testcase2_onlyOneBlindTrustEdge(){
-        MetricResult result = null;
+        List bindings = new LinkedList();
+        List binding = createArgumentList("tc2.testuser1@foo.com", "tc2.testuser2@foo.com", 5, 20, 0.85f, 0.05f, 200, 6, 1f);
+        bindings.add(binding);
+        
         try{
-            result = calcMetric("tc2.testuser1@foo.com", "tc2.testuser2@foo.com", 5, 20, 0.85f, 0.05f, 200, 6, 1f);
-            assertTrue(result.getResult());
+            metric.init(data, bindings);
+        
+            assertTrue(metric.isAccepted(0));
+            assertEquals(2, metric.getIterations(0));
+            assertNotNull(metric.explain(0));
         }catch(Exception e){
-            System.err.print(e.toString());
+            e.printStackTrace(System.err);
             assertTrue(false);
-        }
+        }        
     }
     
     public void testcase3_findRankinOfTheTrustedNode(){
-        MetricResult result = null;
+        List bindings = new LinkedList();
+        List binding = createArgumentList("tc3.testuser1@foo.com", "tc3.testuser2@foo.com", 1, 1, 0.85f, 0.05f, 200, 6, 1f);
+        bindings.add(binding);
+        
         try{
-            result = calcMetric("tc3.testuser1@foo.com", "tc3.testuser2@foo.com", 1, 1, 0.85f, 0.05f, 200, 6, 1f);
-            assertTrue(result.getResult());
+            metric.init(data, bindings);
+
+            assertTrue(metric.isAccepted(0));
+            assertNotNull(metric.explain(0));
         }catch(Exception e){
-            System.err.print(e.toString());
+            e.printStackTrace(System.err);
             assertTrue(false);
         }
     }
     
     public void testcase4_findRankingOfTheUntrustworhyNode(){
-        MetricResult result = null;
+        List bindings = new LinkedList();
+        List binding = createArgumentList("tc3.testuser1@foo.com", "tc3.testuser3@foo.com", 1, 1, 0.85f, 0.05f, 200, 6, 1f);
+        bindings.add(binding);
+        
         try{
-            result = calcMetric("tc3.testuser1@foo.com", "tc3.testuser3@foo.com", 1, 1, 0.85f, 0.05f, 200, 6, 1f);
-            assertFalse(result.getResult());
+            metric.init(data, bindings);
+
+            assertFalse(metric.isAccepted(0));
+            assertNotNull(metric.explain(0));
         }catch(Exception e){
-            System.err.print(e.toString());
+            e.printStackTrace(System.err);
             assertTrue(false);
         }
     }
     
     public void testcase5_testPathLengthParamSinkOutOfRange(){
-        MetricResult result = null;
+        List bindings = new LinkedList();
+        List binding = createArgumentList("tc5.testuser1@foo.com", "tc5.testuser4@foo.com", 5, 20, 0.85f, 0.05f, 200, 2, 1);
+        bindings.add(binding);
+        
         try{
-            result = calcMetric("tc5.testuser1@foo.com", "tc5.testuser4@foo.com", 5, 20, 0.85f, 0.05f, 200, 2, 1);
-            assertFalse(result.getResult());
+            metric.init(data, bindings);
+
+            assertFalse(metric.isAccepted(0));
+            assertNotNull(metric.explain(0));
         }catch(Exception e){
-            System.err.print(e.toString());
+            e.printStackTrace(System.err);
             assertTrue(false);
         }
     }
     
     public void testcase6_testPathLengthParamSinkWithinRange(){
-        MetricResult result = null;
+        List bindings = new LinkedList();
+        List binding = createArgumentList("tc5.testuser1@foo.com", "tc5.testuser3@foo.com", 5, 20, 0.85f, 0.05f, 200, 2, 1);
+        bindings.add(binding);
+        
         try{
-            result = calcMetric("tc5.testuser1@foo.com", "tc5.testuser3@foo.com", 5, 20, 0.85f, 0.05f, 200, 2, 1);
-            assertTrue(result.getResult());
+            metric.init(data, bindings);
+
+            assertTrue(metric.isAccepted(0));
+            assertNotNull(metric.explain(0));
         }catch(Exception e){
-            System.err.print(e.toString());
+            e.printStackTrace(System.err);
             assertTrue(false);
         }
     }
     
     public void testcase7_testMaxNodesParamMoreNodesThanMaximum(){
-        MetricResult result = null;
+        List bindings = new LinkedList();
+        List binding = createArgumentList("tc5.testuser1@foo.com", "tc5.testuser4@foo.com", 5, 20, 0.85f, 0.05f, 3, 6, 1);
+        bindings.add(binding);
+        
         try{
-            result = calcMetric("tc5.testuser1@foo.com", "tc5.testuser4@foo.com", 5, 20, 0.85f, 0.05f, 3, 6, 1);
-            assertFalse(result.getResult());
-            assertEquals(3, metric.getNumberOfRankedNodes());
+            metric.init(data, bindings);
+
+            assertFalse(metric.isAccepted(0));
+            assertEquals(3, metric.getNumberOfRankedNodes(0));
+            assertNotNull(metric.explain(0));
         }catch(Exception e){
-            System.err.print(e.toString());
+            e.printStackTrace(System.err);
             assertTrue(false);
         }
     }
     
     public void testcase8_testMaxNodesParamLessNodesThanMaximum(){
-        MetricResult result = null;
+        List bindings = new LinkedList();
+        List binding = createArgumentList("tc2.testuser1@foo.com", "tc2.testuser2@foo.com", 5, 20, 0.85f, 0.05f, 3, 6, 1);
+        bindings.add(binding);
+        
         try{
-            result = calcMetric("tc2.testuser1@foo.com", "tc2.testuser2@foo.com", 5, 20, 0.85f, 0.05f, 3, 6, 1);
-            assertTrue(result.getResult());
-            assertEquals(metric.getNumberOfRankedNodes(), 2);
+            metric.init(data, bindings);
+
+            assertTrue(metric.isAccepted(0));
+            assertEquals(2, metric.getNumberOfRankedNodes(0));
+            assertNotNull(metric.explain(0));
         }catch(Exception e){
-            System.err.print(e.toString());
+            e.printStackTrace(System.err);
             assertTrue(false);
         } 
     }
     
     public void testcase9_testTerminationByThreshold1(){
-        MetricResult result = null;
+        List bindings = new LinkedList();
+        List binding = createArgumentList("tc2.testuser1@foo.com", "tc2.testuser2@foo.com", 5, 1, 0.5f, 0.5f, 200, 6, 1);
+        bindings.add(binding);
+        
         try{
-            result = calcMetric("tc2.testuser1@foo.com", "tc2.testuser2@foo.com", 5, 1, 0.5f, 0.5f, 200, 6, 1);
-            assertTrue(result.getResult());
-            assertEquals(2, metric.getIterations());
+            metric.init(data, bindings);
+
+            assertTrue(metric.isAccepted(0));
+            assertEquals(2, metric.getIterations(0));
+            assertNotNull(metric.explain(0));
         }catch(Exception e){
-            System.err.print(e.toString());
+            e.printStackTrace(System.err);
             assertTrue(false);
         } 
     }
 
     public void testcase10_testTerminationByThreshold2(){
-        MetricResult result = null;
+        List bindings = new LinkedList();
+        List binding = createArgumentList("tc2.testuser1@foo.com", "tc2.testuser2@foo.com", 5, 1, 0.4f, 0.5f, 200, 6, 1);
+        bindings.add(binding);
+        
         try{
-            result = calcMetric("tc2.testuser1@foo.com", "tc2.testuser2@foo.com", 5, 1, 0.4f, 0.5f, 200, 6, 1);
-            assertTrue(result.getResult());
-            assertEquals(3, metric.getIterations());
+            metric.init(data, bindings);
+
+            assertTrue(metric.isAccepted(0));
+            assertEquals(2, metric.getIterations(0));
+            assertNotNull(metric.explain(0));
         }catch(Exception e){
-            System.err.print(e.toString());
+            e.printStackTrace(System.err);
             assertTrue(false);
-        }     }
+        }
+    }
     
     public void testcase11_testTerminationByThreshold3(){
-        MetricResult result = null;
+        List bindings = new LinkedList();
+        List binding = createArgumentList("tc2.testuser1@foo.com", "tc2.testuser2@foo.com", 5, 1, 0.6f, 0.5f, 200, 6, 1);
+        bindings.add(binding);
+        
         try{
-            result = calcMetric("tc2.testuser1@foo.com", "tc2.testuser2@foo.com", 5, 1, 0.6f, 0.5f, 200, 6, 1);
-            assertTrue(result.getResult());
-            assertEquals(2,metric.getIterations());
+            metric.init(data, bindings);
+
+            assertTrue(metric.isAccepted(0));
+            assertEquals(2,metric.getIterations(0));
+            assertNotNull(metric.explain(0));
         }catch(Exception e){
-            System.err.print(e.toString());
+            e.printStackTrace(System.err);
             assertTrue(false);
         } 
+    }
+    
+    public void testcase12_testCache(){
+        
+        // runs all testcases from 1 to 11 at once and tests the results by using the cache
+        List bindings = new LinkedList();
+        // TC1
+        List binding = createArgumentList("tc1.testuser1@foo.com", "tc1.testuser2@foo.com", 5, 20, 0.85f, 0.05f, 200, 6, 1f);
+        bindings.add(binding);
+        // TC2
+        binding = createArgumentList("tc2.testuser1@foo.com", "tc2.testuser2@foo.com", 5, 20, 0.85f, 0.05f, 200, 6, 1f);
+        bindings.add(binding);
+        // TC3
+        binding = createArgumentList("tc3.testuser1@foo.com", "tc3.testuser2@foo.com", 1, 1, 0.85f, 0.05f, 200, 6, 1f);
+        bindings.add(binding);
+        // TC4
+        binding = createArgumentList("tc3.testuser1@foo.com", "tc3.testuser3@foo.com", 1, 1, 0.85f, 0.05f, 200, 6, 1f);
+        bindings.add(binding);
+        // TC5
+        binding = createArgumentList("tc5.testuser1@foo.com", "tc5.testuser4@foo.com", 5, 20, 0.85f, 0.05f, 200, 2, 1);
+        bindings.add(binding);
+        // TC6
+        binding = createArgumentList("tc5.testuser1@foo.com", "tc5.testuser3@foo.com", 5, 20, 0.85f, 0.05f, 200, 2, 1);
+        bindings.add(binding);
+        // TC7
+        binding = createArgumentList("tc5.testuser1@foo.com", "tc5.testuser4@foo.com", 5, 20, 0.85f, 0.05f, 3, 6, 1);
+        bindings.add(binding);
+        // TC8
+        binding = createArgumentList("tc2.testuser1@foo.com", "tc2.testuser2@foo.com", 5, 20, 0.85f, 0.05f, 3, 6, 1);
+        bindings.add(binding);
+        // TC9
+        binding = createArgumentList("tc2.testuser1@foo.com", "tc2.testuser2@foo.com", 5, 1, 0.5f, 0.5f, 200, 6, 1);
+        bindings.add(binding);
+        // T10
+        binding = createArgumentList("tc2.testuser1@foo.com", "tc2.testuser2@foo.com", 5, 1, 0.4f, 0.5f, 200, 6, 1);
+        bindings.add(binding);
+        // 11 
+        binding = createArgumentList("tc2.testuser1@foo.com", "tc2.testuser2@foo.com", 5, 1, 0.6f, 0.5f, 200, 6, 1);
+        bindings.add(binding);
+        
+        
+        try{
+            metric.init(data, bindings);
+
+            // TC1
+            assertFalse(metric.isAccepted(0));
+            assertEquals(1, metric.getIterations(0));
+            assertNotNull(metric.explain(0));
+            // TC2
+            assertTrue(metric.isAccepted(1));
+            assertEquals(2, metric.getIterations(1));
+            assertNotNull(metric.explain(1));
+            // TC3
+            assertTrue(metric.isAccepted(2));
+            assertNotNull(metric.explain(2));
+            // TC4
+            assertFalse(metric.isAccepted(3));
+            assertNotNull(metric.explain(3));
+            // TC5
+            assertFalse(metric.isAccepted(4));
+            assertNotNull(metric.explain(4));
+            // TC6
+            assertTrue(metric.isAccepted(5));
+            assertNotNull(metric.explain(5));
+            // TC7
+            assertFalse(metric.isAccepted(6));
+            assertEquals(3, metric.getNumberOfRankedNodes(6));
+            assertNotNull(metric.explain(6));
+            // TC8
+            assertTrue(metric.isAccepted(7));
+            assertEquals(2, metric.getNumberOfRankedNodes(7));
+            assertNotNull(metric.explain(7));
+            // TC9
+            assertTrue(metric.isAccepted(8));
+            assertEquals(2, metric.getIterations(8));
+            assertNotNull(metric.explain(8));
+            // TC10
+            assertTrue(metric.isAccepted(9));
+            assertEquals(2, metric.getIterations(9));
+            assertNotNull(metric.explain(9));
+            // TC11
+            assertTrue(metric.isAccepted(10));
+            assertEquals(2,metric.getIterations(10));
+            assertNotNull(metric.explain(10));
+            
+        }catch(Exception e){
+            e.printStackTrace(System.err);
+            assertTrue(false);
+        } 
+        
     }
     
     public static void main(String[] args) {
