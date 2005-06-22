@@ -19,7 +19,7 @@ import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
 /**
- * @version $Id: TrustEngineTest.java,v 1.3 2005/03/28 22:31:51 cyganiak Exp $
+ * @version $Id: TrustEngineTest.java,v 1.4 2005/06/22 21:21:23 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class TrustEngineTest extends FixtureWithLotsOfNodes {
@@ -133,19 +133,41 @@ public class TrustEngineTest extends FixtureWithLotsOfNodes {
 	    this.source.addQuad(new Quad(graph1, node1, node1, Node.createLiteral("bar")));
 	    this.source.addQuad(new Quad(graph1, node2, node2, Node.createLiteral("foo")));
 
-	    TrustPolicy policy = new TrustPolicy("http://example.org/policy1");
+        TrustPolicy policy = new TrustPolicy("http://example.org/policy1");
 	    policy.addExpressionConstraint(new ConstraintParser(
 	            "METRIC(<http://example.org/metrics#IsFoo>, ?OBJ)",
 	            new PrefixMappingImpl(),
-	            Collections.singletonList(new IsFooMetric())).parseExpressionConstraint());
+	            Collections.singletonList(new IsFooMetric()),
+                Collections.EMPTY_LIST).parseExpressionConstraint());
 	    
 	    List results = iteratorToList(
 	            this.trustEngine.find(anyTriple,
 	                    policy).tripleIterator());
 	    assertEquals(1, results.size());
 	    assertTrue(results.contains(new Triple(node2, node2, Node.createLiteral("foo"))));
-	}
+    }
 
+    public void testFindWithRankBasedMetric() {
+	    this.source.addQuad(new Quad(graph1, node1, node1, Node.createLiteral("bar")));
+	    this.source.addQuad(new Quad(graph1, node2, node2, Node.createLiteral("foo")));
+
+        TrustPolicy policy = new TrustPolicy("http://example.org/policies#Policy1");
+	    policy.addRankBasedConstraint(new ConstraintParser(
+	            "METRIC(<" + AlwaysFirstRankBasedMetric.URI + ">, ?OBJ)",
+	            new PrefixMappingImpl(),
+                Collections.EMPTY_LIST,
+                Collections.singletonList(new AlwaysFirstRankBasedMetric())).parseRankBasedConstraint());
+                
+        QueryResult qResult = this.trustEngine.find(anyTriple, policy);
+        List results = iteratorToList(qResult.tripleIterator());
+        
+        assertEquals(2, results.size());
+        Triple t1 = new Triple(node2, node2, Node.createLiteral("foo"));
+	    assertTrue(results.contains(t1));
+	    assertTrue(results.contains(new Triple(node1, node1, Node.createLiteral("bar"))));
+    }
+    
+    
 	public void testFindWithPolicyUsingSUBJ() {
 	    // What Fred says
 	    this.source.addQuad(new Quad(graph1, node1, node1, node1));

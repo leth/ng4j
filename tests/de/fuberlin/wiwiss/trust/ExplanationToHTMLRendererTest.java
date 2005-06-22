@@ -13,16 +13,17 @@ import com.hp.hpl.jena.shared.PrefixMapping;
 import com.hp.hpl.jena.shared.impl.PrefixMappingImpl;
 import com.hp.hpl.jena.vocabulary.RDF;
 
+import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 /**
- * @version $Id: ExplanationToHTMLRendererTest.java,v 1.2 2005/05/25 13:15:33 maresch Exp $
+ * @version $Id: ExplanationToHTMLRendererTest.java,v 1.3 2005/06/22 21:21:23 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class ExplanationToHTMLRendererTest extends TestCase {
     private String foo = "http://example.org/foo";
     private Node fooNode = Node.createURI(this.foo);
     private Node literal = Node.createLiteral("literal");
-    private TrustLayerGraph tlg;
+    private NamedGraphSet ngs;
     private Explanation expl;
     private ExplanationToHTMLRenderer renderer;
     
@@ -31,18 +32,8 @@ public class ExplanationToHTMLRendererTest extends TestCase {
                 new Triple(this.fooNode, this.fooNode, this.fooNode),
                 TrustPolicy.TRUST_EVERYTHING);
 
-        String tpl = "http://www.wiwiss.fu-berlin.de/suhl/bizer/TPL/";
-        Node thisSuite = Node.createURI("http://example.com/test/");
-        Node trustEverything = Node.createURI(tpl + "TrustEverything");
-        Graph policy = ModelFactory.createMemModelMaker().getGraphMaker().createGraph();
-        policy.add(new Triple( thisSuite, RDF.Nodes.type, Node.createURI(tpl + "TrustPolicySuite")));
-        policy.add(new Triple( thisSuite, Node.createURI(tpl + "suiteName"), Node.createLiteral("Test Policies")));
-        policy.add(new Triple( thisSuite, Node.createURI(tpl + "includesPolicy"), trustEverything));
-        policy.add(new Triple( trustEverything, RDF.Nodes.type, Node.createURI(tpl + "TrustPolicy")));
-        policy.add(new Triple( trustEverything, Node.createURI(tpl + "policyName"), Node.createLiteral("Trust everything")));
-        
-        this.tlg = new TrustLayerGraph(new NamedGraphSetImpl(), policy);
-        this.renderer = new ExplanationToHTMLRenderer(this.expl, this.tlg);
+        this.ngs = new NamedGraphSetImpl();
+        this.renderer = new ExplanationToHTMLRenderer(this.expl, ngs);
     }
     
     public void testRenderEmptyExplanation() {
@@ -71,7 +62,7 @@ public class ExplanationToHTMLRendererTest extends TestCase {
         this.expl = new Explanation(
                 new Triple(Node.createAnon(new AnonId("anon")), this.fooNode, this.fooNode),
                 TrustPolicy.TRUST_EVERYTHING);
-        this.renderer = new ExplanationToHTMLRenderer(this.expl, this.tlg);
+        this.renderer = new ExplanationToHTMLRenderer(this.expl, this.ngs);
         assertEquals("<tt>_:anon</tt>", this.renderer.getSubjectAsHTML());
     }
     

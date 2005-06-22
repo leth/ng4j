@@ -11,7 +11,7 @@ import com.hp.hpl.jena.shared.impl.PrefixMappingImpl;
 /**
  * Tests for {@link de.fuberlin.wiwiss.trust.ConstraintParser}.
  *
- * @version $Id: ConstraintParserTest.java,v 1.3 2005/03/28 22:31:51 cyganiak Exp $
+ * @version $Id: ConstraintParserTest.java,v 1.4 2005/06/22 21:21:23 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class ConstraintParserTest extends TestCase {
@@ -28,7 +28,7 @@ public class ConstraintParserTest extends TestCase {
 
     public void testMinimalConstraint() {
         ExpressionConstraint condition = new ConstraintParser(
-                "(?a > 0)", new PrefixMappingImpl(), Collections.EMPTY_LIST).parseExpressionConstraint();
+                "(?a > 0)", new PrefixMappingImpl(), Collections.EMPTY_LIST, Collections.EMPTY_LIST).parseExpressionConstraint();
         
         VariableBinding binding = new VariableBinding();
         binding.setValue("a", Node.createLiteral("17", null, XSDDatatype.XSDinteger));
@@ -70,7 +70,7 @@ public class ConstraintParserTest extends TestCase {
     }
     
     private ConstraintParser createParser(String constraint) {
-        return new ConstraintParser(constraint, new PrefixMappingImpl(), Collections.EMPTY_LIST);
+        return new ConstraintParser(constraint, new PrefixMappingImpl(), Collections.EMPTY_LIST, Collections.EMPTY_LIST);
     }
     
     private void assertParseException(String constraint) {

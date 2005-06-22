@@ -1,5 +1,6 @@
 package de.fuberlin.wiwiss.trust;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -15,15 +16,17 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
 /**
- * @version $Id: MetricTest.java,v 1.6 2005/04/15 12:32:38 maresch Exp $
+ * @version $Id: MetricTest.java,v 1.7 2005/06/22 21:21:23 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class MetricTest extends TestCase {
     private Metric isFooMetric;
     private Metric equalsMetric;
     private Metric trueMetric;
+    private RankBasedMetric alwaysFirstMetric;
     private PrefixMapping prefixes;
     private List metrics;
+    private List rankBasedMetrics;
     
     public void setUp() {
         this.isFooMetric = new IsFooMetric();
@@ -32,10 +35,13 @@ public class MetricTest extends TestCase {
         this.equalsMetric.setup(new NamedGraphSetImpl());
         this.trueMetric = new TrueMetric();
         this.trueMetric.setup(new NamedGraphSetImpl());
+        this.alwaysFirstMetric = new AlwaysFirstRankBasedMetric();
         this.prefixes = new PrefixMappingImpl();
         this.prefixes.setNsPrefix("ex", "http://example.org/metrics#");
         this.metrics = Arrays.asList(
                 new Metric[] {this.isFooMetric, this.equalsMetric, this.trueMetric});
+        this.rankBasedMetrics = Arrays.asList(
+                new RankBasedMetric[] {this.alwaysFirstMetric});
     }
     
     public void testIsFooMetric() throws MetricException {
@@ -53,6 +59,7 @@ public class MetricTest extends TestCase {
         ConstraintParser parser = new ConstraintParser(
                 "METRIC(<http://example.com/metrics#unknown>, ?a)",
                 new PrefixMappingImpl(),
+                Collections.EMPTY_LIST,
                 Collections.EMPTY_LIST);
         try {
             parser.parseExpressionConstraint();
@@ -107,8 +114,27 @@ public class MetricTest extends TestCase {
                 constraint.evaluate(new VariableBinding()).getTextExplanation().toString());
     }
     
+    public void testRankBasedMetric(){
+        ConstraintParser parser = new ConstraintParser(
+            "METRIC(<" + AlwaysFirstRankBasedMetric.URI + ">, <http://example.com/something>)",
+            this.prefixes,
+            this.metrics,
+            this.rankBasedMetrics);
+        assertTrue(parser.isRankBasedConstraint());
+        RankBasedConstraint constraint = parser.parseRankBasedConstraint();
+        RankBasedMetric metric = constraint.getRankBasedMetric();
+        NamedGraphSet set = new NamedGraphSetImpl();
+        try{
+            metric.init(set, Collections.EMPTY_LIST);
+            assertTrue(metric.isAccepted(0));
+            assertEquals("Part[\"AlwaysFirstRankBasedMetric\"]", metric.explain(0).toString());
+        } catch(MetricException e){
+            assertFalse(true);
+        }
+    }
+    
     private ExpressionConstraint makeConstraint(String expression) {
-        return new ConstraintParser(expression, this.prefixes, this.metrics).parseExpressionConstraint();
+        return new ConstraintParser(expression, this.prefixes, this.metrics, this.rankBasedMetrics).parseExpressionConstraint();
     }
     
     class EqualsMetric implements Metric {

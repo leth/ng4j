@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -23,7 +24,7 @@ import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
  * TODO: tpl:graphExplanation
  * TODO: Warn when unknown term from the tpl namespace are used
  * 
- * @version $Id: PolicySuiteFromRDFBuilderTest.java,v 1.7 2005/03/28 22:31:51 cyganiak Exp $
+ * @version $Id: PolicySuiteFromRDFBuilderTest.java,v 1.8 2005/06/22 21:21:23 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class PolicySuiteFromRDFBuilderTest extends TestCase {
@@ -50,7 +51,9 @@ public class PolicySuiteFromRDFBuilderTest extends TestCase {
         buildSuite();
 
         assertNull(this.suite.getSuiteName());
-        assertTrue(this.suite.getAllPolicyURIs().isEmpty());
+        assertEquals(1, this.suite.getAllPolicyURIs().size());
+        assertEquals(TrustPolicy.TRUST_EVERYTHING.getURI(), 
+                     this.suite.getAllPolicyURIs().iterator().next());
     }
     
     public void testNoSuite() {
@@ -105,7 +108,7 @@ public class PolicySuiteFromRDFBuilderTest extends TestCase {
         this.graph.add(new Triple(suiteNode, TPL.includesPolicy, policy2));
         buildSuite();
 
-        assertEquals(2, this.suite.getAllPolicyURIs().size());
+        assertEquals(3, this.suite.getAllPolicyURIs().size()); // + TrustEverything
         assertTrue(this.suite.getAllPolicyURIs().contains(policy1.getURI()));
         assertTrue(this.suite.getAllPolicyURIs().contains(policy2.getURI()));
         
@@ -240,11 +243,14 @@ public class PolicySuiteFromRDFBuilderTest extends TestCase {
         addSuiteAndPolicy1();
         this.graph.getPrefixMapping().setNsPrefix("ex", "http://example.org/metrics#");
         this.graph.add(new Triple(policy1, TPL.constraint, Node.createLiteral("METRIC(ex:IsFoo, ?a)")));
+        this.graph.add(new Triple(policy1, TPL.constraint, Node.createLiteral("METRIC(ex:AlwaysFirstRankBasedMetric, ?a)")));
         PolicySuiteFromRDFBuilder builder = new PolicySuiteFromRDFBuilder(
-                this.graph, Arrays.asList(new Metric[] {new IsFooMetric()}));
+                this.graph, Arrays.asList(new Metric[] {new IsFooMetric()}), 
+                Arrays.asList(new RankBasedMetric[] {new AlwaysFirstRankBasedMetric()}));
         this.suite = builder.buildPolicySuite();
         
         assertEquals(1, this.suite.getTrustPolicy(policy1URI).getExpressionConstraints().size());
+        assertEquals(1, this.suite.getTrustPolicy(policy1URI).getRankBasedConstraints().size());
         ExpressionConstraint condition = (ExpressionConstraint) this.suite.getTrustPolicy(policy1URI)
         			.getExpressionConstraints().iterator().next();
         VariableBinding binding = new VariableBinding();
@@ -252,6 +258,25 @@ public class PolicySuiteFromRDFBuilderTest extends TestCase {
         assertTrue(condition.evaluate(binding).getResult());
         binding.setValue("a", Node.createLiteral("bar"));
         assertFalse(condition.evaluate(binding).getResult());
+        
+        ResultTable table = new ResultTable();
+        binding = new VariableBinding();
+        binding.setValue("a", Node.createLiteral("foo"));
+        table.addBinding(binding);
+        binding = new VariableBinding();
+        binding.setValue("a", Node.createLiteral("bar"));
+        table.addBinding(binding);
+        
+        RankBasedConstraint r = (RankBasedConstraint) 
+            this.suite.getTrustPolicy(policy1URI).getRankBasedConstraints().iterator().next();
+        r.getRankBasedMetric().getURI().equals(AlwaysFirstRankBasedMetric.URI);
+        List args = r.getArgumentBindings(table);
+        assertTrue(args.equals(
+            Arrays.asList(new List[]{
+                Collections.singletonList(Node.createLiteral("foo")),
+                Collections.singletonList(Node.createLiteral("bar"))
+            })
+        ));
     }
 
     public void testCount() {
@@ -331,7 +356,7 @@ public class PolicySuiteFromRDFBuilderTest extends TestCase {
 
     private void buildSuite() {
         PolicySuiteFromRDFBuilder builder = new PolicySuiteFromRDFBuilder(
-                this.graph, Collections.EMPTY_LIST);
+                this.graph, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
         this.suite = builder.buildPolicySuite();
         if (this.expectedWarnings != builder.getWarnings().size()) {
             StringBuffer warnings = new StringBuffer();

@@ -1,6 +1,8 @@
 package de.fuberlin.wiwiss.trust;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
@@ -10,8 +12,10 @@ import com.hp.hpl.jena.vocabulary.RDF;
 
 import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
 
+import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
+
 /**
- * @version $Id: TrustPolicyTest.java,v 1.4 2005/03/28 22:31:51 cyganiak Exp $
+ * @version $Id: TrustPolicyTest.java,v 1.5 2005/06/22 21:21:23 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class TrustPolicyTest extends FixtureWithLotsOfNodes {
@@ -67,11 +71,13 @@ public class TrustPolicyTest extends FixtureWithLotsOfNodes {
 	    policy.addExpressionConstraint(new ConstraintParser(
 	            "METRIC(<http://example.org/metrics#IsFoo>, ?var1)",
 	            new PrefixMappingImpl(),
-	            Collections.singletonList(new IsFooMetric())).parseExpressionConstraint());
+	            Collections.singletonList(new IsFooMetric()),
+                Collections.EMPTY_LIST).parseExpressionConstraint());
 	    policy.addExpressionConstraint(new ConstraintParser(
 	            "METRIC(<http://example.org/metrics#IsFoo>, ?var2)",
 	            new PrefixMappingImpl(),
-	            Collections.singletonList(new IsFooMetric())).parseExpressionConstraint());
+	            Collections.singletonList(new IsFooMetric()),
+                Collections.EMPTY_LIST).parseExpressionConstraint());
 
 	    VariableBinding vb = new VariableBinding();
 	    vb.setValue("var1", Node.createLiteral("foo"));
@@ -83,4 +89,17 @@ public class TrustPolicyTest extends FixtureWithLotsOfNodes {
 	    vb.setValue("var2", Node.createLiteral("bar"));
 	    assertFalse(policy.matchesConstraints(vb));
 	}
+    
+    public void testAddRankBasedMetricConstraint(){
+        RankBasedMetric metric = new AlwaysFirstRankBasedMetric();
+	    TrustPolicy policy = new TrustPolicy("http://example.org/policies#Policy1");
+	    policy.addRankBasedConstraint(new ConstraintParser(
+	            "METRIC(<" + AlwaysFirstRankBasedMetric.URI + ">, ?var1, 10)",
+	            new PrefixMappingImpl(),
+                Collections.EMPTY_LIST,
+                Collections.singletonList(metric)).parseRankBasedConstraint());
+        assertEquals(1, policy.getRankBasedConstraints().size());
+        assertTrue(metric.equals(((RankBasedConstraint) 
+            policy.getRankBasedConstraints().iterator().next()).getRankBasedMetric()));
+   }
 }
