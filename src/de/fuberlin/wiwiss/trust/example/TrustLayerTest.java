@@ -23,7 +23,7 @@ import de.fuberlin.wiwiss.trust.TrustPolicy;
 /**
  * Runs a few tests.
  *
- * @version $Id: TrustLayerTest.java,v 1.2 2005/03/15 08:59:08 cyganiak Exp $
+ * @version $Id: TrustLayerTest.java,v 1.3 2005/06/23 08:29:06 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class TrustLayerTest {
@@ -34,7 +34,7 @@ public class TrustLayerTest {
         Model tplFile = ModelFactory.createDefaultModel();
         tplFile.read("file:doc/trustlayer/finPolicies.n3", "N3");
         PolicySuite suite = new PolicySuiteFromRDFBuilder(
-                tplFile.getGraph(), Collections.EMPTY_LIST).buildPolicySuite();
+                tplFile.getGraph(), Collections.EMPTY_LIST, Collections.EMPTY_LIST).buildPolicySuite();
         TrustPolicy policy = suite.getTrustPolicy("http://www.fu-berlin/suhl/bizer/financialscenario/policies/Policy2");
 //        TrustPolicy policy = TrustPolicy.TRUST_EVERYTHING;
 //        TrustPolicy policy = FixtureWithLotsOfNodes.getPolicyTrustOnlySelfAssertedInformation();
