@@ -5,7 +5,7 @@ import java.util.Iterator;
 import com.hp.hpl.jena.graph.Triple;
 
 /**
- * @version $Id: Explainer.java,v 1.2 2005/05/24 13:50:27 maresch Exp $
+ * @version $Id: Explainer.java,v 1.3 2005/06/23 08:37:33 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class Explainer {
@@ -32,7 +32,6 @@ public class Explainer {
         Iterator it = this.policy.getExplanationTemplate().instantiateTree(this.results).iterator();
         while (it.hasNext()) {
             ExplanationPart part = (ExplanationPart) it.next();
-            System.out.println(part);
             result.addPart(part);
         }
         // append constraint explanation parts
