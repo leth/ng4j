@@ -1,0 +1,212 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix swp: <http://www.w3.org/2004/03/trix/swp-2/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix ex: <http:// www.example.org/vocabulary#> .
+@prefix tpl: <http://www.wiwiss.fu-berlin.de/suhl/bizer/TPL/> .
+@prefix gb: <http://www.ncbi.nlm.nih.gov/NCBI_GBSeq#> .
+@prefix tprefsl: <http://www.wiwiss.fu-berlin.de/suhl/bizer/TPrefsL/> .
+@prefix vcard: <http://www.w3.org/2001/vcard-rdf/3.0#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix dtype: <http://www.w3.org/2001/XMLSchema#> . 
+@prefix exdata: <http://www.example.org//TPLuseCase1/exampleData#> .
+@prefix fin: <http://www.fu-berlin/suhl/bizer/financialscenario/vocabulary/> .
+@prefix iso: <http://www.daml.org/2001/09/countries/iso-3166-ont#> .
+@prefix : <http://www.fu-berlin/suhl/bizer/financialscenario/policies/trust/> .
+
+
+# ----------------------------------------------------
+# Trust Policy Suite for the Financial Scenario
+# ----------------------------------------------------
+
+
+<>  rdf:type tpl:TrustPolicySuite;
+    tpl:suiteName "Financial Trust Policies" ;
+    tpl:includesPolicy :Policy1 ;
+    tpl:includesPolicy :Policy3 ;
+    tpl:includesPolicy :Policy2 ;
+    tpl:includesPolicy :Policy4 ;
+    tpl:includesPolicy :Policy5 ;
+    tpl:includesPolicy :Policy6 ;
+    tpl:includesPolicy :Policy7 ;
+    tpl:includesPolicy :Policy8 ;
+    tpl:includesPolicy :Policy9 ;
+    tpl:includesPolicy :Policy10 .
+
+# ----------------------------------------------------
+# Policy 1:
+# Trust information only from InfoPortals
+# ----------------------------------------------------
+
+:Policy1 rdf:type tpl:TrustPolicy ;
+    tpl:policyName "Only from Portals" ;
+    tpl:policyDescription "Trust information only from information portals" ;
+    tpl:textExplanation "it was stated by @@?authority@@, which is an information portal." ;
+    tpl:graphPattern [
+        tpl:pattern """(?GRAPH swp:assertedBy ?warrant .
+                        ?warrant swp:authority ?authority )""" ;
+    ] ;
+    tpl:graphPattern [
+        tpl:pattern """(?authority rdf:type fin:InfoPortal)""" ;
+    ] .
+
+
+# ----------------------------------------------------
+# Policy 2:
+# Trust information only from Rating Agency
+# ----------------------------------------------------
+
+:Policy2 rdf:type tpl:TrustPolicy ;
+    tpl:policyName "Only from Rating Agencies" ;
+    tpl:policyDescription "Trust information only from rating agencies" ;
+    tpl:textExplanation "it was stated by @@?authority@@, which is a rating agency." ;
+    tpl:graphPattern [
+        tpl:pattern """(?GRAPH swp:assertedBy ?warrant .
+                        ?warrant swp:authority ?authority )""" ;
+    ] ;
+    tpl:graphPattern [
+        tpl:pattern """(?authority rdf:type fin:RatingAgency)""" ;
+    ] .
+
+# ----------------------------------------------------
+# Policy 3:
+# Trust information only from the United States
+# ----------------------------------------------------
+
+:Policy3 rdf:type tpl:TrustPolicy ;
+    tpl:policyName "Located in the United States" ;
+    tpl:policyDescription "Trust information only from sources in the United States." ;
+    tpl:textExplanation "it was stated by @@?authority@@, which located in the United States." ;
+    tpl:graphPattern [
+        tpl:pattern """(?GRAPH swp:assertedBy ?warrant .
+                        ?warrant swp:authority ?authority )""" ;
+    ] ;
+    tpl:graphPattern [
+        tpl:pattern """(?authority fin:country iso:US)""" ;
+    ] .
+
+# ----------------------------------------------------
+# Policy 4:
+# Trust information only from the Germany
+# ----------------------------------------------------
+
+:Policy4 rdf:type tpl:TrustPolicy ;
+    tpl:policyName "Located in Germany" ;
+    tpl:policyDescription "Trust information only from sources in Germany." ;
+    tpl:textExplanation "it was stated by @@?authority@@, which is located in Germany." ;
+    tpl:graphPattern [
+        tpl:pattern """(?GRAPH swp:assertedBy ?warrant .
+                        ?warrant swp:authority ?authority )""" ;
+    ] ;
+    tpl:graphPattern [
+        tpl:pattern """(?authority fin:country iso:DE)""" ;
+    ] .
+
+# -----------------------------------------------------------
+# Policy 5:
+# Trust information only if it has been explicitly asserted.
+# -----------------------------------------------------------
+
+:Policy5 rdf:type tpl:TrustPolicy ;
+    tpl:policyName "Explicitly Asserted" ;
+    tpl:policyDescription "Trust only information that has been explicitly asserted using the SWP vocabulary." ;
+    tpl:textExplanation "it was stated in @@?GRAPH@@ by @@?authority@@." ;
+    tpl:graphPattern [
+        tpl:pattern """(?GRAPH swp:assertedBy ?warrant .
+                        ?warrant swp:authority ?authority )""" ;
+    ] .
+
+# ----------------------------------------------------
+# Policy 6:
+# Trust information only which has been asserted by at least two different sources
+# ----------------------------------------------------
+
+:Policy6 rdf:type tpl:TrustPolicy ;
+    tpl:policyName "At Least Two Sources" ;
+    tpl:policyDescription "Trust only information that has been asserted by at least two different sources." ;
+    tpl:textExplanation "it was stated by at least two different sources. The sources are:" ;
+    tpl:graphPattern [
+        tpl:pattern """(?GRAPH swp:assertedBy ?warrant .
+                        ?warrant swp:authority ?authority )""" ;
+    tpl:textExplanation "@@?authority@@" ;
+    ] ;
+    tpl:constraint "COUNT(?authority) >= 2" .
+
+# ----------------------------------------------------
+# Policy 7:
+# Trust information asserted by sources that have more
+# positive than negative ratings.
+# ----------------------------------------------------
+
+:Policy7 rdf:type tpl:TrustPolicy ;
+    tpl:policyName "More Positive Ratings" ;
+    tpl:policyDescription "Trust information only from sources, which have more positive than negative ratings." ;
+    tpl:textExplanation "it was asserted by @@?authority@@." ;
+    tpl:graphPattern [
+        tpl:pattern """ ?graph1 (?GRAPH swp:assertedBy ?warrant1 .
+                                 ?warrant1 swp:authority ?authority )""" ;
+    ] ;    
+    tpl:constraint "METRIC(tpl:EbayMetric, ?authority) " .
+
+# ----------------------------------------------------
+# Policy 8:
+# Trust only information authored by sources with a 
+# TidalTrust trust value above 0.5.
+# ----------------------------------------------------
+
+
+:Policy8 rdf:type tpl:TrustPolicy ;
+    tpl:policyName "TidalTrust Value above 0.5" ;
+    tpl:policyDescription "Trust information authored by sources with a TidalTrust trust value above 0.5." ;
+    tpl:textExplanation "it was stated by @@?author@@" ;    
+    tpl:graphPattern [
+        tpl:pattern """ ?GRAPH (?SUBJ fin:author ?author )""" ;
+    ] ;
+    tpl:constraint "METRIC(tpl:TidalTrustMetric, ?USER, ?author, 0.5) " .
+
+
+# ----------------------------------------------------
+# Policy 9:
+# Trust information only form graphs with a verifiable
+# signature.
+# ----------------------------------------------------
+
+:Policy9 rdf:type tpl:TrustPolicy ;
+    tpl:policyName "Signature Verifiable" ;
+    tpl:policyDescription "Trust information only from graphs with a verifiable signature." ;
+    tpl:textExplanation "it was asserted by @@?authority@@ in the signed graph @@?GRAPH@@ and the signature was verified by @@?verifier@@." ;
+    tpl:graphPattern [
+        tpl:pattern """(?GRAPH swp:assertedBy ?warrant1 .
+                                 ?warrant1 swp:authority ?authority )""" ;
+    ] ;
+    tpl:graphPattern [
+        tpl:pattern """?graph2 (?GRAPH swp:signatureVerifiedBy <http://signatureVerifier.myorg.org> )""" ;
+    ] ;
+    tpl:graphPattern [
+        tpl:pattern """(?graph2 swp:assertedBy ?warrant .
+                        ?warrant swp:authority ?verifier )""" ;
+    ] .
+    
+    
+# -------------------------------------------------------------------------
+# Policy 10:
+# Use only information from information providers that work for Intel. 
+# The statement that an information provider works for Intel 
+# has to be asserted by Intel.
+# -------------------------------------------------------------------------
+
+:Policy10 rdf:type tpl:TrustPolicy ;
+    tpl:policyName "From Intel Employees" ;
+    tpl:policyDescription "Use only information from information providers that work for Intel. The statement that an information provider works for the company has to be asserted by Intel itself." ;
+    tpl:textExplanation "it was asserted by @@?authority@@ who is working for @@?intel@@. The information that he is working for the company has been asserted by @@?intel@@ in @@?intelgraph@@." ;
+    tpl:graphPattern [
+        tpl:pattern """?GRAPH ( ?news fin:author ?authority )""" ;
+    ] ;
+    tpl:graphPattern [
+        tpl:pattern """?intelgraph (?authority fin:affiliation <urn:DUNS:047897855> )""" ;
+    ] ;
+    tpl:graphPattern [
+        tpl:pattern """(?intelgraph swp:assertedBy ?warrant2 .
+                        ?warrant2 swp:authority ?intel )""" ;
+    ] .

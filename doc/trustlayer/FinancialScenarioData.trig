@@ -1,0 +1,2010 @@
+# Financial Scenario Namespace
+@prefix fin: <http://www.fu-berlin/suhl/bizer/financialscenario/vocabulary/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dtype: <http://www.w3.org/2001/XMLSchema#> . 
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix vcard: <http://www.w3.org/2001/vcard-rdf/3.0#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix iso: <http://www.daml.org/2001/09/countries/iso-3166-ont#> .
+@prefix cur: <http://www.daml.ecs.soton.ac.uk/ont/currency.daml#> .
+@prefix swp: <http://www.w3.org/2004/03/trix/swp-2/> .
+@prefix trust: <http://trust.mindswap.org/ont/trust.owl#> .
+@prefix ebay: <http://www.oliver-maresch.de/ontologies/ebayTrust.n3#> .
+@prefix metric: <http://www.oliver-maresch.de/ontologies/trustMetricSchema.n3#> .
+@prefix tpl: <http://www.wiwiss.fu-berlin.de/suhl/bizer/TPL/> .
+
+
+# Peter Smith's FOAF
+
+<http://www.petersmith.com#homepage> {
+    <http://www.petersmith.com#homepage> swp:assertedBy <http://www.petersmith.com#homepage> .
+    <http://www.petersmith.com#homepage> swp:authority <http://peter.petersmith.com> .
+    <http://www.petersmith.com#homepage> rdfs:label "Peter Smith's FOAF Homepage" .
+    <http://www.petersmith.com#homepage> swp:savedFrom <http://www.petersmith.com> .
+
+<http://peter.petersmith.com> a foaf:Person ;
+ fin:country iso:US ;
+ foaf:name "Peter Smith"^^dtype:string ; 
+ foaf:mbox <mailto:peter.smith@petersmith.com> .
+
+}
+
+
+# John Reynolds's FOAF
+
+<http://www.reynolds.com#homepage> {
+    <http://www.reynolds.com#homepage> swp:assertedBy <http://www.reynolds.com#homepage> .
+    <http://www.reynolds.com#homepage> swp:authority <http://john.reynolds.com> .
+    <http://www.reynolds.com#homepage> rdfs:label "John Reynolds's FOAF Homepage" .
+    <http://www.reynolds.com#homepage> swp:savedFrom <http://www.reynolds.com> .
+
+<http://john.reynolds.com> a foaf:Person ;
+ fin:country iso:US ;
+ foaf:name "John Reynolds"^^dtype:string ; 
+ foaf:mbox <mailto:john.reynolds@reynolds.com> ;
+ foaf:knows <http://peter.petersmith.com> ;
+ foaf:knows <http://bill.mayer.com> .
+
+<http://peter.petersmith.com> a foaf:Person ;
+ fin:country iso:US ;
+ foaf:name "Peter Smith"^^dtype:string ; 
+ foaf:mbox <mailto:peter.smith@petersmith.com> .
+
+}
+
+# Signatures Verified by NG4J SignatureVerifier
+
+<http://verifiedSignatures.myorg.org> {
+    <http://verifiedSignatures.myorg.org> swp:assertedBy <http://verifiedSignatures.myorg.org> ;
+                                          swp:authority <http://signatureVerifier.myorg.org> ;
+                                          rdfs:label "List of verified graphs" .
+
+ <http://signatureVerifier.myorg.org> a foaf:Agent ;
+                                      foaf:name "NG4J Signature Verifier"^^dtype:string . 
+
+<#graphDB> swp:signatureVerifiedBy <http://signatureVerifier.myorg.org> . 
+<#graphDB_trust> swp:signatureVerifiedBy <http://signatureVerifier.myorg.org> . 
+<#graphDB_warrant> swp:signatureVerifiedBy <http://signatureVerifier.myorg.org> . 
+
+}
+
+
+# published by: Deutsche Bank AG (<urn:DUNS:000000001>)
+<#graphDB_warrant> {
+    <#graphDB> swp:assertedBy <#graphDB_warrant> ;
+               swp:digest "NmM2NWRkNDVkZmFkY2Y5ZGZmZTc3M2Y3YjY0NmZmOGY3NzI5Njg0Ng=="^^<http://www.w3.org/2001/XMLSchema#base64Binary> ;
+               swp:digestMethod swp:JjcRdfC14N-sha1 .
+    <#graphDB_trust> swp:assertedBy <#graphDB_warrant> ;
+               swp:digest "Tc3M2Y3YjY0NmZmOGY3NzI5NjgNmM2NWRkNDVkZmFkY2Y5ZGZmZ"^^<http://www.w3.org/2001/XMLSchema#base64Binary> ;
+               swp:digestMethod swp:JjcRdfC14N-sha1 .
+    <#graphDB_warrant> swp:assertedBy <#graphDB_warrant> ;
+               swp:authority <urn:DUNS:000000001> ;
+               rdf:label "Warrant of Deutsche Bank AG" ;
+               swp:signatureMethod swp:JjcRdfC14N-rsa-sha1;                      
+               swp:signature """E2aylVAB2lt1Ujf3ucZpUYDcEWBCtgaoddds0Kgu4hNwWH3R7GbLo+zrBnzKlj2TVZO3OtUSXHFz
+SttJbvdUj2SQlMdryRHjEGHbhtchZ6V9KI49EmNOF57dixZCOWp3yoVlhSyPv0+46b8saOYUu8On
+dcmeBeUaZKRyWH7JMxE=
+"""^^<http://www.w3.org/2001/XMLSchema#base64Binary> .   
+    
+}
+
+<#graphDB_trust> {
+#####################Trust#################################
+    <#graphDB_trust> rdf:label "Trust Graph of Deutsche Bank AG". 
+}
+
+
+<#graphDB> {
+
+######################Source######################
+
+<#graphDB> rdfs:label "Data Graph of Deutsche Bank AG" . 
+
+<urn:DUNS:000000001> a fin:Corporation ;
+ dc:description "  Deutsche Bank AG is a stock corporation ('Aktiengesellschaft') incorporated under the laws of the Federal Republic of Germany with principal office in Frankfurt am Main.   "^^dtype:string ;
+ foaf:homepage <http://www.deutsche-bank.com>;
+ foaf:name "Deutsche Bank AG"^^dtype:string ;
+ fin:sector <fin:Banking> ;
+ vcard:ADR _:a .
+
+_:a 
+ vcard:street "  Taunusanlage 12 "^^dtype:string ;
+ vcard:locality " Frankfurt am Main "^^dtype:string ;
+ vcard:pcode " 60262 "^^dtype:long ;
+ vcard:country iso:DE .
+
+<urn:ISIN:DE0005140008> a fin:Share ;
+ foaf:name "Deutsche Bank Aktie"^^dtype:string ;
+ fin:wkn "514000"^^dtype:string ;
+ fin:emitter <urn:DUNS:000000001> ;
+ fin:valueAtDate _:b ;
+ fin:valueAtDate _:now1 ;
+ fin:valueAtDate _:val .
+
+
+######################News######################
+
+<http://www.deutsche-bank.de/ir/pdfs/db_ar03_annual_report_2003.pdf> a fin:AnnualReport ;
+ fin:newsSource  <urn:DUNS:000000001> ;
+ fin:newsAbout <urn:DUNS:000000001> ;
+ foaf:name " Annual Report 2003"^^dtype:string ;
+ fin:author <urn:DUNS:000000001> ;
+ fin:availableAt " http://www.deutsche-bank.de/ir/pdfs/db_ar03_annual_report_2003.pdf "^^dtype:string ;
+ dc:date " 2004-03-01T00:00+01:00 "^^dtype:date .
+
+<http://geschaeftsbericht.deutsche-bank.de/2004/q3/en/consolidatedfinancialstatements/factsheet.php> a fin:FactSheet ;
+ fin:newsAbout <urn:DUNS:000000001> ;
+ fin:author <urn:DUNS:000000001> ;
+ fin:availableAt " http://geschaeftsbericht.deutsche-bank.de/2004/q3/en/consolidatedfinancialstatements/factsheet.php "^^dtype:string ;
+ foaf:name " Fact Sheet "^^dtype:string ;
+ fin:newsSource <urn:DUNS:000000001> .
+ 	
+<http://www.deutsche-bank.de/ir/pdfs/04_Q3_E.pdf> a fin:InterimReport ;
+ fin:newsSource  <urn:DUNS:000000001> ;
+ fin:newsAbout <urn:DUNS:000000001> ;
+ foaf:name " Interim Report Q3/04"^^dtype:string ;
+ fin:author <urn:DUNS:000000001> ;
+ fin:availableAt " http://www.deutsche-bank.de/ir/pdfs/04_Q3_E.pdf "^^dtype:string ;
+ dc:date " 2004-09-30T00:00+01:00 "^^dtype:date .
+
+<http://www.deutsche-bank.de/ir/pdfs/04_Q2_E.pdf> a fin:InterimReport ;
+ fin:newsSource  <urn:DUNS:000000001> ;
+ fin:newsAbout <urn:DUNS:000000001> ;
+ foaf:name " Interim Report Q2/04"^^dtype:string ;
+ fin:author <urn:DUNS:000000001> ;
+ fin:availableAt " http://www.deutsche-bank.de/ir/pdfs/04_Q2_E.pdf "^^dtype:string ;
+ dc:date " 2004-06-30T00:00+01:00 "^^dtype:date .
+
+
+<http://www.deutsche-bank.de/ir/pdfs/ZB_Q1_04_E.pdf> a fin:InterimReport ;
+ fin:newsSource  <urn:DUNS:000000001> ;
+ fin:newsAbout <urn:DUNS:000000001> ;
+ foaf:name " Interim Report Q1/04"^^dtype:string ;
+ fin:author <urn:DUNS:000000001> ;
+ fin:availableAt " http://www.deutsche-bank.de/ir/pdfs/ZB_Q1_04_E.pdf "^^dtype:string ;
+ dc:date " 2004-03-31T00:00+01:00 "^^dtype:date .
+
+# Deutsche Bank Rating Agency
+
+<urn:DUNS:000000012> a fin:RatingAgency ;
+ foaf:name " Deutsche Bank Investment, London"^^dtype:string ;
+ dc:description " Investment firm and rating agency "^^dtype:string ;
+ fin:country iso:GB ;
+ foaf:homepage <http://http://www.deutsche-bank.de> . 
+
+######################News######################
+
+
+_:dbe a fin:Rating ;
+ fin:newsSource  <urn:DUNS:000000012> ;
+ fin:author  <urn:DUNS:000000012> ;
+ fin:newsAbout <urn:DUNS:000000001> ;
+ foaf:name " Rating "^^dtype:string ;
+ fin:scale " Standard and Poor's "^^dtype:string ;
+ fin:value " AAA "^^dtype:string ;
+ dc:date " 2004-01-01T00:00+01:00 "^^dtype:date .
+
+
+_:dbz a fin:Rating ;
+ fin:newsSource  <urn:DUNS:000000012> ;
+ fin:author  <urn:DUNS:000000012> ;
+ fin:newsAbout <urn:DUNS:316067164> ;
+ foaf:name " Rating "^^dtype:string ;
+ fin:scale " Standard and Poor's "^^dtype:string ;
+ fin:value " AA- "^^dtype:string ;
+ dc:date " 2004-01-01T00:00+01:00 "^^dtype:date .
+
+_:dbg a fin:Rating ;
+ fin:newsSource  <urn:DUNS:000000012> ;
+ fin:author  <urn:DUNS:000000012> ;
+ fin:newsAbout <urn:DUNS:000000002> ;
+ foaf:name " Rating "^^dtype:string ;
+ fin:scale " Standard and Poor's "^^dtype:string ;
+ fin:value " AA- "^^dtype:string ;
+ dc:date " 2004-01-01T00:00+01:00 "^^dtype:date .
+
+_:dbf a fin:Rating ;
+ fin:newsSource  <urn:DUNS:000000012> ;
+ fin:author  <urn:DUNS:000000012> ;
+ fin:newsAbout <urn:DUNS:000000004> ;
+ foaf:name " Rating "^^dtype:string ;
+ fin:scale " Standard and Poor's "^^dtype:string ;
+ fin:value " AAA "^^dtype:string ;
+ dc:date " 2004-01-01T00:00+01:00 "^^dtype:date .
+
+
+}
+
+
+# published by: Intel (<urn:DUNS:047897855>)
+<#graphIntel_warrant> {
+    <#graphIntel> swp:assertedBy <#graphIntel_warrant> .
+    <#graphIntel_trust> swp:assertedBy <#graphIntel_warrant> .
+    <#graphIntel_warrant> swp:assertedBy <#graphIntel_warrant> .
+    <#graphIntel_warrant> swp:authority <urn:DUNS:047897855> .
+    <#graphIntel_warrant> rdfs:label "Warrant of Intel" .
+}
+
+<#graphIntel_trust> {
+#####################Trust#################################
+    <#graphIntel_trust> rdfs:label "Trust Graph of Intel" .
+}
+
+<#graphIntel> {
+
+######################Source######################
+
+<#graphIntel> rdfs:label "Data Graph of Intel" .
+
+<urn:DUNS:047897855> a fin:Corporation ;
+ dc:description "   Founded in 1968 to build semiconductor memory products, Intel introduced the world's first microprocessor in 1971. Today, Intel supplies the computing and communications industries with chips, boards, systems, and software building blocks that are the ingredients of computers, servers and networking and communications products.  "^^dtype:string ;
+ foaf:homepage <http://www.intel.com> ;
+ foaf:name " Intel, Inc "^^dtype:string ;
+ fin:sector <fin:Electronics> ;
+ vcard:country iso:US .
+ vcard:ADR _:r .
+
+_:r 
+ vcard:street " 2200 Mission College Blvd. "^^dtype:string ;
+ vcard:pobox " 58119 "^^dtype:integer ;
+ vcard:locality "   Santa Clara "^^dtype:string ;
+ vcard:pcode " 95052"^^dtype:string ;
+ vcard:region " California "^^dtype:string ;
+ vcard:country iso:US .
+
+<urn:ISIN:US4581401001> a fin:Share ;
+ foaf:name " INTEL CORPORATION Share "^^dtype:string ;
+ fin:emitter <urn:DUNS:047897855> ;
+ fin:valueAtDate _:s ;
+ fin:valueAtDate _:intel010205 ;
+ fin:valueAtDate _:intel020205 ;
+ fin:valueAtDate _:a4 .
+
+###################### Employees ###############
+
+<http://john.reynolds.com> fin:affiliation <urn:DUNS:047897855> .
+<http://bill.gates.org> fin:affiliation <urn:DUNS:047897855> .
+
+######################News######################
+
+<http://www.intel.com/intel/annual03/ar03.pdf> a fin:AnnualReport ;
+ fin:newsSource  <urn:DUNS:047897855> ;
+ fin:newsAbout <urn:DUNS:047897855> ;
+ foaf:name " Annual Report 2003"^^dtype:string ;
+ fin:author <urn:DUNS:047897855> ;
+ fin:availableAt " http://www.intel.com/intel/annual03/ar03.pdf "^^dtype:string ;
+ dc:date " 2004-02-20T00:00+01:00 "^^dtype:date .
+
+}
+
+
+
+# published by: Siemens AG (<urn:DUNS:316067164>)
+
+<#graphSi_warrant> {
+    <#graphSi> swp:assertedBy <#graphSi_warrant> .
+    <#graphSi_trust> swp:assertedBy <#graphSi_warrant> .
+    <#graphSi_warrant> swp:assertedBy <#graphSi_warrant> .
+    <#graphSi_warrant> swp:authority <urn:DUNS:316067164> .
+    <#graphSi_warrant> rdfs:label "Warrant Graph of Siemens AG" .
+}
+
+<#graphSi_trust> {
+#####################Trust#################################
+    <#graphSi_trust> rdfs:label "Trust Graph of Siemens AG" .
+}
+
+<#graphSi> {
+
+######################Source######################
+
+<#graphSi> rdfs:label "Data Graph of Siemens AG" . 
+
+<urn:DUNS:316067164> a fin:Corporation ;
+ dc:description "  Europe's largest electronics and electrical engineering firm and has operations worldwide in the industrial automation and control, information and communications, lighting, medical, power transmission, and transportation sectors.  "^^dtype:string ;
+ foaf:homepage <http://www.siemens.com> ;
+ foaf:name "Siemens AG"^^dtype:string ;
+ fin:sector <fin:Electronics> ;
+ vcard:ADR _:w .
+
+_:w 
+ vcard:street "   Wittelsbacherplatz 2 "^^dtype:string ;
+ vcard:locality " Munich "^^dtype:string ;
+ vcard:pcode " 80333 "^^dtype:integer ;
+ vcard:country iso:DE .
+
+<urn:ISIN:DE0007236101> a fin:Share ;
+ foaf:name "Siemens Aktie"^^dtype:string ;
+ fin:emitter <urn:DUNS:316067164> ;
+ fin:wkn "723610"^^dtype:string ;
+ fin:valueAtDate _:x ;
+ fin:valueAtDate _:a2 ;
+ fin:valueAtDate _:siem010205 ;
+ fin:valueAtDate _:a3 ;
+ fin:valueAtDate _:val111 ;
+ fin:valueAtDate _:val222 .
+
+######################News######################
+
+
+<http://www.siemens.com/Daten/siecom/HQ/CC/Internet/Investor_Relations/WORKAREA/ir_ed/templatedata/English/file/binary/Final_20-F_29Nov_1230674.pdf> a fin:AnnualReport ;
+ fin:newsSource  <urn:urn:DUNS:316067164> ;
+ fin:newsAbout <urn:urn:DUNS:316067164> ;
+ foaf:name " Annual Report 2004"^^dtype:string ;
+ fin:author <urn:urn:DUNS:316067164> ;
+ fin:availableAt " http://www.siemens.com/Daten/siecom/HQ/CC/Internet/Investor_Relations/WORKAREA/ir_ed/templatedata/English/file/binary/Final_20-F_29Nov_1230674.pdf "^^dtype:string ;
+ dc:date " 2004-11-17T00:00+01:00 "^^dtype:date .
+
+
+}
+
+
+
+# published by: AMD (<urn:DUNS:000000002>)
+<#graphAMD_warrant> {
+    <#graphAMD> swp:assertedBy <#graphAMD_warrant> .
+    <#graphAMD_trust> swp:assertedBy <#graphAMD_warrant> .
+    <#graphAMD_warrant> swp:assertedBy <#graphAMD_warrant> .
+    <#graphAMD_warrant> swp:authority <urn:DUNS:000000002> .
+    <#graphAMD_warrant> rdfs:label "Warrant Graph of AMD" .
+}
+
+<#graphAMD_trust> {
+#####################Trust#################################
+    <#graphAMD_trust> rdfs:label "Trust graph of AMD" .
+}
+
+<#graphAMD> {
+
+######################Source######################
+
+<#graphAMD> rdfs:label "Data Graph of AMD" .
+
+<urn:DUNS:000000002> a fin:Corporation ;
+ dc:description "   Founded in 1969 and based in Sunnyvale, California, AMD provides microprocessors, Flash memory devices, and silicon-based solutions for our customers in the communications and computer industries worldwide.  "^^dtype:string ;
+ foaf:homepage <http://www.amd.com> ;
+ foaf:name " Advanced Micro Devices, Inc "^^dtype:string ;
+ fin:sector <fin:Electronics> ;
+ vcard:ADR _:l .
+
+
+<urn:ISIN:US0079031078> a fin:Share ;
+ foaf:name " AMD Share "^^dtype:string ;
+ fin:emitter <urn:DUNS:000000002> ;
+ fin:valueAtDate _:m ;
+ fin:valueAtDate _:a5 ;
+ fin:valueAtDate _:amd020205 ;
+ fin:valueAtDate _:amd010205 .
+
+
+_:l
+ vcard:street " One AMD Place "^^dtype:string ;
+ vcard:pobox " 3453 "^^dtype:integer ;
+ vcard:locality "  Sunnyvale "^^dtype:string ;
+ vcard:pcode " 94088 "^^dtype:integer ;
+ vcard:region " California "^^dtype:string ;
+ vcard:country iso:US .
+
+######################News######################
+
+
+<http://www.amd.com/us-en/assets/content_type/DownloadableAssets/TK0304.pdf> a fin:AnnualReport ;
+ fin:newsSource  <urn:DUNS:000000002> ;
+ fin:newsAbout <urn:DUNS:000000002> ;
+ foaf:name " Annual Report 2003"^^dtype:string ;
+ fin:author <urn:DUNS:000000002> ;
+ fin:availableAt " http://www.amd.com/us-en/assets/content_type/DownloadableAssets/TK0304.pdf "^^dtype:string ;
+ dc:date " 2004-03-08T00:00+01:00 "^^dtype:date .
+
+
+
+}
+
+
+
+
+# published by: Moody's  (<urn:DUNS:000000003>)
+<#graphMood_warrant> {
+    <#graphMood> swp:assertedBy <#graphMood_warrant> .
+    <#graphMood_trust> swp:assertedBy <#graphMood_warrant> .
+    <#graphMood_warrant> swp:assertedBy <#graphMood_warrant> .
+    <#graphMood_warrant> swp:authority <urn:DUNS:000000003> .
+    <#graphMood_warrant> rdfs:label "Warrant Graph of Moody's" .
+}
+
+<#graphMood_trust> {
+#####################Trust#################################
+    <#graphMood_trust> rdfs:label "Trust Graph of Moody's" .
+}
+
+<#graphMood> {
+
+######################Source######################
+
+<#grahpMood> rdfs:label "Data Graph of Moody's" .
+
+<urn:DUNS:000000003> a fin:RatingAgency ;
+ foaf:name " Moody's Investors Service, New York "^^dtype:string ;
+ dc:description " A large rating agency "^^dtype:string ;
+ fin:country iso:US ;
+ foaf:homepage <http://www.moodys.com> .
+
+######################News######################
+
+_:c a fin:Rating ;
+ fin:newsSource  <urn:DUNS:000000003> ;
+ fin:newsAbout <urn:DUNS:000000001> ;
+ foaf:name " Rating "^^dtype:string ;
+ fin:country iso:US ;
+ fin:scale " Moody's "^^dtype:string ;
+ fin:value " Aa3 "^^dtype:string ;
+ fin:author <urn:DUNS:000000003> ;
+ dc:date " 2004-01-01T00:00+01:00 "^^dtype:date .
+
+
+_:b a fin:Rating ;
+ fin:newsSource  <urn:DUNS:000000003> ;
+ fin:newsAbout <urn:DUNS:000000004> ;
+ foaf:name " Rating "^^dtype:string ;
+ fin:country iso:US ;
+ fin:scale " Moody's "^^dtype:string ;
+ fin:value " Aa3 "^^dtype:string ;
+ dc:date " 2004-01-01T00:00+01:00 "^^dtype:date .
+
+_:y a fin:Rating ;
+ fin:newsSource  <urn:DUNS:000000003> ;
+ fin:newsAbout <urn:DUNS:316067164> ;
+ foaf:name " Rating "^^dtype:string ;
+ fin:country iso:US ;
+ fin:scale " Moody's "^^dtype:string ;
+ fin:value " Aa3 "^^dtype:string ;
+ dc:date " 2004-01-01T00:00+01:00 "^^dtype:date .
+
+
+_:z a fin:Rating ;
+ fin:newsSource  <urn:DUNS:000000003> ;
+ fin:newsAbout <urn:DUNS:000000001> ;
+ foaf:name " Rating "^^dtype:string ;
+ fin:country iso:US ;
+ fin:scale " Moody's "^^dtype:string ;
+ fin:value " Aa1 "^^dtype:string ;
+ dc:date " 2004-01-01T00:00+01:00 "^^dtype:date .
+
+}
+
+
+
+
+
+# published by: Financial Times 
+
+<#graphFt_warrant> {
+    <#graphFt> swp:assertedBy <#graphFt_warrant> .
+    <#graphFt_trust> swp:assertedBy <#graphFt_warrant> .
+    <#graphFt_warrant> swp:assertedBy <#graphFt_warrant> .
+    <#graphFt_warrant> swp:authority <http://www.ftd.de> .
+    <#graphFt_warrant> rdfs:label "Warrant Grahp of the Financial Times" .
+}
+
+<#graphFt_trust> {
+#####################Trust#################################
+    <#grahpFt_trust> rdfs:label "Trust Grahp of the Financial Times" .
+
+    <http://www.ftd.de> trust:trust10 <http://www.ft.com> .
+    <http://www.ftd.de> trust:trust9  <http://www.reuters.com> .
+    <http://www.ftd.de> trust:trust10 <mailto:ralph.atkins@ftd.com> .
+    <http://www.ftd.de> trust:trust10 <http://peter.petersmith.com> .
+}
+
+<#graphFt> {
+
+######################Source######################
+<#graphFt> rdfs:label "Data Graph of the Financial Times" .
+
+<http://www.ftd.de> a fin:InfoPortal ;
+ fin:country iso:DE ;
+ foaf:homepage <http://www.ftd.de> ;
+ foaf:name " Financial Times Deutschland "^^dtype:string ;
+ dc:description " Online portal of a large german newspaper about financial topics. "^^dtype:string .
+
+
+<http://www.ft.com> a fin:InfoPortal ;
+ fin:country iso:GB ;
+ foaf:homepage <http://www.ft.com> ;
+ foaf:name " Financial Times "^^dtype:string ;
+ dc:description " Online portal of the Financial Times "^^dtype:string .
+
+
+
+_:j a fin:Author ;
+ fin:country iso:GB ;
+ foaf:name " Ralph Atkins "^^dtype:string .
+
+<http://peter.petersmith.com> a fin:Author ;
+ fin:country iso:DE ;
+ foaf:name "Peter Smith"^^dtype:string ; 
+ foaf:mbox <mailto:peter.smith@petersmith.com> .
+
+<http://www.reuters.com> a fin:Author ;
+ fin:country iso:GB ;
+ foaf:homepage <http://www.reuters.com> ;
+ foaf:name " Reuters "^^dtype:string .
+
+
+######################News######################
+
+
+<http://news.ft.com/cms/s/3f5e1e84-6fcf-11d9-850d-00000e2511c8.html>  a fin:News ;
+ fin:newsSource <http://www.ft.com> ;
+ fin:author _:j ;
+ fin:author <http://peter.petersmith.com> ;
+ fin:newsAbout <urn:DUNS:000000001> ;
+ dc:date " 2005-01-26T19:31+00:00 "^^dtype:date ;
+ dc:description " Article about Deutsche Bank "^^dtype:string ;
+ fin:text " Deutsche Bank warns buy-out market could overheatBy Ralph Atkins in Frankfurt and Peter Smith in LondonPublished: January 26 2005 19:31 | Last updated: January 26 2005 19:31 \n deutsche bankEurope's fast-growing buy-out market is in danger of overheating as competition drives prices higher, Deutsche Bank economists have warned.\n Buy-out groups, particularly large US funds, are playing an increasing role in corporate restructuring across the continent, buying stakes in established companies with the aim of making a significant profit on their sale a few years later. \n \"The risk of overshooting in the buy-out market can no longer be disregarded,\" Deutsche Bank warned in a report released on Wednesday. \n \"Prices are skyrocketing owing to the stiff competition between bidders,\" it said, while the debt proportion of deals had also risen sharply. \n The remarks may intensify concern about how fast the private equity market can continue to grow. The value of announced buy-outs in Europe was just 64bn ($84bn) in 2001 but rose to 107bn last year, the bank said. It forecasts deals worth 135bn this year. \n Guy Weldon, a partner at Bridgepoint Capital, said parts of Europe were \"relatively frothy\", including the Nordic region, where a \"lot of capital was chasing a narrow number of deals\". \n However, Deutsche Bank pointed out that pressure for European industrial consolidation meant strong demand for private equity finance remained. \n Patrick Dunne at 3i said \"the impact of Asia\" was forcing the pace of restructuring across Europe. \"This is perhaps why sectors such as outsourcing and countries such as Germany have proved so fertile,\" he said. \n Germany last year became the world's third largest private equity market by value, after the UK and US. Jrgen Schaaf, the report's author, said that unlike a share market bubble, overshooting in the buy-out market would not result in a sharp or sudden price collapse but could result in deteriorating returns for private equity funds. Deutsche Bank said buy-outs had become more attractive at a time of low interest rates \"but this is only true as long as a high price can be achieved when the stake is sold\".\"The relatively new phenomenon of secondary buy-outs - that is, the selling on of a stake to another financial investor - shows that selling stakes to strategic investors has in some cases become more difficult.\"However, Richard Sachar, chief executive of Almeida Capital, pointed out that certain buy-out groups had generated \"fantastic returns\" from assets bought in highly competitive auctions.\"Investors in private equity believe there are good returns to be made and they are pouring more capital into big pan-European buy-out funds,\" he said. " . 
+
+<http://www.ftd.de/ub/in/1106385299592.html?nv=hpm> a fin:News ;
+ fin:newsSource <http://www.ftd.de> ;
+ fin:author <http://www.ftd.de> ;
+ fin:newsAbout <urn:DUNS:316067164> ;
+ dc:date " 2005-01-27T11:43+01:00 "^^dtype:date ;
+ dc:description " article about Siemens "^^dtype:string ;
+ fin:text " ftd.de, Do, 27.1.2005, 8:40, aktualisiert: Do, 27.1.2005, 11:43 Siemens: ..." .
+
+<http://www.ftd.de/tm/tk/1781.html> a fin:News ;
+ fin:newsSource <http://www.ftd.de> ;
+ fin:author <http://www.reuters.com> ;
+ fin:newsAbout <urn:DUNS:047897855> ;
+ dc:date " 2005-04-03T20:03+01:00 "^^dtype:date ;
+ dc:description " article about Intel "^^dtype:string ;
+ fin:text "Intel investiert Milliarden in Werks-Modernisierung\nDer weltgrößte Chiphersteller Intel will nach Firmenangaben mit milliardenschweren Investitionen seine älteren Werke modernisieren, um ihnen die Fertigung kleinerer Microprozessoren zu ermöglichen. Ziel ist die Umstellung älterer Anlagen auf die Produktion von 65-Nanometer- von 90-Nanometer-Chips.\nDer Konzern befinde sich mitten in einem Modernisierungsprogramm über fünf Mrd. Dollar, sagte Intel-Chef Craig Barret am Sonntag zum 30. Jahrestag der Tätigkeit von Intel in Israel. Die älteren Anlagen sollen auf die Produktion von 65-Nanometer- von 90-Nanometer-Chips (ein Nanometer ist ein Millionstel Millimeter) umgestellt werden. Wir haben eine Menge 65-Nanometer-Investitionen. Dafür geht der größte Teil der Aufwendungen von 5 Mrd. $ drauf, sagte Barret. Er verwies dazu insbesondere auf die US-Werke in Phoenix, Portland und Oregon sowie die Anlage in Irland.\nIn zwei Jahren seien noch kleinere Halbleiter möglich, sagte er. Im zweiten Halbjahr 2007 sollte es die 45-Nanometer- Technologie geben, erklärte Barret. Er lehnte es jedoch ab, sich zu den Finanzergebnissen des Konzerns zu äußern. Er sagte lediglich, das Geschäft wachse weltweit. Kräftiges Wachstum sei in den Schwellenländern zu verzeichnen." .
+
+<http://news.ft.com/cms/s/a4aaf56a-4166-11d9-9dd8-00000e2511c8.html> a fin:News ;
+ fin:newsSource <http://www.ftd.de> ;
+ fin:author _:j ;
+ fin:newsAbout <urn:DUNS:316067164> ;
+ dc:date " 2004-11-28T19:06+01:00 "^^dtype:date ;
+ dc:description " article about Siemens "^^dtype:string ;
+ fin:text "German bosses lead in pay table\nexecutive pay in GermanyHeinrich von Pierer, chief executive of Siemens, earned €4.6m ($6.1m) in the past year, according to the engineering group's first detailed management pay figures, which coincided with a study highlighting the favourable conditions enjoyed by top German managers compared with European counterparts./nMr Pierer received cash compensation of €3.56m plus stock-based compensation valued at €1.08m, Siemens has revealed in its annual report for the financial year that ended in September." .
+
+
+}
+
+
+# published by: BBC News (<http://news.bbc.co.uk>)
+
+<#Bbc_warrant> {
+    <#graphBbc> swp:assertedBy <#graphBbc_warrant> .
+    <#graphBbc_trust> swp:assertedBy <#graphBbc_warrant> .
+    <#graphBbc_warrant> swp:assertedBy <#graphBbc_warrant> .
+    <#graphBbc_warrant> swp:authority <http://news.bbc.co.uk> .
+    <#graphBbc_warrant> rdfs:label "Warrant Graph of BBC" .
+}
+
+<#graphBbc_trust> {
+#####################Trust#################################
+    <#graphBbc_trust> rdfs:label "Trust Graph of BBC" .
+}
+
+<#graphBbc> {
+
+######################Source######################
+
+<#graphBbc> rdfs:label "Data Graph of BBC" .
+
+ <http://news.bbc.co.uk> a fin:InfoPortal ;
+  fin:country iso:GB ;
+  foaf:homepage <http://news.bbc.co.uk> ;
+  foaf:name " BBC news "^^dtype:string ;
+  dc:description " Online portal of the BBC "^^dtype:string .
+
+######################News######################
+
+<http://news.bbc.co.uk/1/hi/business/4131549.stm>  a fin:News ;
+ fin:newsSource <http://news.bbc.co.uk> ;
+ fin:author <http://news.bbc.co.uk> ;
+ fin:newsAbout <urn:DUNS:000000001> ;
+ dc:date " 2004-12-29T09:45+00:00 "^^dtype:date ;
+ dc:description " Article about Deutsche Bank "^^dtype:string ;
+ fin:text " Deutsche Bank attacks Yukos caseYukos workerYuganskneftegas pumped 60% of Yukos' oilGerman investment bank Deutsche Bank has challenged the right of Yukos to claim bankruptcy protection in the US.In a court filing on Tuesday, it said the Russian oil giant has few Texas ties beyond bank accounts and a Texas-based finance chief.Deutsche Bank claimed Yukos had artificially manufactured a legal case to stop the sale of its main asset.It had wanted to help fund Gazprom's plans for a $10bn (5.18bn) bid for Yukos unit Yuganskneftegas.Lost businessDeutsche Bank would have earned large fees from the deal, which could not be carried out because US chapter 11 bankruptcy rules made the Kremlin's auction of Yuganskneftegas on 19 December illegal under US law.But the US bankruptcy court judge in Texas granted Yukos an injunction that barred Gazprom and its lenders from taking part.Yuganskneftegas will ultimately end up with Gazprom.The winning bidder at the auction was a previously unknown firm, Baikal Finance Group, which was snapped up days later by Rosneft, a Russian oil firm that is in the process of merging with Gazprom. The effect of these transactions is to renationalise Yuganskneftegas.Deutsche Bank contends Yukos filed for bankruptcy earlier this month in Texas in a desperate and unsuccessful bid to stave off the 19 December auction of its top unit by the Russian government, which was in a tax dispute with Yukos.'No right'\"This blatant attempt to artificially manufacture a basis for jurisdiction constitutes cause to dismiss this case,\" Deutsche Bank said in its court filing.Mike Lake, a spokesman for Yukos' lawyers, said on Tuesday that the company stands by its legal action.Yukos is confident of its right to US bankruptcy protection, and \"we are prepared to be back in court defending that position again,\" he said.Yukos has said it intends to seek $20bn in damages from the buyer of Yuganskneftegas once the sale finally goes through.In its filing, Deutsche Bank said Houston was \"a jurisdiction in which Yukos owns no real or personal property and conducts no business operations.\"'Inappropriate'It also said the US bankruptcy court should not become involved in \"a tax dispute between the Federation and one of its corporate citizens\".It suggested the European Court or an international arbitration tribunal were more appropriate jurisdictions for the legal fight between Russia and Yukos.The next hearing in the bankruptcy is expected on 6 January.Analysts believe the tax dispute between the Russian government and Yukos is partly driven by Russian president Vladimir Putin's hostility to the political ambitions of ex-Yukos boss Mikhail Khordokovsky.Mr Khodorkovsky is in jail, and on trial for fraud and tax evasion. " .
+
+
+<http://news.bbc.co.uk/1/hi/business/4166371.stm> a fin:News ;
+ fin:newsSource <http://news.bbc.co.uk> ;
+ fin:author <http://news.bbc.co.uk> ;
+ fin:newsAbout <urn:DUNS:000000002> ;
+ dc:date " 2005-01-11T21:57+00:00 "^^dtype:date ;
+ dc:description " Article about AMD "^^dtype:string ;
+ fin:text " AMD shares fall on income warningShares in US chipmaker Advanced Micro Devices (AMD) fell 26% on Tuesday after the firm issued a profits warning.AMD said a \"challenging\" market for its flash memory products - used in devices like mobile phones and digital cameras - would hit earnings.Its stock price has doubled recently as a new 64-bit computer processor helped the firm increase market share.The AMD news came as the world's biggest chipmaker Intel said profits had fallen due to sector competition.Intel said turnover of $9.6bn (5.1bn) in the last three months of 2004 was a record for a quarterly period.But its profits were $2.1bn, compared to $2.2bn in the same period of 2003.The overall figures, however, were higher-than-expected and boosted by sales of Centrino chips used in notebook computers.Intel shares, which had fallen on the AMD announcement, recovered Tuesday's losses as they moved up 3% in after hours electronic trading.Price pressuresAMD said fourth quarter profits were expected to be \"down significantly\" from its third quarter totals of $68.4m.It said its flash memory chip division would record lower sales and an operating loss in the fourth quarter.\"We suspect that difficult pricing from Intel is the primary culprit,\" analyst Richard Shannon at Piper Jaffray said.The attention on flash memory production came as Apple unveiled the iPod shuffle, a new digital music player using the cheaper storage rather than hard drives, which are in more expensive iPods. " .
+
+
+<http://news.bbc.co.uk/2/hi/business/3693122.stm> a fin:News ;
+ fin:newsSource <http://news.bbc.co.uk> ;
+ fin:author <http://news.bbc.co.uk> ;
+ fin:newsAbout <urn:DUNS:000000001> ;
+ dc:date " 2004-09-27T09:34+00:00 "^^dtype:date ;
+ dc:description " Article about Deutsche Bank "^^dtype:string ;
+ fin:text " Deutsche Bank under investigation. A window being cleaned at Deutsche Bank's headquartersDeutsche Bank is Germany's biggest banking institutionGermany's biggest bank - Deutsche Bank - is being investigated on suspicion it may have manipulated its balance sheet.The investigation is in connection to a long-running legal dispute with the now-defunct Kirch media group.Deutsche Bank is alleged not to have set aside provisions to cover damages and compensation that a court ordered it to pay to Kirch.Kirch imploded in 2002 shortly after Deutsche's former boss questioned its creditworthiness in a TV interview.ViolationA probe had been launched against \"Deutsche Bank officials\", a spokesman for state prosecutors said, without providing any further details.Back in December 2003, a court in Munich ruled that Deutsche Bank's then chairman Rolf Breuer had violated his duty of client confidentiality by publicly questioning Kirch Group's creditworthiness on television in 2002.The court ordered Deutsche Bank to pay unspecified compensation to Kirch, but the bank has challenged this ruling.Shortly after Mr Breuer's remarks, banks began to refuse to lend Kirch any more money and KirchMedia, the main pillar of the Kirch Group, filed for insolvency in April 2002.Deutsche Bank declined to comment.  " .
+
+
+<http://news.bbc.co.uk/1/hi/business/4166935.stm> a fin:News ;
+ fin:newsSource <http://news.bbc.co.uk> ;
+ fin:author <http://news.bbc.co.uk> ;
+ fin:newsAbout <urn:DUNS:047897855> ;
+ dc:date " 2005-01-12T06:16+00:00 "^^dtype:date ;
+ dc:description " Article about Intel "^^dtype:string ;
+ fin:text " Intel has record quarterly sales. Intel, the world's largest chipmaker, has posted its best quarterly sales figures, boosting optimism about earnings throughout the industry. Revenue growth was driven by sales of chips used in servers and portable computers, as well as demand in booming economies such as India and China. Intel also said it had sorted out inventory problems. Sales in the three months ending 25 December were $9.6bn (5.1bn) from $8.7 a year earlier. Profit was $2.12bn. Analysts had expected sales of $9.42bn. Turning point \"It's a terrific report,\" said Stephen Leeb, president of Leeb Capital. \"Intel is clearly the bellwether, and this report could easily turn the tech sector.\" Total sales for 2004 were $34.2bn, 14% higher than in the previous twelve months. Intel shares rose 3% to $23.20 in electronic trading after Wall Street had closed. The news also lifted stocks such as Applied Materials, a company which makes equipment used to produce computer chips. Until Intel's announcement, analysts and industry insiders had been cautious about the outlook for earnings. Intel rivals Advanced Micro Devices and STMicroelectronics have both disappointed investors with forecasts. AMD shares fell 26% on Tuesday after the firm issued a profits warning, citing a \"challenging\" market for its flash memory products - used in devices like mobile phones and digital cameras. Fourth quarter profits were expected to be \"down significantly\" from the third, AMD said. By contrast, Intel said that it was targeting sales of between $8.8bn and $9.4bn in the current three month period, with chief financial officer Andy Bryant hinting that the company may be slightly pessimistic. Mr Bryant, however, said that there still is fierce competition from rivals. " .
+
+
+}
+
+
+
+
+# published by: CNN Money (<http://www.money.cnn.com>)
+
+<#graphCNN_warrant> {
+    <#graphCNN> swp:assertedBy <#graphCNN_warrant> .
+    <#graphCNN_trust> swp:assertedBy <#graphCNN_warrant> .
+    <#graphCNN_warrant> swp:assertedBy <#graphCNN_warrant> .
+    <#graphCNN_warrant> swp:authority <http://www.money.cnn.com> .
+    <#graphCNN_warrant> rdfs:label "Warrant Graph of CNN" .
+}
+
+<#graphCNN_trust> {
+#####################Trust#################################
+    <#graphCNN_trust> rdfs:label "Trust Graph of CNN" .
+
+    <http://www.money.cnn.com> trust:trust10 <http://www.retuers.com> .
+}
+
+<#graphCNN> {
+
+
+######################Source######################
+
+<#graphCNN> rdfs:label "Data Graph of CNN" .
+
+<http://www.money.cnn.com> a fin:InfoPortal ;
+  fin:country iso:US ;
+  foaf:homepage <http://money.cnn.com> ;
+  foaf:name " CNN Money "^^dtype:string ;
+  dc:description " Online portal of CNN about financial topics. "^^dtype:string .
+
+
+<http://www.reuters.com> a fin:Author ;
+  fin:country iso:GB ;
+  foaf:homepage <http://www.reuters.com> ;
+  foaf:name " Reuters "^^dtype:string ;
+  dc:description " Reuters is a global information company. "^^dtype:string .
+
+
+
+######################News######################
+
+<http://money.cnn.com/2005/01/18/technology/amd.reut/index.htm> a fin:News ;
+ fin:newsSource <http://www.money.cnn.com> ;
+ fin:author <http://www.reuters.com>;
+ fin:newsAbout <urn:DUNS:000000002> ;
+ dc:date " 2004-01-18T18:29+10:00 "^^dtype:date ;
+ dc:description " article about AMD "^^dtype:string ;
+ fin:text " AMD posts $30 million lossChipmaker warns of market imbalance and says it will leave open option of flash memory spin-off.January 18, 2005: 6:29 PM ESTSAN FRANCISCO (Reuters) - Advanced Micro Devices Inc., the computer chip maker, swung to a loss in the fourth quarter as weaker memory chip sales and a debt-related charge outweighed healthier demand for microprocessors.AMD, whose top rival is Intel Corp. (Research), also warned that sales of its memory chips would fall in the first quarter because of tough pricing and an imbalance in supply and demand.The company forecast improving momentum during the year in personal computer microprocessors, where AMD's Opteron and Athlon chips have gained share against Intel, but it said first-quarter sales should be flat to lower amid a regular drop off following the year-end holiday sales rush.\"Flat-to-down is certainly good news for them,\" said Allan Mishan, the semiconductor analyst for CIBC World Markets. \"The potential for flat is a good thing.\"In addition, AMD CEO Hector Ruiz said his company was \"prepared to do whatever it takes\" to get value from its flash memory business, in response to a question about whether the chip maker would consider spinning off that unit.\"We are prepared to do whatever it takes to make sure that we get value to our shareholders going forward,\" said Ruiz. \"We're open to anything that would allow us to increase value to our shareholders.\"On a conference call with analysts, Ruiz also said AMD had an \"awful\" quarter in the flash memory business, and would take aggressive actions to reduce costs.AMD (Research) stock rose 34 cents, or 2.2 percent, to $15.50 on the New York Stock Exchange. In after-hours trading, the shares fell 2 percent to $15.20.Last week, a revenue warning from AMD sent its shares down around 25 percent, a move analysts blamed on recent market share losses in memory chips to Intel.\"Memory Group sales were weaker than expected due to an aggressive pricing environment, significantly lower sales in Japan and a delay in qualifying a new product in the wireless segment,\" said Robert Rivet, AMD's chief financial officer, in a statement.The loss in the quarter ended Dec. 26 was $30 million, or 8 cents a share, compared with a year-earlier profit of $43.2 million, or 12 cents. Sales rose to $1.26 billion from $1.21 billion in the same period last year.That was all in line with AMD's warning last week.The results included charges of $49 million, or 13 cents a share, to retire some debt and convert other debt to equity.AMD said sales from its computations products business, which includes PC processors, rose to $730 million from $581 million last year.Memory product sales fell to $504 million from $566 million and the division operating loss swelled to $39 million from $3 million.The Sunnyvale, California-based chip maker also said it reduced its debt during the quarter by $200 million through a conversion of convertible debt, and refinanced $600 million in loans it took out for a chip factory in Germany. Top of page " .
+
+
+<http://money.cnn.com/2005/01/17/technology/intel.reut/index.htm> a fin:News ;
+ fin:newsSource <http://www.money.cnn.com> ;
+ fin:author <http://www.reuters.com> ;
+ fin:newsAbout <urn:DUNS:047897855> ;
+ dc:date " 2005-01-17T15:58+10:00 "^^dtype:date ;
+ dc:description " Article about Intel "^^dtype:string ;
+ fin:text " Intel reorganizes, exec departsChipmaker creates three groups focusing on mobile tech, digital business and digital home.January 17, 2005: 3:58 PM ESTNEW YORK (Reuters) - Intel Corp. on Monday reorganized its corporate structure, introducing new businesses focused on mobile electronics, corporations and homes and eliminating a money-losing group centered on communications.In a move that comes months before the succession of a new chief executive, the world's largest chip maker also shook up its product and sales management team, and said the company's vice president of sales was leaving the company to attend to a family health matter.Before the changes, the Santa Clara, California-based company had divided itself into two major business, one for its computer chips and one for its communications products. But in recent years, the line between computing and communications has blurred, with notebook computers now including wireless radios and some cellular phones now as powerful as older PCs. The reorganization -- creating groups for mobility, enterprise, home, health and global markets -- follows a plan to build \"platforms,\" or bundles, of Intel chips and software for various technology markets.The \"platformization\" of Intel is a mantra of company president Paul Otellini, who later this year will take over as chief executive from Craig Barrett, 65, who has reached the company's mandatory retirement age.The reorganization is perceived as one of Otellini's first big moves as the designated heir to one of the world's most powerful technology companies.\"This is just the beginning of many major transformations they're going to have with Craig leaving,\" said Apjit Walia, an analyst with RBC Capital Markets, who expects Otellini to seek out companies to acquire in the communications space.Intel (Research), which delayed several products and canceled an initiative to develop chips for televisions, has said it has recovered from product blunders that helped push its stock down by nearly a third last year. Last week, the company reported a record $34 billion in annual sales, rallying its stock.The chip maker did not announce any financial charges or cost savings. Tom Beermann, a spokesman, said Intel was in the process of determining if and how the changes would affect the financial reporting of business units.Intel's shares closed on Friday at $23.02 on Nasdaq. U.S. markets were closed on Monday for Martin Luther King Jr. Day.\"Platform\" productsThe new corporate structure makes \"Intel's entire structure consistent with our platform products strategy,\" Otellini said in a statement.The communications group, which had an operating loss of $791 million last year, has been dropped, although its product lines -- primarily for mobile phones and networking equipment -- will be distributed among the five newly formed businesses.Sean Maloney, the executive vice president who ran communications and is believed to be a possible successor to Otellini in years ahead, will now lead the mobility group, which includes flash memory, cellular phone chips, and mobile computer microprocessors, including the Centrino brand of notebook chips.Before the changes, Intel had two main operating units -- the architecture group, which encompassed computer microprocessors and supporting chips; and the communications group, which included flash memory, cellular phone chips and networking products.The digital enterprise group will include the Itanium and Xeon products for computer servers, networking products, and other computing technologies designed for business, and the digital home group will develop products for consumer electronics and living room entertainment.The digital health group, which will be led by Louis Burns, who had run desktop computing, will explore new opportunities for Intel's microprocessors in healthcare research and personal health. A \"channel products group\" will combine existing organizations into a central operation for selling products into local markets. " .
+
+<http://money.cnn.com/2005/01/27/news/international/siemens.reut/index.htm> a fin:News ;
+ fin:newsSource <http://www.money.cnn.com> ;
+ fin:author <http://www.reuters.com> ;
+ fin:newsAbout <urn:DUNS:316067164> ;
+ dc:date " 2005-01-27T06:53+10:00 "^^dtype:date ;
+ dc:description " article about Siemens "^^dtype:string ;
+ fin:text " Siemens unclear about earningsEngineering company tops 1Q estimates, but says telecoms keep it from making solid forecast.January 27, 2005: 6:53 AM ESTMUNICH, Germany (Reuters) - German engineering conglomerate Siemens posted forecast-beating first-quarter profits Thursday, but uncertainty over its telecom businesses prevented it from presenting a clear earnings outlook.Siemens failed to unveil a solution for its mobile-phone business, where losses continued amid falling prices and lower sales volumes. Chief Executive Heinrich von Pierer said a plan of action would be worked out \"quickly but without undue haste.\"Siemens shares fell as much as 1.5 percent in early trade but reversed losses after von Pierer, who hands over to new CEO Klaus Kleinfeld on Thursday, said in a television interview that a solution would be seen \"within the next few weeks.\"He said, however, that all four options -- to fix, sell, close or find a partner for the business -- remained open.For its first quarter, Siemens, whose other businesses range from turbines to medical equipment, reported operating profit up 5 percent to 1.433 billion ($1.87 billion) from a year earlier, at the high end of forecasts in a Reuters poll of 23 analysts, driven by some of its traditional, industrial units.The phone handset unit lost 143 million in the December quarter. Average selling prices fell to 86 from 99 the previous quarter, while the 13.5 million phones it sold represented a drop of 11 percent year-on-year.\"We think this means that desperate attempts to sell/partner have failed, leaving management with the choice of closing it down or costing shareholders significant sums by keeping it open,\" Nomura telecom analyst Richard Windsor wrote in a note.\"Shareholders seem to be at the bottom of management's priority list,\" added Windsor, who rates the share \"neutral.\"Chief Financial Officer Heinz-Joachim Neubuerger told an analysts' call that \"hopefully\" the handset unit would post a considerably smaller loss this quarter.Siemens is the world's fourth-biggest handset maker but its strength is mainly in the low end of the market, where its profit margins have been crushed in a price war launched by market leader Nokia.No details for fiscal '05Siemens said it could not give a detailed earnings outlook for fiscal 2005 while the future of the mobile business was undecided, meaning restructuring charges for the merger of its two telecoms units last October could not yet be calculated.\"However, we see chances of improving our net income again -- on a comparable basis -- in the current fiscal year. At any rate, we are focusing all our efforts on achieving this,\" von Pierer told Siemens' annual shareholders meeting.\"We expect sales for the full year to show a bigger increase than last year. In certain cases, however, this depends on how the currency exchange rates develop,\" he added.First-quarter sales missed forecasts, falling 1 percent to 18.167 billion, but net profit exceeded the top of the poll range, growing 38 percent to 1.001 billion.The VDO Automotive car-electronics unit increased operating profit by 44 percent to 144 million, helped by the acquisition of a U.S. automotive electronics plant in Huntsville, Ala., from DaimlerChrysler.Factory machinery unit Automation and Drives raised its operating income 19 percent to 262 million -- the most of all Siemens' 13 units -- while Osram, the world's second-biggest lighting provider after Philips Electronics, upped profits 10 percent to 120 million.Philips, which also competes with Siemens in medical technology, earlier Thursday beat expectations for quarterly earnings but warned that the world economy made it cautious.Philips Medical Systems operating profit margin of 14 percent compared with a 13-percent margin at Siemens Medical, where operating income dropped by one-third to 215 million as the U.S.-focused unit was squeezed by the weak dollar.Transportation Systems, which has been hurt in the last few quarters by charges for technical problems with its Combino trams, reported a 38-percent fall in operating profit to 20 million.Von Pierer said that no Combino charges were booked in the quarter and that he was confident a solution had been found, but the unit suffered from sharply reduced rail projects in Germany, which it is trying to combat by winning more orders abroad. " .
+
+
+}
+
+
+# published by: Forbes (<http://www.forbes.com>)
+
+<#graphForbes_warrant> {
+    <#graphForbes> swp:assertedBy <#graphForbes_warrant> .
+    <#graphForbes_trust> swp:assertedBy <#graphForbes_warrant> .
+    <#graphForbes_warrant> swp:assertedBy <#graphForbes_warrant> .
+    <#graphForbes_warrant> swp:authority <http://www.forbes.com> .
+    <#graphForbes_warrant> rdfs:label "Warrant Graph of Forbes" .
+}
+
+<#graphForbes_trust> {
+#####################Trust#################################
+    <#graohForbes_trust> rdfs:label "Trust Graph of Forbes" .
+
+    <http://www.forbes.com> trust:trust9 <http://www.afxnews.com> .
+    <http://www.forbes.com> trust:trust8 <http://www.reuters.com> .
+    <http://www.forbes.com> trust:trust10 <mailto:crn@vnu.vom.uk> .
+}
+
+<#graphForbes> {
+
+######################Source######################
+
+<#graphForbes> rdfs:label "Data graph of Forbes" .
+
+<http://www.forbes.com> a fin:InfoPortal ;
+  fin:country iso:US ;
+  foaf:homepage <http://www.forbes.com> ;
+  foaf:name " Forbes "^^dtype:string ;
+  dc:description " Forbes Online portal. "^^dtype:string .
+
+
+<mailto:crn@vnu.vom.uk> a fin:Author ;
+  fin:country iso:GB ;
+  foaf:homepage <http://www.vnunet.com> ;
+  foaf:name " Martin Lynch "^^dtype:string ;
+  vcard:EMAIL <mailto:crn@vnu.co.uk> .
+
+<http://www.reuters.com> a fin:Author ;
+  fin:country iso:GB ;
+  foaf:homepage <http://www.reuters.com> ;
+  foaf:name " Reuters "^^dtype:string .
+
+<http://www.afxnews.com> a fin:Author ;
+  fin:country iso:GB ;
+  foaf:homepage <http://www.afxnews.com> ;
+  foaf:name " AFX News Limited "^^dtype:string ;
+  dc:description " Financial news broker. "^^dtype:string . 
+
+######################News######################
+
+
+<http://www.forbes.com/technology/feeds/wireless/2005/01/26/wirelessafx_2005_01_26_AEF_6358-3989-PRD.MNA.GER.CMP.TLE.ENG..html> a fin:News ;
+ fin:newsSource <http://www.forbes.com> ;
+ fin:author <http://www.afxnews.com> ;
+ fin:newsAbout <urn:DUNS:316067164> ;
+ dc:date " 2005-01-26T10:50-05:00 "^^dtype:date ;
+ dc:description " article about Siemens "^^dtype:string ;
+ fin:text " Siemens currently not planning to sell mobile phone unit - CEO, 01.26.05, 10:50 AM ETAFX News LimitedFRANKFURT (AFX) - Siemens AG currently has no plans to sell its troubled mobile phone division, chief executive Heinrich von Pierer told Die Welt newspaper in an interview to be published tomorrow.\"We have a clear schedule for bringing the unit out of the red,\" he said. \"We are working through this schedule speedily, but not hastily. There is nothing to announce yet.\"Von Pierer is expected to be replaced tomorrow by Klaus Kleinfeld as head of the management board.maria.sheahan@afxnews.comCopyright 2005 AFX News Limited. All Rights Reserved. " .
+
+<http://www.forbes.com/technology/feeds/general/2005/01/24/generalvnunet_2005_01_24_eng-vnunet_eng-vnunet_072506_8703414931344649178.html> a fin:News ;
+ fin:newsSource <http://www.forbes.com> ;
+ fin:author <mailto:crn@vnu.vom.uk> ;
+ fin:newsAbout <urn:DUNS:000000002> ;
+ dc:date " 2005-01-24T11:49-05:00 "^^dtype:date ;
+ dc:description " Article about AMD "^^dtype:string ;
+ fin:text " AMD servers take mystery dipMartin Lynch, 01.24.05, 11:49 AM ETVNUNet.comAMD server sales in Europe took an unexplained nosedive in the last quarter of 2004, according to the latest channel sales figures from Context.The market researcher noted that despite strong growth in Q3 2004 for servers based on AMD Opteron processors, sales fell off dramatically in October and November.Context monitors server sales of leading IT suppliers such as Hewlett-Packard (HP) and IBM through the channel in seven key European nations including the UK, Germany and France.During Q3, the monthly sequential growth rate for Opteron-based servers through the channel was a strong 50 per cent. However, the market saw a mere 8.6 per cent rise from September to October, and by November the growth rate had dropped further still.\"AMD was heading towards one per cent of the server market back in July, but in the past few months that impetus seems to have disappeared - and we can't actually say why this has happened,\" said Jeremy Davies, senior partner at Context.\"We are now waiting for the December sales figures to come through, which should be at the end of this month.\"Maybe Intel's price cuts have started to hit back. If you look at its recent results you can see that both server and notebook chip sales bounced back.\"Sales might be slowing for Opteron server processors across the board, but UK sales have stayed reasonably level, according to AMD distributor Microtronica.\"We hit our sales targets for Q4,\" said Les Billing, managing director of Microtronica. \"We haven't seen the kind of drop-off here that Context is finding across the rest of Europe. Opteron sales are still healthy, as far as we can see.\"Context added that the good news for AMD is that Opteron-based servers now represent just under one per cent of total server sales in Europe's top seven economies, a \"significant\" achievement, it claimed. It noted that for the first time the sales figures are high enough to be appearing on the regular monthly data collection from its panel of resellers.HP has now taken over from IBM as the leading supplier of Opteron-based servers.crn@vnu.co.ukTo see more of VNUNet go to http://www.vnunet.comCopyright ? 2004 VNU Business Online Limited (UK) [All rights reserved] " .
+
+<http://www.forbes.com/technology/feeds/general/2005/01/25/generalafx_2005_01_25_AAF_1120-0328-REG.PRD.USA.CHI.CMP..html> a fin:News ;
+ fin:newsSource <http://www.forbes.com> ;
+ fin:author <http://www.afxnews.com> ;
+ fin:newsAbout <urn:DUNS:047897855> ;
+ dc:date " 2005-01-25T16:30-05:00 "^^dtype:date ;
+ dc:description " Article about Intel "^^dtype:string ;
+ fin:text " Intel sues Shenzhen Donjin over software IPR infringement dispute, 01.25.05, 4:30 PM ETAFX News LimitedBEIJING (AFX) - Intel Corp has filed a lawsuit against Shenzhen Donjin Communication Tech Co Ltd over alleged infringement of software intellectual property rights, the Shenzen-based company said.Shenzhen Donjin said Intel is claiming 7.96 mln usd in compensation for alleged losses incurred because its voice software violated the intellectual property rights of a similar Intel product.Shenzhen Donjin said all of its software is based on independent intellectual property rights, and that it will contest the US petition.Shenzhen Donjin said the Shenzhen Intermediate People's Court will hear the case on March 23.Shenzhen Donjin was founded in 1993 with registered capital of 40 mln yuan. The company develops computer telephony integration software, competing with Intel's Dialogic.(1 usd = 8.3 yuan)delia.liu@xinhuafinance.comCopyright 2005 AFX News Limited. All Rights Reserved. " .
+
+
+<http://www.forbes.com/technology/newswire/2004/03/23/rtr1308158.html> a fin:News ;
+ fin:newsSource <http://www.forbes.com> ;
+ fin:author <http://www.reuters.com> ;
+ fin:newsAbout <urn:DUNS:316067164> ;
+ dc:date " 2004-03-23T16:46-05:00 "^^dtype:date ;
+ dc:description " Article about Siemens "^^dtype:string ;
+ fin:text " Siemens agrees partnership with Novell unit SUSE\nFRANKFURT, March 23 (Reuters) - Siemens Business Services (SBS), the IT services arm of German technology conglomerate Siemens <SIEGn.DE>, said on Tuesday it had agreed a partnerhip deal with Novell's  (nasdaq: NOVL - news - people) newly acquired unit SUSE Linux.\nLinux software is open-source, meaning it can be freely copied and modified, unlike proprietary software such as Microsoft (nasdaq: MSFT - news - people) Windows.\nIn the past months clients have been asking more and more for open-source platforms, SBS said in a statement which said SUSE would have premier partner status. SBS is one of Europe's top 10 information technology service providers.\nLinux, once the exclusive province of a few dedicated enthusiasts, is now seen as the only serious rival to Windows and is supported by U.S. giant International Business Machines (nyse: IBM - news - people), among others.\Its advocates, who include big businesses and government departments, argue it is cheaper, simpler and more secure than Windows. " .
+
+
+}
+
+
+
+
+# published by: The Street (<http://www.thestreet.com>)
+
+<#graphStreet_warrant> {
+    <#graphStreet> swp:assertedBy <#graphStreet_warrant> .
+    <#graphStreet_trust> swp:assertedBy <#graphStreet_warrant> .
+    <#graphStreet_warrant> swp:assertedBy <#graphStreet_warrant> .
+    <#graphStreet_warrant> swp:authority <http://www.thestreet.com> .
+    <#graphStreet_warrant> rdfs:label "Warrant Graph of The Street" .
+}
+
+<#graphStreet_trust> {
+#####################Trust#################################
+    <#graphStreet_trust> rdfs:label "Trust Graph of The Street" .
+
+    <http://www.thestreet.com> trust:10 <mailto:chris.kraeuter@thestreet.com> .
+}
+
+<#graphStreet> {
+
+######################Source###################### 
+
+<#graphSteet> rdfs:label "Data Graph of The Street" .
+
+
+<http://www.thestreet.com> a fin:InfoPortal ;
+  fin:country iso:US ;
+  foaf:homepage <http://www.thestreet.com> ;
+  foaf:name " TheStreet.com "^^dtype:string ;
+  dc:description " Online portal about financial topics. "^^dtype:string .
+
+
+ _:v a fin:Author ;
+  fin:country iso:US ;
+  foaf:name " Chris Kraeuter "^^dtype:string ;
+  dc:description " TheStreet.com Staff Reporter "^^dtype:string ;
+  foaf:image "http://images.thestreet.com/tsc/common/images/icons/1100407.gif"^^dtype:string . 
+
+
+######################News######################
+
+<http://www.thestreet.com/_tscs/tech/chriskraeuter/10203758.html> a fin:News ;
+ fin:newsSource <http://www.thestreet.com> ;
+ fin:author _:v ;
+ fin:newsAbout <urn:DUNS:000000002> ;
+ dc:date " 2005-01-19T09:39-05:00 "^^dtype:date ;
+ dc:description " Article about AMD "^^dtype:string ;
+ fin:text " Flash Unit Drags AMDBy Chris KraeuterTheStreet.com Staff Reporter1/19/2005 12:57 PM ESTClick here for more stories by Chris Kraeuter Updated from 9:39 a.m. ESTShares of Advanced Micro Devices (AMD:NYSE - news - research) were up slightly Wednesday even though the chipmaker detailed a disappointing fourth quarter and offered lukewarm projections for the seasonally weak first quarter stemming from increased competition in the flash memory market.Shares were recently up 23 cents, or 1.5%, to $15.73.After the bell Tuesday, AMD said it posted a fourth-quarter loss of $30 million, or 8 cents a share, on sales of $1.26 billion. During the same period last year, AMD earned $43.2 million, or 12 cents a share, on sales of $1.2 billion.AMD's loss was largely driven by charges of $49 million, or 13 cents a share, caused by the conversion and retirement of debt. Following a warning from AMD on Jan. 10, analysts lowered their targets to reflect expected earnings excluding charges of 8 cents a share and sales of $1.26 billion, on average, according to Thomson First Call.For the first quarter, AMD predicted that computer chip sales would be flat to down and that flash revenue would decline. The company expects to regain profitability in the current quarter.During the fourth quarter, in its computational products group, AMD logged a double-digit percentage increase in unit shipments, with server and mobile chip sales hitting records for the company. Sales rose 26% from last year's fourth quarter. The flash memory group, however, held back results as the unit lost $39 million on sales of $504 million. Sales dropped 11% from last year's fourth quarter.Executives at the company expressed frustration with the flash memory performance and vowed a renewed effort.\"The fourth quarter of 2004 was for AMD a solid quarter in microprocessors, but, frankly, a freaking dismal quarter in flash,\" said Chief Executive Hector Ruiz during a conference call. He cited aggressive pricing and oversupply, as well as poor execution for AMD in Japan and a delay in qualifying a new flash density. \"We will take bold actions to address these issues and to capitalize on the opportunities before us,\" Ruiz said. \"We are determined to make this business provide a fair return to shareholders.\"Analysts were skeptical of AMD's ability to bounce back so fast in the flash arena.\"AMD has little market power, and looks unlikely to have any control over profitability in the near future,\" said analyst Allan Mishan with CIBC World Markets in a research note, adding that he wasn't sure when the company's flash unit would be profitable again.Still, others expect AMD's microprocessor unit to perform strongly going forward and that this should offset weakness in flash.Analyst Kevin Rottinghaus with FTN Midwest Research expects AMD's overall profitability to improve through manufacturing and operational efficiencies, pricing increases in processors due to improving mix, and expanded exposure to more hardware manufacturers.\"Because of the improved product line-up, emerging opportunities in enterprise PCs, continued trend towards good-enough and lower cost PCs, and opportunities for additional share gains, we encourage investors looking for technology exposure to evaluate AMD as an opportunity to see appreciation in an emerging and maturing market,\" Rottinghaus wrote in a research note.Ruiz vowed that AMD would do whatever it takes to make the flash business pay off for shareholders. He said he would accelerate technology transitions, better utilize capacity and \"be more competitive and aggressive in the marketplace.\"He also acknowledged the corporate reorganization around end-markets that its much larger and primary rival, Intel (INTC:Nasdaq - news - research), announced Monday.\"We believe that customers really would like to see all of us more focused on total solutions, whether you call it a platform or not. And I believe that doing that does make sense, makes sense for us and makes sense for the customer,\" Ruiz said. However, Ruiz stopped short of saying that the way Intel was going about it was a good idea.\"I think the opportunity is for us to establish deeper and stronger relationships with the ecosystem to provide customers the best solution, not the solution we dream up in the lab and cram down their throats,\" he said during a conference call Tuesday.Intel unveiled on Monday a marketing-driven reorganization that sets the company on a new path only four months before President Paul Otellini gets ready to take the chief executive reins. Intel made the move following the success of its Centrino brand of wireless networking technology. " .
+
+<http://www.thestreet.com/_tscs/tech/chriskraeuter/10204326.html> a fin:News ;
+ fin:newsSource <http://www.thestreet.com> ;
+ fin:author _:v ;
+ fin:newsAbout <urn:DUNS:047897855> ;
+ dc:date " 2005-01-20T15:30-05:00 "^^dtype:date ;
+ dc:description " Article about Intel "^^dtype:string ;
+ fin:text " Intel Keeps Ball RollingBy Chris KraeuterTheStreet.com Staff Reporter1/20/2005 3:30 PM ESTClick here for more stories by Chris Kraeuter The sleeping giant is awake.Looking to extend the momentum from its positive earnings announcement last week, Intel (INTC:Nasdaq - news - research) said Thursday that it is speeding the introduction of a new virtualization technology for desktop chips and chipsets late this year -- earlier than an anticipated launch in 2006.Intel's Vanderpool technology helps a single computing system act like several systems through the use of partitions. The technology was slated for use in Intel's Itanium server chips this year, but the company has moved up the introduction into its PC microprocessors and chipsets.It's a relatively minor event, but the announcement, along with Intel's stellar fourth-quarter report has added significance, considering that Intel is coming off a year of technology and execution missteps. Its stock finished 2004 off almost 30%.In fact, the world's largest chipmaker has already had a noteworthy week: the company earlier reorganized its corporate structure in a sweeping set of changes that sets Intel on a new path only months before President Paul Otellini takes over as chief executive from Craig Barrett. Otellini will become only the fourth chief executive in Intel's 37-year history and its first not to be an engineer.On Wednesday, Intel rolled out its latest Centrino package, dubbed Sonoma.Perhaps just as important to investor sentiment, Intel's smaller but primary rival Advanced Micro Devices (AMD:NYSE - news - research) announced disappointing financial results for the fourth quarter, capping an otherwise very positive year. AMD's recent resurgency against Intel had pushed its stock up nearly 50% in 2004.On the surface, Intel's announcements and AMD's fourth-quarter problems could signal increased trouble for AMD, but the stock performances of the two companies indicate that nothing beyond the status quo is expected. Shares of AMD have held steady around a three-month low in the $15 range since the company warned on Jan. 10; Intel's stock, too, has drifted in the past week at around $22.50. AMD blamed its fourth-quarter problems on its flash memory unit, which accounts for almost half of its sales. The chipmaker said the unit would likely take more than a quarter to recover from the missteps.But the problem could be larger than that. Consider that the flash memory market is about to be inundated with supply, which should contribute to tumbling prices, and AMD could have missed its best, most profitable opportunity to stake out more territory against Intel.\"Everyone is very iffy about 2005 -- no one wants to say it will be a bad year, but everyone is guarded about saying it will be a good year,\" said Jim Handy, flash memory analyst with Semico Research. \"Most companies are predicting flat growth, but there are still questions about that.\"When that overcapacity strikes, expect NOR flash prices to collapse,\" he said, adding that a collapse typically entails a 60% drop in prices.The extreme price drop balanced by unit growth will make for a flash memory market that declines by 12% in terms of revenue, Handy predicted.However, that spells trouble for Intel, too. Although flash makes up less than 10% of Intel's sales, it still amounted to roughly $2 billion in 2004.\"Everyone will have a difficult year in 2005 if prices collapse the way we are forecasting they will,\" said Handy. \"The only thing specific to AMD is that they are going into a difficult year having to recover from a product glitch in the fourth quarter.\"AMD blamed the difficulties on a severe pricing environment, weak sales in Japan, and a delay in qualifying a 256-megabit flash chip. But Handy said the pricing decline had less to do with AMD's woes than with sales in Japan and the product delay, adding that the weakness in Japan could be a symptom of the product delay.Handy estimated industrywide sales of 256-megabit flash products, which are used almost exclusively in cell phones, were about $175 million in the fourth quarter. If AMD had captured even one-third of those sales, the $60 million in revenue would have been enough for AMD to hit Wall Street's original revenue targets.AMD, for its part, has said it had recovered from the glitches and that sales of 256-megbit flash products would help its results this quarter. The company also vowed to take aggressive actions to recover flash business, but the industrywide headwinds will make the journey even more difficult. " .
+
+<http://www.thestreet.com/_tscs/tech/chriskraeuter/10203052.html> a fin:News ;
+ fin:newsSource <http://www.thestreet.com> ;
+ fin:author _:v ;
+ fin:newsAbout <urn:DUNS:047897855> ;
+ dc:date " 2005-01-12T12:35-05:00 "^^dtype:date ;
+ dc:description " Article about Intel "^^dtype:string ;
+ fin:text " Investors Welcome Back IntelBy Chris KraeuterTheStreet.com Staff Reporter1/12/2005 12:35 PM ESTClick here for more stories by Chris Kraeuter Intel (INTC:Nasdaq - news - research) shares rose Wednesday as investors were soothed by a solid financial report and first-quarter projections from the world's largest chipmaker. Intel's fourth-quarter net income fell 2% to $2.1 billion, but earnings of 33 cents a share and 10% revenue growth to $9.6 billion surpassed Wall Street's financial targets. Also, Intel's first-quarter sales targets of between $8.8 billion and $9.4 billion provided room for substantial upside to analysts' expected sales of $8.94 billion.\"Intel's report yesterday was excellent,\" said Stephen Leeb, president of Leeb Capital Management and manager of the MegaTrends Fund. \"It says that during the past six months, despite inventory problems and despite tough comparisons to a blowout year in 2003, that Intel still managed to grow their top line and bottom line.\"Leeb, who manages about $100 million, was most impressed with Intel's gross margin target of 58% for 2005 and the company's strong growth in emerging markets. \"The big picture for Intel is that it may no longer be a cyclical stock. This may be a growth stock, thanks to India and China and surging demand there for PCs and Intel-related products.\"Placing Intel in the growth-stock category is a strong statement, considering it just wrapped a year with revenue of $34 billion. Still, Intel President Paul Otellini, who will take over as chief executive officer in March from Craig Barrett, said the company is expecting PC units to grow by double-digit percentages in 2005.This is more optimistic than current industry estimates, most of which peg PC growth in the low- to mid-single-digit percentage range. A portion of that growth has to come from emerging markets, which aren't as saturated with PCs as industrialized nations.\"I take it with a grain of salt, because as they plan for production levels, they are better off overshooting than undershooting, but to expect a double-digit unit shipment rate for PCs is a pretty bullish statement,\" said Pam Hegarty, global technology team leader for Baring Asset Management, which has about $32 billion under management. However, most investors were content to be on the bullish side Wednesday. Shares were recently up 2.4% to $23 Wednesday.Hegarty, too, took note of the margin targets. She said that the company's stock typically doesn't move higher unless Intel is expanding its profitability. On the basis of a weaker first half, Intel's margin expansion should accelerate in the second half of the year.Analyst Charlie Glavin at Needham estimated that the third and fourth quarters should see Intel boost its margins by 1 to 1.5 percentage points a quarter.\"Intel may not be the hyper growth company of the 1990s, but it has rebounded from the embarrassing gaffes of early 2004 to reposition itself for earnings expansion in 2005,\" Glavin said in a morning research note.Intel also set strong increases in capital expenditures with a projected budget between $4.9 billion and $5.3 billion for 2005, representing a 29% to 39% boost from the $3.8 billion it spent in 2004.Stocks of chip-equipment companies advanced strongly on the capex target, with Applied Materials (AMAT:Nasdaq - news - research), KLA-Tencor (KLAC:Nasdaq - news - research) and Novellus Systems (NVLS:Nasdaq - news - research) each adding between 3% and 5%.Intel cited record revenue and strong demand for its architecture products -- microprocessors, chipsets and motherboards -- in all geographies and channels. Selling prices held flat from the third quarter.The architecture unit accounted for all of Intel's profits. On $8.23 billion in sales, which was up 15% from the third quarter, the unit grossed $3.48 billion in operating profit, up 25%.Flash memory units rose and prices fell, but the company claimed market-share gains. On Monday, Intel's primary flash competitor, AMD (AMD:NYSE - news - research), announced that it would not hit its sales and operating income targets, primarily because of weakness in its flash unit. " .
+
+
+
+}
+
+
+
+
+
+# published by: The register (<http://www.theregister.co.uk>)
+
+<#graphReg_warrant> {
+    <#graphReg> swp:assertedBy <#graphReg_warrant> .
+    <#graphReg_trust> swp:assertedBy <#graphReg_warrant> .
+    <#graphReg_warrant> swp:assertedBy <#graphReg_warrant> .
+    <#graphReg_warrant> swp:authority <http://www.theregister.co.uk> .
+    <#graphReg_warrant> rdfs:label "Warrant Graph of The Register" .
+}
+
+
+<#graphReg_trust> {
+#####################Trust#################################
+    <#graphReg_trust> rdfs:label "Trust Graph of The Register" .
+
+    <http://www.theregister.co.uk> trust:trust10 <mailto:tony.smith@theregister.co.uk> .
+    <http://www.theregister.co.uk> trust:trust10 <mailto:tim.richardson@theregister.co.uk> .
+    <http://www.theregister.co.uk> trust:trust10 <mailto:john.oates@theregister.co.uk> .
+}
+
+<#graphReg> {
+
+######################Source######################
+
+<#graphReg> rdfs:label "Data Graph of The Register" .
+
+<http://www.theregister.co.uk> a fin:InfoPortal ;
+  fin:country iso:GB ;
+  foaf:homepage <http://www.theregister.co.uk/> ;
+  foaf:name " The Register "^^dtype:string ;
+  dc:description " Online portal about IT- topics. "^^dtype:string .
+
+
+ _:TonySmith a fin:Author ;
+  foaf:name " Tony Smith "^^dtype:string ;
+  vcard:TITLE " Hardware Editor "^^dtype:string .
+
+
+
+<mailto:tim.richardson@theregister.co.uk> a fin:Author ;
+  foaf:name " Tim Richardson "^^dtype:string ;
+  vcard:TITLE " Internet Editor "^^dtype:string ;
+  vcard:EMAIL <mailto:tim.richardson@theregister.co.uk> .
+
+
+ _:JohnOates a fin:Author ;
+  foaf:name " John Oates "^^dtype:string .
+
+	
+
+
+######################News######################
+
+
+<http://www.theregister.co.uk/2005/01/24/amd_roadmap_2006/> a fin:News ;
+ fin:newsSource <http://www.theregister.co.uk> ;
+ fin:author _:TonySmith ;
+ fin:newsAbout <urn:DUNS:000000002> ;
+ dc:date " 2005-01-24T13:10+00:00 "^^dtype:date ;
+ dc:description " Article about AMD "^^dtype:string ;
+ fin:text " AMD's 2006 roadmap - details emergeBy Tony SmithPublished Monday 24th January 2005 13:10 GMTRoadmap AMD's public roadmap stretched only so far as the end of 2005, but an image that surfaced on the web this weekend may reveal the chip maker's plans for 2006.If genuine, the roadmap shows the arrival of 'Windsor' and 'Orleans', dual-core processors that bring DDR 2 SDRAM support to the memory controller integrated into AMD's 64-bit processors.Click HereThe chips also incorporate enhanced security technologies and AMD's answer to Intel's 'Vanderpool' virtualisation system, 'Presidio'. Windsor apparently uses a new interface codenamed 'M2'.Other sites point to 'Taylor', a dual-core mobile part with DDR 2 support, presumably the successor to today's single-core Mobile Athlon 64 chips for thin'n'light laptops. 'Trinidad', meanwhile, is geared toward desktop replacement notebooks, so presumably it's essentially the same as the upcoming Athlon 64 desktop dualies. Indeed, it's said to be M2-based, too.Officially, H1 2005 will see the arrival of updated 90nm single-core desktop Athlon 64s and 64-FXs - 'Venice' and 'San Diego', respectively - and a new 90nm Sempron desktop core, 'Palermo'.On the mobile side, AMD has said it will release 'Lancaster' and 'Newark', new 90nm low-voltage and mainstream, respectively, Mobile Athlon 64 chips in the first half of the year.In H2, expect to see 90nm dual-core Opterons, and 90nm Mobile Sempron cores. " .
+
+<http://www.theregister.co.uk/2005/01/28/intel_trademark_confusion/> a fin:News ;
+ fin:newsSource <http://www.theregister.co.uk> ;
+ fin:author _:TonySmith ;
+ fin:newsAbout <urn:DUNS:047897855> ;
+ dc:date " 2005-01-28T17:02+00:00 "^^dtype:date ;
+ dc:description " Article about Intel "^^dtype:string ;
+ fin:text " Intel baffles with latest trademarksBy Tony SmithPublished Friday 28th January 2005 17:02 GMTIntel has added a pair of trademarks to its large roster of protected names: 'Intel Inside VIIV' and 'Intel VIIV'.Not surprisingly, there's a considerable amount of head-scratching going on in web-based Intel-watching circles as to what the chip giant is thinking. The speculation isn't helped by Intel's refusal to comment, even though the trademark filings are a matter of public record.The trademarks have also been filed in Germany.Some say the 'VIIV' is a reference to a dual-core ('II') Pentium 5 ('V'). Others suggest the symbol indicates 64-bit: VI for six, IV for 4. However, LXIV would be a better indicator of 64-bit technology, perhaps, and certainly a more accurate way of showing the number in Roman numerals.Either way - and neither idea has been confirmed, in any way - the meaning is not immediately obvious to potential punters; and it doesn't follow the company's usual approach to technology naming schemes.'Vacuous Intel Initiative Verbiage', anyone? " .
+
+<http://www.theregister.co.uk/2005/01/28/siemens_phone_results/> a fin:News ;
+ fin:newsSource <http://www.theregister.co.uk> ;
+ fin:author _:TonySmith ;
+ fin:newsAbout <urn:DUNS:316067164> ;
+ dc:date " 2005-01-28T11:53+00:00 "^^dtype:date ;
+ dc:description " Article about Siemens "^^dtype:string ;
+ fin:text " Siemens delays decision on handset biz fateBy Tony SmithPublished Friday 28th January 2005 11:53 GMTSiemens yesterday reported that there was nothing to report, stating that no decision had yet been made concerning the future of the engineering giant's loss-making mobile phone business.The phone wing lost 143m ($186.4m) during its most recently completed quarter, Q1 FY2005. Quarterly sales fell year on year from 1.49bn ($1.94bn) to 1.17bn ($1.53), down 21.5 per cent.Click HereUnit shipments fell from 15.2m units in Q1 FY2004 to 13.5m in the three months to 31 December 2004. That puts the company behind LG, which shipped 13.9m handsets in the same period. LG recently denied being in talks to acquire Siemens' handset business or to merge the two companies' operations.Siemens' average handset selling price fell year on year to 86 ($112.1) from 98 ($127.8).Addressing the division's decline, Siemens pledged to put in place a \"road map\" to drive the handset business, but did not say when its plans would be announced or implemented.However, new Siemens chief Klaus Kleinfeld takes over from his former boss Heinrich von Pierer next week. The troubled Mobile Devices division is likely to be high on his list of priorities.Overall, Siemens' Communications group, of which Mobile Devices is a part, saw profits rise 37.9 per cent year on year to 240m ($312.9m) despite a seven per cent decline in sales, to 4.24bn ($5.53bn). Mobile devices' drop in sales accounted for 97.5 per cent of the division's revenue fall.Rumours that Siemens had decided to sell its handset business surfaced late last year. However, a variety of suggested partners and purchasers have they are denied interest in buying the company. " .
+
+<http://www.theregister.co.uk/2005/01/26/intel_roadmap_em64t/> a fin:News ;
+ fin:newsSource <http://www.theregister.co.uk> ;
+ fin:author _:TonySmith ;
+ fin:newsAbout <urn:DUNS:047897855> ;
+ dc:date " 2005-01-26T12:12+00:00 "^^dtype:date ;
+ dc:description " Article about Intel "^^dtype:string ;
+ fin:text " Intel to bring 64-bit to P4, Celerons in Q2By Tony SmithPublished Wednesday 26th January 2005 12:12 GMTRoadmap Intel plans to upgrade its current LGA-775 Pentium 4 line-up with its AMD64-like EM64T 64-bit addressing technology next quarter, the company's latest roadmap update reveals.Intel also plans to add the technology to its top-end Celeron processors.Click HereAccording to a report on the usually accurate Japanese site PCWatch, Q2 2005 will see the debut of P4s carrying the model numbers 521, 531, 541, 551, 561 and 571, clocked liked today's P4 line-up at 2.8, 3.0, 3.2, 3.4, 3.6 and 3.8GHz, respectively. The single point added to the model number represents the effect of enabling EM64T. The new chips will supersede today's P4s, ensuring that all P4s support the technology come Q2.Today's mainstream P4s are equipped with EM64T, but it's disabled. The 64-bit system only ships today on a series of P4s aimed at single-processor workstation and server roles.The arrival of EM64T into the desktop space will take occur later this quarter with the debut of the P4 6xx series, which not only add the 64-bit addressing capability but also a 2MB on-die L2 cache, double today's P4 cache size and likewise double the cache of the upcoming 5x1 P4s.Curiously, some appear to have a very short lifespan, with the 2.8GHz version not surviving the quarter even, and the 571 and 561 being culled at the end of Q3. Their demise is presumably predicated on the successful roll-out of 'Smithfield', the 90nm dual-core P4 8xx series, now scheduled to ship late Q2, but with volume shipments probably not arriving until Q3.Both the new 5x1 P4 line-up and the 6xx P4s appear to be scheduled for replacement in the Q2 2006 timeframe, when they'll be pushed aside by 'Cedarmill', Intel's 65nm single-core desktop CPU. It will ship in the same quarter as 'Presler', the 65nm successor to Smithfield.Also marked for termination is the P4 Extreme Edition, which gets no upgrade beyond this quarter's 3.73GHz version, and doesn't appear to extend beyond Q4 2005.Back to Q2 2005, and we'll see the debut of desktop Celerons with model number 326, 331, 336, 341, 346 and 351, clocked at 2.53, 2.66, 2.8, 2.93, 3.06 and 3.2GHz, respectively. Like the new P4s, they too will sport EM64T support.All this activity on the EM64T front strongly suggests that Microsoft will finally release the completed 64-bit version of Windows XP in the H1 2005 timeframe. Intel always said it would not push EM64T out into the mainstream until key operating systems supported 64-bit addressing. Linux has for some time, of course, but to make 64-bit computing mainstream, you need Windows behind you.Like the P4 line, the EM64T-equipped Celerons will replace the existing LGA-775 Celerons, though older, 478-pin versions will continue to be made available. Q3 will see a further addition to the family: the 3.33GHz Celeron 355. " .
+
+<http://www.theregister.co.uk/2005/01/21/siemens_lg/> a fin:News ;
+ fin:newsSource <http://www.theregister.co.uk> ;
+ fin:author <mailto:tim.richardson@theregister.co.uk> ;
+ fin:newsAbout <urn:DUNS:316067164> ;
+ dc:date " 2005-01-21T10:44+00:00 "^^dtype:date ;
+ dc:description " Article about Siemens "^^dtype:string ;
+ fin:text " LG rejects interest in Siemens mobile bizBy Tim RichardsonPublished Friday 21st January 2005 10:44 GMTLG Electronics has ruled itself out of the running to acquire Siemens' loss-making mobile phone business.Reports circulating yesterday said that LG Electronics was in the frame to buy Siemens' handset business if negotiations ran smoothly.Click HereBut newswire AFP today quotes an LG spokesman who has denied that the South Korean electronics giant has even held talks with Siemens.He said: \"We have no interest in acquiring the Siemens' handset unit.\"That ties in with another story which pours cold water on speculation that the handset business is up for sale.German-language newspaper Die Welt today quoted the head of Siemens' works council as saying that the business is not up for sale.That's despite chief executive Heinrich von Pierer saying earlier: \"Either the situation has to be fixed or we have to find a partner for co-operation. We have to fix, close or sell.\"LG has now joined NEC and Chinese manufacturer Ningbo Bird in the list of firms who deny any interest in acquiring the business. A decision about the future of Siemens' mobile phone operation is expected at the group's annual meeting on 27 January. " .
+
+
+<http://www.theregister.co.uk/2005/01/20/lg_mulls_siemens_handset_purchase/> a fin:News ;
+ fin:newsSource <http://www.theregister.co.uk> ;
+ fin:author <mailto:tim.richardson@theregister.co.uk> ;
+ fin:newsAbout <urn:DUNS:316067164> ;
+ dc:date " 2005-01-20T15:45+00:00 "^^dtype:date ;
+ dc:description " Article about Siemens "^^dtype:string ;
+ fin:text " LG sniffing round Siemens mobile phone bizBy Tim RichardsonPublished Thursday 20th January 2005 15:45 GMTSouth Korean firm LG Electronics is in the frame to buy Siemens' loss-making handset business, according to German business magazine WirtschaftsWoche, by way of newswire AFP.Unnamed sources say the two companies are locked in talks over the future of the mobile phone business, which lost 140m (97m) in the fourth quarter of 2004. " . 
+
+<http://www.theregister.co.uk/2005/01/17/siemens_mobile_sale/> a fin:News ;
+ fin:newsSource <http://www.theregister.co.uk> ;
+ fin:author _:JohnOates ;
+ fin:newsAbout <urn:DUNS:316067164> ;
+ dc:date " 2005-01-17T11:10+00:00 "^^dtype:date ;
+ dc:description " Article about Siemens "^^dtype:string ;
+ fin:text " Siemens mobile arm for sale or closureBy John OatesPublished Monday 17th January 2005 11:10 GMTSiemens will close its mobile handset division unless it can find a last minute buyer, according to the Sunday Telegraph.Siemens is the fourth largest handset maker by market share it has struggled to make a profit. In the fourth quarter of 2004 the mobile division lost 140m.Click HereThe paper reports a final decision will be announced at the Siemens annual general meeting on 27 January.A spokesman for Siemens declined to comment on the report but confirmed to the Scotsman newspaper that the division's future was under review by chief executive Heinrich von Pierer and that an announcement will be made at the annual meeting.Von Pierer told Bloomberg: \"Either the situation has to be fixed or we have to find a partner for cooperation. We have to fix, close or sell.\".NEC denied it is interested in buying the division. Chinese manufacturer Ningbo Bird also denied interest. " .
+
+
+
+}
+
+
+# published by: DiscussionForums and newsgroups
+
+
+
+<#graphNG_warrant> {
+    <#graphNG> swp:assertedBy <#graphNG_warrant> .
+    <#graphNG_trust> swp:assertedBy <#graphNG_warrant> .
+    <#graphNG_warrant> swp:assertedBy <#graphNG_warrant> .
+    <#graphNG_warrant> swp:authority <http://groups-beta.google.com> .
+    <#graphNG_warrant> rdfs:label "Warrant Graph of the Google Groups" .
+}
+
+<#graphNG_trust> {
+#####################Trust#################################
+
+}
+
+<#graphNG> {
+
+<#graphNG> rdfs:label "Data Graph of the Google Groups" .
+
+_:GoogleGroups a fin:NewsGroup ;
+  foaf:name " comp.sys.ibm.pc.hardware.chips, comp.sys.intel "^^dtype:string ;
+  dc:description " Usenet newsgroup about financial topics. "^^dtype:string . 
+
+<http://groups.google.de/groups?hl=de&lr=&selm=Wuqdnbgcco63Th_cRVn-uA%40rogers.com&rnum=3> a fin:Posting ;
+ fin:newsSource _:GoogleGroups ;
+ fin:author <mailto:bbbl67@ezrs.com> ;
+ fin:newsAbout <urn:DUNS:047897855> ;
+ dc:date " 2004-10-29T16:32-10:00 "^^dtype:date ;
+ dc:description " Posting about Intel "^^dtype:string ;
+ fin:text " Positions of Smaller Chipset Makers Strengthening, Says Reportby Anton Shilov10/29/2004 | 03:21 PMIntel Corp. lost 6.7% of the chipset market to companies like VIA Technologies, SiS and ATI, who produce chipsets, during the third quarter of the year according to a report from Merril Lynch analyst cited by DigiTimes web-site in Taiwan.During the Q3 2004 Intel Corp. supplied 62.1% of all chipsets shipped worldwide, VIA Technologies commanded 18.5% of the market, Silicon Integrated Systems Corp. shipped 9.9% of core-logic products in Q3 2004, while ATI Technologies and NVIDIA Corp. only occupied 4.5% and 4.2% of the market.According to Merrill Lynch analyst Den Heyler VIA's third-quarter 3.6% market share gains become possible as shipments of core-logic chipsets supporting Intel and Advanced Micro Devices microprocessors rose 17% and 67%, respectively, from the second quarter of 2004. Shares of ATI, NVIDIA and SiS also increase 1% each in Q3. Still, chipset business of companies like VIA, SiS and ATI, who supply the majority of their core-logic products for PCs running Intel Pentium 4 processors, is under fire, as Intel Corp. competes fiercely in the entry-level and mainstream chipset market segments, which puts pricing pressure on third-party core-logic makers.ATI, SiS and VIA supply chipsets designed for both widely available platforms: Intel and AMD. In contrast, NVIDIA Corp. ships chipsets only for AMD-based computers, as it does not have license to make core-logic for Intel's central processing units. Intel only makes chipsets for its own processors.This quarter ATI, NVIDIA and VIA are expected to initiate commercial shipments of the first breed of PCI Express chipsets targeted at AMD64 infrastructure. SiS and VIA are also expected to begin volume supplies of PCI Express and DDR2 products designed for Intel's Pentium 4 processors in weeks.\"http://www.xbitlabs.com/news/chipsets/display/20041029152027.htmlKinda surprising considering Intel makes the overwhelming majority of chipsets for its own platforms. I didn't think there was much of a market for Intel chipsets for VIA, SIS, or ATI. Yousuf Khan " . 
+
+<mailto:bbbl67@ezrs.com> a fin:Author ;
+  foaf:name " Yousuf Kahn "^^dtype:string ;
+  vcard:EMAIL <mailto:bbbl67@ezrs.com> .
+
+
+}
+
+
+<#graphYa_warrant> {
+    <#graphYa> swp:assertedBy <#graphYa_warrant> .
+    <#graphYa_trust> swp:assertedBy <#graphYa_warrant> .
+    <#graphYa_warrant> swp:assertedBy <#graphYa_warrant> .
+    <#graphYa_warrant> swp:authority <http://messages.yahoo.com/yahoo/Business___Finance/index.html> .
+    <#graphYa_warrant> rdfs:label "Warrant Graph of the Yahoo Buisiness Finance Message Board".
+}
+
+<#graphYa_trust> {
+#####################Trust#################################
+
+}
+
+<#graphYa> {
+
+<#graphYa> rdfs:label "Data Graph of the Yahoo Buisiness Finance Message Board" .
+
+<http://messages.yahoo.com/yahoo/Business___Finance/index.html> a fin:DiscussionForum ;
+  fin:country iso:US ;
+  foaf:homepage <http://messages.yahoo.com/yahoo/Business___Finance/index.html> ;
+  foaf:name " Yahoo Finance Message Boards "^^dtype:string ;
+  dc:description " Discussionforum about financial topics "^^dtype:string .
+
+<http://finance.messages.yahoo.com/bbs?.mm=FN&action=m&board=1603257709&tid=si&sid=1603257709&mid=2391> a fin:Posting ;
+ fin:newsSource <http://ragingbull.lycos.com/cgi-bin/static.cgi/a=index.txt&d=mainpages> ;
+ fin:author _:zipter12 ;
+ fin:newsAbout <urn:DUNS:316067164> ;
+ dc:date " 2005-01-27T21:07-05:00 "^^dtype:date ;
+ dc:description " Posting about Siemens "^^dtype:string ;
+ fin:text "  Mobile Phones by: zipter12 01/27/05 09:07 pm | 2004: Fix, close, sell2005: Fix, close, sell, cooperate2006: Nothing to fix, nothing to close, nothing to sell, no one left to cooperate.Von Pierer, who said in the text of a speech he would not present a concrete solution for Siemens' ailing handsets business at Thursday's shareholder meeting, declined to rule out shutting the unit.\"I have been as specific as I want to be,\" he said. Siemens has said repeatedly its options for the unit are \"fix, close, sell or cooperate.\" ".
+
+_:zipter12 a fin:Author ;  
+  foaf:name " zipter12 "^^dtype:string ;
+  vcard:TITLE " Discussionforum user "^^dtype:string .
+
+}
+
+
+<#graphRa_warrant> {
+    <#graphRa> swp:assertedBy <#graphRa_warrant> .
+    <#graphRa_trust> swp:assertedBy <#graphRa_warrant> .
+    <#graphRa_warrant> swp:assertedBy <#graphRa_warrant> .
+    <#graphRa_warrant> swp:authority <http://ragingbull.lycos.com/cgi-bin/static.cgi/a=index.txt&d=mainpages> .
+    <#graphRa_warrant> rdfs:label "Warrant Graph of the Lycos Raging Bull Forum" .
+}
+
+<#graphRa_trust> {
+#####################Trust#################################
+
+}
+
+<#graphRa> {
+
+<#graphRa> rdfs:label "Data Graph of the Lycos Raging Bull Forum" .
+
+<http://ragingbull.lycos.com/cgi-bin/static.cgi/a=index.txt&d=mainpages> a fin:DiscussionForum ;
+  fin:country iso:US ;
+  foaf:homepage <http://ragingbull.lycos.com/cgi-bin/static.cgi/a=index.txt&d=mainpages> ;
+  foaf:name " Lycos Raging Bull "^^dtype:string ;
+  dc:description " Discussionforum about stocks "^^dtype:string .
+
+<http://ragingbull.lycos.com/mboard/boards.cgi?board=AMD&read=117988> a fin:Posting ;
+ fin:newsSource <http://ragingbull.lycos.com/cgi-bin/static.cgi/a=index.txt&d=mainpages> ;
+ fin:author _:dubya_kicksyourbutt ;
+ fin:newsAbout <urn:ISIN:US0079031078> ;
+ dc:date " 2005-01-15T15:04-05:00 "^^dtype:date ;
+ dc:description " Posting about AMD share "^^dtype:string ;
+ fin:text "  Advanced Micro Devices-AMD downgrading to Net Neutral from Net Positiveopinion @ SUSQDowngrading due to weakness in their NOR Flash business.---------------Advanced Micro Devices established a nervous tone ahead of the Intel report. The company said that current quarter revenue would be less than Wall Street expects. This doesn't necessarily mean that Intel has a similar problem, but it understandably has put in place a level of concern that might persist through the day and until Intel reports. " .
+
+<http://ragingbull.lycos.com/mboard/boards.cgi?board=INTC&read=43915> a fin:Posting ;
+ fin:newsSource <http://ragingbull.lycos.com/cgi-bin/static.cgi/a=index.txt&d=mainpages> ;
+ fin:author _:dadean7 ;
+ fin:newsAbout <urn:ISIN:US4581401001> ;
+ dc:date " 2005-02-01T12:26-05:00 "^^dtype:date ;
+ dc:description " Posting about Intel share "^^dtype:string ;
+ fin:text "  What an idiot you are. INTC will never go down to $12 or even close to it. As a matter of fact, it is on it's way to a new high this year pal. Don't you read the news?(Voluntary Disclosure: Position- Long; ST Rating- Strong Buy; LT Rating- Strong Buy) " .
+
+_:dubya_kicksyourbutt a fin:Author ;  
+  foaf:name " dubya_kicksyourbutt "^^dtype:string ;
+  vcard:TITLE " Discussionforum user "^^dtype:string .
+
+_:dadean7 a fin:Author ;  
+  foaf:name " dadean7 "^^dtype:string ;
+  vcard:TITLE " Discussionforum user "^^dtype:string .
+
+}
+
+
+<#graphStS_warrant> {
+    <#graphStS> swp:assertedBy <#graphStS_warrant> .
+    <#graphStS_trust> swp:assertedBy <#graphStS_warrant> .
+    <#graphStS_warrant> swp:assertedBy <#graphStS_warrant> .
+    <#graphStS_warrant> swp:authority <http://boards.stockselector.com/community.asp> .
+    <#graphStS_warrant> rdfs:label "Warrant Graph of the Stockselector Community Board" .
+}
+
+<#graphStS_trust> {
+#####################Trust#################################
+    
+}
+
+<#graphStS> {
+
+<#graphStS> rdfs:label "Data Graph of the Stockselector Community Board" .
+
+<http://boards.stockselector.com/community.asp> a fin:DiscussionForum ;
+  fin:country iso:US ;
+  foaf:homepage <http://boards.stockselector.com/community.asp> ;
+  foaf:name " StockSelector.com "^^dtype:string ;
+  dc:description " Discussionforum about stocks "^^dtype:string .
+
+<http://www.stockselector.com/message.asp?mid=78379&symbol=AMD> a fin:Posting ;
+ fin:newsSource <http://boards.stockselector.com/community.asp> ;
+ fin:author _:Got_rich_by_shorting_stocks ;
+ fin:newsAbout <urn:ISIN:US0079031078> ;
+ dc:date " 2004-12-29T11:52-05:00 "^^dtype:date ;
+ dc:description " Posting about AMD share "^^dtype:string ;
+ fin:text " AMD good covered call play  The best way to play Amd would be via covered calls. Right now the call option prices are too rich to qualify to buy, but great to sell. And as Amd drops, you can buy back and sell another call.That would be the best way to play this stock. " .
+
+<http://boards.stockselector.com/message.asp?mid=78830&symbol=INTC> a fin:Posting ;
+ fin:newsSource <http://boards.stockselector.com/community.asp> ;
+ fin:author <http://john.reynolds.com> ;
+ fin:newsAbout <urn:ISIN:US4581401001> ;
+ dc:date " 2005-01-09T12:49-05:00 "^^dtype:date ;
+ dc:description " Posting about Intel share "^^dtype:string ;
+ fin:text "  Time to sell INTEL???? As all of you are aware, Intel has earnings coming up this week. It is never a good idea to hold over earnings BUT...what really worries me is that AMD also has earnings coming up and when AMD misses and their stock slides, they could take Intel right down with them.Peraps this explains the already strongs elling we have seen on both Intel but especially Amd. Also notice that insiders and institutions have been dumping shares of Amd like crazy.I AM MOVING my rating on Intel from hold to sell at least for now. You can always pick up shares a whole lot cheaper later on. Longs may want to buy puts and/or sell calls. " .
+
+_:Got_rich_by_shorting_stocks a fin:Author ;  
+  foaf:name " Got_rich_by_shorting_stocks "^^dtype:string ;
+  vcard:TITLE " Discussionforum user "^^dtype:string .  
+
+
+_:Hupalo_is_clueless a fin:Author ;  
+  foaf:name " Hupalo_is_clueless "^^dtype:string ;
+  vcard:TITLE " Discussionforum user "^^dtype:string .
+
+}
+
+
+
+
+# market prices XETRA
+
+<#graphMpriceXETRA> {
+
+
+<#graphMpriceXETRA> rdfs:label "XETRA Market Price Graph" .
+
+_:b 
+ fin:maketPrice "64.22"^^dtype:float ;
+ fin:market " XETRA "^^dtype:string ;
+ fin:currency <cur:EUR> ;
+ fin:dividend " 2.00 "^^dtype:float ;
+ dc:date " 2005-01-26T13:34+01:00 "^^dtype:date .
+
+_:now1 
+ fin:maketPrice "66.18"^^dtype:float ;
+ fin:market " XETRA "^^dtype:string ;
+ fin:currency <cur:EUR> ;
+ fin:dividend " 2.00 "^^dtype:float ;
+ dc:date " 2005-02-01T17:35+01:00 "^^dtype:date . 
+
+_:val
+ fin:maketPrice "65.90"^^dtype:float ;
+ fin:market " XETRA "^^dtype:string ;
+ fin:currency <cur:EUR> ;
+ fin:dividend " 2.00 "^^dtype:float ;
+ dc:date " 2005-02-02T15:04+01:00 "^^dtype:date .  
+
+_:x 
+ fin:maketPrice "62.62"^^dtype:float ;
+ fin:market " XETRA "^^dtype:string ;
+ fin:currency <cur:EUR> ;
+ fin:dividend " 1.30 "^^dtype:float ;
+ dc:date " 2005-01-27T14:01+01:00 "^^dtype:date .
+
+_:val111 
+ fin:maketPrice "60.97"^^dtype:float ;
+ fin:market " XETRA "^^dtype:string ;
+ fin:currency <cur:EUR> ;
+ fin:dividend " 1.30 "^^dtype:float ;
+ dc:date " 2005-02-02T15:16+01:00 "^^dtype:date . 
+
+
+_:a2 
+ fin:maketPrice "62.57"^^dtype:float ;
+ fin:market " XETRA "^^dtype:string ;
+ fin:currency <cur:EUR> ;
+ fin:dividend " 1.30 "^^dtype:float ;
+ dc:date " 2005-01-28T10:05+01:00 "^^dtype:date .
+
+
+
+_:siem010205
+ fin:maketPrice "61.35"^^dtype:float ;
+ fin:market " XETRA "^^dtype:string ;
+ fin:currency <cur:EUR> ;
+ fin:dividend " 1.30 "^^dtype:float ;
+ dc:date " 2005-02-01T17:35+01:00 "^^dtype:date . 
+
+
+}
+
+
+
+# market prices NYSE
+
+<#graphMpriceNYSE> {
+
+<#graphMPriceNYSE> rdfs:label "NYSE Market Price Graph" .
+
+_:val222
+ fin:maketPrice "80.24"^^dtype:float ;
+ fin:market " NYSE "^^dtype:string ;
+ fin:currency <cur:USD> ;
+ dc:date " 2005-02-02T09:33-05:00 "^^dtype:date . 
+
+_:a3 
+ fin:maketPrice "81.55"^^dtype:float ;
+ fin:market " NYSE "^^dtype:string ;
+ fin:currency <cur:USD> ;
+ dc:date " 2005-01-27T16:03-05:00 "^^dtype:date .
+
+_:amd010205
+ fin:maketPrice "16.23"^^dtype:float ;
+ fin:market " NYSE "^^dtype:string ;
+ fin:currency <cur:USD> ;
+ dc:date " 2005-02-01T12:08-05:00 "^^dtype:date . 
+
+_:amd020205
+ fin:maketPrice "16.27"^^dtype:float ;
+ fin:market " NYSE "^^dtype:string ;
+ fin:currency <cur:USD> ;
+ dc:date " 2005-02-02T09:37-05:00 "^^dtype:date .  
+
+
+_:m
+ fin:maketPrice "15.86"^^dtype:float ;
+ fin:market " NYSE "^^dtype:string ;
+ fin:currency <cur:USD> ;
+ dc:date " 2005-01-26T09:51-05:00 "^^dtype:date .
+
+_:a5
+ fin:maketPrice "16.12"^^dtype:float ;
+ fin:market " NYSE "^^dtype:string ;
+ fin:currency <cur:USD> ;
+ dc:date " 2005-01-27T16:00-05:00 "^^dtype:date . 
+
+
+}
+
+
+
+# market prices NASDAQ
+
+<#graphMpriceNASDAQ> {
+
+<#graphMpriceNASDAQ> rdfs:label "NASDAQ Market Price Graph" .
+
+_:s 
+ fin:maketPrice "22.47"^^dtype:float ;
+ fin:market " NASDAQ "^^dtype:string ;
+ fin:currency <cur:USD> ;
+ dc:date " 2005-01-26T09:51-05:00 "^^dtype:date .
+
+_:a4 
+ fin:maketPrice "22.31"^^dtype:float ;
+ fin:market " NASDAQ "^^dtype:string ;
+ fin:currency <cur:USD> ;
+ dc:date " 2005-01-28T16:25-05:00 "^^dtype:date .
+
+_:intel010205 
+ fin:maketPrice "22.48"^^dtype:float ;
+ fin:market " NASDAQ "^^dtype:string ;
+ fin:currency <cur:USD> ;
+ dc:date " 2005-02-01T12:09-05:00 "^^dtype:date .
+
+_:intel020205 
+ fin:maketPrice "22.63"^^dtype:float ;
+ fin:market " NASDAQ "^^dtype:string ;
+ fin:currency <cur:USD> ;
+ dc:date " 2005-02-02T09:36-05:00 "^^dtype:date .
+
+
+}
+
+
+
+
+# published by Standard and Poor's (<urn:DUNS:000000004>)
+
+<#graphStP_warrant> {
+    <#graphStP> swp:assertedBy <#graphStP_warrant> .
+    <#graphStP_trust> swp:assertedBy <#graphStP_warrant> .
+    <#graphStP_warrant> swp:assertedBy <#graphStP_warrant> .
+    <#graphStP_warrant> swp:authority <urn:DUNS:000000004> .
+    <#graphStP_warrant> rdfs:label "Warrant Graph of Standard and Poor's" .
+}
+
+<#graphStP_trust> {
+#####################Trust#################################
+    <#graphStP_trust> rdfs:label "Trust Graph of Standard and Poor's".
+
+}
+
+
+<#graphStP> {
+
+<#graphStP> rdfs:label "Data Graph of Standard and Poor's" .
+
+######################Source######################
+
+<urn:DUNS:000000004> a fin:RatingAgency ;
+ foaf:name " Standard & Poor's, New York "^^dtype:string ;
+ dc:description " A large rating agency "^^dtype:string ;
+ fin:country iso:US ;
+ foaf:homepage <http://www.standardandpoors.com> . 
+
+######################News######################
+
+
+_:e a fin:Rating ;
+ fin:newsSource  <urn:DUNS:000000004> ;
+ fin:author  <urn:DUNS:000000004> ;
+ fin:newsAbout <urn:DUNS:000000001> ;
+ foaf:name " Rating "^^dtype:string ;
+ fin:scale " Standard and Poor's "^^dtype:string ;
+ fin:value " AA- "^^dtype:string ;
+ dc:date " 2004-01-01T00:00+01:00 "^^dtype:date .
+
+
+_:z a fin:Rating ;
+ fin:newsSource  <urn:DUNS:000000004> ;
+ fin:newsAbout <urn:DUNS:316067164> ;
+ foaf:name " Rating "^^dtype:string ;
+ fin:scale " Standard and Poor's "^^dtype:string ;
+ fin:value " AA- "^^dtype:string ;
+ dc:date " 2004-01-01T00:00+01:00 "^^dtype:date .
+
+
+}
+
+
+
+# published by Fitch (<urn:DUNS:000000005>)
+
+<#graphFit_warrant> {
+    <#graphFit> swp:assertedBy <#graphFit_warrant> .
+    <#graphFit_trust> swp:assertedBy <#graphFit_warrant> .
+    <#graphFit_warrant> swp:assertedBy <#graphFit_warrant> .
+    <#graphFit_warrant> swp:authority <urn:DUNS:000000005> .
+    <#graphFit_warrant> rdfs:label "Warrant Graph of Fitch" .
+}
+
+
+<#graphFit_trust> {
+#####################Trust#################################
+    <#graphFit_trust> rdfs:label "Trust Graph of Fitch" .
+}
+
+<#graphFit> {
+
+######################Source######################
+
+<#graphFit> rdfs:label "Data Graph of Fitch" .
+
+<urn:DUNS:000000005> a fin:RatingAgency ;
+ foaf:name " Fitch Ratings, New York "^^dtype:string ;
+ dc:description " A large rating agency "^^dtype:string ;
+ fin:country iso:US ;
+ foaf:homepage <http://www.fitchratings.com> . 
+
+######################News######################
+
+ _:g10 a fin:Rating ;
+ fin:newsSource  <urn:DUNS:000000005> ;
+ fin:author  <urn:DUNS:000000005> ;
+ fin:newsAbout <urn:DUNS:000000001> ;
+ foaf:name " Rating "^^dtype:string ;
+ fin:country iso:US ;
+ fin:scale " Fitch "^^dtype:string ;
+ fin:value " AA- "^^dtype:string ;
+ dc:date " 2004-01-01T00:00+01:00 "^^dtype:date .
+
+ _:g12 a fin:Rating ;
+ fin:newsSource  <urn:DUNS:000000005> ;
+ fin:author  <urn:DUNS:000000005> ;
+ fin:newsAbout <urn:DUNS:000000004> ;
+ foaf:name " Rating "^^dtype:string ;
+ fin:country iso:US ;
+ fin:scale " Fitch "^^dtype:string ;
+ fin:value " AA- "^^dtype:string ;
+ dc:date " 2004-01-01T00:00+01:00 "^^dtype:date .
+
+ _:g13 a fin:Rating ;
+ fin:newsSource  <urn:DUNS:000000005> ;
+ fin:author  <urn:DUNS:000000005> ;
+ fin:newsAbout <urn:DUNS:000000002> ;
+ foaf:name " Rating "^^dtype:string ;
+ fin:country iso:US ;
+ fin:scale " Fitch "^^dtype:string ;
+ fin:value " AAA "^^dtype:string ;
+ dc:date " 2004-01-01T00:00+01:00 "^^dtype:date .
+
+ _:g14 a fin:Rating ;
+ fin:newsSource  <urn:DUNS:000000005> ;
+ fin:author  <urn:DUNS:000000005> ;
+ fin:newsAbout <urn:DUNS:316067164> ;
+ foaf:name " Rating "^^dtype:string ;
+ fin:country iso:US ;
+ fin:scale " Fitch "^^dtype:string ;
+ fin:value " AAA "^^dtype:string ;
+ dc:date " 2004-01-01T00:00+01:00 "^^dtype:date .
+
+}
+
+
+
+
+# published by Reed-electronics (<http://www.reed-electronics.com/electronicnews/>)
+
+
+<#graphReed_warrant> {
+    <#graphReed> swp:assertedBy <#graphReed_warrant> .
+    <#graphReed_trust> swp:assertedBy <#graphReed_warrant> .
+    <#graphReed_warrant> swp:assertedBy <#graphReed_warrant> .
+    <#graphReed_warrant> swp:authority <http://www.reed-electronics.com/electronicnews/> .
+    <#graphReed_warrant> rdfs:label "Warrant Graph of Reed-electronics" .
+}
+
+<#graphReed_trust> {
+#####################Trust#################################
+    <#graphReed_trust> rdfs:label "Trust Graph of Reed-electronics" .
+}
+
+<#graphReed> {
+
+######################Source######################
+
+<#graphReed> rdfs:label "Data Graph of Reed-elecronics" .
+
+<http://www.reed-electronics.com/electronicnews/> a fin:InfoPortal ;
+  fin:country iso:US ;
+  foaf:homepage <http://www.reed-electronics.com/electronicnews/> ;
+  foaf:name " Reed Electronics Group - electronic news "^^dtype:string ;
+  dc:description " Large global information provider for the electronic industry "^^dtype:string .
+
+######################News######################
+
+<http://www.reed-electronics.com/electronicnews/article/CA497153.html> a fin:News ;
+ fin:newsSource <http://www.reed-electronics.com/electronicnews/> ;
+ fin:author <http://www.reed-electronics.com/electronicnews/> ;
+ fin:newsAbout <urn:DUNS:047897855> ;
+ dc:date " 2005-01-18T00:00+00:00 "^^dtype:date ;
+ dc:description " Article about Intel "^^dtype:string ;
+ fin:text " Intel Reorgs Around Platforms, Creates New Business UnitsOnline staff -- Electronic News, 1/18/2005To bring all major product groups in-line with its push for platform development based on Intel technologies, Intel Corp. is in the midst of a broad reorganization that includes the creation of new business units for digital healthcare and the worldwide distribution channel, the company announced Monday.This reorganization created three groups to lead its efforts in platforms for mobility, the digital enterprise and digital home. The platform-based organizations also reflect the ongoing convergence of computing and communications by incorporating both capabilities across the new groups, Intel said.Intel is putting the people and resources in place to sharpen our focus on the development of platforms that meet the demands of our customers and provide innovative and exciting new technologies for the marketplace, said Paul Otellini, Intel president and COO, in a statement. The new organization will help address growth opportunities by better anticipating and addressing market needs, speeding decision making, and ensuring world-class operational excellence, he continued. Each operating unit has the autonomy to allocate computing and communications resources to be successful, making Intel's entire structure consistent with our platform products strategy, Otellini added.The new business units are to report to Otellini and CEO Craig Barrett.The mobility group, led by Sean Maloney and Dadi Perlmutter, is to develop platforms for notebook PCs along with handheld computing and communications devices. The group is aimed at making the growing numbers of different mobile devices work together better and easier to use.The digital enterprise group, led by Pat Gelsinger and Abhi Talwalkar, is set to develop computing and communications infrastructure platforms for end-to-end solutions in businesses.The digital home group is focused on development of consumer-aimed home computing and communications platforms, with emphasis on living room entertainment applications and consumer electronics devices, led by Don MacDonald.The digital health group, led by Louis Burns, is to develop products and explore business opportunities for Intel architecture products in healthcare research, diagnostics and productivity, as well as personal healthcare.The channel products group, led by Bill Siu, combines existing groups focused on developing and selling Intel products to local markets worldwide.Justin Rattner is to serve in an acting capacity overseeing Intel's corporate technology group until a replacement for Gelsinger is named. Jason Chen, VP and director of the sales and marketing group, plans to leave Intel at the end of January to attend to a family health matter, to be replaced by Anand Chandrasekher, who is to jointly run the organization with Eric Kim, VP and director of sales and marketing.Reporting structures and assignments in other Intel organizations, including Intel's technology and manufacturing group, remain unchanged. " .
+
+
+<http://www.reed-electronics.com/electronicnews/article/CA497790> a fin:News ;
+ fin:newsSource <http://www.reed-electronics.com/electronicnews/> ;
+ fin:author <http://www.reed-electronics.com/electronicnews/> ;
+ fin:newsAbout <urn:DUNS:000000002> ;
+ dc:date " 2005-01-19T00:00+00:00 "^^dtype:date ;
+ dc:description " Article about AMD "^^dtype:string ;
+ fin:text " AMD Sees Red ----Online staff -- Electronic News, 1/19/2005 Advanced Micro Devices saw a net loss in its Q4 even as net sales inched up both sequentially and year over year to reach a new record.AMD posted a net loss of $30 million or 8 cents per share, which included charges of $49 million or 13 cents per share on the retirement and conversion of debt.For the year the company saw record sales of $5 billion, up 42 percent from 2003. Net income for the year reached $91 million or 25 cents per share, including charges of $51.6 million or 14 cents per share. In 2003 the microprocessor and flash memory maker saw sales of $3.52 billion and a net loss of $274 million or 79 cents per share which included credits of $13.9 million or 4 cents per share.\"In 2004 both the processor and flash memory businesses were profitable,\" said Robert Rivet, CFO, in a statement. \"Total sales increased by 42 percent compared with 2003, driven by 29 percent growth in our microprocessor business and 65 percent growth in our flash memory business. In Q4 the company experienced record microprocessor sales, driven by increased server and mobile dollar and unit sales, according to Rivet. The companys 64-bit processor line increased to 50 percent of total PC processor sales for the quarter. But the memory picture was not as brightMemory group sales were weaker than expected due to an aggressive pricing environment, significantly lower sales in Japan, and a delay in qualifying a new product in the wireless segment, the company said. Memory group sales of $504 million in Q4 decreased 11 percent the same period a year ago and were down 6 percent sequentially.For its Q1, AMD expects processor sales to be flat to down slightly, typical of the seasonally down quarter. In addition the company said it expects flash memory sales to also be down due to a continued imbalance in supply and demand, pressure on ASPs and seasonality. " .
+
+
+
+}
+
+
+
+
+
+# published by New Ratings (<http://www.newratings.com>)
+
+
+<#graphNewRatings_warrant> {
+    <#graphNewRatings> swp:assertedBy <#graphNewRatings_warrant> .
+    <#graphNewRatings_trust> swp:assertedBy <#graphNewRatings_warrant> .
+    <#graphNewRatings_warrant> swp:assertedBy <#graphNewRatings_warrant> .
+    <#graphNewRatings_warrant> swp:authority <http://www.newratings.com> .
+    <#graphNewRatings_warrant> rdfs:label "Warrant Graph of New Ratings" .
+}
+
+
+<#graphNewRatings_trust> {
+#####################Trust#################################
+    <#graphNewRatings_trust> rdfs:label "Trust Graph of New Ratings" .
+
+    <http://www.newratings.com> trust:trust6 <http://www.merckfinck.de/> .
+    <http://www.newratings.com> trust:trust9 <http://www.afxnews.com> .
+}
+
+<#graphNewRatings> {
+
+
+
+######################Source######################
+
+<http://www.newratings.com> a fin:InfoPortal ;
+  fin:country iso:US ;
+  foaf:homepage <http://www.newratings.com/> ;
+  foaf:name " newRatings "^^dtype:string ;
+  dc:description " Online portal of newRatings.com "^^dtype:string .
+
+
+<http://www.merckfinck.de/> a fin:NewsSource ;
+ foaf:name " Merck Finck &amp; Co Privatbankiers "^^dtype:string ;
+ dc:description " A privat bank "^^dtype:string ;
+ fin:country iso:DE ;
+ foaf:homepage <http://www.merckfinck.de/> .  
+
+<http://www.afxnews.com> a fin:Author;
+ foaf:name" AFX News "^^dtype:string ;
+ foaf:homepage <http://www.afxnews.com> .
+
+######################News######################
+
+<http://www.newratings.com/analyst_news/article_597303.html> a fin:News ;
+ fin:newsSource <http://www.newratings.com> ;
+ fin:author <http://www.merckfinck.de/> ;
+ fin:newsAbout <urn:DUNS:000000001> ;
+ dc:date " 2004-12-28T07:47+00:00 "^^dtype:date ;
+ dc:description " Article about Deutsche Bank "^^dtype:string ;
+ fin:text " Deutsche Bank \"buy\"Tuesday, December 28, 2004 7:47:13 AM ETMerck Finck & Co.LONDON, December 28 (newratings.com) - Analyst Konrad Becker of Merck Finck & Co maintains his \"buy\" rating on Deutsche Bank (DBK.ETR).In a research note published this morning, the analyst mentions that the company has recently sold 109 of its assets to a UK-based investor. Deutsche Bank has posted book loss of 40 million as a result of the deal, the analyst says. The company is pursuing such deals in order to free its capital and generate higher profits through capital reinvestment, Merck Finck & Co adds. " .
+
+<http://www.newratings.com/analyst_news/article_744337.html> a fin:News ;
+ fin:newsSource <http://www.newratings.com> ;
+ fin:author <http://www.afxnews.com> ;
+ fin:newsAbout <urn:DUNS:000000001> ;
+ dc:date " 2005-03-23T17:07+00:00 "^^dtype:date ;
+ dc:description " Article about Deutsche Bank "^^dtype:string ;
+ fin:text " STOCKWATCH Schering downgraded to 'hold' from 'buy' at Deutsche Bank\nFRANKFURT (AFX) - Deutsche Bank has downgraded its stance on shares inSchering AG to 'hold' from 'buy', with its price target falling to 52 eur from ... " .
+
+<http://www.newratings.com/analyst_news/article_739681.html> a fin:News ;
+ fin:newsSource <http://www.newratings.com> ;
+ fin:author <http://www.afxnews.com> ;
+ fin:newsAbout <urn:DUNS:000000001> ;
+ fin:newsAbout <urn:DUNS:047897855> ;
+ dc:date " 2005-03-19T15:04+00:00 "^^dtype:date ;
+ dc:description " Article about Deutsche Bank and Intel"^^dtype:string ;
+ fin:text " Intel shares gain on Deutsche Bank upgrade\nNEW YORK (AFX) -- Deutsche Bank upgraded Intel Corp to 'buy' from 'hold' Friday on valuation grounds. Analyst Ben Lynch said investors should take advantage of the semiconductor company's share price, which is trading at an eight-year low. " .
+
+
+}
+
+
+# #########################################################################
+# Personal Trust graphs
+# #########################################################################
+
+
+<#graphJohnOates_warrant> {
+# john.oates@theregister.co.uk ##########################################
+
+    <#graphJohnOates_trust> swp:assertedBy <#graphJohnOates_warrant> .
+    <#graphJohnOates_warrant> swp:assertedBy <#graphJohnOates_warrant> .
+    <#graphJohnOates_warrant> swp:authority <mailto:john.oates@theregister.co.uk> .
+    <#graphJohnOates_warrant> rdfs:label "Warrant Graph of John Oates".
+}
+
+<#graphJohnOates_trust> {
+#####################Trust#################################
+    <#graphJohnOates_trust> rdfs:label "Trust Graph of John Oates" .
+
+    <mailto:john.oates@theregister.co.uk> trust:trust9 <mailto:tony.smith@theregister.co.uk> .
+    <mailto:john.oates@theregister.co.uk> trust:trust9 <mailto:tim.richardson@theregister.co.uk> .
+    <mailto:john.oates@theregister.co.uk> trust:trust10 <http://www.theregister.co.uk> .
+    
+}
+
+
+<#graphTonySmith_warrant> {
+# tony.smith@theregister.co.uk ###########################################
+
+    <#graphTonySmith_trust> swp:assertedBy <#graphTonySmith_warrant> .
+    <#graphTonySmith_warrant> swp:assertedBy <#graphTonySmith_warrant> .
+    <#graphTonySmith_warrant> swp:authority <mailto:tony.smith@theregister.com> .
+    <#graphTonySmith_warrant> rdfs:label "Warrant Graph of Tony Smith" .
+}
+
+
+<#graphTonySmith_trust> {
+#####################Trust#################################
+    <#graphTonySmith_trust> rdfs:label "Trust Graph of Tony Smith" .
+
+    <mailto:tony.smith@theregister.co.uk> trust:trust10 <mailto:tim.richardson@theregister.co.uk> .
+    <mailto:tony.smith@theregister.co.uk> trust:trust7 <mailto:john.oates@theregister.co.uk> .
+    <mailto:tony.smith@theregister.co.uk> trust:trust10 <http://www.theregister.co.uk> .
+}
+
+
+<#graphTimR_warrant>{
+# tim.richardson@theregister.co.uk ###########################################
+
+    <#graphTimR_trust> swp:assertedBy <#graphTimR_warrant> .
+    <#graphTimR_warrant> swp:assertedBy <#graphTimR_warrant> .
+    <#graphTimR_warrant> swp:authority <mailto:tim.richardson@theregister.co.uk> .
+    <#graphTimR_warrant> rdfs:label "Warrant Graph of Tim Richardson" .
+}
+
+<#graphTimR_trust> {
+#####################Trust#################################
+    <#graphTimR_trust> rdfs:label "Trust Graph of Tim Richardson" .
+
+    <mailto:tim.richardson@theregister.co.uk> trust:trust9 <mailto:tony.smith@theregister.co.uk> .
+    <mailto:tim.richardson@theregister.co.uk> trust:trust7 <mailto:john.oates@theregister.co.uk> .
+}
+
+
+
+<#graphAtkins_warrant>{
+# ralph.atkins@ftd.de ###########################################
+
+    <#graphAtkins_trust> swp:assertedBy <#graphAtkins_warrant> .
+    <#graphAtkins_warrant> swp:assertedBy <#graphAtkins_warrant> .
+    <#graphAtkins_warrant> swp:authority <mailto:ralph.atkins@ftd.de>  .
+    <#graphAtkins_warrant> rdfs:label "Warrant Graph of Ralph Atkins" .
+}
+
+<#graphAtkins_trust> {
+#####################Trust#################################
+    <#graphAtkins_trust> rdfs:label "Trust Graph of Ralph Atkins" .
+
+    <mailto:ralph.atkins@ftd.de>  trust:trust8  <mailto:peter.smith@ftd.de> .
+    <mailto:ralph.atkins@ftd.de>  trust:trust9  <http://www.ftd.de> .
+    <mailto:ralph.atkins@ftd.de>  trust:trust10  <http://www.ft.com> .
+}
+
+
+<#graphPSmith_warrant>{
+# peter.smith@ftd.de ###########################################
+    <#graphPSmith_warrant> rdfs:label "Warrant Graph of Peter Smith" .
+
+    <#graphPSmith_trust> swp:assertedBy <#graphPSmith_warrant> .
+    <#graphPSmith_warrant> swp:assertedBy <#graphPSmith_warrant> .
+    <#graphPSmith_warrant> swp:authority <mailto:peter.smith@ftd.de> .
+}
+
+<#graphPSmith_trust> {
+#####################Trust#################################
+    <#graphPSmith_trust> rdfs:label "Trust Graphof Peter Smith" .
+
+    <mailto:peter.smith@ftd.de> trust:trust10 <http://www.ftd.de> .
+    <mailto:peter.smith@ftd.de> trust:trust9 <http://www.reuters.com> .
+
+}
+
+
+<#graphMLynch_warrant>{
+# crn@vnu.vom.uk (Martin Lynch) ###########################################
+
+    <#graphMLynch_trust> swp:assertedBy <#graphMLynch_warrant> .
+    <#graphMLynch_warrant> swp:assertedBy <#graphMLynch_warrant> .
+    <#graphMLynch_warrant> swp:authority <mailto:crn@vnu.vom.uk> .
+    <#graphMLynch_warrant> rdfs:label "Warrant Graph of Martin Lynch" .
+}
+
+<#graphMLynch_trust> {
+#####################Trust#################################
+    <#graphMLynch_trust> rdfs:label "Trust Graph of Martin Lynch" .
+
+    <mailto:crn@vnu.vom.uk> trust:trust6 <http://www.forbes.com> .
+}
+
+
+<#graphCKraeu_warrant>{
+# chris.kraeuter@thestreet.com ###########################################
+
+    <#graphCKraeu_trust> swp:assertedBy <#graphCKraeu_warrant> .
+    <#graphCKraeu_warrant> swp:assertedBy <#graphCKraeu_warrant> .
+    <#graphCKraeu_warrant> swp:authority <mailto:chris.kraeuter@thestreet.com> .
+    <#graphCKraeu_warrant> rdfs:label "Warrant Graph of Chris Kraeuter" .
+}
+
+<#graphCKraeu_trust> {
+#####################Trust#################################
+    <#graphCKraeu_trust> rdfs:label "Trust Graph of Chris Kraeuter" .
+
+    <mailto:chris.kraeuter@thestreet.com> trust:trust9 <http://www.thestreet.com> . 
+}
+
+
+<#graphZipter12_warrant>{
+# zipter12@yahoo.com ###########################################
+
+    <#graphZipter12_trust> swp:assertedBy <#graphZipter12_warrant> .
+    <#graphZipter12_warrant> swp:assertedBy <#graphZipter12_warrant> .
+    <#graphZipter12_warrant> swp:authority <mailto:zipter12@yahoo.com> .
+    <#graphZipter12_warrant> rdfs:labe "Warrant Graph of zipter12@yahoo.com" .
+}
+
+<#graphZipter12_trust> {
+#####################Trust#################################
+    <#graphZipter12_trust> rdfs:label "Trust Graph of zipter12@yahoo.com" .
+
+    <mailto:zipter12@yahoo.com> trust:trust6 <http://www.thestreet.com> .
+    <mailto:zipter12@yahoo.com> trust:trust7 <http://www.money.cnn.com> .
+    <mailto:zipter12@yahoo.com> trust:trust3 <http://www.ftd.de> .
+    <mailto:zipter12@yahoo.com> trust:trust2 <http://news.bbc.co.uk> .
+    <mailto:zipter12@yahoo.com> trust:trust8 <http://www.forbes.com> .
+    <mailto:zipter12@yahoo.com> trust:trust10 <http://www.newratings.com> .
+
+    <mailto:zipter12@yahoo.com> ebay:positiveRating <http://www.thestreet.com> .
+    <mailto:zipter12@yahoo.com> ebay:positiveRating <http://www.money.cnn.com> .
+    <mailto:zipter12@yahoo.com> ebay:negativeRating <http://www.ftd.de> .
+    <mailto:zipter12@yahoo.com> ebay:negativeRating <http://news.bbc.co.uk> .
+    <mailto:zipter12@yahoo.com> ebay:positiveRating <http://www.forbes.com> .
+    <mailto:zipter12@yahoo.com> ebay:positiveRating <http://www.newratings.com> .
+}
+
+
+<#graphBbbl_warrant>{
+# bbbl67@ezrs.com (Yousouf Kahn) ###########################################
+
+    <#graphBbbl_trust> swp:assertedBy <#graphBbbl_warrant> .
+    <#graphBbbl_warrant> swp:assertedBy <#graphBbbl_warrant> .
+    <#graphBbbl_warrant> swp:authority <mailto:bbbl67@ezrs.com> .
+    <#graphBbbl_warrant> rdfs:label "Warrant Graph of Bbbl167@ezrs.com" .
+}
+
+<#graphBbbl_trust> {
+#####################Trust#################################
+    <#graphBbbl_trust>  rdfs:label "Trust Graph of Bbbl167@ezrs.com" .
+
+    <mailto:bbbl67@ezrs.com> trust:trust9 <http://www.ftd.de> .
+    <mailto:bbbl67@ezrs.com> trust:trust8 <http://www.forbes.com> .
+
+    <mailto:bbbl67@ezrs.com> ebay:positiveRating <http://www.ftd.de> .
+    <mailto:bbbl67@ezrs.com> ebay:positiveRating <http://www.forbes.com> .
+}
+
+
+<#graphDubya_warrant>{
+# dubya@lycos.de (dubya_kicksyourbutt) ###########################################
+
+    <#graphDubya_trust> swp:assertedBy <#graphDubya_warrant> .
+    <#graphDubya_warrant> swp:assertedBy <#graphDubya_warrant> .
+    <#graphDubya_warrant> swp:authority <mailto:dubya@lycos.de> .
+    <#graphDubya_warrant> rdfs:label "Warrant Graph of dubya@lycos.de" .
+}
+
+<#graphDubya_trust> {
+#####################Trust#################################
+    <#graphDubya_trust> rdfs:label "Trust Graph of Dubya@lycos.de" .
+
+    <mailto:dubya@lycos.de> trust:trust3 <http://www.thestreet.com> .
+    <mailto:dubya@lycos.de> trust:trust10 <http://www.ftd.de> .
+    <mailto:dubya@lycos.de> trust:trust9 <http://news.bbc.co.uk> .
+    <mailto:dubya@lycos.de> trust:trust0 <mailto:dadean7@lycos.de> .
+
+    <mailto:dubya@lycos.de> ebay:negativeRating <http://www.thestreet.com> .
+    <mailto:dubya@lycos.de> ebay:positiveRating <http://www.ftd.de> .
+    <mailto:dubya@lycos.de> ebay:positiveRating <http://news.bbc.co.uk> .
+    <mailto:dubya@lycos.de> ebay:negativeRating <mailto:dadean7@lycos.de> .
+}
+
+
+<#graphDadean7_warrant>{
+# dadean7@lycos.de ###########################################
+
+    <#graphDadean7_trust> swp:assertedBy <#graphDadean7_warrant> .
+    <#graphDadean7_warrant> swp:assertedBy <#graphDadean7_warrant> .
+    <#graphDadean7_warrant> swp:authority <mailto:dadean7@lycos.de> .
+    <#graphDadean7_warrant> rdfs:label "Warrant Graph of dadean7@lycos.de" .
+}
+
+<#graphDadean7_trust> {
+#####################Trust#################################
+    <#graphDadean7_trust> rdfs:label "Trust Graph of dadean7@lycos.de" .
+
+    <mailto:dadean7@lycos.de> trust:trust2 <mailto:dubya@lycos.de> .
+    <mailto:dadean7@lycos.de> trust:trust9 <mailto:bbbl67@ezrs.com> .
+    <mailto:dadean7@lycos.de> trust:trust7 <mailto:zipter12@yahoo.com> .
+    <mailto:dadean7@lycos.de> trust:trust6 <mailto:got-rich@stockselector.com> .
+
+    <mailto:dadean7@lycos.de> ebay:negativeRating <mailto:dubya@lycos.de> .
+    <mailto:dadean7@lycos.de> ebay:positiveRating <mailto:bbbl67@ezrs.com> .
+    <mailto:dadean7@lycos.de> ebay:positiveRating <mailto:zipter12@yahoo.com> .
+    <mailto:dadean7@lycos.de> ebay:positiveRating <mailto:got-rich@stockselector.com> .
+}
+
+
+<#graphGotRich_warrant>{
+# got-rich@stockselector.com (Got_rich_by_shorting_stocks) ###########################################
+
+    <#graphGotRich_trust> swp:assertedBy <#graphGotRich_warrant> .
+    <#graphGotRich_warrant> swp:assertedBy <#graphGotRich_warrant> .
+    <#graphGotRich_warrant> swp:authority <mailto:got-rich@stockselector.com> .
+    <#graphGotRich_warrant> rdfs:label "Warrant Graph of got-rich@stockselector.com" .
+}
+
+<#graphGotRich_trust> {
+#####################Trust#################################
+    <#graphGotRich_trust> rdfs:label "Trust Graph of got-rich@stockselector.com" .
+
+    <mailto:got-rich@stockselector.com> trust:trust9 <http://www.forbes.com> .
+    <mailto:got-rich@stockselector.com> trust:trust6 <http://news.bbc.co.uk> .
+    <mailto:got-rich@stockselector.com> trust:trust5 <http://www.ftd.com> .
+    <mailto:got-rich@stockselector.com> trust:trust8 <http://www.newratings.com> .
+    <mailto:got-rich@stockselector.com> trust:trust6 <mailto:hupola@stockselector.com> .
+
+    <mailto:got-rich@stockselector.com> ebay:positiveRating <http://www.forbes.com> .
+    <mailto:got-rich@stockselector.com> ebay:positiveRating <http://news.bbc.co.uk> .
+    <mailto:got-rich@stockselector.com> ebay:neutralRating <http://www.ftd.com> .
+    <mailto:got-rich@stockselector.com> ebay:positiveRating <http://www.newratings.com> .
+    <mailto:got-rich@stockselector.com> ebay:positiveRating <mailto:hupola@stockselector.com> .
+}
+
+
+<#graphHupola_warrant>{
+# hupola@stockselector.com (Hupola_is_clueless) ###########################################
+
+    <#graphHupola_trust> swp:assertedBy <#graphHupola_warrant> .
+    <#graphHupola_warrant> swp:assertedBy <#graphHupola_warrant> .
+    <#graphHupola_warrant> swp:authority <mailto:hupola@stockselector.com> .
+    <#graphHupola_warrant> rdfs:label "Warrant Graph of hupola@stockselector.com" .
+}
+
+<#graphHupola_trust> {
+#####################Trust#################################
+    <#graphHupola_trust> rdfs:label "Trust Graph of hupola@stockselector.com" .
+
+    <mailto:hupola@stockselector.com> trust:trust4 <http://news.bbc.co.uk> .
+    <mailto:hupola@stockselector.com> trust:trust7 <http://www.ftd.de> .
+    <mailto:hupola@stockselector.com> trust:trust3 <http://www.newratings.com> .
+    <mailto:hupola@stockselector.com> trust:trust9 <http://www.theregister.co.uk> .
+
+    <mailto:hupola@stockselector.com> ebay:neutralRating <http://news.bbc.co.uk> .
+    <mailto:hupola@stockselector.com> ebay:positiveRating <http://www.ftd.de> .
+    <mailto:hupola@stockselector.com> ebay:negativeRating <http://www.newratings.com> .
+    <mailto:hupola@stockselector.com> ebay:positiveRating <http://www.theregister.co.uk> .
+}
+
+
+
+
+
+<#graphIso> {
+
+
+iso:DE a iso:Country ;
+ iso:code " DE " ;
+ iso:name " GERMANY " .
+
+<cur:EUR> a cur:Currency ;
+ cur:code " EUR " ;
+ cur:name " Euro " .
+
+
+iso:US a iso:Country ;
+ iso:code " US " ;
+ iso:name " UNITED STATES " .
+
+
+iso:GB a iso:Country ;
+ iso:code " GB " ;
+ iso:name " UNITED KINGDOM " . 
+
+<cur:USD> a cur:Currency ;
+ cur:code " USD " ;
+ cur:name " United States Dollars " . 
+
+
+ } 
+
+<#metricDescription> {
+
+tpl:TidalTrustMetric a metric:TrustMetric ;
+    rdfs:label                              "TidalTrustMetric" ;
+    rdfs:comment                            "The TidalTrust metric was founded by Jennifer Goldbeck. It infers an absolute trust value between two agents in a trust network. It searchs shortest pathes between the two agents in a directed labeled graph, where nodes are agents and the outgoing edges are trust opinions with a weights. The found pathes and the weigthed edges are used to calulate the absolute trust value. The implementation for the TriQL-Trust-Architecture uses a threshold to descide whether or not the inferred trust value is high enough to trust the sink." ;  
+    metric:perspecive                       metric:LocalPerspective ;
+    metric:inputData                        metric:OpinionBasedData ;
+    metric:completeness                     metric:LocalizedData ;
+    metric:selection                        metric:ThresholdBasedSelection ;
+    metric:computationalLocus               metric:CentralComputation ;
+    metric:evaluationOfTrustRelationships   metric:ScalarEvaluatoin ;
+    metric:arguments
+        [ a metric:MetricArgumentSeq ;
+            rdf:_1 
+                [ a metric:RequiredArgument;
+                    rdfs:comment "The URI, which identifies the source of the metric evaluation." ;
+                    rdfs:label "Source" ;
+                ];
+            rdf:_2
+                [ a metric:RequiredArgument;
+                    rdfs:comment "The URI, which identifies the sink of the metric evaluation." ;
+                    rdfs:label "Sink" ;
+                ];
+            rdf:_3
+                [ a metric:RequiredArgument;
+                    rdfs:comment "The metric decides that the source trust the sink, if the inferred trust value for the trust relationship between the source and the sink is greater than the threshold. Otherwise the metric returns, that the source does not trust the sink. The threshold have to be in the range of [0,1]." ;
+                    rdfs:label "Threshold" ;
+                ];
+        ].
+
+tpl:AppleseedMetric a metric:TrustMetric;
+    rdfs:label                              "AppleseedMetric" ;
+    rdfs:comment                            "The Appleseed metric was founded by Cai Ziegler and Georg Lausen. Originally it infers a trust ranking of agents in the neighborhood an agent. It uses a directed labeled trust graph, where nodes are agents and the outgoing edges are trust opinions with a weights. In the implementation of the of the TriQL-Trust-Architecture, the top n of agents of the inferred ranking will be trusted. Therefore the implementation is not a rank-based selection, it is a trashhold selection." ;  
+    metric:perspecive                       metric:LocalPerspective ;
+    metric:inputData                        metric:OpinionBasedData ;
+    metric:completeness                     metric:LocalizedData ;
+    metric:selection                        metric:ThresholdBasedSelection ;
+    metric:computationalLocus               metric:CentralComputation ;
+    metric:evaluationOfTrustRelationships   metric:GroupEvaluatoin .
+    metric:arguments
+        [ a metric:MetricArgumentSeq;
+            rdf:_1 
+                [ a metric:RequiredArgument;
+                    rdfs:comment "The URI, which identifies the source of the metric evaluation." ;
+                    rdfs:label "Source" ;
+                ];
+            rdf:_2
+                [ a metric:RequiredArgument;
+                    rdfs:comment "The URI, which identifies the sink of the metric evaluation." ;
+                    rdfs:label "Sink" ;
+                ];
+            rdf:_3
+                [ a metric:RequiredArgument;
+                    rdfs:comment "The number x of trusted nodes. This number is used to select the x nodes with the best rating as trusted." ;
+                    rdfs:label "Number of Trusted Nodes" ;
+                ];
+            rdf:_4
+                [ a metric:RequiredArgument;
+                    rdfs:comment "The amount of trust, that should be speaded over the direct and indirect neighbors. If more trust will be injected more nodes will be ranked." ;
+                    rdfs:label "Trust injection" ;
+                ];
+            rdf:_5
+                [ a metric:OptionalArgument;
+                    rdfs:comment "The spreading factor decides, how much trust a node keeps for itself and how much it gives to its successors. The spreading factor is in the range of [0,1]. If the spreading factor is not set, the default value is 0.85. Each node keeps 15% of the injected trust for itself and spread 85% will be spread among the successor nodes." ;
+                    rdfs:label "Spreading Factor" ;
+                ];
+            rdf:_6
+                [ a metric:OptionalArgument;
+                    rdfs:comment "The threshold decides, if the amount of trust, that should be injected into a successor node is high enough for further calculation. The threshold is a termination condition of the metric. If the threshold is not explicitly set, the default value is 0.05." ;
+                    rdfs:label "Threshold for Minimal Trust Injection" ;
+                ];
+            rdf:_7
+                [ a metric:OptionalArgument;
+                    rdfs:comment "The maximal number of nodes decides, how much nodes a maximal analysed and ranked. The default value of the maximal number of nodes is 200." ;
+                    rdfs:label "Maximal Number of Nodes" ;
+                ];
+            rdf:_8
+                [ a metric:OptionalArgument;
+                    rdfs:comment "The maximal path length defines the maximal path length between the source and a sink. The default value is 6." ;
+                    rdfs:label "Maximal Path Length" ;
+                ];
+            rdf:_9
+                [ a metric:OptionalArgument;
+                    rdfs:comment "The exponent is used to calculate, how trust is spreaded among the successor nodes of a node. An exponent greater than 1 punishes successor nodes with a low rating and rewards nodes with a high rating. A value less than 1 increases the differences of the ratings. The default value is 1" ;
+                    rdfs:label "Exponent for Trust Distribution";
+                ];
+        ].
+
+
+
+tpl:EbayMetric a metric:TrustMetric;
+    rdfs:label                              "Ebay Metric" ;
+    rdfs:comment                            "The implemetnation of the Ebay Metric in the TriQL-Trust-Architecture is a very simple version of the original Ebay trust metric. It just counts the positive, negative and neutral ratings and evaluates, whether or not their are more positive than negative ratings. The metric counts every rating from every one." ;  
+    metric:perspecive                       metric:GlobalPerspective ;
+    metric:inputData                        metric:TransactionBasedData ;
+    metric:completeness                     metric:CompleteData ;
+    metric:selection                        metric:ThresholdBasedSelection ;
+    metric:computationalLocus               metric:CentralComputation ;
+    metric:evaluationOfTrustRelationships   metric:GroupEvaluatoin .
+    metric:arguments
+        [ a metric:MetricArgumentSeq;
+            rdf:_1 
+                [ a metric:RequiredArgument;
+                    rdfs:comment "The URI, which identifies the sink of the metric evaluation." ;
+                    rdfs:label "Sink" ;
+                ];
+        ].
+
+}
