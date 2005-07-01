@@ -1,4 +1,4 @@
-// $Id: TriGWriterTest.java,v 1.2 2004/12/17 05:06:31 cyganiak Exp $
+// $Id: TriGWriterTest.java,v 1.3 2005/07/01 09:27:06 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import java.io.StringWriter;
@@ -50,6 +50,16 @@ public class TriGWriterTest extends TestCase {
 		StringWriter s = new StringWriter();
 		writer.write(this.set, s, null);
 		assertEquals("<" + EX + "graph1> { }\n\n<" + EX + "graph2> { }\n\n",
+				s.toString());
+	}
+
+	public void testAddNamespace() {
+		this.set.createGraph(graph1);
+		TriGWriter writer = new TriGWriter();
+		writer.addNamespace("ex", EX);
+		StringWriter s = new StringWriter();
+		writer.write(this.set, s, null);
+		assertEquals("@prefix ex:      <" + EX + "> .\n\nex:graph1 { }\n\n",
 				s.toString());
 	}
 }
