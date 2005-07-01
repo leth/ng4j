@@ -1,5 +1,5 @@
 /*
- * $Id: TriGWriter.java,v 1.4 2004/12/17 11:15:31 cyganiak Exp $
+ * $Id: TriGWriter.java,v 1.5 2005/07/01 09:26:57 cyganiak Exp $
  */
 package de.fuberlin.wiwiss.ng4j.trig;
 
@@ -11,8 +11,10 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.mem.GraphMem;
@@ -45,7 +47,8 @@ public class TriGWriter implements NamedGraphSetWriter {
 	private Writer writer;
 	private NamedGraph currentGraph;
 	private PrettyNamespacePrefixMaker prefixMaker;
-
+	private Map customPrefixes = new HashMap();
+	
 	/**
 	 * Writes a NamedGraphSet to a Writer. The base URI is optional.
 	 */
@@ -71,10 +74,16 @@ public class TriGWriter implements NamedGraphSetWriter {
 		this.prefixMaker.addDefaultNamespace("swp1", "http://www.w3.org/2004/03/trix/swp-1/");
 		this.prefixMaker.addDefaultNamespace("swp", "http://www.w3.org/2004/03/trix/swp-2/");
 		this.prefixMaker.addDefaultNamespace("rdfg", "http://www.w3.org/2004/03/trix/rdfg-1/");
+		Iterator it = this.customPrefixes.keySet().iterator();
+		while (it.hasNext()) {
+			String prefix = (String) it.next();
+			String uri = (String) this.customPrefixes.get(prefix);
+			this.prefixMaker.addNamespace(prefix, uri);
+		}
 		Model namespaceModel = ModelFactory.createDefaultModel();
 		namespaceModel.setNsPrefixes(this.prefixMaker.getPrefixMap());
 		new N3JenaWriterOnlyNamespaces().write(namespaceModel, out, baseURI);
-		Iterator it = getSortedGraphNames(set).iterator();
+		it = getSortedGraphNames(set).iterator();
 		while (it.hasNext()) {
 			String graphName = (String) it.next();
 			this.currentGraph = set.getGraph(graphName);
@@ -107,7 +116,7 @@ public class TriGWriter implements NamedGraphSetWriter {
 	 * @param namespaceURI The full namespace URI
 	 */
 	public void addNamespace(String prefix, String namespaceURI) {
-		this.prefixMaker.addNamespace(prefix, namespaceURI);
+		this.customPrefixes.put(prefix, namespaceURI);
 	}
 
 	private String getCurrentGraphURI() {
@@ -138,6 +147,45 @@ public class TriGWriter implements NamedGraphSetWriter {
 	}
 
 	private class N3JenaWriterOnlyStatements extends N3JenaWriterPP {
+
+		// we override this only to remove that one println()
+	    protected void processModel(Model baseModel)
+	    {
+	        prefixMap = baseModel.getNsPrefixMap() ;
+	        Model model = ModelFactory.withHiddenStatements( baseModel );
+	        bNodesMap = new HashMap() ;
+
+	        // If no base defined for the model, but one given to writer,
+	        // then use this.
+	        String base2 = (String)prefixMap.get("") ;
+	        
+	        if ( base2 == null && baseURIrefHash != null )
+	            prefixMap.put("", baseURIrefHash) ;
+
+	        for ( Iterator iter = prefixMap.keySet().iterator() ; iter.hasNext() ; )
+	        {
+	            String prefix = (String)iter.next() ;
+	            if ( prefix.indexOf('.') != -1 )
+	                iter.remove() ;
+	        }
+	        
+	        startWriting() ;
+	        prepare(model) ;
+
+	        writeHeader(model) ;
+	        writePrefixes(model) ;
+
+// No! -- RC
+//	        if (prefixMap.size() != 0)
+//	            out.println();
+
+	        // Do the output.
+	        writeModel(model) ;
+
+	        // Release intermediate memory - allows reuse of a writer
+	        finishWriting() ;
+	        bNodesMap = null ;
+	    }
 
 		protected void startWriting() {
 			if (TriGWriter.this.currentGraphIsEmpty()) {
