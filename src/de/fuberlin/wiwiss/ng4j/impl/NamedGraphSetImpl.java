@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetImpl.java,v 1.7 2005/06/21 09:25:35 cyganiak Exp $
+// $Id: NamedGraphSetImpl.java,v 1.8 2005/07/28 13:52:25 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import java.util.ArrayList;
@@ -9,10 +9,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import com.hp.hpl.jena.graph.BulkUpdateHandler;
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.graph.compose.MultiUnion;
+import com.hp.hpl.jena.graph.impl.SimpleBulkUpdateHandler;
 import com.hp.hpl.jena.mem.GraphMem;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.util.iterator.NiceIterator;
@@ -263,6 +265,18 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 				member.delete(t);
 			}
 		}
+
+		/**
+		 * <p>We create our own bulk update handler because the superclass
+		 * uses only the base graph's update handler.</p>
+		 * 
+		 * TODO: Add a test!
+		 */
+        public BulkUpdateHandler getBulkUpdateHandler() {
+            if (this.bulkHandler == null)
+                this.bulkHandler = new SimpleBulkUpdateHandler(this);
+            return this.bulkHandler;
+        }
 	}
 
 	private class FindQuadsIterator extends NiceIterator {
