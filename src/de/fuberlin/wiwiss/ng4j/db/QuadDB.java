@@ -1,4 +1,4 @@
-// $Id: QuadDB.java,v 1.4 2005/04/14 14:25:27 cyganiak Exp $
+// $Id: QuadDB.java,v 1.5 2005/08/04 10:46:13 tgauss Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -36,16 +36,21 @@ import de.fuberlin.wiwiss.ng4j.Quad;
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class QuadDB {
-	private final static Pattern escapePattern = Pattern.compile("([\\\\'])");
-	private final static String escapeReplacement = "\\\\$1";
+
+	private Pattern escapePattern = null;
+	private String escapeReplacement = null;
+	
 	private String tablePrefix;
 	private Connection connection;
+	private int type;
 
 	public QuadDB(Connection connection, String tablePrefix) {
 		this.connection = connection;
+		this.setDBtype();
+		this.setEscapePattern();
 		this.tablePrefix = escape(tablePrefix);
 	}
-
+	
 	public void insert(Node g, Node s, Node p, Node o) {
 		if (find(g, s, p, o).hasNext()) {
 			return;
@@ -243,27 +248,13 @@ public class QuadDB {
 	}
 
 	public void createTables() {
-		execute("CREATE TABLE " + getGraphNamesTableName() + " (" +
-				"name varchar(160) NOT NULL default '', " +
-				"PRIMARY KEY  (`name`)) TYPE=MyISAM");
-		try {
-			executeNoErrorHandling(
-					"CREATE TABLE " + getQuadsTableName() + " (" +
-					"graph varchar(160) NOT NULL default ''," +
-					"subject varchar(160) NOT NULL default ''," +
-					"predicate varchar(160) NOT NULL default ''," +
-					"object varchar(160) default NULL," +
-					"literal text," +
-					"lang varchar(10) default NULL," +
-					"datatype varchar(160) default NULL," +
-					"KEY graph (`graph`)," +
-					"KEY subject (`subject`)," +
-					"KEY predicate (`predicate`)," +
-					"KEY object (`object`)" +
-					") TYPE=MyISAM;");
-		} catch (SQLException ex) {
-			execute("DROP TABLE " + getGraphNamesTableName());
-			throw new JenaException(ex);
+		switch(this.type){
+			case 0:
+				this.createTablesHSQLDB();
+				break;
+			default:
+				this.createTablesMySQL();
+				break;
 		}
 	}
 	
@@ -273,15 +264,14 @@ public class QuadDB {
 	}
 	
 	public boolean tablesExist() {
-		try {
-			ResultSet results = this.connection.getMetaData().getTables(
-					null, null, getGraphNamesTableName(), null);
-			return results.next();
-		} catch (SQLException ex) {
-			throw new JenaException(ex);
+		switch(this.type){
+			case 0:
+				return this.tableExistHSQLDB();
+			default:
+				return this.tableExistMySQL();
 		}
 	}
-
+	
 	public void close() {
 		try {
 			this.connection.close();
@@ -302,12 +292,12 @@ public class QuadDB {
 	 * Escape special characters in database literals to avoid
 	 * SQL injection
 	 */
-	private static String escape(String s) {
-		return QuadDB.escapePattern.matcher(s).
-				replaceAll(QuadDB.escapeReplacement);
+	private String escape(String s) {
+		return this.escapePattern.matcher(s).
+				replaceAll(this.escapeReplacement);
 	}
 
-	private static String escapeResource(Node resource) {
+	private String escapeResource(Node resource) {
 		if (resource.isURI()) {
 			return escape(resource.getURI());
 		}
@@ -407,6 +397,101 @@ public class QuadDB {
 		}
 		return "WHERE " + result;
 	}
+	
+	private void setDBtype(){
+		String name = null;
+		try{
+			name = this.connection.getMetaData().getDatabaseProductName();
+		}catch(Exception e){
+			
+		}
+		if(name.toLowerCase().indexOf("hsql")!= -1){
+			this.type = 0;
+		}else if (name.toLowerCase().indexOf("mysql")!= -1){
+			this.type = 1;
+		}else{
+			this.type = -1;
+		}
+	}
+	
+	private void setEscapePattern(){
+		switch(this.type){
+			case 0:
+				this.escapePattern     = Pattern.compile("([\\'])");
+				this.escapeReplacement = "$1$1";
+				break;
+			default:
+				this.escapePattern     = escapePattern = Pattern.compile("([\\\\'])");
+				this.escapeReplacement = "\\\\$1";
+				break;
+		}
+	}
+	
+	private void createTablesHSQLDB(){
+		execute("CREATE TABLE " + getGraphNamesTableName() + " (name VARCHAR , PRIMARY KEY(name)) ");
+		try {
+			executeNoErrorHandling(
+					"CREATE TABLE " + getQuadsTableName() + " (" +
+					"graph VARCHAR NOT NULL," +
+					"subject VARCHAR NOT NULL," +
+					"predicate VARCHAR NOT NULL," +
+					"object VARCHAR," +
+					"literal LONGVARCHAR," +
+					"lang VARCHAR," +
+					"datatype VARCHAR )");
+		} catch (SQLException ex) {
+			execute("DROP TABLE " + getGraphNamesTableName());
+			throw new JenaException(ex);
+		}
+	}
+	
+	private void createTablesMySQL(){
+		execute("CREATE TABLE " + getGraphNamesTableName() + " (" +
+				"name varchar(160) NOT NULL default '', " +
+				"PRIMARY KEY  (`name`)) TYPE=MyISAM");
+		try {
+			executeNoErrorHandling(
+					"CREATE TABLE " + getQuadsTableName() + " (" +
+					"graph varchar(160) NOT NULL default ''," +
+					"subject varchar(160) NOT NULL default ''," +
+					"predicate varchar(160) NOT NULL default ''," +
+					"object varchar(160) default NULL," +
+					"literal text," +
+					"lang varchar(10) default NULL," +
+					"datatype varchar(160) default NULL," +
+					"KEY graph (`graph`)," +
+					"KEY subject (`subject`)," +
+					"KEY predicate (`predicate`)," +
+					"KEY object (`object`)" +
+					") TYPE=MyISAM;");
+		} catch (SQLException ex) {
+			execute("DROP TABLE " + getGraphNamesTableName());
+			throw new JenaException(ex);
+		}
+	}
+	
+	private boolean tableExistHSQLDB(){
+		try {
+			ResultSet results = this.connection.getMetaData().getTables(
+					null, null, getGraphNamesTableName().toUpperCase(), null);
+			return results.next();
+		} catch (SQLException ex) {
+			throw new JenaException(ex);
+		}
+	}
+	
+	private boolean tableExistMySQL(){
+		try {
+			ResultSet results = this.connection.getMetaData().getTables(
+					null, null, getGraphNamesTableName(), null);
+			return results.next();
+		} catch (SQLException ex) {
+			throw new JenaException(ex);
+		}
+	}
+
+	
+	
 }
 
 /*
