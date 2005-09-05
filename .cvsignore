@@ -1,8 +1,7 @@
 bin
+build
 bin-tests
 ng4j.jar
 ng4j.zip
-.classpath
-.project
 .DS_Store
 build-tests

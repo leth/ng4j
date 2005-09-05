@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="tests"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/junit.jar"/>
+	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
+	<classpathentry kind="lib" path="lib/antlr.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-oro-2.0.5.jar"/>
+	<classpathentry kind="lib" path="lib/concurrent.jar"/>
+	<classpathentry kind="lib" path="lib/icu4j.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang-2.0.jar"/>
+	<classpathentry sourcepath="/Users/richard/Java Libraries/Jena-2.2-beta-1/src" kind="lib" path="lib/jena.jar"/>
+	<classpathentry kind="lib" path="lib/xml-apis.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.9.jar"/>
+	<classpathentry kind="lib" path="lib/uuid-2.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/bcprov-jdk14-127.jar"/>
+	<classpathentry kind="lib" path="lib/bcpg-jdk14-127.jar"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-java-3.2.0-alpha-bin.jar"/>
+	<classpathentry kind="lib" path="lib/arq.jar"/>
+	<classpathentry kind="output" path="build"/>
+</classpath>

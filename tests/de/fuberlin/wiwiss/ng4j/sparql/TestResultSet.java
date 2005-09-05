@@ -77,4 +77,8 @@ public class TestResultSet implements ResultSet {
 		}
 		this.bindingIterator = this.bindings.iterator();
 	}
+
+	public boolean isDistinct() {
+		return false;
+	}
 }

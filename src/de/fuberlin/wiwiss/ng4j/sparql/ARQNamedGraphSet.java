@@ -36,7 +36,7 @@ public class ARQNamedGraphSet extends NamedGraphSetBase {
 	// === Graphset functions ===
 	
 	public NamedGraph getGraph(String graphNameURI) {
-		Graph graph = this.source.getNamedGraph(graphNameURI);
+		Graph graph = this.source.getNamedModel(graphNameURI).getGraph();
 		if (graph == null) {
 			return null;
 		}
@@ -52,10 +52,14 @@ public class ARQNamedGraphSet extends NamedGraphSetBase {
 	}
 
 	public void addGraph(NamedGraph graph) {
-		if (this.source.containsNamedGraph(graph.getGraphName().getURI())) {
-			this.source.replaceNamedGraph(graph.getGraphName().getURI(), graph);
+		if (this.source.containsNamedModel(graph.getGraphName().getURI())) {
+			this.source.replaceNamedModel(
+					graph.getGraphName().getURI(),
+					ModelFactory.createModelForGraph(graph));
 		} else {
-			this.source.addNamedGraph(graph.getGraphName().getURI(), graph);
+			this.source.addNamedModel(
+					graph.getGraphName().getURI(),
+					ModelFactory.createModelForGraph(graph));
 		}
 	}
 
@@ -64,7 +68,7 @@ public class ARQNamedGraphSet extends NamedGraphSetBase {
 	}
 
 	public void removeGraph(String graphNameURI) {
-		this.source.removeNamedGraph(graphNameURI);
+		this.source.removeNamedModel(graphNameURI);
 	}
 
 	public boolean containsGraph(Node graphName) {
@@ -72,7 +76,7 @@ public class ARQNamedGraphSet extends NamedGraphSetBase {
 	}
 
 	public boolean containsGraph(String graphNameURI) {
-		return this.source.containsNamedGraph(graphNameURI);
+		return this.source.containsNamedModel(graphNameURI);
 	}
 
 	public NamedGraph createGraph(Node graphName) {
@@ -81,10 +85,13 @@ public class ARQNamedGraphSet extends NamedGraphSetBase {
 
 	public NamedGraph createGraph(String graphNameURI) {
 		Graph graph = ModelFactory.createDefaultModel().getGraph();
-		if (this.source.containsNamedGraph(graphNameURI)) {
-			this.source.replaceNamedGraph(graphNameURI, graph);
+		if (this.source.containsNamedModel(graphNameURI)) {
+			this.source.replaceNamedModel(graphNameURI,
+					ModelFactory.createModelForGraph(graph));
 		} else {
-			this.source.addNamedGraph(graphNameURI, graph);
+			this.source.addNamedModel(
+					graphNameURI,
+					ModelFactory.createModelForGraph(graph));
 		}
 		return getGraph(graphNameURI);
 	}
