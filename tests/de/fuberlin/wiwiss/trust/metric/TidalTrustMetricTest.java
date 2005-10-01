@@ -25,7 +25,7 @@ public class TidalTrustMetricTest extends TestCase {
     public TidalTrustMetricTest(java.lang.String testName) {
         super(testName);
         data = new NamedGraphSetImpl();
-        data.read("file:/home/voodoo/Java/project/trustlayer/ng4j/tests/de/fuberlin/wiwiss/trust/metric/testDataTidalTrust.trig", "TRIG");       
+        data.read(AllTests.TESTSPATH + "de/fuberlin/wiwiss/trust/metric/testDataTidalTrust.trig", "TRIG");       
     }
     
     public static Test suite() {

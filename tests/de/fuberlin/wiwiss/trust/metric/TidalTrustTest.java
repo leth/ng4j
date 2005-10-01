@@ -26,7 +26,7 @@ public class TidalTrustTest {
 
         // get data source
         NamedGraphSet data = new NamedGraphSetImpl();
-        data.read("file:tests/de/fuberlin/wiwiss/trust/metric/testDataTidalTrust.trig", "TRIG");
+        data.read(AllTests.TESTSPATH + "de/fuberlin/wiwiss/trust/metric/testDataTidalTrust.trig", "TRIG");
         
         // run metric
         java.util.List arguments = new java.util.LinkedList();

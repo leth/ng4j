@@ -15,7 +15,7 @@ import junit.framework.*;
  */
 public class AllTests extends TestCase {
     
-    public static final String TESTSPATH= "file:/home/voodoo/Java/project/trustlayer/ng4j/tests/";
+    public static final String TESTSPATH= "file:tests/";
     
     public AllTests(java.lang.String testName) {
         super(testName);
