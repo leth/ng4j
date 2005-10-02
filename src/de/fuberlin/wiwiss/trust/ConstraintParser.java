@@ -1,7 +1,6 @@
 package de.fuberlin.wiwiss.trust;
 
 import java.io.StringReader;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -18,14 +17,25 @@ import de.fuberlin.wiwiss.ng4j.triql.parser.TriQLParser;
 
 /**
  * <p>Service for parsing a TriQL constraint into a
- * {@link ExpressionConstraint} or {@link CountConstraint} instance.
- * The input is a string like this:</p>
+ * {@link ExpressionConstraint}, {@link RankBasedConstraint} or
+ * {@link CountConstraint} instance. The input is a string like this:</p>
  *
  * <pre>
  * ?date >= '2005-01-01' AND ?date &lt; '2005-12-31'
  * </pre>
  * 
- * @version $Id: ConstraintParser.java,v 1.3 2005/06/21 15:01:46 maresch Exp $
+ * <p>Or:</p>
+ * 
+ * <pre>
+ * COUNT(?authority) >= 2
+ * </pre>
+ * 
+ * <p>The various <tt>isXXX()</tt> methods can be used to distinguish
+ * between the different kinds of constraints. Then, the appropriate
+ * <tt>parseXXX()</tt> method can be called to retrieve the parsed
+ * constraint.</p>
+ * 
+ * @version $Id: ConstraintParser.java,v 1.4 2005/10/02 21:59:28 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class ConstraintParser {
@@ -37,6 +47,8 @@ public class ConstraintParser {
     private RankBasedMetric rankBasedMetric = null;
     
     /**
+     * Creates a new parser.
+     * 
      * @param constraint The string representation of the constraint
      * @param prefixes Namespace prefixes that may be used in the constraint
      * @param metricInstances A collection of {@link Metric}s that can be used
@@ -50,23 +62,48 @@ public class ConstraintParser {
         this.rankBasedMetricInstances = rankBasedMetricInstances;
     }
     
+    /**
+     * @return true if the constraint string is an expression constraint.
+     */
+    public boolean isExpressionConstraint() {
+        ensureParsed();
+        return !(this.resultNode instanceof Q_CountExpression);
+    }
+    
+    /**
+     * @return true if the constraint string is a count constraint.
+     */
     public boolean isCountConstraint() {
         ensureParsed();
         return this.resultNode instanceof Q_CountExpression;
     }
     
+    /**
+     * @return true if the constraint string is a rank based metric
+     * constraint.
+     */
     public boolean isRankBasedConstraint() {
         ensureParsed();
         return this.rankBasedMetric != null;
     }
     
+    /**
+     * Parses the constraint string into a rank based metric constraint.
+     * Must not be called unless {@link #isRankBasedConstraint()} is
+     * true.
+     * @return The parsed rank based metric constraint
+     * @throws TPLException on parse error
+     */
     public RankBasedConstraint parseRankBasedConstraint(){
         ensureParsed();
         return new RankBasedConstraint((Q_MetricExpression) this.resultNode, this.rankBasedMetric);
     }
     
     /**
-     * @return The parsed constraint
+     * Parses the constraint string into an expression constraint.
+     * Must not be called unless {@link #isExpressionConstraint()} is
+     * true.
+     * @return The parsed expression constraint
      * @throws TPLException on parse error
      */
     public ExpressionConstraint parseExpressionConstraint() {
@@ -74,6 +111,13 @@ public class ConstraintParser {
         return new ExpressionConstraint((Expr) this.resultNode);
     }
 
+    /**
+     * Parses the constraint string into a count constraint.
+     * Must not be called unless {@link #isCountConstraint()} is
+     * true.
+     * @return The parsed count constraint
+     * @throws TPLException on parse error
+     */
     public CountConstraint parseCountConstraint() {
         ensureParsed();
         Q_CountExpression count = (Q_CountExpression) this.resultNode;

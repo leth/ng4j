@@ -21,7 +21,7 @@ import de.fuberlin.wiwiss.trust.TrustPolicy;
 import de.fuberlin.wiwiss.trust.VariableBinding;
 
 /**
- * @version $Id: ExplanationTest.java,v 1.2 2005/03/22 01:01:21 cyganiak Exp $
+ * @version $Id: ExplanationTest.java,v 1.3 2005/10/02 21:59:28 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class ExplanationTest extends TestCase {
@@ -181,12 +181,9 @@ public class ExplanationTest extends TestCase {
     
     public void testSelectDistinct() {
         ResultTable distinct = this.results.selectDistinct(
-                Arrays.asList(new String[] {"foo"}));
-        ResultTable expected = ResultTableTest.createResultTable(new String[] {"foo"},
-                Arrays.asList(new Node[][] {
-                        new Node[] {fooValue1},
-                        new Node[] {fooValue2},
-                        new Node[] {fooValue3}}));
+        		Collections.singleton("foo"));
+        ResultTable expected = ResultTableBuilder.build(
+        		"foo", "fooValue1|fooValue2|fooValue3");
         assertEquals(expected, distinct);
     }
     
@@ -194,11 +191,10 @@ public class ExplanationTest extends TestCase {
         String[] varNames =
             new String[] {TrustPolicy.SUBJ.getName(), TrustPolicy.OBJ.getName()};
         ResultTable distinct = this.results.selectDistinct(Arrays.asList(varNames));
-        ResultTable expected = ResultTableTest.createResultTable(varNames,
-                Arrays.asList(new Node[][] {
-                        new Node[] {a, c1},
-                        new Node[] {a, c2}}));
-        assertEquals(expected, distinct);
+        ResultTableBuilder expected = new ResultTableBuilder(varNames);
+        expected.addNodeRow(new Node[] {a, c1});
+        expected.addNodeRow(new Node[] {a, c2});
+        assertEquals(expected.table(), distinct);
     }
     
     public void testSelectMatchingAll() {

@@ -3,9 +3,12 @@ package de.fuberlin.wiwiss.trust;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Triple;
@@ -13,27 +16,44 @@ import com.hp.hpl.jena.graph.Triple;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 
 /**
- * @version $Id: ResultTable.java,v 1.4 2005/06/21 15:01:46 maresch Exp $
+ * @version $Id: ResultTable.java,v 1.5 2005/10/02 21:59:28 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class ResultTable {
-    private static final Collection SPO = Arrays.asList(new String[] {
+    public static final Collection SPO = Arrays.asList(new String[] {
             TrustPolicy.SUBJ.getName(),
             TrustPolicy.PRED.getName(),
             TrustPolicy.OBJ.getName()});
 
     private List bindings = new ArrayList();
+    private Set variables = new HashSet();
     
     public void addBinding(VariableBinding binding) {
         this.bindings.add(binding);
+        this.variables.addAll(binding.variableNames());
     }
 
+    public void addAll(ResultTable table) {
+        Iterator it = table.bindingIterator();
+        while (it.hasNext()) {
+			addBinding((VariableBinding) it.next());
+        }
+    }
+    
     public Iterator bindingIterator() {
         return this.bindings.iterator();
     }
     
     public int countBindings() {
         return this.bindings.size();
+    }
+    
+    public int countDistinct(String variableName) {
+		if (!this.variables.contains(variableName)) {
+			return 0;
+		}
+		return selectDistinct(
+				Collections.singleton(variableName)).countBindings();
     }
     
     public ResultTable selectDistinct(Collection variableNames) {
@@ -68,6 +88,23 @@ public class ResultTable {
         binding.setValue(TrustPolicy.OBJ.getName(), triple.getObject());
         return selectMatching(binding);
     }
+
+    public ResultTable filterByCount(CountConstraint count, Collection groupByVariables) {
+		ResultTable result = new ResultTable();
+    		if (groupByVariables == null) {
+    			groupByVariables = Collections.EMPTY_SET;
+    		}
+    		Iterator it = selectDistinct(groupByVariables).bindingIterator();
+    		while (it.hasNext()) {
+    			VariableBinding commonVariables = (VariableBinding) it.next();
+    			ResultTable group = selectMatching(commonVariables);
+    			if (!count.isMatchingCount(group.countDistinct(count.variableName()))) {
+    				continue;
+    			}
+    			result.addAll(group);
+    		}
+    		return result;
+    	}
 
     public ResultTable filterByConstraints(TrustPolicy policy) {
 		ResultTable result = new ResultTable();

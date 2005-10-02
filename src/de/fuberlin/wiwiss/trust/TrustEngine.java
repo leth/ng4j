@@ -1,5 +1,7 @@
 package de.fuberlin.wiwiss.trust;
 
+import java.util.Iterator;
+
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 
@@ -9,7 +11,7 @@ import de.fuberlin.wiwiss.ng4j.triql.TriQLQuery;
 /**
  * TODO: Describe this type
  *
- * @version $Id: TrustEngine.java,v 1.5 2005/06/21 15:01:46 maresch Exp $
+ * @version $Id: TrustEngine.java,v 1.6 2005/10/02 21:59:28 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class TrustEngine {
@@ -37,7 +39,12 @@ public class TrustEngine {
 		        this.source, triple, policy, this.systemVariables).buildQuery();
 		ResultTable table = ResultTable.createFromTriQLResult(query.getResults(), triple);
 		table = table.filterByConstraints(policy);
-        table = table.filterByRank(policy , this.source);
+		table = table.filterByRank(policy , this.source);
+		Iterator it = policy.getCountConstraints().iterator();
+		while (it.hasNext()) {
+			CountConstraint count = (CountConstraint) it.next();
+			table = table.filterByCount(count, ResultTable.SPO);
+		}
 		return new QueryResult(table, policy);
 	}
 	
