@@ -10,20 +10,29 @@ import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
 import de.fuberlin.wiwiss.ng4j.triql.TriQLQuery;
 
 /**
- * Builds a {@link TriQLQuery} from a {@link NamedGraphSet}, a find query pattern,
- * and a {@link TrustPolicy}. 
+ * Service that builds a {@link TriQLQuery} from a find query pattern
+ * and a {@link TrustPolicy}, and sets it up with an untrusted
+ * {@link NamedGraphSet} as the data source.
  *
- * @version $Id: QueryFactory.java,v 1.5 2005/03/26 23:56:56 cyganiak Exp $
+ * @version $Id: QueryBuilder.java,v 1.1 2005/10/04 00:03:44 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
-public class QueryFactory {
+public class QueryBuilder {
 	private NamedGraphSet source;
 	private Triple findMe;
 	private TrustPolicy policy;
 	private VariableBinding systemVariables;
 	private TriQLQuery query;
 
-	public QueryFactory(NamedGraphSet source, Triple findMe, TrustPolicy policy,
+	/**
+	 * Sets up a new query builder.
+	 * @param source The untrusted reporitory
+	 * @param findMe The triple to be found
+	 * @param policy The policy to be used
+	 * @param systemVariables System variables like ?NOW and ?USER that
+	 * 		are available in the policy
+	 */
+	public QueryBuilder(NamedGraphSet source, Triple findMe, TrustPolicy policy,
 	        VariableBinding systemVariables) {
 		this.source = source;
 		this.findMe = findMe;

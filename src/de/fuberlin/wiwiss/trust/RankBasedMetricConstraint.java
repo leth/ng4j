@@ -22,31 +22,45 @@ import de.fuberlin.wiwiss.ng4j.triql.ResultBinding;
 import de.fuberlin.wiwiss.ng4j.triql.parser.Q_MetricExpression;
 
 /**
- *
+ * Constraint that passes a result table through a {@link RankBasedMetric}
+ * plugin.
+ * 
+ * @version $Id: RankBasedMetricConstraint.java,v 1.1 2005/10/04 00:03:44 cyganiak Exp $
  * @author  Oliver Maresch (oliver-maresch@gmx.de)
  */
-public class RankBasedConstraint {
-    
+public class RankBasedMetricConstraint {
     private Q_MetricExpression expression;
-    
     private RankBasedMetric metric;
     
-    /** Creates a new instance of RankBasedConstraint */
-    public RankBasedConstraint(Q_MetricExpression expression, RankBasedMetric metric) {
+    /**
+     * Creates a new instance of RankBasedConstraint
+     * @param expression The parse tree node representing the metric and its arguments 
+     * @param metric The metric implementation
+     */
+    public RankBasedMetricConstraint(Q_MetricExpression expression, RankBasedMetric metric) {
         this.expression = expression;
         this.metric = metric;
     }
     
+    /**
+     * Calculates the arguments to the metric for each row of 
+     * a result table.
+     * @param t A result table
+     * @return A list of lists of {@link Node}s
+     */
     public List getArgumentBindings(ResultTable t){
         List args = new ArrayList();
         Iterator it = t.bindingIterator();
         while(it.hasNext()){
             VariableBinding binding = (VariableBinding) it.next();
-            args.add(expression.evalArgumentExpressions(new Query(),createResultBindingFrom(binding))); 
+            args.add(this.expression.evalArgumentExpressions(new Query(),createResultBindingFrom(binding))); 
         }
         return args;
     }
     
+    /**
+     * @return The metric implementation
+     */
     public RankBasedMetric getRankBasedMetric(){
         return this.metric;
     }

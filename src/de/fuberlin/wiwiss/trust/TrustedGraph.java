@@ -18,12 +18,14 @@ import com.hp.hpl.jena.util.iterator.NiceIterator;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 
 /**
- * TODO: Write documentation and tests!
+ * <p>A Jena {@link Graph} implementation that filters a
+ * {@link NamedGraphSet}, exposing only the triples that match
+ * a {@link TrustPolicy}. Top layer of the TriQL.P trust engine.</p>
  * 
- * @version $Id: TrustLayerGraph.java,v 1.5 2005/06/21 15:01:45 maresch Exp $
+ * @version $Id: TrustedGraph.java,v 1.1 2005/10/04 00:03:44 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
-public class TrustLayerGraph extends GraphBase {
+public class TrustedGraph extends GraphBase {
     private NamedGraphSet sourceData;
     private TrustEngine engine;
     private Graph policySuiteGraph;
@@ -34,28 +36,51 @@ public class TrustLayerGraph extends GraphBase {
     private boolean policiesParsed = false;
     private Map explanationCache = new HashMap();
     private VariableBinding systemVariables = new VariableBinding();
-    
-    public TrustLayerGraph(NamedGraphSet untrustedDatasource, Graph policySuite) {
+
+    /**
+     * Sets up a new trusted graph.
+     * @param untrustedDatasource The untrusted repository
+     * @param policySuite A suite of trust policies that are available
+     * 		to filter the repository
+     */
+    public TrustedGraph(NamedGraphSet untrustedDatasource, Graph policySuite) {
         this.sourceData = untrustedDatasource;
         this.engine = new TrustEngine(untrustedDatasource, this.systemVariables);
         this.policySuiteGraph = policySuite;
     }
-    
+
+    /**
+     * @return A list of all available trust policies as URI strings
+     */
     public List getAllTrustPolicyURIs() {
         ensurePoliciesParsed();
         return this.suite.getAllPolicyURIs();
     }
     
+    /**
+     * @param uri The URI of a trust policy
+     * @return The policy's name
+     */
     public String getTrustPolicyName(String uri) {
         ensurePoliciesParsed();
         return this.suite.getPolicyName(uri);
     }
     
+    /**
+     * @param uri The URI of a trust policy
+     * @return The policy's description
+     */
     public String getTrustPolicyDescription(String uri) {
         ensurePoliciesParsed();
         return this.suite.getPolicyDescription(uri);
     }
 
+    /**
+     * Switches the trusted graph to a different trust policy.
+     * Subsequent calls to find and friends will use the new
+     * policy.
+     * @param uri The URI of a trust policy from the suite
+     */
     public void selectTrustPolicy(String uri) {
         ensurePoliciesParsed();
         clearExplanationCache();
@@ -66,11 +91,18 @@ public class TrustLayerGraph extends GraphBase {
         this.currentPolicy = newPolicy;
     }
     
+    /**
+     * @return The URI of the currently selected trust policy
+     */
     public String getSelectedTrustPolicyURI() {
         ensurePoliciesParsed();
         return this.currentPolicy.getURI();
     }
     
+    /**
+     * @param t A triple that was the result of an earlier find call 
+     * @return The explanation why the triple fulfils the current policy
+     */
     public Explanation explain(Triple t) {
         QueryResult queryResult = (QueryResult) this.explanationCache.get(t);
         if (queryResult == null) {
@@ -79,19 +111,43 @@ public class TrustLayerGraph extends GraphBase {
         return queryResult.explain(t);
     }
     
+    /**
+     * @param t A triple that was the result of an earlier find call 
+     * @return The explanation why the triple fulfils the current policy
+     */
     public Graph explainAsGraph(Triple t) {
-        // TODO GraphExplanations
+        QueryResult queryResult = (QueryResult) this.explanationCache.get(t);
+        if (queryResult == null) {
+            throw new IllegalArgumentException("No explanation cached for triple " + t);
+        }
+        // TODO Support GraphExplanations
         return null;
     }
-    
+
+    /**
+     * Forgets the explanations of all prior query results. This
+     * frees memory.
+     */
     public void clearExplanationCache() {
         this.explanationCache.clear();
     }
     
+    /**
+     * Adds a system variable like ?NOW or ?USER that will be available
+     * in policies.
+     * @param varName The variable's name
+     * @param varValue The variable's value
+     */
     public void setSystemVariable(String varName, Node varValue) {
         this.systemVariables.setValue(varName, varValue);
     }
-    
+
+    /**
+     * Registers a metric plugin that can then be used in the
+     * trust policy suite.
+     * @param metricImplementationClass A class implementing
+     * 		{@link Metric} or {@link RankBasedMetric}
+     */
     public void registerMetricImplementation(Class metricImplementationClass) {
         if (this.policiesParsed) {
             throw new IllegalStateException(

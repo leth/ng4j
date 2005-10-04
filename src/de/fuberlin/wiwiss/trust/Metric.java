@@ -8,11 +8,18 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 
 /**
  * <p>A trust metric to be used with the METRIC() syntax in Trust Policies.
- * An implementation of this interface implements one metric algorithm.</p>
+ * There are two kinds of metrics:</p>
  * 
- * <p>Trust metrics are used as part of trust policies. A metric can calculate
- * a boolean value for a list of input RDF resource. Trust decisions can
- * be made based on this boolean value.</p>
+ * <ul>
+ * <li>Simple metrics are algorithms that implement this interface. They
+ * operate on a single {@link VariableBinding}.</li>
+ * <li>Rank-based metrics are algorithms that implement
+ * {@link RankBasedMetric}. They operate on an entire {@link ResultTable}.</li>
+ * </ul>
+ * 
+ * <p>Trust metrics are used as part of trust policies. Simple trust
+ * metrics can calculate a boolean value for a list of input RDF
+ * resource. Trust decisions can be made based on this boolean value.</p>
  * 
  * <p>Classes implementing this
  * interface will be instantiated once at startup time of the TriQL Trust Layer.
@@ -31,7 +38,7 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
  * {@link ExplanationPart} instances, or as generic application-specifc
  * RDF graphs.</p>
  * 
- * @version $Id: Metric.java,v 1.2 2005/03/22 01:01:48 cyganiak Exp $
+ * @version $Id: Metric.java,v 1.3 2005/10/04 00:03:44 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public interface Metric {

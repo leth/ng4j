@@ -8,10 +8,10 @@ import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
 
 /**
  * Builds a tree of {@link GraphPatternTreeNode}s from a set
- * of {@link GraphPattern}s. The algorithm is outlined in the
- * documentation of <tt>GraphPatternTreeNode</tt>.
+ * of {@link GraphPattern}s. The algorithm is specified in
+ * a separate document.
  *
- * @version $Id: GraphPatternTreeBuilder.java,v 1.1 2005/02/18 01:44:59 cyganiak Exp $
+ * @version $Id: GraphPatternTreeBuilder.java,v 1.2 2005/10/04 00:03:44 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  * @see GraphPatternTreeNode
  */
@@ -19,11 +19,19 @@ public class GraphPatternTreeBuilder {
     private List patterns;
     private List unconnectedPatterns;
     
+    /**
+     * Sets up a new graph pattern tree builder.
+     * @param graphPatterns The {@link GraphPattern}s that should be
+     * 		arranged in a tree
+     */
     public GraphPatternTreeBuilder(List graphPatterns) {
         this.patterns = graphPatterns;
         this.unconnectedPatterns = new ArrayList(graphPatterns);
     }
     
+    /**
+     * @return The root node of the resulting graph pattern tree
+     */
     public GraphPatternTreeNode getRootNode() {
         GraphPatternTreeNode root = new GraphPatternTreeNode(null);
         chooseChildren(root);

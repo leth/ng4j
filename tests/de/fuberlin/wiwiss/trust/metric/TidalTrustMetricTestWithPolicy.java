@@ -16,7 +16,7 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
-import de.fuberlin.wiwiss.trust.TrustLayerGraph;
+import de.fuberlin.wiwiss.trust.TrustedGraph;
 
 
 /**
@@ -25,7 +25,7 @@ import de.fuberlin.wiwiss.trust.TrustLayerGraph;
  */
 public class TidalTrustMetricTestWithPolicy extends TestCase {
     
-    private TrustLayerGraph tlg = null;
+    private TrustedGraph tlg = null;
     
     public TidalTrustMetricTestWithPolicy(java.lang.String testName) {
         super(testName);
@@ -40,7 +40,7 @@ public class TidalTrustMetricTestWithPolicy extends TestCase {
         NamedGraphSet source = new NamedGraphSetImpl();
         source.read(AllTests.TESTSPATH + "de/fuberlin/wiwiss/trust/metric/testDataTidalTrust.trig", "TRIG");
 
-        this.tlg = new TrustLayerGraph(source, policies);
+        this.tlg = new TrustedGraph(source, policies);
         this.tlg.registerMetricImplementation(TidalTrustMetric.class);
         this.tlg.selectTrustPolicy("http://www.fu-berlin/suhl/bizer/financialscenario/policies/test/Policy1");
     }

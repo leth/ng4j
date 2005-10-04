@@ -17,51 +17,90 @@ import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.FOAF;
 
 /**
- * @version $Id: ExplanationToHTMLRenderer.java,v 1.6 2005/05/31 09:53:56 maresch Exp $
+ * Service that returns HTML representations for an entire
+ * {@link Explanation} or some of its parts.
+ * 
+ * @version $Id: ExplanationToHTMLRenderer.java,v 1.7 2005/10/04 00:03:44 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class ExplanationToHTMLRenderer {
     private Explanation expl;
-    private NamedGraphSet ngs;
+    private NamedGraphSet repository;
     private PrefixMapping prefixes = new PrefixMappingImpl();
     private List detailsBuffer;
     private long timestamp;
-    
-    public ExplanationToHTMLRenderer(Explanation expl, NamedGraphSet ngs) {
+
+    /**
+     * Sets up a new renderer.
+     * @param expl The explanation to be rendered
+     * @param repository The untrusted repository,
+     * 		used to retrieve labels for resources
+     */
+    public ExplanationToHTMLRenderer(Explanation expl, NamedGraphSet repository) {
         this.expl = expl;
         this.detailsBuffer = new ArrayList();
         this.timestamp = System.currentTimeMillis();
-        this.ngs = ngs;
+        this.repository = repository;
     }
     
-    public static String renderExplanationPart(ExplanationPart part, NamedGraphSet ngs) {
+    /**
+     * Convenience method for rendering a single explanation part.
+     * @param part An explanation part
+     * @param repository The untrusted repository, used to retrieve labels
+     * 		for resources
+     * @return An HTML fragment representing the explanation part
+     */
+    public static String renderExplanationPart(ExplanationPart part, NamedGraphSet repository) {
         Explanation dummyExpl = new Explanation(
                 new Triple(Node.ANY, Node.ANY, Node.ANY),
                 TrustPolicy.TRUST_EVERYTHING);
         dummyExpl.addPart(part);
-        return new ExplanationToHTMLRenderer(dummyExpl, ngs).getExplanationPartsAsHTML();
+        return new ExplanationToHTMLRenderer(dummyExpl, repository).getExplanationPartsAsHTML();
     }
     
+    /**
+     * Sets a prefix map that will be used to render URIs as QNames.
+     * @param prefixes A prefix map
+     */
     public void setPrefixes(PrefixMapping prefixes) {
         this.prefixes = prefixes;
     }
     
+    /**
+     * @return An HTML representation of the explained triple's subject,
+     * 		including QName compression and URI linking 
+     */
     public String getSubjectAsHTML() {
         return getNodeAsHTML(this.expl.getExplainedTriple().getSubject());
     }
     
+    /**
+     * @return An HTML representation of the explained triple's predicate,
+     * 		including QName compression and URI linking 
+     */
     public String getPredicateAsHTML() {
         return getNodeAsHTML(this.expl.getExplainedTriple().getPredicate());
     }
     
+    /**
+     * @return An HTML representation of the explained triple's object,
+     * 		including QName compression and URI linking 
+     */
     public String getObjectAsHTML() {
         return getNodeAsHTML(this.expl.getExplainedTriple().getObject());
     }
 
+    /**
+     * @return An HTML representation of the explained triple's policy URI,
+     * 		including QName compression and URI linking 
+     */
     public String getPolicyAsHTML() {
         return getNodeAsHTML(this.expl.getPolicyURI());
     }
 
+    /**
+     * @return An HTML representation of the parts of the explanation
+     */
     public String getExplanationPartsAsHTML() {
         if (this.expl.parts().isEmpty()) {
             return "<em>This policy does not generate explanations</em>";
@@ -71,14 +110,18 @@ public class ExplanationToHTMLRenderer {
         return result.toString();
     }
     
+    /**
+     * @return An HTML representation of the more detailed alternative
+     * 		version of the explanation, if available
+     */
     public String getDetailsAsHTML(){
         StringBuffer buffer = new StringBuffer();
-        if(detailsBuffer.isEmpty()){
+        if (this.detailsBuffer.isEmpty()){
             buffer.append("No details.");
         }else{
-            for(int i = 0; i < detailsBuffer.size(); i++){
+            for(int i = 0; i < this.detailsBuffer.size(); i++){
                 int number = i + 1;
-                ExplanationPart detail = (ExplanationPart) detailsBuffer.get(i);
+                ExplanationPart detail = (ExplanationPart) this.detailsBuffer.get(i);
                 buffer.append("<p><a name='detail" + this.timestamp + "_" + i + "'/><b>Detail number " + number + "</b></p>");
                 buffer.append("<p>");
                 List parts = new ArrayList();
@@ -90,6 +133,9 @@ public class ExplanationToHTMLRenderer {
         return buffer.toString();
     }
     
+    /**
+     * @return An HTML representation of the entire explanation
+     */
     public String getExplanationAsHTML() {
 	    return "<dl><dt><a name='expanation" + this.timestamp + "'/>Triple:</dt><dd>"
 	            + getSubjectAsHTML() + " " + getPredicateAsHTML() + " " + getObjectAsHTML() + " .</dd>"
@@ -136,8 +182,8 @@ public class ExplanationToHTMLRenderer {
                 // add link to detials 
                 ExplanationPart detail = part.getDetails();
                 if(detail != null){
-                    buffer.append("(<a href='#detail" + this.timestamp + "_" + detailsBuffer.size() + "'>detail number " + (detailsBuffer.size() + 1) + "</a>)");
-                    detailsBuffer.add(detail);
+                    buffer.append("(<a href='#detail" + this.timestamp + "_" + this.detailsBuffer.size() + "'>detail number " + (this.detailsBuffer.size() + 1) + "</a>)");
+                    this.detailsBuffer.add(detail);
                 }
                 renderExplanationParts(part.parts(), buffer);
             }
@@ -157,26 +203,24 @@ public class ExplanationToHTMLRenderer {
     
     private String findLabel(Node_URI uri){
         Quad quad = new Quad(Node.ANY,uri, RDFS.Nodes.label , Node.ANY); 
-        Iterator it = this.ngs.findQuads(quad);
+        Iterator it = this.repository.findQuads(quad);
         
         if(it.hasNext()){
             // if at least one label was found, take the first
             return ((Quad) it.next()).getObject().getLiteral().getLexicalForm();
-        } else {
-            quad = new Quad(Node.ANY,uri, FOAF.name.getNode(), Node.ANY);
-            it = ngs.findQuads(quad);
-            
-            if(it.hasNext()){
-                return ((Quad) it.next()).getObject().getLiteral().getLexicalForm();
-            } else {
-                // if no label was found try to prefix the uri
-                String label = this.prefixes.qnameFor(uri.getURI());
-                if (label == null) {
-                    // if no prefix is available use the complete URI
-                    label = uri.getURI();
-                }
-                return label;
-            }
         }
+        quad = new Quad(Node.ANY,uri, FOAF.name.getNode(), Node.ANY);
+        it = this.repository.findQuads(quad);
+        
+        if(it.hasNext()){
+            return ((Quad) it.next()).getObject().getLiteral().getLexicalForm();
+        }
+        // if no label was found try to prefix the uri
+        String label = this.prefixes.qnameFor(uri.getURI());
+        if (label == null) {
+            // if no prefix is available use the complete URI
+            label = uri.getURI();
+        }
+        return label;
     }
 }

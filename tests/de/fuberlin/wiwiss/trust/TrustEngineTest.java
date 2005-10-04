@@ -17,9 +17,10 @@ import com.hp.hpl.jena.vocabulary.RDF;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
+import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP;
 
 /**
- * @version $Id: TrustEngineTest.java,v 1.4 2005/06/22 21:21:23 maresch Exp $
+ * @version $Id: TrustEngineTest.java,v 1.5 2005/10/04 00:03:44 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class TrustEngineTest extends FixtureWithLotsOfNodes {
@@ -218,23 +219,39 @@ public class TrustEngineTest extends FixtureWithLotsOfNodes {
 	    assertTrue(results.contains(new Triple(node2, node2, node2)));
 	}
 
-// Later
-//	public void testCount() {
-//	    TrustPolicy policy = new TrustPolicy();
-//	    policy.addCountRestriction(TrustPolicy.GRAPH.getName(),
-//	            TrustPolicy.COUNT_EQUALS, 1);
-//
-//	    this.source.addQuad(new Quad(graph1, node1, node1, node1));
-//	    this.source.addQuad(new Quad(graph1, node2, node2, node2));
-//	    this.source.addQuad(new Quad(graph2, node2, node2, node2));
-//	    
-//	    List results = iteratorToList(
-//	            this.trustEngine.find(anyTriple, policy));
-//
-//	    assertEquals(1, results.size());
-//	    assertTrue(results.contains(new Triple(node1, node1, node1)));
-//	}
+	public void testCount() {
+	    TrustPolicy policy = new TrustPolicy("http://example.org/policy1");
+	    policy.addCountConstraint(
+	    		new CountConstraint(TrustPolicy.GRAPH.getName(), "=", 1));
 
+	    this.source.addQuad(new Quad(graph1, node1, node1, node1));
+	    this.source.addQuad(new Quad(graph1, node2, node2, node2));
+	    this.source.addQuad(new Quad(graph2, node2, node2, node2));
+	    
+	    List results = iteratorToList(
+	            this.trustEngine.find(anyTriple, policy).tripleIterator());
+
+	    assertEquals(1, results.size());
+	    assertTrue(results.contains(new Triple(node1, node1, node1)));
+	}
+
+	public void testPolicyAssertedByTwoSources() {
+		this.source.addQuad(new Quad(graph1, node1, node1, node1));
+		this.source.addQuad(new Quad(graph2, node1, node1, node1));
+		this.source.addQuad(new Quad(graph2, node2, node2, node2));
+		this.source.addQuad(new Quad(warrant1, graph1, SWP.assertedBy, warrant1));
+		this.source.addQuad(new Quad(warrant1, warrant1, SWP.assertedBy, warrant1));
+		this.source.addQuad(new Quad(warrant1, warrant1, SWP.authority, authority1));
+		this.source.addQuad(new Quad(warrant2, graph2, SWP.assertedBy, warrant2));
+		this.source.addQuad(new Quad(warrant2, warrant2, SWP.assertedBy, warrant2));
+		this.source.addQuad(new Quad(warrant2, warrant2, SWP.authority, authority2));
+	    List results = iteratorToList(
+	            this.trustEngine.find(
+	            		anyTriple, getPolicyTwoSources()).tripleIterator());
+	    assertEquals(1, results.size());
+	    assertTrue(results.contains(new Triple(node1, node1, node1)));
+	}
+	
 	private void addWarrant(Node graphName, Node authorityNode) {
 	    Node warrantGraphName = Node.createURI("http://example.com/warrant#" + new Random(System.currentTimeMillis()).nextLong());
 	    this.source.addQuad(new Quad(warrantGraphName, graphName, assertedBy, warrantGraphName));

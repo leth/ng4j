@@ -12,10 +12,14 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 import de.fuberlin.wiwiss.trust.Explanation;
 import de.fuberlin.wiwiss.trust.ExplanationToHTMLRenderer;
-import de.fuberlin.wiwiss.trust.TrustLayerGraph;
+import de.fuberlin.wiwiss.trust.TrustedGraph;
 
 /**
- * @version $Id: FindToHTML.java,v 1.4 2005/05/31 09:53:56 maresch Exp $
+ * Test application: Filters a TRIG file, runs a find query against
+ * the trusted graph, and renders an HTML file with explanations for
+ * all matching triples.
+ * 
+ * @version $Id: FindToHTML.java,v 1.5 2005/10/04 00:03:44 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class FindToHTML {
@@ -40,7 +44,7 @@ public class FindToHTML {
         Graph tplGraph = tplModel.getGraph();
         
         // Set up the TrustLayerGraph
-        TrustLayerGraph tlg = new TrustLayerGraph(source, tplGraph);
+        TrustedGraph tlg = new TrustedGraph(source, tplGraph);
         tlg.selectTrustPolicy(policyURI);
 //        tlg.setSystemVariable("USER", Node.createURI("http://example.org/user"));
         

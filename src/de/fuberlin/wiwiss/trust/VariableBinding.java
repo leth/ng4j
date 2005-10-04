@@ -13,9 +13,17 @@ import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 
 /**
- * @version $Id: VariableBinding.java,v 1.4 2005/05/24 13:50:27 maresch Exp $
+ * <p>A mapping from variable names (strings) to RDF nodes.</p>
+ * 
+ * <p>Additionally, a binding may contain zero or more
+ * {@link ExplanationPart}s and zero or more {@link Graph}s containing
+ * graph explanations. Metric plugins use this facility to store
+ * their explanations in the binding after having checked that
+ * the binding fulfills the metric.</p>
+ * 
+ * @version $Id: VariableBinding.java,v 1.5 2005/10/04 00:03:44 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
- * @author Oliver Maresch (oliver-maresch@gmy.de)
+ * @author Oliver Maresch (oliver-maresch@gmx.de)
  */
 public class VariableBinding {
     private Map namesToValues;
@@ -32,58 +40,85 @@ public class VariableBinding {
     
     public VariableBinding(Map binding) {
         this.namesToValues = binding;
-        textExplanations = new ArrayList();
-        graphExplanations = new ArrayList();
+        this.textExplanations = new ArrayList();
+        this.graphExplanations = new ArrayList();
     }
     
     /**
-     * Adds a ExplanationPart to the list of text explanations
+     * Adds a ExplanationPart to the list of text explanations.
+     * @param textExplanation The explanation part to be added
      */
     public void addTextExplanation(ExplanationPart textExplanation){
         this.textExplanations.add(textExplanation);
     }
     
     /** 
-     * Returns the list of text explanations. The list contains ExplanationParts.
+     * @return A list of {@link ExplanationPart}s
      */
     public List getTextExplanations(){
         return this.textExplanations;
     }
     
     /**
-     * Adds a Graph with a RDF Explanation to the list of graph explanations
+     * Adds a Graph with an RDF Explanation to the list of
+     * graph explanations.
+     * @param graphExplanation The RDF graph containing the explanation
      */
     public void addGraphExplanation(Graph graphExplanation){
         this.graphExplanations.add(graphExplanation);
     }
     
     /** 
-     * Returns the list of graph explanations. The list contains Graphs.
+     * @return A list of {@link Graph}s containing graph explanations
      */
     public List getGraphExplanations(){
         return this.graphExplanations;
     }
     
+    /**
+     * @param variableName A variable name
+     * @return true if it is bound
+     */
     public boolean containsName(String variableName) {
         return this.namesToValues.containsKey(variableName);
     }
-    
+
+    /**
+     * @param variableName A variable name
+     * @return Its value, or null if it is not bound
+     */
     public Node value(String variableName) {
         return (Node) this.namesToValues.get(variableName);
     }
     
+    /**
+     * Sets the value of a variable.
+     * @param variableName A variable name
+     * @param variableValue Its new value
+     */
     public void setValue(String variableName, Node variableValue) {
         this.namesToValues.put(variableName, variableValue);
     }
     
+    /**
+     * @return A set of strings containing all bound variable names
+     */
     public Set variableNames() {
         return this.namesToValues.keySet();
     }
     
+    /**
+     * @return A Java {@link Map} representation of the binding
+     */
     public Map asMap() {
         return Collections.unmodifiableMap(this.namesToValues);
     }
     
+    /**
+     * @param variableNames A set of variable names (strings)
+     * @return A new binding containing only those variables that were
+     * 		bound in the original and are in the argument collection
+     */
     public VariableBinding selectSubset(Collection variableNames) {
         VariableBinding result = new VariableBinding();
         Iterator it = variableNames.iterator();
@@ -97,6 +132,11 @@ public class VariableBinding {
         return result;
     }
     
+    /**
+     * @param other Another binding
+     * @return True if all variables of this binding are bound to
+     * 		the same values in the other binding
+     */
     public boolean isSubsetOf(VariableBinding other) {
         Iterator it = this.namesToValues.keySet().iterator();
         while (it.hasNext()) {

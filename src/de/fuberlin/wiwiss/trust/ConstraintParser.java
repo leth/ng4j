@@ -17,7 +17,7 @@ import de.fuberlin.wiwiss.ng4j.triql.parser.TriQLParser;
 
 /**
  * <p>Service for parsing a TriQL constraint into a
- * {@link ExpressionConstraint}, {@link RankBasedConstraint} or
+ * {@link ExpressionConstraint}, {@link RankBasedMetricConstraint} or
  * {@link CountConstraint} instance. The input is a string like this:</p>
  *
  * <pre>
@@ -35,7 +35,7 @@ import de.fuberlin.wiwiss.ng4j.triql.parser.TriQLParser;
  * <tt>parseXXX()</tt> method can be called to retrieve the parsed
  * constraint.</p>
  * 
- * @version $Id: ConstraintParser.java,v 1.4 2005/10/02 21:59:28 cyganiak Exp $
+ * @version $Id: ConstraintParser.java,v 1.5 2005/10/04 00:03:44 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class ConstraintParser {
@@ -53,6 +53,8 @@ public class ConstraintParser {
      * @param prefixes Namespace prefixes that may be used in the constraint
      * @param metricInstances A collection of {@link Metric}s that can be used
      * 		within the constraint
+     * @param rankBasedMetricInstances A collection of {@link RankBasedMetric}s
+     * 		that can be used within the constraint
      */
     public ConstraintParser(String constraint, PrefixMapping prefixes,
             Collection metricInstances, Collection rankBasedMetricInstances) {
@@ -94,9 +96,9 @@ public class ConstraintParser {
      * @return The parsed rank based metric constraint
      * @throws TPLException on parse error
      */
-    public RankBasedConstraint parseRankBasedConstraint(){
+    public RankBasedMetricConstraint parseRankBasedConstraint(){
         ensureParsed();
-        return new RankBasedConstraint((Q_MetricExpression) this.resultNode, this.rankBasedMetric);
+        return new RankBasedMetricConstraint((Q_MetricExpression) this.resultNode, this.rankBasedMetric);
     }
     
     /**
@@ -168,7 +170,8 @@ public class ConstraintParser {
     }
     
     /**
-     * Return the metric instance identified by the URI Node or null otherwise.
+     * @param uri A URI identifying a metric 
+     * @return The metric instance identified by the URI Node or null otherwise.
      */
     private Metric findMetricInstance(com.hp.hpl.jena.graph.Node uri) {
         Iterator it = this.metricInstances.iterator();
@@ -182,15 +185,16 @@ public class ConstraintParser {
     }
 
     /**
-     * Return the rank-based metric instance identified by the URI Node or null otherwise.
+     * @param metric A URI identifying a rank-based metric 
+     * @return The rank-based metric instance identified by the URI Node or null otherwise.
      */
     private RankBasedMetric findRankBasedConstraint(com.hp.hpl.jena.graph.Node metric){
         String uri = metric.getURI();
         Iterator it = this.rankBasedMetricInstances.iterator();
         while(it.hasNext()){
-            RankBasedMetric rankBasedMetric = (RankBasedMetric) it.next();
-            if(rankBasedMetric.getURI().equals(uri)){
-                return rankBasedMetric;
+            RankBasedMetric registeredMetric = (RankBasedMetric) it.next();
+            if(registeredMetric.getURI().equals(uri)){
+                return registeredMetric;
             }
         }
         return null;

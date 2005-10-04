@@ -24,7 +24,7 @@ import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
  * TODO: tpl:graphExplanation
  * TODO: Warn when unknown term from the tpl namespace are used
  * 
- * @version $Id: PolicySuiteFromRDFBuilderTest.java,v 1.8 2005/06/22 21:21:23 maresch Exp $
+ * @version $Id: PolicySuiteFromRDFBuilderTest.java,v 1.9 2005/10/04 00:03:44 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class PolicySuiteFromRDFBuilderTest extends TestCase {
@@ -267,7 +267,7 @@ public class PolicySuiteFromRDFBuilderTest extends TestCase {
         binding.setValue("a", Node.createLiteral("bar"));
         table.addBinding(binding);
         
-        RankBasedConstraint r = (RankBasedConstraint) 
+        RankBasedMetricConstraint r = (RankBasedMetricConstraint) 
             this.suite.getTrustPolicy(policy1URI).getRankBasedConstraints().iterator().next();
         r.getRankBasedMetric().getURI().equals(AlwaysFirstRankBasedMetric.URI);
         List args = r.getArgumentBindings(table);

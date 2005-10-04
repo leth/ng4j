@@ -12,7 +12,19 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 /**
- * @version $Id: Explanation.java,v 1.3 2005/04/15 11:37:43 maresch Exp $
+ * <p>A textual explanation why a given triple matched a given trust
+ * policy.</p>
+ * 
+ * <p>Explanations are structured as a tree of text fragments.
+ * This class represents the root of the tree and has no associated
+ * text fragment; the other nodes are {@link ExplanationPart}s and all
+ * have associated text fragments. The main process for creating
+ * explanations is the {@link ExplanationTemplate}.<p>
+ * 
+ * <p>The main capability of an explanation is to write itself into
+ * an RDF graph using the {@link EXPL} vocabulary.</p>
+ * 
+ * @version $Id: Explanation.java,v 1.4 2005/10/04 00:03:44 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  * @author Oliver Maresch
  */
@@ -20,20 +32,41 @@ public class Explanation {
     private Collection parts = new ArrayList();
     private Triple triple;
     private TrustPolicy policy;
-    
+   
+    /**
+     * Creates a new, empty explanation.
+     * 
+     * @param triple An RDF triple
+     * @param policy The policy that has accepted the triple
+     */
     public Explanation(Triple triple, TrustPolicy policy) {
         this.triple = triple;
         this.policy = policy;
     }
     
+    /**
+     * Adds a new child to the root node of this explanation tree.
+     * @param part The new child
+     */
     public void addPart(ExplanationPart part) {
         this.parts.add(part);
     }
     
+    /**
+     * @return all children of the root of this explanation tree
+     */
     public Collection parts() {
         return this.parts;
     }
-    
+
+    /**
+     * Checks two explanations for equality. Two explanations are
+     * equal if the trees have the same structure and the same text
+     * at every node, and if they explain the same triple for the
+     * same policy.
+     * @param other Another object
+     * @return true if other is an explanation and equal to this 
+     */
     public boolean equals(Object other) {
         if (other == null || !(other instanceof Explanation)) {
             return false;
@@ -61,6 +94,10 @@ public class Explanation {
         			+ this.policy.getURI().hashCode();
     }
 
+    /**
+     * @return A Jena graph representation of the explanation using
+     * the {@link EXPL} vocabulary
+     */
     public Graph toRDF() {
         Graph result = ModelFactory.createDefaultModel().getGraph();
         Node explanation = Node.createAnon(new AnonId("explanation"));
@@ -82,10 +119,16 @@ public class Explanation {
         return result;
     }
     
+    /**
+     * @return The RDF triple of this explanation
+     */
     public Triple getExplainedTriple() {
         return this.triple;
     }
     
+    /**
+     * @return The URI of the policy of this explanation
+     */
     public Node getPolicyURI() {
         return Node.createURI(this.policy.getURI());
     }

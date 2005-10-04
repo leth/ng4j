@@ -6,7 +6,7 @@ import java.util.Collections;
 import junit.framework.TestCase;
 
 /**
- * @version $Id: CountTest.java,v 1.1 2005/10/02 21:59:28 cyganiak Exp $
+ * @version $Id: CountTest.java,v 1.2 2005/10/04 00:03:44 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class CountTest extends TestCase {
@@ -14,8 +14,8 @@ public class CountTest extends TestCase {
 	private ResultTable empty;
 	
 	public void setUp() {
-		table = ResultTableBuilder.build("a", "1|2|3");
-		empty = ResultTableBuilder.build("a", null);
+		this.table = ResultTableBuilder.build("a", "1|2|3");
+		this.empty = ResultTableBuilder.build("a", null);
 	}
 	
 	public void testIllegalOperator() {
@@ -28,43 +28,43 @@ public class CountTest extends TestCase {
 	}
 	
 	public void testEqual() {
-		assertEquals(empty, table.filterByCount(new CountConstraint("a", "=", 2), null));
-		assertEquals(table, table.filterByCount(new CountConstraint("a", "=", 3), null));
-		assertEquals(empty, table.filterByCount(new CountConstraint("a", "=", 4), null));
+		assertEquals(this.empty, this.table.filterByCount(new CountConstraint("a", "=", 2), null));
+		assertEquals(this.table, this.table.filterByCount(new CountConstraint("a", "=", 3), null));
+		assertEquals(this.empty, this.table.filterByCount(new CountConstraint("a", "=", 4), null));
 	}
 
 	public void testNotEqual() {
-		assertEquals(table, table.filterByCount(new CountConstraint("a", "!=", 2), null));
-		assertEquals(empty, table.filterByCount(new CountConstraint("a", "!=", 3), null));
-		assertEquals(table, table.filterByCount(new CountConstraint("a", "!=", 4), null));
+		assertEquals(this.table, this.table.filterByCount(new CountConstraint("a", "!=", 2), null));
+		assertEquals(this.empty, this.table.filterByCount(new CountConstraint("a", "!=", 3), null));
+		assertEquals(this.table, this.table.filterByCount(new CountConstraint("a", "!=", 4), null));
 	}
 	
 	public void testLessThan() {
-		assertEquals(empty, table.filterByCount(new CountConstraint("a", "<", 2), null));
-		assertEquals(empty, table.filterByCount(new CountConstraint("a", "<", 3), null));
-		assertEquals(table, table.filterByCount(new CountConstraint("a", "<", 4), null));
+		assertEquals(this.empty, this.table.filterByCount(new CountConstraint("a", "<", 2), null));
+		assertEquals(this.empty, this.table.filterByCount(new CountConstraint("a", "<", 3), null));
+		assertEquals(this.table, this.table.filterByCount(new CountConstraint("a", "<", 4), null));
 	}
 
 	public void testLessThanOrEqual() {
-		assertEquals(empty, table.filterByCount(new CountConstraint("a", "<=", 2), null));
-		assertEquals(table, table.filterByCount(new CountConstraint("a", "<=", 3), null));
-		assertEquals(table, table.filterByCount(new CountConstraint("a", "<=", 4), null));
+		assertEquals(this.empty, this.table.filterByCount(new CountConstraint("a", "<=", 2), null));
+		assertEquals(this.table, this.table.filterByCount(new CountConstraint("a", "<=", 3), null));
+		assertEquals(this.table, this.table.filterByCount(new CountConstraint("a", "<=", 4), null));
 	}
 
 	public void testGreaterThan() {
-		assertEquals(table, table.filterByCount(new CountConstraint("a", ">", 2), null));
-		assertEquals(empty, table.filterByCount(new CountConstraint("a", ">", 3), null));
-		assertEquals(empty, table.filterByCount(new CountConstraint("a", ">", 4), null));
+		assertEquals(this.table, this.table.filterByCount(new CountConstraint("a", ">", 2), null));
+		assertEquals(this.empty, this.table.filterByCount(new CountConstraint("a", ">", 3), null));
+		assertEquals(this.empty, this.table.filterByCount(new CountConstraint("a", ">", 4), null));
 	}
 
 	public void testGreaterThanOrEqual() {
-		assertEquals(table, table.filterByCount(new CountConstraint("a", ">=", 2), null));
-		assertEquals(table, table.filterByCount(new CountConstraint("a", ">=", 3), null));
-		assertEquals(empty, table.filterByCount(new CountConstraint("a", ">=", 4), null));
+		assertEquals(this.table, this.table.filterByCount(new CountConstraint("a", ">=", 2), null));
+		assertEquals(this.table, this.table.filterByCount(new CountConstraint("a", ">=", 3), null));
+		assertEquals(this.empty, this.table.filterByCount(new CountConstraint("a", ">=", 4), null));
 	}
 	
 	public void testFilterNonMatching() {
-		table = ResultTableBuilder.build("id,a",
+		this.table = ResultTableBuilder.build("id,a",
 				"1,1|2,1|3,2|4,3|5,3|6,3|7,4|8,4|9,5|10,6");
 		ResultTable count1 = ResultTableBuilder.build("id,a",
 				"3,2|9,5|10,6");
@@ -72,18 +72,18 @@ public class CountTest extends TestCase {
 				"1,1|2,1|7,4|8,4");
 		ResultTable count3 = ResultTableBuilder.build("id,a",
 				"4,3|5,3|6,3");
-		assertEquals(empty, table.filterByCount(new CountConstraint("id", "=", 9), null));
-		assertEquals(table, table.filterByCount(new CountConstraint("id", "=", 10), null));
-		assertEquals(empty, table.filterByCount(new CountConstraint("id", "=", 11), null));
+		assertEquals(this.empty, this.table.filterByCount(new CountConstraint("id", "=", 9), null));
+		assertEquals(this.table, this.table.filterByCount(new CountConstraint("id", "=", 10), null));
+		assertEquals(this.empty, this.table.filterByCount(new CountConstraint("id", "=", 11), null));
 
-		assertEquals(empty, table.filterByCount(new CountConstraint("a", "=", 5), null));
-		assertEquals(table, table.filterByCount(new CountConstraint("a", "=", 6), null));
-		assertEquals(empty, table.filterByCount(new CountConstraint("a", "=", 7), null));
+		assertEquals(this.empty, this.table.filterByCount(new CountConstraint("a", "=", 5), null));
+		assertEquals(this.table, this.table.filterByCount(new CountConstraint("a", "=", 6), null));
+		assertEquals(this.empty, this.table.filterByCount(new CountConstraint("a", "=", 7), null));
 
 		Collection onlyA = Collections.singleton("a");
-		assertEquals(count1, table.filterByCount(new CountConstraint("id", "=", 1), onlyA));
-		assertEquals(count2, table.filterByCount(new CountConstraint("id", "=", 2), onlyA));
-		assertEquals(count3, table.filterByCount(new CountConstraint("id", "=", 3), onlyA));
-		assertEquals(empty, table.filterByCount(new CountConstraint("id", "=", 4), onlyA));
+		assertEquals(count1, this.table.filterByCount(new CountConstraint("id", "=", 1), onlyA));
+		assertEquals(count2, this.table.filterByCount(new CountConstraint("id", "=", 2), onlyA));
+		assertEquals(count3, this.table.filterByCount(new CountConstraint("id", "=", 3), onlyA));
+		assertEquals(this.empty, this.table.filterByCount(new CountConstraint("id", "=", 4), onlyA));
 	}
 }

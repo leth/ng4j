@@ -22,12 +22,16 @@ import de.fuberlin.wiwiss.ng4j.triql.parser.Q_MetricExpression;
  * binding to be trusted. This is a boolean expression that can
  * use all variables occuring in the graph patterns. 
  *
- * @version $Id: ExpressionConstraint.java,v 1.1 2005/03/28 22:31:51 cyganiak Exp $
+ * @version $Id: ExpressionConstraint.java,v 1.2 2005/10/04 00:03:44 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class ExpressionConstraint {
     private Expr expression;
 
+    /**
+     * Creates a new expression constraint.
+     * @param expression A TriQL.P expression
+     */
     public ExpressionConstraint(Expr expression) {
         this.expression = expression;
     }
@@ -97,7 +101,7 @@ public class ExpressionConstraint {
      * of passing MetricResult instead of the explanation itself:
      * We keep the ability to generate the explanation on demand.
      * 
-     * @version $Id: ExpressionConstraint.java,v 1.1 2005/03/28 22:31:51 cyganiak Exp $
+     * @version $Id: ExpressionConstraint.java,v 1.2 2005/10/04 00:03:44 cyganiak Exp $
      * @author Richard Cyganiak (richard@cyganiak.de)
      */
     public class MetricResultCollector extends Query {

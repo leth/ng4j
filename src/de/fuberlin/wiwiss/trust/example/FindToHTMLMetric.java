@@ -17,15 +17,19 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 import de.fuberlin.wiwiss.trust.Explanation;
 import de.fuberlin.wiwiss.trust.ExplanationToHTMLRenderer;
-import de.fuberlin.wiwiss.trust.TrustLayerGraph;
+import de.fuberlin.wiwiss.trust.TrustedGraph;
 import de.fuberlin.wiwiss.trust.metric.AppleseedMetric;
 import de.fuberlin.wiwiss.trust.metric.EbayMetric;
 import de.fuberlin.wiwiss.trust.metric.SemanticPageRank;
 import de.fuberlin.wiwiss.trust.metric.TidalTrustMetric;
 
 /**
- * @version $Id: FindToHTMLMetric.java,v 1.4 2005/06/21 15:01:46 maresch Exp $
- * @author Ricard Cyganiak (richard@cyganiak.de)
+ * Test application: Filters a TRIG file, runs a find query against
+ * the trusted graph, and renders an HTML file with explanations for
+ * all matching triples.
+ * 
+ * @version $Id: FindToHTMLMetric.java,v 1.5 2005/10/04 00:03:44 cyganiak Exp $
+ * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class FindToHTMLMetric {
 
@@ -63,7 +67,7 @@ public class FindToHTMLMetric {
             Graph tplGraph = tplModel.getGraph();
 
             // Set up the TrustLayerGraph
-            TrustLayerGraph tlg = new TrustLayerGraph(source, tplGraph);
+            TrustedGraph tlg = new TrustedGraph(source, tplGraph);
             // register Metrics
             tlg.registerMetricImplementation(TidalTrustMetric.class);
             tlg.registerMetricImplementation(EbayMetric.class);

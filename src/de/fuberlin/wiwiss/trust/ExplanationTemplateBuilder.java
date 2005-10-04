@@ -6,8 +6,26 @@ import java.util.Map;
 
 import com.hp.hpl.jena.graph.Node;
 
+import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
+
 /**
- * @version $Id: ExplanationTemplateBuilder.java,v 1.2 2005/03/15 08:59:08 cyganiak Exp $
+ * <p>Service that builds an {@link ExplanationTemplate} from the parts
+ * provided in a trust policy. The inputs are:</p>
+ * 
+ * <ul>
+ * <li>A collection of {@link GraphPattern}s</li>
+ * <li>An explanation template string for each graph pattern</li>
+ * <li>An explanation template string for the root of the explanation
+ *   template tree.</li>
+ * </ul>
+ * 
+ * <p>The output is the root of a tree of explanation templates.</p>
+ * 
+ * <p>The main responsibility is to arrange the graph patterns
+ * into a tree (done in {@link GraphPatternTreeBuilder} and then walk
+ * the tree and build a corresponding tree of ExplanationTemplates.</p>
+ * 
+ * @version $Id: ExplanationTemplateBuilder.java,v 1.3 2005/10/04 00:03:44 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class ExplanationTemplateBuilder {
@@ -15,6 +33,13 @@ public class ExplanationTemplateBuilder {
     private Node rootTemplateNode;
     private Map patternsToTemplateNodes;
     
+    /**
+     * Sets up a new explanation template builder.
+     * @param graphPatterns A list of {@link GraphPattern}s
+     * @param rootTextExplanation The root template string 
+     * @param patternTextExplanations A map from graph patterns 
+     * 		to template string {@link Node}s
+     */
     public ExplanationTemplateBuilder(List graphPatterns, Node rootTextExplanation,
             Map patternTextExplanations) {
         this.patterns = graphPatterns;
@@ -22,6 +47,9 @@ public class ExplanationTemplateBuilder {
         this.patternsToTemplateNodes = patternTextExplanations;
     }
 
+    /**
+     * @return The complete explanation template with children
+     */
     public ExplanationTemplate explanationTemplate() {
         if (this.rootTemplateNode == null && this.patternsToTemplateNodes.isEmpty()) {
             return null;	// no explanations at all defined

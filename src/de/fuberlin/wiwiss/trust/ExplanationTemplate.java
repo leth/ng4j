@@ -13,34 +13,88 @@ import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.graph.Node;
 
 /**
- * @version $Id: ExplanationTemplate.java,v 1.2 2005/03/26 23:56:56 cyganiak Exp $
+ * <p>A template that can be instantiated into an {@link ExplanationPart}.
+ * It is created from a string like this:</p>
+ * 
+ * <pre>
+ * "The information was stated by @@?person@@ who works for @@?company@@."
+ * </pre>
+ * 
+ * <p>A template is instantiated by chopping it into its text and
+ * variable parts, replacing the text parts by equivalent RDF literal
+ * nodes, and replacing the variables with values from a
+ * {@link VariableBinding} that is provided to the {@link #instantiate}
+ * method. The resulting list of RDF nodes can be used as the text
+ * fragment of an ExplanationPart.</p>
+ * 
+ * <p>A template can also have additional templates as children.
+ * Such a template tree is instantiated by providing not a single
+ * variable binding, but a set of variable bindings -- a
+ * {@link ResultTable}. The process works in these steps:</p>
+ * 
+ * <ol>
+ * <li>Group the result table by those variables that are used in
+ *   the parent template</li>
+ * <li>For each group, instantiate the parent template once</li>
+ * <li>To each of these parent explanations, add the explanations
+ *   obtained from instantiating all child templates with the
+ *   bindings in the current group.</li>
+ * </ol>
+ * 
+ * <p>The result is a collection of ExplanationParts, one for each
+ * group. This process is implemented in {@link #instantiateTree}.</p>
+ * 
+ * @version $Id: ExplanationTemplate.java,v 1.3 2005/10/04 00:03:44 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
+ * 
+ * TODO: Extract ExplanationTemplateString into its own class?
  */
 public class ExplanationTemplate {
     private Node[] templateNodes;
-    private Set usedVariableNames = new HashSet();
-    private Set usedVariables = new HashSet();
+    private Set variableNames = new HashSet();
+    private Set variablesUsedInTree = new HashSet();
     private Collection childTemplates = new ArrayList();
     
+    /**
+     * Creates a new explanation template.
+     * @param pattern The template string
+     * @param lang A language tag for the resulting explanation RDF nodes
+     */
     public ExplanationTemplate(String pattern, String lang) {
         compilePattern(pattern, lang);
     }
     
+    /**
+     * Creates a new explanation template.
+     * @param pattern The template string
+     */
     public ExplanationTemplate(String pattern) {
         this(pattern, null);
     }
     
+    /**
+     * Creates a new explanation template that, when instantiated,
+     * creates empty text fragments but may still have children.
+     */
     public ExplanationTemplate() {
         this("", null);
     }
-    
+
+    /**
+     * Adds a child template.
+     * @param childTemplate The child template
+     */
     public void addChild(ExplanationTemplate childTemplate) {
         this.childTemplates.add(childTemplate);
-        this.usedVariables.addAll(childTemplate.usedVariables());
+        this.variablesUsedInTree.addAll(childTemplate.usedVariables());
     }
 
+    /**
+     * @return All variables used in this template and all its children,
+     * 		as RDF {@link Node}s.
+     */
     public Set usedVariables() {
-        return this.usedVariables;
+        return this.variablesUsedInTree;
     }
     
     private void compilePattern(String pattern, String lang) {
@@ -54,8 +108,8 @@ public class ExplanationTemplate {
 	        }
 	        Node variable = Node.createVariable(matcher.group(1));
 	        nodes.add(variable);
-	        this.usedVariables.add(variable);
-	        this.usedVariableNames.add(matcher.group(1));
+	        this.variablesUsedInTree.add(variable);
+	        this.variableNames.add(matcher.group(1));
 	        currentStart = matcher.end();
         }
         if (currentStart < pattern.length()) {
@@ -64,6 +118,11 @@ public class ExplanationTemplate {
         this.templateNodes = (Node[]) nodes.toArray(new Node[nodes.size()]);
     }
     
+    /**
+     * Instantiates the template, without its children.
+     * @param binding A variable binding used to fill in the variable slots
+     * @return An explanation part without children
+     */
     public ExplanationPart instantiate(VariableBinding binding) {
         List instanceNodes = new ArrayList();
         for (int i = 0; i < this.templateNodes.length; i++) {
@@ -79,10 +138,15 @@ public class ExplanationTemplate {
         }
         return new ExplanationPart(instanceNodes);
     }
-    
+
+    /**
+     * Instantiates this template and all its children.
+     * @param results A query result table
+     * @return The instantiated ExplanationParts
+     */
     public Collection instantiateTree(ResultTable results) {
         List resultParts = new ArrayList();
-        Iterator it = results.selectDistinct(this.usedVariableNames).bindingIterator();
+        Iterator it = results.selectDistinct(this.variableNames).bindingIterator();
         while (it.hasNext()) {
             VariableBinding binding = (VariableBinding) it.next();
             ExplanationPart explanationPart = instantiate(binding);

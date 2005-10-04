@@ -6,7 +6,7 @@ import junit.framework.TestSuite;
 /**
  * JUnit test suite for entire project
  *
- * @version $Id: AllTests.java,v 1.5 2005/10/02 21:59:28 cyganiak Exp $
+ * @version $Id: AllTests.java,v 1.6 2005/10/04 00:03:44 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class AllTests {
@@ -32,7 +32,7 @@ public class AllTests {
 		suite.addTestSuite(GraphPatternTreeBuilderTest.class);
 		suite.addTestSuite(PolicySuiteFromRDFBuilderTest.class);
 		suite.addTestSuite(ExplanationTemplateBuilderTest.class);
-		suite.addTestSuite(QueryFactoryTest.class);
+		suite.addTestSuite(QueryBuilderTest.class);
 		suite.addTestSuite(CountTest.class);
 		suite.addTestSuite(TrustEngineTest.class);
 		//$JUnit-END$

@@ -11,11 +11,14 @@ import com.hp.hpl.jena.rdf.model.impl.ModelCom;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 //import de.fuberlin.wiwiss.trust.IsFooMetric;
-import de.fuberlin.wiwiss.trust.TrustLayerGraph;
+import de.fuberlin.wiwiss.trust.TrustedGraph;
 import de.fuberlin.wiwiss.trust.metric.TidalTrustMetric;
 
 /**
- * @version $Id: Filter.java,v 1.3 2005/05/31 09:53:56 maresch Exp $
+ * Test application: Filter a TRIG file and write out the trusted
+ * graph as N3
+ * 
+ * @version $Id: Filter.java,v 1.4 2005/10/04 00:03:44 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class Filter {
@@ -35,7 +38,7 @@ public class Filter {
         Graph tplGraph = tplModel.getGraph();
         
         // Set up the TrustLayerGraph
-        TrustLayerGraph tlg = new TrustLayerGraph(source, tplGraph);
+        TrustedGraph tlg = new TrustedGraph(source, tplGraph);
 
         // Make some Metric implementations available to be used in policies
  //       tlg.registerMetricImplementation(IsFooMetric.class);

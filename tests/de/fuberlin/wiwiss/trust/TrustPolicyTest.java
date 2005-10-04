@@ -1,8 +1,6 @@
 package de.fuberlin.wiwiss.trust;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
@@ -12,10 +10,8 @@ import com.hp.hpl.jena.vocabulary.RDF;
 
 import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
 
-import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
-
 /**
- * @version $Id: TrustPolicyTest.java,v 1.5 2005/06/22 21:21:23 maresch Exp $
+ * @version $Id: TrustPolicyTest.java,v 1.6 2005/10/04 00:03:44 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class TrustPolicyTest extends FixtureWithLotsOfNodes {
@@ -82,12 +78,12 @@ public class TrustPolicyTest extends FixtureWithLotsOfNodes {
 	    VariableBinding vb = new VariableBinding();
 	    vb.setValue("var1", Node.createLiteral("foo"));
 	    vb.setValue("var2", Node.createLiteral("foo"));
-	    assertTrue(policy.matchesConstraints(vb));
+	    assertTrue(policy.matchesExpressionConstraints(vb));
 
 	    vb = new VariableBinding();
 	    vb.setValue("var1", Node.createLiteral("foo"));
 	    vb.setValue("var2", Node.createLiteral("bar"));
-	    assertFalse(policy.matchesConstraints(vb));
+	    assertFalse(policy.matchesExpressionConstraints(vb));
 	}
     
     public void testAddRankBasedMetricConstraint(){
@@ -99,7 +95,7 @@ public class TrustPolicyTest extends FixtureWithLotsOfNodes {
                 Collections.EMPTY_LIST,
                 Collections.singletonList(metric)).parseRankBasedConstraint());
         assertEquals(1, policy.getRankBasedConstraints().size());
-        assertTrue(metric.equals(((RankBasedConstraint) 
+        assertTrue(metric.equals(((RankBasedMetricConstraint) 
             policy.getRankBasedConstraints().iterator().next()).getRankBasedMetric()));
    }
 }

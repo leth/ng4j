@@ -4,19 +4,16 @@ import java.util.Arrays;
 
 import junit.framework.TestCase;
 
-import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.rdf.model.AnonId;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.shared.PrefixMapping;
 import com.hp.hpl.jena.shared.impl.PrefixMappingImpl;
-import com.hp.hpl.jena.vocabulary.RDF;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 /**
- * @version $Id: ExplanationToHTMLRendererTest.java,v 1.3 2005/06/22 21:21:23 maresch Exp $
+ * @version $Id: ExplanationToHTMLRendererTest.java,v 1.4 2005/10/04 00:03:44 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class ExplanationToHTMLRendererTest extends TestCase {
@@ -33,7 +30,7 @@ public class ExplanationToHTMLRendererTest extends TestCase {
                 TrustPolicy.TRUST_EVERYTHING);
 
         this.ngs = new NamedGraphSetImpl();
-        this.renderer = new ExplanationToHTMLRenderer(this.expl, ngs);
+        this.renderer = new ExplanationToHTMLRenderer(this.expl, this.ngs);
     }
     
     public void testRenderEmptyExplanation() {

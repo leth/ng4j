@@ -13,14 +13,21 @@ import com.hp.hpl.jena.shared.PrefixMapping;
 import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
 
 /**
- * A trust policy defines rules for accepting or rejecting RDF statements.
- * A policy consists of graph patterns and conditions. Taken together,
+ * <p>A trust policy defines rules for accepting or rejecting RDF statements.
+ * A policy consists of graph patterns ({@link GraphPattern})
+ * and various forms of conditions ({@link ExpressionConstraint},
+ * {@link CountConstraint}, {@link RankBasedMetricConstraint}). Taken together,
  * they form an implicit TriQL.P query. A statement is trusted if it matches
  * the query. The policy also provides explanations templates which
  * can generate an explanation stating why a particular statement was trusted
- * (but not why a statement was rejected).
+ * (but not why a statement was rejected).</p>
  *
- * @version $Id: TrustPolicy.java,v 1.8 2005/06/21 15:01:45 maresch Exp $
+ * <p>A trust policy must be identified by a unique URI.</p>
+ * 
+ * <p>Trust policy instances are created mainly through the
+ * {@link de.fuberlin.wiwiss.trust.PolicySuiteFromRDFBuilder}.</p>
+ * 
+ * @version $Id: TrustPolicy.java,v 1.9 2005/10/04 00:03:44 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  * @author Oliver Maresch (oliver-maresch@gmx.de)
  */
@@ -66,56 +73,111 @@ public class TrustPolicy {
 	private PrefixMapping prefixes = PrefixMapping.Standard;
 
 	private ExplanationTemplate explanationTemplate;
-	
+
+	/**
+	 * Creates a new trust policy.
+	 * @param uri A unique ID for the policy
+	 */
 	public TrustPolicy(String uri) {
 	    this.uri = uri;
 	}
 	
+	/**
+	 * @return The policy's unique ID
+	 */
 	public String getURI() {
 	    return this.uri;
 	}
 	
+	/**
+	 * Adds a graph pattern to the policy.
+	 * @param pattern A graph pattern
+	 */
 	public void addPattern(GraphPattern pattern) {
 		this.graphPatterns.add(pattern);
 	}
 
+	/**
+	 * @return An unordered collection of {@link GraphPattern}s
+	 */
 	public List getGraphPatterns() {
 		return Collections.unmodifiableList(this.graphPatterns);
 	}
 	
+	/**
+	 * Adds a count constraint that limits how often a variable
+	 * must be bound in order for a triple to be accepted.
+	 * @param count The count constraint 
+	 */
 	public void addCountConstraint(CountConstraint count) {
 	    this.countConstraints.add(count);
 	}
 
+	/**
+	 * @return An unordered collection of the policy's
+	 * 		{@link CountConstraint}s
+	 */
 	public Collection getCountConstraints() {
 	    return Collections.unmodifiableCollection(this.countConstraints);
 	}
-    
-    public void addRankBasedConstraint(RankBasedConstraint constraint){
+
+	/**
+	 * Adds a rank-based metric constraint to the policy.
+	 * @param constraint The constraint
+	 */
+    public void addRankBasedConstraint(RankBasedMetricConstraint constraint){
         this.rankBasedConstraints.add(constraint);
     }
     
+    /**
+     * @return An unordered collection of the policy's
+     * 		{@link RankBasedMetricConstraint}s
+     */
     public Collection getRankBasedConstraints(){
         return this.rankBasedConstraints;
     }
 	
+    /**
+     * Sets a prefix map that is used throughout the policy to expand and
+     * contract URIs/QNames.
+     * @param prefixes
+     */
 	public void setPrefixMapping(PrefixMapping prefixes) {
 	    this.prefixes = prefixes;
 	}
 	
+	/**
+	 * @return The prefix map that is used throughout the policy to expand
+	 * and contract URIs/QNames
+	 */
 	public PrefixMapping getPrefixMapping() {
 	    return this.prefixes;
 	}
 	
+	/**
+	 * Adds an expression constraint to the trust policy.
+	 * @param condition
+	 */
 	public void addExpressionConstraint(ExpressionConstraint condition) {
 	    this.constraints.add(condition);
 	}
 
+	/**
+	 * @return An unordered collection of the policy's
+	 * {@link ExpressionConstraint}s
+	 */
 	public Collection getExpressionConstraints() {
 	    return this.constraints;
 	}
 	
-	public boolean matchesConstraints(VariableBinding binding) {
+	/**
+	 * Checks if a variable binding matches the expression constraints
+	 * of the policy.
+	 * @param binding A variable binding 
+	 * @return True if the binding matches the expression constraints
+	 * TODO: Has the side effect of adding explanations from metrics to the binding. Ugly!
+	 */
+	public boolean matchesExpressionConstraints(VariableBinding binding) {
 	    Iterator it = this.constraints.iterator();
 	    while (it.hasNext()) {
             ExpressionConstraint constraint = (ExpressionConstraint) it.next();
@@ -135,10 +197,18 @@ public class TrustPolicy {
 	    return true;
 	}
 	
+	/**
+	 * Sets the explanation template used to explain why a triple
+	 * matches the policy.
+	 * @param expl An explanation template
+	 */
 	public void setExplanationTemplate(ExplanationTemplate expl) {
 	    this.explanationTemplate = expl;
 	}
 	
+	/**
+	 * @return The policy's explanation template
+	 */
 	public ExplanationTemplate getExplanationTemplate() {
 	    return this.explanationTemplate;
 	}

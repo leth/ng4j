@@ -20,10 +20,6 @@ public class AlwaysFirstRankBasedMetric implements RankBasedMetric {
 
     public static final String URI = "http://example.org/metrics#AlwaysFirstRankBasedMetric";
     
-    /** Creates a new instance of AllwaysFirstRankBasedMetric */
-    public AlwaysFirstRankBasedMetric() {
-    }
-
     public ExplanationPart explain(int row) {
         List text = new ArrayList();
         text.add(Node.createLiteral("AlwaysFirstRankBasedMetric"));
@@ -39,6 +35,7 @@ public class AlwaysFirstRankBasedMetric implements RankBasedMetric {
     }
 
     public void init(de.fuberlin.wiwiss.ng4j.NamedGraphSet source, java.util.List inputTable) throws MetricException {
+    	// do nothing
     }
 
     public boolean isAccepted(int row) {

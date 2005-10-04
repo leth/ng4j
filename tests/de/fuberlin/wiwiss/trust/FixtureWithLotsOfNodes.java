@@ -14,7 +14,7 @@ import junit.framework.TestCase;
 /**
  * Provides lots of test data to several test cases which extend this class
  *
- * @version $Id: FixtureWithLotsOfNodes.java,v 1.4 2005/03/28 22:31:44 cyganiak Exp $
+ * @version $Id: FixtureWithLotsOfNodes.java,v 1.5 2005/10/04 00:03:44 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public abstract class FixtureWithLotsOfNodes extends TestCase {
@@ -26,6 +26,10 @@ public abstract class FixtureWithLotsOfNodes extends TestCase {
 	protected static final Node node1 = Node.createURI(ex + "#node1");
 	protected static final Node node2 = Node.createURI(ex + "#node2");
 	protected static final Node node3 = Node.createURI(ex + "#node3");
+	protected static final Node authority1 = Node.createURI(ex + "#authority1");
+	protected static final Node authority2 = Node.createURI(ex + "#authority2");
+	protected static final Node warrant1 = Node.createURI(ex + "#warrant1");
+	protected static final Node warrant2 = Node.createURI(ex + "#warrant2");
 
 	protected static final Node assertedBy = Node.createURI("http://www.w3.org/2004/03/trix/swp-2/assertedBy");
 	protected static final Node authority = Node.createURI("http://www.w3.org/2004/03/trix/swp-2/authority");
@@ -95,25 +99,25 @@ public abstract class FixtureWithLotsOfNodes extends TestCase {
 
 	public static TrustPolicy getPolicyTrustIfAssertedByFredAndBob() {
 		TrustPolicy policy = new TrustPolicy(ex + "policies#TrustIfAssertedByFredAndBob");
-		Node warrant1 = Node.createVariable("warrant1");
-		Node warrant2 = Node.createVariable("warrant2");
-		Node person1 = Node.createVariable("person1");
-		Node person2 = Node.createVariable("person2");
+		Node varWarrant1 = Node.createVariable("warrant1");
+		Node varWarrant2 = Node.createVariable("warrant2");
+		Node varPerson1 = Node.createVariable("person1");
+		Node varPerson2 = Node.createVariable("person2");
 		GraphPattern pattern = new GraphPattern(graph1);
 		pattern.addTriplePattern(new Triple(TrustPolicy.SUBJ, TrustPolicy.PRED, TrustPolicy.OBJ));		
 		policy.addPattern(pattern);
 		policy.addPattern(createSelfAssertedWarrant(
-				graph1, warrant1, person1));
+				graph1, varWarrant1, varPerson1));
 		pattern = new GraphPattern(graph2);
 		pattern.addTriplePattern(new Triple(TrustPolicy.SUBJ, TrustPolicy.PRED, TrustPolicy.OBJ));		
 		policy.addPattern(pattern);
 		policy.addPattern(createSelfAssertedWarrant(
-				graph2, warrant2, person2));
+				graph2, varWarrant2, varPerson2));
 		pattern = new GraphPattern(Node.ANY);
-		pattern.addTriplePattern(new Triple(person1, mbox, Node.createURI("mailto:fred@example.com")));
+		pattern.addTriplePattern(new Triple(varPerson1, mbox, Node.createURI("mailto:fred@example.com")));
 		policy.addPattern(pattern);
 		pattern = new GraphPattern(Node.ANY);
-		pattern.addTriplePattern(new Triple(person2, mbox, Node.createURI("mailto:bob@example.com")));
+		pattern.addTriplePattern(new Triple(varPerson2, mbox, Node.createURI("mailto:bob@example.com")));
 		policy.addPattern(pattern);
 		return policy;		
 	}
@@ -126,6 +130,19 @@ public abstract class FixtureWithLotsOfNodes extends TestCase {
 	    policy.addPattern(pattern);
 	    policy.addExpressionConstraint(ConstraintFixture.getConstraint("?rating > 3"));
 	    return policy;
+	}
+
+	public static TrustPolicy getPolicyTwoSources() {
+		TrustPolicy result = new TrustPolicy(
+		        ex + "policies#TrustOnlyInformationAssertedByTwoSources");
+		result.addPattern(createSelfAssertedWarrant(
+				TrustPolicy.GRAPH, varWarrant, varAuthority));
+		result.addCountConstraint(new CountConstraint(varAuthority.getName(), ">=", 2));
+		ExplanationTemplate template = new ExplanationTemplate(
+				"The information is trusted because it is asserted by two sources:");
+		template.addChild(new ExplanationTemplate("@@?authority@@"));
+		result.setExplanationTemplate(template);
+		return result;
 	}
 
 	private static GraphPattern createSelfAssertedWarrant(Node assertedGraph,

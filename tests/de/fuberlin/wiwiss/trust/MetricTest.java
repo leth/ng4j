@@ -1,6 +1,5 @@
 package de.fuberlin.wiwiss.trust;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -16,7 +15,7 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
 /**
- * @version $Id: MetricTest.java,v 1.7 2005/06/22 21:21:23 maresch Exp $
+ * @version $Id: MetricTest.java,v 1.8 2005/10/04 00:03:44 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class MetricTest extends TestCase {
@@ -121,7 +120,7 @@ public class MetricTest extends TestCase {
             this.metrics,
             this.rankBasedMetrics);
         assertTrue(parser.isRankBasedConstraint());
-        RankBasedConstraint constraint = parser.parseRankBasedConstraint();
+        RankBasedMetricConstraint constraint = parser.parseRankBasedConstraint();
         RankBasedMetric metric = constraint.getRankBasedMetric();
         NamedGraphSet set = new NamedGraphSetImpl();
         try{

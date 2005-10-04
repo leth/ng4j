@@ -18,9 +18,9 @@ import de.fuberlin.wiwiss.ng4j.triql.GraphPattern;
 
 /**
  * Service for building a {@link PolicySuite} from an RDF graph containing
- * the policy's description using the TPL vocabulary.
+ * the policy's description using the {@link TPL} vocabulary.
  *
- * @version $Id: PolicySuiteFromRDFBuilder.java,v 1.7 2005/06/21 15:01:46 maresch Exp $
+ * @version $Id: PolicySuiteFromRDFBuilder.java,v 1.8 2005/10/04 00:03:44 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  * @author Oliver Maresch (oliver-maresch@gmx.de)
  */
@@ -30,24 +30,27 @@ public class PolicySuiteFromRDFBuilder {
     private PrefixMapping prefixes;
     private PolicySuite resultSuite;
     private Node suiteNode;
-    private Collection metricInstances;
+    private Collection simpleMetricInstances;
     private Collection rankBasedMetricInstances;
     
     /**
      * @param suiteGraph A Jena RDF graph containing a description of a
      *        policy suite using the TPL vocabulary
-     * @param metricInstances A collection of {@link Metric} instances
+     * @param simpleMetricInstances A collection of {@link Metric} instances
      *        that will be available to the policies
+     * @param rankBasedMetricInstances A collection of
+     * 		{@link RankBasedMetric} instances
      */
-    public PolicySuiteFromRDFBuilder(Graph suiteGraph, Collection metricInstances, Collection rankBasedMetricInstances) {
+    public PolicySuiteFromRDFBuilder(Graph suiteGraph,
+    	Collection simpleMetricInstances, Collection rankBasedMetricInstances) {
         this.graph.getBulkUpdateHandler().add(suiteGraph);
         this.prefixes = suiteGraph.getPrefixMapping();
-        this.metricInstances = metricInstances;
+        this.simpleMetricInstances = simpleMetricInstances;
         this.rankBasedMetricInstances = rankBasedMetricInstances;
     }
     
     /**
-     * Builds the policy suite from the TPL graph
+     * Builds the policy suite from the TPL graph.
      * @return A policy suite
      * @throws TPLException on error in the TPL file
      */
@@ -155,7 +158,7 @@ public class PolicySuiteFromRDFBuilder {
     
     private void addConstraintToPolicy(String constraint, TrustPolicy policy) {
         ConstraintParser parser = new ConstraintParser(
-                constraint, this.prefixes, this.metricInstances, this.rankBasedMetricInstances);
+                constraint, this.prefixes, this.simpleMetricInstances, this.rankBasedMetricInstances);
         if (parser.isCountConstraint()) {
             policy.addCountConstraint(parser.parseCountConstraint());
         } else if(parser.isRankBasedConstraint()){

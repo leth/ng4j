@@ -15,7 +15,8 @@ import de.fuberlin.wiwiss.ng4j.triql.parser.TriQLParser;
 
 /**
  * <p>Service for parsing a TriQL Graph Pattern into a
- * {@link GraphPattern} instance. The input is a string
+ * {@link GraphPattern} instance. Works by invoking the
+ * right part of the TriQL parser. The input is a string
  * like this:</p>
  *
  * <pre>
@@ -23,7 +24,7 @@ import de.fuberlin.wiwiss.ng4j.triql.parser.TriQLParser;
  *           ?warrant swp:authority ?USER)
  * </pre>
  * 
- * @version $Id: GraphPatternParser.java,v 1.2 2005/03/15 08:59:08 cyganiak Exp $
+ * @version $Id: GraphPatternParser.java,v 1.3 2005/10/04 00:03:44 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class GraphPatternParser {
@@ -31,6 +32,7 @@ public class GraphPatternParser {
     private PrefixMapping prefixes;
     
     /**
+     * Sets up a new graph pattern parser.
      * @param pattern The string representation of the graph pattern
      * @param prefixes Namespace prefixes that may be used in the pattern 
      */

@@ -9,11 +9,20 @@ import com.hp.hpl.jena.rdql.Var;
 import de.fuberlin.wiwiss.ng4j.triql.legacy.Value;
 
 /**
- * @version $Id: TriQLHelper.java,v 1.1 2005/03/15 08:59:08 cyganiak Exp $
+ * Some utility methods for working with TriQL.
+ * 
+ * @version $Id: TriQLHelper.java,v 1.2 2005/10/04 00:03:44 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class TriQLHelper {
 
+	/**
+	 * Converts a node from a TriQL parse tree into an RDF node.
+	 * Works only if the parse tree node represents an RDF node
+	 * or a variable.
+	 * @param n A TriQL parse tree node
+	 * @return An RDF node or RDF variable
+	 */
     public static Node toRDFNode(de.fuberlin.wiwiss.ng4j.triql.parser.Node n) {
         if (n instanceof Var) {
             return Node.createVariable(((Var)n).getVarName()) ;
@@ -24,6 +33,10 @@ public class TriQLHelper {
         return TriQLHelper.toRDFNode((Value) n);
     }
     
+	/**
+	 * @param v A TriQL value
+	 * @return The corresponding RDF node
+	 */
     public static Node toRDFNode(Value v) {
         if (v.isRDFLiteral()) {
             Literal lit = v.getRDFLiteral();

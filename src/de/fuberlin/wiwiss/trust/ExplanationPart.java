@@ -12,7 +12,16 @@ import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 /**
- * @version $Id: ExplanationPart.java,v 1.3 2005/04/15 11:42:05 maresch Exp $
+ * <p>A node in an {@link Explanation} tree. A node has zero or more
+ * children which are also ExplanationParts, and a text fragment
+ * which is a list of RDF nodes (literals or URIs which should be
+ * rendered as links). The children are unordered.</p>
+ * 
+ * <p>An ExplanationPart may have a more detailed alternative
+ * version, accessible through {@link #getDetails}. Which version
+ * is shown should be determined based on user preferences.</p>
+ * 
+ * @version $Id: ExplanationPart.java,v 1.4 2005/10/04 00:03:44 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  * @author Oliver Maresch (oliver-maresch@gmx.de)
  */
@@ -21,34 +30,68 @@ public class ExplanationPart {
     private List explanation;
     private ExplanationPart details = null;
 
+    /**
+     * Creates a new explanation part without children and with
+     * an empty text representation.
+     */
     public ExplanationPart() {
         this.explanation = Collections.EMPTY_LIST;
     }
-    
+
+    /**
+     * Creates a new explanation part without children and with
+     * a text representation.
+     * @param explanation The text representation, a list of RDF {@link Node}s
+     */
     public ExplanationPart(List explanation) {
         this.explanation = explanation;
     }
     
+    /**
+     * Adds a child to this explanation part.
+     * @param part The new child
+     */
     public void addPart(ExplanationPart part) {
         this.parts.add(part);
     }
     
+    /**
+     * @return The children of this explanation part
+     */
     public Collection parts() {
         return this.parts;
     }
     
+    /**
+     * @return The text representation of this explanation part; a
+     * 		list of RDF {@link Node}s.
+     */
     public List explanationNodes() {
         return this.explanation;
     }
     
+    /**
+     * Sets the alternative detailed version of this explanation part.
+     * @param details The alternative version
+     */
     public void setDetails(ExplanationPart details){
         this.details = details;
     }
     
+    /**
+     * @return The alternative detailed version of this explanation part,
+     * or null if none exists
+     */
     public ExplanationPart getDetails(){
         return this.details;
     }
     
+    /**
+     * Writes this explanation part and all of its children into
+     * a Jena RDF {@link Graph}.
+     * @param target Statements will be added to this graph
+     * @return The RDF node representing this part
+     */
     public Node writeAsRDF(Graph target) {
         Node thisPart = Node.createAnon();
         target.add(new Triple(thisPart, RDF.Nodes.type, EXPL.ExplanationPart));
@@ -70,8 +113,8 @@ public class ExplanationPart {
             target.add(new Triple(thisPart, EXPL.parts, child));
         }
         
-        if(details != null){
-            Node node = details.writeAsRDF(target);
+        if (this.details != null){
+            Node node = this.details.writeAsRDF(target);
             target.add(new Triple(thisPart, EXPL.details, node));
         }
         
@@ -92,8 +135,8 @@ public class ExplanationPart {
         if (!otherExplanationPart.parts.containsAll(this.parts)) {
             return false;
         }
-        if(  (details != null && !details.equals(otherExplanationPart.details))
-          || (details == null && otherExplanationPart.details != null)){
+        if ((this.details != null && !this.details.equals(otherExplanationPart.details))
+          || (this.details == null && otherExplanationPart.details != null)){
             return false;
         }
         return true;
@@ -127,8 +170,8 @@ public class ExplanationPart {
             }
         }
         
-        if(details != null){
-            result.append("Details(" + details + ")");
+        if(this.details != null){
+            result.append("Details(" + this.details + ")");
         }
         result.append(">");
         return result.toString();
