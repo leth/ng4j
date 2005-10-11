@@ -1,4 +1,4 @@
-// $Id: GraphPattern.java,v 1.6 2005/02/14 23:37:15 cyganiak Exp $
+// $Id: GraphPattern.java,v 1.7 2005/10/11 20:56:16 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import java.util.ArrayList;
@@ -10,22 +10,40 @@ import java.util.Set;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 
+import de.fuberlin.wiwiss.ng4j.Quad;
+
 /**
- * A graph pattern in a TriQL query, consisting of a graph name pattern and
- * a collection of triple patterns.
+ * <p>A graph pattern in a TriQL query, consisting of a graph name pattern and
+ * a collection of triple patterns.</p>
  *
+ * <p>The graph pattern can be viewed as a list of quad patterns
+ * which all have the same graph name. (See {@link #getQuads}.)
+ * If the graph name is Node.ANY, then, in the quad view, an
+ * anonymous variable (_graphXXXX) will be used as the graph name.
+ * This helps distinguishing between quad patterns that are part
+ * of different graph pattern.</p>
+ * 
+ * TODO: Test getAllVariables(), getQuad(...)
+ * 
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class GraphPattern {
 	private Node name;
+	private Node anonymouseName = null;
+	private static long nextID = 0;
 	private List triples = new ArrayList();
-
+	private List quads = null;
+	
 	public GraphPattern(Node name) {
 		this.name = name;
+		if (needsAnonymousName()) {
+		    assignAnonymousName();
+		}
 	}
 	
 	public void addTriplePattern(Triple pattern) {
 		this.triples.add(pattern);
+		this.quads = null;
 	}
 	
 	public Node getName() {
@@ -36,8 +54,22 @@ public class GraphPattern {
 		return this.triples.size();
 	}
 	
+	public List getTriples() {
+	    return this.triples;
+	}
+	
 	public Triple getTriple(int index) {
 		return (Triple) this.triples.get(index);
+	}
+	
+	public List getQuads() {
+	    ensureQuadsInitialized();
+	    return this.quads;
+	}
+	
+	public Quad getQuad(int index) {
+	    ensureQuadsInitialized();
+	    return (Quad) this.quads.get(index);
 	}
 	
 	public Set getAllVariables() {
@@ -59,6 +91,35 @@ public class GraphPattern {
             }
         }
 	    return result;
+	}
+	
+	private void ensureQuadsInitialized() {
+	    if (this.quads != null) {
+	        return;
+	    }
+	    this.quads = new ArrayList(this.triples.size());
+	    Iterator it = this.triples.iterator();
+	    while (it.hasNext()) {
+            Triple triple = (Triple) it.next();
+            if (needsAnonymousName()) {
+                this.quads.add(new Quad(this.anonymouseName, triple));
+            } else {
+                this.quads.add(new Quad(this.name, triple));
+            }
+        }
+	}
+
+	private void assignAnonymousName() {
+	    this.anonymouseName = Node.createVariable("_graph" + nextID);
+	    if (nextID == Long.MAX_VALUE) {
+	        nextID = Long.MIN_VALUE;
+	    } else {
+	        nextID++;
+	    }
+	}
+	
+	private boolean needsAnonymousName() {
+	    return Node.ANY.equals(this.name);
 	}
 }
 

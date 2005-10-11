@@ -1,4 +1,4 @@
-// $Id: QueryExecutionService.java,v 1.7 2005/01/30 22:08:58 cyganiak Exp $
+// $Id: QueryExecutionService.java,v 1.8 2005/10/11 20:56:16 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import java.net.MalformedURLException;
@@ -11,13 +11,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.impl.StatementImpl;
 import com.hp.hpl.jena.rdql.QueryException;
 
-import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
+import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.impl.GraphReaderService;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 import de.fuberlin.wiwiss.ng4j.triql.legacy.Constraint;
@@ -32,12 +31,17 @@ import de.fuberlin.wiwiss.ng4j.triql.legacy.Constraint;
  * the second pattern, etc. Finally, the constraint clauses are evaluated.
  * For this part, the RDQL implementation is used.</p>
  * 
+ * TODO: Refactor containsNonMatchingDuplicates(); it should check
+ * for duplicate variables in a single graph pattern before the query
+ * executes, and do the runtime checks only if any were found
+ * 
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class QueryExecutionService {
 	private TriQLQuery query;
 	private NamedGraphSet source;
 	private List results;
+	private List quadPatterns = new ArrayList();
 
 	/**
 	 * Constructs a new QueryExecutionService from a TriQL query.
@@ -45,6 +49,7 @@ public class QueryExecutionService {
 	 */
 	public QueryExecutionService(TriQLQuery query) {
 		this.query = query;
+		buildQuadPatternList();
 	}
 	
 	/**
@@ -55,72 +60,56 @@ public class QueryExecutionService {
 		this.source = initSource();
 		this.results = new ArrayList();
 		Map matchedVars = cloneMap(this.query.getPreboundVariableValues());
-		matchGraphPattern(0, matchedVars);
+		matchQuadPattern(0, matchedVars);
 		return this.results;
 	}
 
-	private void matchGraphPattern(int index, Map matchedVars) {
-		if (index >= this.query.getGraphPatterns().size()) {
+	private void buildQuadPatternList() {
+		Iterator it = this.query.getGraphPatterns().iterator();
+		while (it.hasNext()) {
+            GraphPattern graphPattern = (GraphPattern) it.next();
+            this.quadPatterns.addAll(graphPattern.getQuads());
+        }
+	}
+	
+	private void matchQuadPattern(int quadIndex, Map matchedVars) {
+		if (quadIndex >= this.quadPatterns.size()) {
 			matchConstraints(matchedVars);
 			return;
 		}
-		GraphPattern gp =
-				(GraphPattern) this.query.getGraphPatterns().get(index);
-		Node graphName = getPossiblyMatchedNode(gp.getName(), matchedVars);
-		if (!this.source.containsGraph(varToAny(graphName))) {
-			return;
-		}
-		if (graphName.isConcrete()) {
-			matchGraph(index, this.source.getGraph(graphName), matchedVars);
-		} else {
-			Iterator it = this.source.listGraphs();
-			while (it.hasNext()) {
-				NamedGraph graph = (NamedGraph) it.next();
-				if (graphName.isVariable()) {
-					Map matchedVarsCopy = cloneMap(matchedVars);
-					matchedVarsCopy.put(graphName.getName(), graph.getGraphName());
-					matchGraph(index, graph, matchedVarsCopy);
-				} else {
-					matchGraph(index, graph, matchedVars);
-				}
-			}
-		}
-	}
-	
-	private void matchGraph(int index, NamedGraph graph, Map matchedVars) {
-		matchTriplePattern(0, index, graph, matchedVars);
-	}
-	
-	private void matchTriplePattern(int tripleIndex, int graphIndex, NamedGraph graph,
-			Map matchedVars) {
-		GraphPattern gp =
-			(GraphPattern) this.query.getGraphPatterns().get(graphIndex);
-		if (tripleIndex >= gp.getTripleCount()) {
-			matchGraphPattern(graphIndex + 1, matchedVars);
-			return;
-		}
-		Triple tp = gp.getTriple(tripleIndex);
-		Iterator it = graph.find(getTripleMatch(tp, matchedVars));
+		Quad quadPattern = (Quad) this.quadPatterns.get(quadIndex);
+		Iterator it = this.source.findQuads(replaceVariables(quadPattern, matchedVars));
 		while (it.hasNext()) {
-			Triple match = (Triple) it.next();
-			if (containsNonMatchingDuplicates(tp, match)) {
+			Quad match = (Quad) it.next();
+			if (containsNonMatchingDuplicates(quadPattern, match)) {
 				continue;
 			}
 			Map matchedVarsCopy = cloneMap(matchedVars);
-			if (tp.getSubject().isVariable()) {
-				matchedVarsCopy.put(tp.getSubject().getName(), match.getSubject());
+			if (quadPattern.getGraphName().isVariable()) {
+				matchedVarsCopy.put(quadPattern.getGraphName().getName(), match.getGraphName());
 			}
-			if (tp.getPredicate().isVariable()) {
-				matchedVarsCopy.put(tp.getPredicate().getName(), match.getPredicate());
+			if (quadPattern.getSubject().isVariable()) {
+				matchedVarsCopy.put(quadPattern.getSubject().getName(), match.getSubject());
 			}
-			if (tp.getObject().isVariable()) {
-				matchedVarsCopy.put(tp.getObject().getName(), match.getObject());
+			if (quadPattern.getPredicate().isVariable()) {
+				matchedVarsCopy.put(quadPattern.getPredicate().getName(), match.getPredicate());
 			}
-			matchTriplePattern(tripleIndex + 1, graphIndex, graph, matchedVarsCopy);
+			if (quadPattern.getObject().isVariable()) {
+				matchedVarsCopy.put(quadPattern.getObject().getName(), match.getObject());
+			}
+			matchQuadPattern(quadIndex + 1, matchedVarsCopy);
 		}
 	}
 
-	private boolean containsNonMatchingDuplicates(Triple pattern, Triple potentialMatch) {
+	private Quad replaceVariables(Quad quadPattern, Map matchedVars) {
+		return new Quad(
+				eliminateVariables(quadPattern.getGraphName(), matchedVars),
+				eliminateVariables(quadPattern.getSubject(), matchedVars),
+				eliminateVariables(quadPattern.getPredicate(), matchedVars),
+				eliminateVariables(quadPattern.getObject(), matchedVars));
+	}
+
+	private boolean containsNonMatchingDuplicates(Quad pattern, Quad potentialMatch) {
 		if (areSameVariable(pattern.getSubject(), pattern.getPredicate())) {
 			return !potentialMatch.getSubject().matches(potentialMatch.getPredicate());
 		}
@@ -130,22 +119,20 @@ public class QueryExecutionService {
 		if (areSameVariable(pattern.getObject(), pattern.getPredicate())) {
 			return !potentialMatch.getObject().matches(potentialMatch.getPredicate());
 		}
+		if (areSameVariable(pattern.getGraphName(), pattern.getSubject())) {
+			return !potentialMatch.getGraphName().matches(potentialMatch.getSubject());
+		}
+		if (areSameVariable(pattern.getGraphName(), pattern.getPredicate())) {
+			return !potentialMatch.getGraphName().matches(potentialMatch.getPredicate());
+		}
+		if (areSameVariable(pattern.getGraphName(), pattern.getObject())) {
+			return !potentialMatch.getGraphName().matches(potentialMatch.getObject());
+		}
 		return false;
 	}
 	
 	private boolean areSameVariable(Node v1, Node v2) {
 		return v1.isVariable() && v2.isVariable() && v1.getName().equals(v2.getName());
-	}
-
-	private Node varToAny(Node node) {
-		return node.isVariable() ? Node.ANY : node;
-	}
-
-	private Node getPossiblyMatchedNode(Node node, Map matchedVars) {
-		if (node.isVariable() && matchedVars.containsKey(node.getName())) {
-			return (Node) matchedVars.get(node.getName());
-		}
-		return node;
 	}
 
 	private Node eliminateVariables(Node node, Map matchedVars) {
@@ -156,13 +143,6 @@ public class QueryExecutionService {
 			return Node.ANY;
 		}
 		return node;
-	}
-
-	private Triple getTripleMatch(Triple triple, Map matchedVars) {
-		return new Triple(
-				eliminateVariables(triple.getSubject(), matchedVars),
-				eliminateVariables(triple.getPredicate(), matchedVars),
-				eliminateVariables(triple.getObject(), matchedVars));
 	}
 
 	private void matchConstraints(Map matchedVars) {
