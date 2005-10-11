@@ -23,7 +23,7 @@ public class DataSourcesSummary {
     
     private Vector sources;
     
-    private ExplanationUtilities util = new ExplanationUtilities();
+    private ExplanationUtilities util = ExplanationUtilities.getExplanationUtilities();
    
     
     /** Creates a new instance of DataSourcesSummarizer */
@@ -94,6 +94,8 @@ public class DataSourcesSummary {
         private Node warrant;
         private Vector authorities;
         
+        private ExplanationUtilities util = ExplanationUtilities.getExplanationUtilities();
+        
         public Warrant(Node warrant){
             this.warrant = warrant;
             authorities = new Vector();
@@ -101,9 +103,9 @@ public class DataSourcesSummary {
         
         public ExplanationPart summarize(){
             List expl = new ArrayList();
-            expl.add(util.cl("Warrant graph "));
-            expl.add(warrant);
-            expl.add(util.cl(" auhtorized by the authorities: "));
+            expl.add(this.util.cl("Warrant graph "));
+            expl.add(this.warrant);
+            expl.add(this.util.cl(" auhtorized by the authorities: "));
             
             ExplanationPart warrantSummary = new ExplanationPart(expl);
             Iterator as = authorities.iterator();
@@ -141,6 +143,8 @@ public class DataSourcesSummary {
     private class Source{
         private Node source;
         private Vector warrants;
+
+        private ExplanationUtilities util = ExplanationUtilities.getExplanationUtilities();
         
         public Source(Node source){
             this.source = source;
@@ -149,9 +153,9 @@ public class DataSourcesSummary {
         
         public ExplanationPart summarize(){
             List expl = new ArrayList();
-            expl.add(util.cl("Source graph "));
-            expl.add(source);
-            expl.add(util.cl(" asserted by the warrants: "));
+            expl.add(this.util.cl("Source graph "));
+            expl.add(this.source);
+            expl.add(this.util.cl(" asserted by the warrants: "));
             
             ExplanationPart sourceSummary = new ExplanationPart(expl);
             Iterator it = warrants.iterator();
