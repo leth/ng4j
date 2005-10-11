@@ -14,6 +14,15 @@ import com.hp.hpl.jena.graph.Node;
  */
 public class ExplanationUtilities {
     
+    private static final ExplanationUtilities util = new ExplanationUtilities();
+    
+    private ExplanationUtilities(){
+        
+    }
+    
+    public static ExplanationUtilities getExplanationUtilities(){
+        return ExplanationUtilities.util;
+    }
 
     /**
      * Creates a String Literal Node
