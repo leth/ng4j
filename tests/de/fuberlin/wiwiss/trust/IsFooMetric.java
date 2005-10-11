@@ -15,7 +15,9 @@ import de.fuberlin.wiwiss.trust.EvaluationResult;
 /**
  * Metric that returns true if the first argument is the literal node "foo".
  *  
- * @version $Id: IsFooMetric.java,v 1.2 2005/03/22 01:01:21 cyganiak Exp $
+ * TODO: Move to trust.helpers package
+ * 
+ * @version $Id: IsFooMetric.java,v 1.3 2005/10/11 20:51:35 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class IsFooMetric implements Metric {

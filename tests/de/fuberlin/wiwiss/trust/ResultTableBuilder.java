@@ -7,7 +7,9 @@ import java.util.StringTokenizer;
 import com.hp.hpl.jena.graph.Node;
 
 /**
- * @version $Id: ResultTableBuilder.java,v 1.1 2005/10/02 21:59:28 cyganiak Exp $
+ * TODO: Move to trust.helpers package
+ * 
+ * @version $Id: ResultTableBuilder.java,v 1.2 2005/10/11 20:51:35 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class ResultTableBuilder {

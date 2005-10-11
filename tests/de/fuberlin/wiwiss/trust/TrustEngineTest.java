@@ -20,7 +20,9 @@ import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP;
 
 /**
- * @version $Id: TrustEngineTest.java,v 1.5 2005/10/04 00:03:44 cyganiak Exp $
+ * TODO: Add a few more functional tests for COUNT
+ * 
+ * @version $Id: TrustEngineTest.java,v 1.6 2005/10/11 20:51:35 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class TrustEngineTest extends FixtureWithLotsOfNodes {

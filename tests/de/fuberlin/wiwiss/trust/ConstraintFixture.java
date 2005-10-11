@@ -10,7 +10,9 @@ import de.fuberlin.wiwiss.trust.ExpressionConstraint;
 /**
  * Some {@link ExpressionConstraint} instances for use in test cases.
  *
- * @version $Id: ConstraintFixture.java,v 1.2 2005/03/28 22:31:51 cyganiak Exp $
+ * TODO: Move to trust.helpers package
+ * 
+ * @version $Id: ConstraintFixture.java,v 1.3 2005/10/11 20:51:35 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class ConstraintFixture {
