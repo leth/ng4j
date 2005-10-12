@@ -20,7 +20,9 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.FOAF;
  * Service that returns HTML representations for an entire
  * {@link Explanation} or some of its parts.
  * 
- * @version $Id: ExplanationToHTMLRenderer.java,v 1.7 2005/10/04 00:03:44 cyganiak Exp $
+ * TODO: Move to browser code?
+ * 
+ * @version $Id: ExplanationToHTMLRenderer.java,v 1.8 2005/10/12 12:35:05 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class ExplanationToHTMLRenderer {

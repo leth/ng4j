@@ -22,7 +22,9 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
  * {@link NamedGraphSet}, exposing only the triples that match
  * a {@link TrustPolicy}. Top layer of the TriQL.P trust engine.</p>
  * 
- * @version $Id: TrustedGraph.java,v 1.1 2005/10/04 00:03:44 cyganiak Exp $
+ * TODO: Rename to AcceptedGraph
+ * 
+ * @version $Id: TrustedGraph.java,v 1.2 2005/10/12 12:35:05 cyganiak Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class TrustedGraph extends GraphBase {

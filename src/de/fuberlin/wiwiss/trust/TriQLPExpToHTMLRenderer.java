@@ -17,6 +17,8 @@ import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.FOAF;
 
 /**
+ * TODO: Move to browser code?
+ * 
  * @version $Id: TriQLPExpToHTMLRenderer.java,v 1.6 2005/05/31 09:53:56 maresch Exp $
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
