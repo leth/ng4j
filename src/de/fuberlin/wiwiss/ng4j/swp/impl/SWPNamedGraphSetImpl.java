@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.log4j.Category;
+import org.apache.axis.components.uuid.SimpleUUIDGen;
+import org.apache.log4j.Logger;
 import org.bouncycastle.openpgp.PGPException;
 
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
@@ -44,15 +45,32 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
 import de.fuberlin.wiwiss.ng4j.triql.TriQLQuery;
 
-import com.eaio.uuid.UUID;
 
 /**
+ * 
+ * Last commit info    :   $Author: erw $
+ * $Date: 2005/10/29 18:35:36 $
+ * $Revision: 1.13 $
+ * 
  * @author Chris Bizer.
  * @author Rowland Watkins.
  */
 public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedGraphSet
 {
-	 static final Category log = Category.getInstance( SWPNamedGraphSet.class );
+	 private static final Logger logger = Logger.getLogger( SWPNamedGraphSetImpl.class );
+	 private static boolean debug = logger.isDebugEnabled();
+	 //This means we no longer have to rely on a not-so-well known uuid impl.
+	 //Now dependent on Axis.
+	 private SimpleUUIDGen uuidGen = new SimpleUUIDGen ();
+	 
+	 //Some constants so we don't make an strange typos in queries
+	 private static final String QUERY_NODE_GRAPH = "graph";
+	 private static final String QUERY_NODE_WARRANT = "warrant";
+	 private static final String QUERY_NODE_SIG = "signature";
+	 private static final String QUERY_NODE_CERT = "certificate";
+	 private static final String QUERY_NODE_SMETHOD = "smethod";
+	 private static final String QUERY_NODE_DIGEST = "digest";
+	 private static final String QUERY_NODE_DMETHOD = "dmethod";
    
     public boolean swpAssert(SWPAuthority authority, ArrayList listOfAuthorityProperties) {
 		// Create a new warrant graph.
@@ -101,6 +119,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
         return swpQuote( authority, new ArrayList() );
    }
 
+   
     /* (non-Javadoc)
      * @see de.fuberlin.wiwiss.ng4j.swp.signature.SWPNamedGraphSet#assertGraphs(java.util.ArrayList, de.fuberlin.wiwiss.ng4j.swp.signature.SWPAuthority, java.util.ArrayList)
      */
@@ -205,8 +224,9 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
             while ( witr.hasNext() )
             {
                 Map results = ( Map ) witr.next();
-	            Node graph = ( Node ) results.get( "graph" );
-				System.out.println(graph);
+	            Node graph = ( Node ) results.get( QUERY_NODE_GRAPH );
+	            if ( debug )
+	            	logger.debug( graph );
 				
 				NamedGraph warrant = this.getGraph( graph );
 				// If we find a signed warrant graph, check that all graphs are asserted by it.
@@ -220,7 +240,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 					NamedGraph currentGraph = ( NamedGraph ) graphIterator.next();
 					if ( warrant.contains( currentGraph.getGraphName(), SWP.assertedBy, graph ) )
 					{
-						System.out.println( "Warrant graph: "+currentGraph.getGraphName()+" already asserted and signed; skipping." );
+						logger.warn( "Warrant graph: "+currentGraph.getGraphName()+" already asserted and signed; skipping." );
 					}        
 				}  
             }
@@ -243,7 +263,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 				} 
 				catch ( SWPNoSuchDigestMethodException e ) 
 				{
-					System.out.println( e.getMessage() );
+					logger.error( e.getMessage() );
 					return false;
 				} 
 			}  
@@ -281,45 +301,45 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 			catch ( SWPInvalidKeyException e ) 
 			{
 				//make the private key unusable
-				System.out.println( e.getMessage() );
+				logger.error( e.getMessage() );
 				pkey = null;
 				return false;
 			}  
 			catch ( SWPSignatureException e ) 
 			{	
 				//make the private key unusable
-				System.out.println( e.getMessage() );
+				logger.error( e.getMessage() );
 				pkey = null;
 				return false;
 			} 
 			catch ( SWPNoSuchAlgorithmException e ) 
 			{
 				//make the private key unusable
-				System.out.println( e.getMessage() );
+				logger.error( e.getMessage() );
 				pkey = null;
 				return false;
 			} 
 			catch ( NoSuchProviderException e ) 
 			{
-				System.out.println( e.getMessage() );
+				logger.error( e.getMessage() );
 				pkey = null;
 				return false;
 			} 
 			catch ( IOException e ) 
 			{
-				System.out.println( e.getMessage() );
+				logger.error( e.getMessage() );
 				pkey = null;
 				return false;
 			} 
 			catch ( PGPException e ) 
 			{
-				System.out.println( e.getMessage() );
+				logger.error( e.getMessage() );
 				pkey = null;
 				return false;
 			} 
 			catch ( SWPAlgorithmNotSupportedException e ) 
 			{
-				System.out.println( e.getMessage() );
+				logger.error( e.getMessage() );
 				pkey = null;
 				return false;
 			}
@@ -361,8 +381,9 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
             while ( witr.hasNext() )
             {
                 Map results = ( Map ) witr.next();
-	            Node graph = ( Node ) results.get( "graph" );
-				System.out.println(graph);
+	            Node graph = ( Node ) results.get( QUERY_NODE_GRAPH );
+	            if ( debug )
+	            	logger.debug( graph );
 				
 				NamedGraph warrant = this.getGraph( graph );
 				// If we find a signed warrant graph, check that all graphs are asserted by it.
@@ -376,7 +397,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 					NamedGraph currentGraph = ( NamedGraph ) graphIterator.next();
 					if ( warrant.contains( currentGraph.getGraphName(), SWP.quotedBy, graph ) )
 					{
-						System.out.println( "Warrant graph: "+currentGraph.getGraphName()+" already quoted and signed; skipping." );
+						logger.warn( "Warrant graph: "+currentGraph.getGraphName()+" already quoted and signed; skipping." );
 					}        
 				}  
             }
@@ -399,7 +420,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 				} 
 				catch ( SWPNoSuchDigestMethodException e ) 
 				{
-					System.out.println( e.getMessage() );
+					logger.error( e.getMessage() );
 					return false;
 				} 
 			}  
@@ -437,45 +458,45 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 			catch ( SWPInvalidKeyException e ) 
 			{
 				//make the private key unusable
-				System.out.println( e.getMessage() );
+				logger.error( e.getMessage() );
 				pkey = null;
 				return false;
 			}  
 			catch ( SWPSignatureException e ) 
 			{	
 				//make the private key unusable
-				System.out.println( e.getMessage() );
+				logger.error( e.getMessage() );
 				pkey = null;
 				return false;
 			} 
 			catch ( SWPNoSuchAlgorithmException e ) 
 			{
 				//make the private key unusable
-				System.out.println( e.getMessage() );
+				logger.error( e.getMessage() );
 				pkey = null;
 				return false;
 			} 
 			catch ( NoSuchProviderException e ) 
 			{
-				System.out.println( e.getMessage() );
+				logger.error( e.getMessage() );
 				pkey = null;
 				return false;
 			} 
 			catch ( IOException e ) 
 			{
-				System.out.println( e.getMessage() );
+				logger.error( e.getMessage() );
 				pkey = null;
 				return false;
 			} 
 			catch ( PGPException e ) 
 			{
-				System.out.println( e.getMessage() );
+				logger.error( e.getMessage() );
 				pkey = null;
 				return false;
 			} 
 			catch ( SWPAlgorithmNotSupportedException e ) 
 			{
-				System.out.println( e.getMessage() );
+				logger.error( e.getMessage() );
 				pkey = null;
 				return false;
 			}
@@ -519,7 +540,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 				NamedGraph currentGraph = this.getGraph( graph );
 				if ( currentGraph.contains( currentGraph.getGraphName(), SWP.assertedBy, Node.ANY ) )
 				{
-					System.out.println( "Graph: "+currentGraph.getGraphName()+" already asserted; skipping.");
+					logger.warn( "Graph: "+currentGraph.getGraphName()+" already asserted; skipping.");
 					graphsIgnored.add( currentGraph.getGraphName() );
 					continue;
 				}
@@ -537,7 +558,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 					} 
 					catch ( SWPNoSuchDigestMethodException e ) 
 					{
-						System.out.println( e.getMessage() );
+						logger.error( e.getMessage() );
 						return false;
 					} 
 				}
@@ -550,11 +571,15 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 		Iterator git = graphsAsserted.iterator();
 		Iterator iit = graphsIgnored.iterator();
 		if ( git.hasNext() )
-		{				
-			System.out.println( "Graphs to be asserted: " );
-			while ( git.hasNext() )
+		{	
+			if ( debug )
 			{
-				System.out.println( git.next() );
+				logger.debug( "Graphs to be asserted: " );
+			
+				while ( git.hasNext() )
+				{
+					logger.debug( git.next() );
+				}
 			}
 			Object pkey = null;
         	// Sign the warrant graph now.
@@ -587,45 +612,45 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 			catch ( SWPInvalidKeyException e ) 
 			{
 				//make the private key unusable
-				System.out.println( e.getMessage() );
+				logger.error( e.getMessage() );
 				pkey = null;
 				return false;
 			}  
 			catch ( SWPSignatureException e ) 
 			{	
 				//make the private key unusable
-				System.out.println( e.getMessage() );
+				logger.error( e.getMessage() );
 				pkey = null;
 				return false;
 			} 
 			catch ( SWPNoSuchAlgorithmException e ) 
 			{
 				//make the private key unusable
-				System.out.println( e.getMessage() );
+				logger.error( e.getMessage() );
 				pkey = null;
 				return false;
 			} 
 			catch ( NoSuchProviderException e ) 
 			{
-				System.out.println( e.getMessage() );
+				logger.error( e.getMessage() );
 				pkey = null;
 				return false;
 			} 
 			catch ( IOException e ) 
 			{
-				System.out.println( e.getMessage() );
+				logger.error( e.getMessage() );
 				pkey = null;
 				return false;
 			} 
 			catch ( PGPException e ) 
 			{
-				System.out.println( e.getMessage() );
+				logger.error( e.getMessage() );
 				pkey = null;
 				return false;
 			} 
 			catch ( SWPAlgorithmNotSupportedException e ) 
 			{
-				System.out.println( e.getMessage() );
+				logger.error( e.getMessage() );
 				pkey = null;
 				return false;
 			}
@@ -636,10 +661,15 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 		}
 		else if( iit.hasNext() )
 		{
-			System.out.println( "Graphs already asserted and ignored: " );
-			while ( iit.hasNext() )
+			
+			
+			logger.warn( "Graphs already asserted and ignored: " );
+			if ( debug )
 			{
-				System.out.println( iit.next() );
+				while ( iit.hasNext() )
+				{
+					logger.debug( iit.next() );
+				}
 			}
 			return false;
 		}
@@ -667,7 +697,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 			public Object next() 
 			{
 				Map results =  ( Map ) witr.next();
-				Node graphURI = ( Node ) results.get( "graph" );
+				Node graphURI = ( Node ) results.get( QUERY_NODE_GRAPH );
 				SWPWarrant warrant = new SWPWarrantImpl( SWPNamedGraphSetImpl.this.getGraph( graphURI ) ); 
 				return warrant;
 			}
@@ -686,7 +716,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 		while ( witr.hasNext() )
 		{
 			Map results =  ( Map ) witr.next();
-			Node graphURI = ( Node ) results.get( "graph" );
+			Node graphURI = ( Node ) results.get( QUERY_NODE_GRAPH );
 			warrant = graphURI;
 			
 		}
@@ -722,8 +752,9 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 		while ( witr.hasNext() )
 		{
 			Map results =  ( Map ) witr.next();
-			Node graphURI = ( Node ) results.get( "graph" );
-			System.out.println( "Asserted Graph: " +graphURI );
+			Node graphURI = ( Node ) results.get( QUERY_NODE_GRAPH );
+			if ( debug )
+				logger.debug( "Asserted Graph: " +graphURI );
 			warrant = graphURI;
 			
 		}
@@ -815,7 +846,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
         	                	// this process.
         	                    if ( SWPSignatureUtilities.validateSignature( ng, signatureMethod, signature.getLiteral().getLexicalForm(), certs ) )
         	                    {
-        	                    	System.out.println( "Warrant graph " + ng.getGraphName().toString() + " successfully verified." );
+        	                    	logger.info( "Warrant graph " + ng.getGraphName().toString() + " successfully verified." );
 									verificationGraph.add( new Triple( ng.getGraphName(), SWP_V.successful, Node.createLiteral( "true" ) ) );
 									
 									String asserteddigestQuery = "SELECT * WHERE (?graph swp:assertedBy <"+ng.getGraphName().toString()+"> . ?graph swp:digest ?digest . ?graph swp:digestMethod ?dmethod) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
@@ -827,7 +858,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 										while ( ditr.hasNext() )
 										{
 											Map dresult = ( Map ) ditr.next();
-											Node graph = ( Node ) dresult.get( "graph" );
+											Node graph = ( Node ) dresult.get( QUERY_NODE_GRAPH );
 											Node digest = ( Node ) dresult.get( "digest" );
 					        	        	Node digestMethod = (Node) dresult.get( "dmethod" );
 										
@@ -844,7 +875,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 										while ( qitr.hasNext() )
 										{
 											Map dresult = ( Map ) qitr.next();
-											Node graph = ( Node ) dresult.get( "graph" );
+											Node graph = ( Node ) dresult.get( QUERY_NODE_GRAPH );
 											Node digest = ( Node ) dresult.get( "digest" );
 					        	        	Node digestMethod = (Node) dresult.get( "dmethod" );
 										
@@ -859,7 +890,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
         	                    }
         	                    else
         	                    {
-									System.out.println( "Warrant graph " + ng.getGraphName().toString() + " verification failure!" );
+									logger.error( "Warrant graph " + ng.getGraphName().toString() + " verification failure!" );
         	                    	verificationGraph.add( new Triple( ng.getGraphName(), SWP_V.notSuccessful, Node.createLiteral( "true" ) ) );
         	                    }
         	                    
@@ -870,40 +901,40 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
         	                }
         	                catch ( SWPInvalidKeyException e ) 
         	                {
-								System.out.println( e.getMessage() );
+								logger.error( e.getMessage() );
 								return false;
 							} 
         	                catch ( SWPSignatureException e ) 
         	                {
-								System.out.println( e.getMessage() );
+        	                	logger.error( e.getMessage() );
 								return false;
 							}  
         	                catch ( SWPNoSuchAlgorithmException e ) 
         	                {
-								System.out.println( e.getMessage() );
+        	                	logger.error( e.getMessage() );
 								return false;
 							} 
         	                catch ( SWPValidationException e ) 
         	                {
-								System.out.println( e.getMessage() );
+        	                	logger.error( e.getMessage() );
 								return false;
 							} 
 							catch ( SWPNoSuchDigestMethodException e ) 
 							{ 
-								System.out.println( e.getMessage() );
+								logger.error( e.getMessage() );
 								return false;
 							}
         	            }
         	            else
 						{
-							System.out.println( "Warrant graph " + ng.getGraphName().toString() + " verification failure!" );
+							logger.error( "Warrant graph " + ng.getGraphName().toString() + " verification failure!" );
 	                    	verificationGraph.add( new Triple( ng.getGraphName(), SWP_V.notSuccessful, Node.createLiteral( "true" ) ) );
 						}
 	                }
     			}	
 				else
 				{
-					System.out.println( "Warrant graph " + ng.getGraphName().toString() + " verification failure!" );
+					logger.error( "Warrant graph " + ng.getGraphName().toString() + " verification failure!" );
                 	verificationGraph.add( new Triple( ng.getGraphName(), SWP_V.notSuccessful, Node.createLiteral( "true" ) ) );
 				}
     		}
@@ -925,7 +956,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 
     protected SWPNamedGraph createNewWarrantGraph() 
     {
-		Node warrantGraphName = Node.createURI( "urn:uuid:" + new UUID() );
+		Node warrantGraphName = Node.createURI( "urn:uuid:" + uuidGen.nextUUID() );
 		SWPNamedGraph warrantGraph = new SWPNamedGraphImpl( warrantGraphName, new GraphMem() );
 		warrantGraph.add( new Triple( warrantGraphName, SWP.assertedBy, warrantGraphName ) );
         return warrantGraph;
