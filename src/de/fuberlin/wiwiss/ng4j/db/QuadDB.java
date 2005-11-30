@@ -1,4 +1,4 @@
-// $Id: QuadDB.java,v 1.5 2005/08/04 10:46:13 tgauss Exp $
+// $Id: QuadDB.java,v 1.6 2005/11/30 21:10:00 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -30,8 +30,7 @@ import de.fuberlin.wiwiss.ng4j.Quad;
  * table. A table prefix can be supplied in order to support multiple QuadDBs
  * in a single database.</p>
  * 
- * TODO: Currently, this works only with MySQL.
- * 		Must factor out DB-specific stuff, e.g. table creation.
+ * TODO: Factor out DB-specific stuff, e.g. table creation.
  * 
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
@@ -43,6 +42,10 @@ public class QuadDB {
 	private String tablePrefix;
 	private Connection connection;
 	private int type;
+
+	public static final int HSQL_TYPE = 0;
+	public static final int MYSQL_TYPE = 1;
+	public static final int POSTGRESQL_TYPE = 2;
 
 	public QuadDB(Connection connection, String tablePrefix) {
 		this.connection = connection;
@@ -249,8 +252,14 @@ public class QuadDB {
 
 	public void createTables() {
 		switch(this.type){
-			case 0:
+			case HSQL_TYPE:
 				this.createTablesHSQLDB();
+				break;
+			case MYSQL_TYPE:
+				this.createTablesMySQL();
+				break;
+			case POSTGRESQL_TYPE:
+				this.createTablesPostgreSQL();
 				break;
 			default:
 				this.createTablesMySQL();
@@ -265,8 +274,12 @@ public class QuadDB {
 	
 	public boolean tablesExist() {
 		switch(this.type){
-			case 0:
+			case HSQL_TYPE:
 				return this.tableExistHSQLDB();
+			case MYSQL_TYPE:
+				return this.tableExistMySQL();
+			case POSTGRESQL_TYPE:
+				return this.tableExistPostgreSQL();
 			default:
 				return this.tableExistMySQL();
 		}
@@ -400,28 +413,32 @@ public class QuadDB {
 	
 	private void setDBtype(){
 		String name = null;
-		try{
+		try {
 			name = this.connection.getMetaData().getDatabaseProductName();
-		}catch(Exception e){
-			
+		} catch (Exception e){
+			throw new RuntimeException(e);
 		}
-		if(name.toLowerCase().indexOf("hsql")!= -1){
-			this.type = 0;
-		}else if (name.toLowerCase().indexOf("mysql")!= -1){
-			this.type = 1;
-		}else{
+		if (name.toLowerCase().indexOf("hsql")!= -1) {
+			this.type = HSQL_TYPE;
+		} else if (name.toLowerCase().indexOf("mysql")!= -1) {
+			this.type = MYSQL_TYPE;
+		} else if (name.toLowerCase().indexOf("postgresql") != -1) {
+			this.type = POSTGRESQL_TYPE;
+		} else {
 			this.type = -1;
 		}
 	}
 	
 	private void setEscapePattern(){
 		switch(this.type){
-			case 0:
+			case HSQL_TYPE:
 				this.escapePattern     = Pattern.compile("([\\'])");
 				this.escapeReplacement = "$1$1";
 				break;
+			case MYSQL_TYPE:
+			case POSTGRESQL_TYPE:
 			default:
-				this.escapePattern     = escapePattern = Pattern.compile("([\\\\'])");
+				this.escapePattern     = Pattern.compile("([\\\\'])");
 				this.escapeReplacement = "\\\\$1";
 				break;
 		}
@@ -469,7 +486,34 @@ public class QuadDB {
 			throw new JenaException(ex);
 		}
 	}
-	
+
+  private void createTablesPostgreSQL(){
+		execute("CREATE TABLE " + getGraphNamesTableName() + " (" +
+				"name text PRIMARY KEY default '')");
+		try {
+			executeNoErrorHandling(
+					"CREATE TABLE " + getQuadsTableName() + " (" +
+					"graph text NOT NULL default ''," +
+					"subject text NOT NULL default ''," +
+					"predicate text NOT NULL default ''," +
+					"object text default NULL," +
+					"literal text," +
+					"lang text default NULL," +
+					"datatype text default NULL)");
+		} catch (SQLException ex) {
+			execute("DROP TABLE " + getGraphNamesTableName());
+			throw new JenaException(ex);
+		}
+		execute("CREATE INDEX " + tablePrefix + "_graph_index ON " +
+				getQuadsTableName() + " (graph)");
+		execute("CREATE INDEX " + tablePrefix + "_subject_index ON " +
+				getQuadsTableName() + " (subject)");
+		execute("CREATE INDEX " + tablePrefix + "_predicate_index ON " +
+				getQuadsTableName() + " (predicate)");
+		execute("CREATE INDEX " + tablePrefix + "_object_index ON " +
+				getQuadsTableName() + " (object)");
+	}
+
 	private boolean tableExistHSQLDB(){
 		try {
 			ResultSet results = this.connection.getMetaData().getTables(
@@ -489,7 +533,16 @@ public class QuadDB {
 			throw new JenaException(ex);
 		}
 	}
-
+	
+	private boolean tableExistPostgreSQL(){
+		try {
+			ResultSet results = this.connection.getMetaData().getTables(
+					null, null, getGraphNamesTableName(), null);
+			return results.next();
+		} catch (SQLException ex) {
+			throw new JenaException(ex);
+		}
+	}
 	
 	
 }
