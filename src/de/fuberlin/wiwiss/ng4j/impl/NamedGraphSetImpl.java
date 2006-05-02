@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetImpl.java,v 1.8 2005/07/28 13:52:25 cyganiak Exp $
+// $Id: NamedGraphSetImpl.java,v 1.9 2006/05/02 19:56:10 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import java.util.ArrayList;
@@ -10,12 +10,13 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import com.hp.hpl.jena.graph.BulkUpdateHandler;
+import com.hp.hpl.jena.graph.Factory;
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.graph.compose.MultiUnion;
 import com.hp.hpl.jena.graph.impl.SimpleBulkUpdateHandler;
-import com.hp.hpl.jena.mem.GraphMem;
+import com.hp.hpl.jena.shared.ReificationStyle;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.util.iterator.NiceIterator;
 import com.hp.hpl.jena.util.iterator.NullIterator;
@@ -211,7 +212,7 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 		if (!graphName.isURI()) {
 			throw new IllegalArgumentException("Graph names must be URIs");
 		}
-		return new NamedGraphImpl(graphName, new GraphMem());
+		return new NamedGraphImpl(graphName, Factory.createGraphMem(ReificationStyle.Standard));
 	}
 	
 	private ExtendedIterator getQuadIteratorOverGraph(
