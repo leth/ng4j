@@ -1,4 +1,4 @@
-// $Id: DBConnectionHelper.java,v 1.1 2004/12/12 17:30:29 cyganiak Exp $
+// $Id: DBConnectionHelper.java,v 1.2 2006/08/21 20:21:21 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -12,7 +12,7 @@ import java.sql.SQLException;
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class DBConnectionHelper {
-	private static String URL = "jdbc:mysql://localhost/ng4j";
+	private static String URL = "jdbc:mysql://127.0.0.1/ng4j";
 	private static String USER = "root";
 	private static String PW = "";
 	private static String DRIVER = "com.mysql.jdbc.Driver";
