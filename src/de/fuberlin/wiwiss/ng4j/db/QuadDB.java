@@ -1,4 +1,4 @@
-// $Id: QuadDB.java,v 1.6 2005/11/30 21:10:00 cyganiak Exp $
+// $Id: QuadDB.java,v 1.7 2006/08/21 20:20:50 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -15,6 +15,7 @@ import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.rdf.model.AnonId;
 import com.hp.hpl.jena.shared.JenaException;
+import com.hp.hpl.jena.util.iterator.NullIterator;
 
 import de.fuberlin.wiwiss.ng4j.Quad;
 
@@ -88,6 +89,11 @@ public class QuadDB {
 		}
 		if (o == null) {
 			o = Node.ANY;
+		}
+		if ((!g.isURI() && !g.equals(Node.ANY))
+				|| (!s.isURI() && !s.isBlank() && !s.equals(Node.ANY))
+				|| (!p.isURI() && !p.equals(Node.ANY))) {
+			return new NullIterator();
 		}
 		String sql = "SELECT graph, subject, predicate, object, literal, lang, datatype " +
 				"FROM " + getQuadsTableName() + " " +
