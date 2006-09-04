@@ -8,11 +8,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.graph.TripleMatch;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
@@ -23,21 +26,50 @@ import de.fuberlin.wiwiss.ng4j.SemanticWebClient;
 
 public class SemanticWebClientImpl implements SemanticWebClient {
 	private NamedGraphSet ngs;
-	private List derefURIs;
-	private List toDerefURIs;
+	private UriList derefURIs;
+	private UriList toDerefURIs;
+	private URIRetriever retriever;
+	
+	//public int threadcounter = 0;
 	
 	public SemanticWebClientImpl() {
 		this.ngs = new NamedGraphSetImpl();
-		this.derefURIs.clear();
-		this.toDerefURIs.clear();
+		this.ngs.createGraph("http://localhost/provenanceInformation");
+		
+		this.retriever = new URIRetriever(this);
+		this.derefURIs = new UriList(); 
+		this.toDerefURIs = new UriList(); 
+		this.derefURIs.addListListener(this.retriever);
+		this.toDerefURIs.addListListener(this.retriever);
 	}
 
 	public Iterator find(TripleMatch pattern) {
 		// TODO Auto-generated method stub
-		return null;
+		Triple t =pattern.asTriple();
+		Node sub  = t.getSubject();
+		Node pred = t.getPredicate();
+		Node obj  = t.getObject();
+		
+		
+	//	Iterator iter = this.ngs.findQuads(Node.ANY,sub,pred,obj);
+	
+		if(sub.isURI()){
+			if(!this.toDerefURIs.contains(sub.getURI())&&!this.derefURIs.contains(sub.getURI()))
+			this.toDerefURIs.add(sub.getURI());
+		}
+		if(pred.isURI()){
+			if(!this.toDerefURIs.contains(pred.getURI())&&!this.derefURIs.contains(pred.getURI()))
+			this.toDerefURIs.add(pred.getURI());		
+		}
+		if(obj.isURI()){
+			if(!this.toDerefURIs.contains(obj.getURI())&&!this.derefURIs.contains(obj.getURI()))
+			this.toDerefURIs.add(obj.getURI());
+		}
+		return this.ngs.findQuads(Node.ANY,sub,pred,obj);
 	}
 
 	public void addRemoteGraph(String URI) {
+		this.derefURIs.add(URI);
 		// TODO Auto-generated method stub
 	}
 
@@ -57,8 +89,7 @@ public class SemanticWebClientImpl implements SemanticWebClient {
 	}
 
 	public Iterator successfullyDereferencedURIs() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.derefURIs.iterator();
 	}
 
 	public Iterator unsuccessfullyDereferencedURIs() {
@@ -178,5 +209,15 @@ public class SemanticWebClientImpl implements SemanticWebClient {
 
 	public void write(Writer out, String lang, String baseURI) {
 		this.ngs.write(out,lang,baseURI);
+	}
+	
+	public List getUrisToRetrieve(){
+		return this.toDerefURIs;
+	}
+	public List getRetrievedUris(){
+		return this.derefURIs;
+	}
+	public NamedGraphSet getNamedGraphSet(){
+		return this.ngs;
 	}
 }
