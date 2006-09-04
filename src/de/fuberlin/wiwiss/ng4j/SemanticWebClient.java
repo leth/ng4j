@@ -1,4 +1,4 @@
-// $Id: SemanticWebClient.java,v 1.1 2006/08/23 12:32:13 tgauss Exp $
+// $Id: SemanticWebClient.java,v 1.2 2006/09/04 14:08:07 tgauss Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
@@ -80,7 +80,7 @@ public interface SemanticWebClient extends NamedGraphSet {
 	 * @param pattern
 	 * @return 
 	 */
-	public void find(TripleMatch pattern, FindListener listener);
+	//public void find(TripleMatch pattern, FindListener listener);
 	
 		
 	/**
