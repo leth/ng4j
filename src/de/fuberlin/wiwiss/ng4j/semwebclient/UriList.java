@@ -1,6 +1,5 @@
 package de.fuberlin.wiwiss.ng4j.semwebclient;
 
-import java.net.URL;
 import java.util.ArrayList;
 
 /**

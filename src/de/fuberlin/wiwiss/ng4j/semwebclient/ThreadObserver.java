@@ -107,15 +107,6 @@ public class ThreadObserver extends Thread {
 		this.lookupNgs(ngs, connector.getUriString(), connector.getStep());
 		this.inspectNgs(ngs, connector.getStep());
 
-		//System.out.println(connector.uriRetrieved());
-	//	if (!connector.uriRetrieved()) {
-	//		int response = connector.responseCode();
-	//		this.retriever.getClient().getUnretrievedURIs().add(
-	//				new RetrieveResult(connector.getUriString(), response));
-	//	}else{
-	//		
-	//	}
-
 	}
 
 	/**

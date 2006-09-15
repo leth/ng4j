@@ -166,14 +166,10 @@ public class UriConnector extends Thread {
 		if (!this.stopped && !(this.step >= this.retriever.getMaxsteps())) {
 			try {
 				this.connection = (HttpURLConnection) this.url.openConnection();
-				//System.out.println(this.connection.getContentType());
 				if (this.connection.getContentType() != null) {
-					//System.out.println(this.connection.getContentType());
 					String lang = null;
 					if (this.connection.getContentType().startsWith("application/rdf+xml")){
 							lang = "RDF/XML";
-				//	}else if(this.connection.getContentType().startsWith("application/octet-stream")){
-				//		    lang = "default";
 					}else{
 						lang = "default";
 					}

@@ -64,6 +64,7 @@ public class URIRetriever implements ListListener{
 		this.observer.stopObserver();
 		this.getClient().retrievalFinished();
 		// dbug
+		/*
 		System.out.println("FINISH!!!. NGS Size: "
 				+ this.getClient().getNamedGraphSet().countQuads());
 
@@ -82,7 +83,7 @@ public class URIRetriever implements ListListener{
 			}
 		}
 	    System.out.println("should find : "+count);
-
+	    */
 	}
 
 
