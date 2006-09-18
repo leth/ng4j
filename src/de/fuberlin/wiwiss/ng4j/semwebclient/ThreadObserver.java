@@ -6,6 +6,7 @@ import java.util.LinkedList;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
+import com.hp.hpl.jena.graph.TripleMatch;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
@@ -93,7 +94,7 @@ public class ThreadObserver extends Thread {
 	 * @param connector The URIConnector which contains the retrieved data.
 	 */
 	synchronized private void addToGraphset(UriConnector connector) {
-		this.lookupNgs(this.retriever.getClient().getNamedGraphSet(), connector
+		this.lookupNgs(this.retriever.getClient(), connector
 				.getUriString(), connector.getStep());
 		NamedGraphSet ngs = connector.getNgs();
 
@@ -167,7 +168,11 @@ public class ThreadObserver extends Thread {
 	 * @param step The retrieval step
 	 */
 	synchronized private void inspectNgs(NamedGraphSet ngs, int step) {
-		Iterator iter = ngs.findQuads(Node.ANY, Node.ANY, Node.ANY, Node.ANY);
+		TripleMatch pattern = this.retriever.getTriplePattern();
+		pattern.asTriple();
+		
+
+		Iterator iter = ngs.findQuads(Node.ANY, pattern.asTriple().getSubject(), pattern.asTriple().getPredicate(), pattern.asTriple().getObject());
 
 		while (iter.hasNext()) {
 			Quad q = (Quad) iter.next();

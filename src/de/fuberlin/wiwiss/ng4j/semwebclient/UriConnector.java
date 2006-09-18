@@ -4,6 +4,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import com.hp.hpl.jena.rdf.model.RDFReader;
+
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
@@ -142,6 +144,7 @@ public class UriConnector extends Thread {
 		try {
 			if(lang.equals("default"))
 				lang = null;
+			
 				this.tempNgs.read(this.connection.getInputStream(), lang, this.url
 					.toString());
 			this.uriRetrieved = true;
@@ -182,9 +185,10 @@ public class UriConnector extends Thread {
 				this.uriRetrieved = false;
 			}
 		}
-		if(this.step >= this.retriever.getMaxsteps())
+		if(this.step >= this.retriever.getMaxsteps()){
 			// response code ??
 			this.responseCode = 666;
+		}
 		
 		this.isReady = true;
 		synchronized (this) {

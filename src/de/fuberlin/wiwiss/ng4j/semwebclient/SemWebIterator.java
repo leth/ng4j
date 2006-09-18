@@ -93,7 +93,7 @@ public class SemWebIterator implements Iterator, FindListener {
 	 * before the retrieval started.
 	 */
 	synchronized private void fillGraphList() {
-		Iterator iter = this.client.getNamedGraphSet().listGraphs();
+		Iterator iter = this.client.listGraphs();
 		while (iter.hasNext()) {
 			NamedGraph g = (NamedGraph) iter.next();
 			this.graphList.add(g.getGraphName().getURI());
@@ -152,7 +152,7 @@ public class SemWebIterator implements Iterator, FindListener {
 	 */
 	synchronized private void initIterator() {
 		String graphname = (String) this.graphList.getFirst();
-		NamedGraph g = this.client.getNamedGraphSet().getGraph(graphname);
+		NamedGraph g = this.client.getGraph(graphname);
 		this.graph = g.getGraphName();
 		this.iter = g.find(this.s, this.p, this.o);
 		this.removedList.add(this.graphList.getFirst());

@@ -24,8 +24,8 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
-public class SemanticWebClientImpl implements SemanticWebClient {
-	private NamedGraphSet ngs;
+public class SemanticWebClientImpl extends NamedGraphSetImpl implements SemanticWebClient {
+	//private NamedGraphSet ngs;
 	private List retrievedUris;
 	private UriList urisToRetrieve;
 	private URIRetriever retriever;
@@ -37,8 +37,9 @@ public class SemanticWebClientImpl implements SemanticWebClient {
 	 * Constructor for the SemantciWebClient.
 	 */
 	public SemanticWebClientImpl() {
-		this.ngs = new NamedGraphSetImpl();
+		super();
 		this.createGraph("http://localhost/provenanceInformation");
+		//this.ngs = new NamedGraphSetImpl();
 		this.retriever       = new URIRetriever(this);
 		this.retrievedUris   = Collections.synchronizedList(new ArrayList());
 		this.unretrievedURIs = Collections.synchronizedList(new ArrayList());
@@ -50,6 +51,7 @@ public class SemanticWebClientImpl implements SemanticWebClient {
 	 * @see de.fuberlin.wiwiss.ng4j.semWebClient.SemanticWebClient#find(com.hp.hpl.jena.graph.TripleMatch)
 	 */
 	public Iterator find(TripleMatch pattern) {
+		this.retriever.setTriplePattern(pattern);
 		this.retrievalFinished = false;
 		Triple t =pattern.asTriple();
 		
@@ -134,7 +136,7 @@ public class SemanticWebClientImpl implements SemanticWebClient {
 	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#addGraph(de.fuberlin.wiwiss.ng4j.NamedGraph)
 	 */
 	public void addGraph(NamedGraph graph) {
-		this.ngs.addGraph(graph);
+		super.addGraph(graph);
 		if(this.listener != null){
 			this.listener.graphAdded(new GraphAddedEvent(this,graph.getGraphName().getURI()));
 		}
@@ -142,191 +144,14 @@ public class SemanticWebClientImpl implements SemanticWebClient {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#removeGraph(com.hp.hpl.jena.graph.Node)
-	 */
-	public void removeGraph(Node graphName){
-		this.ngs.removeGraph(graphName);
-	}
-
-	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#removeGraph(java.lang.String)
-	 */
-	public void removeGraph(String graphNameURI) {
-		this.ngs.removeGraph(graphNameURI);
-
-	}
-
-	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#containsGraph(com.hp.hpl.jena.graph.Node)
-	 */
-	public boolean containsGraph(Node graphName) {
-		return this.ngs.containsGraph(graphName);
-	}
-
-	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#containsGraph(java.lang.String)
-	 */
-	public boolean containsGraph(String graphNameURI) {
-		return this.ngs.containsGraph(graphNameURI);
-	}
-
-	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#getGraph(com.hp.hpl.jena.graph.Node)
-	 */
-	public NamedGraph getGraph(Node graphName) {
-		return this.ngs.getGraph(graphName);
-	}
-
-	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#getGraph(java.lang.String)
-	 */
-	synchronized public NamedGraph getGraph(String graphNameURI) {
-		return this.ngs.getGraph(graphNameURI);
-	}
-
-	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#createGraph(com.hp.hpl.jena.graph.Node)
-	 */
-	public NamedGraph createGraph(Node graphName) {
-		return this.ngs.createGraph(graphName);
-	}
-
-	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#createGraph(java.lang.String)
-	 */
-	public NamedGraph createGraph(String graphNameURI) {
-		return this.ngs.createGraph(graphNameURI);
-	}
-
-	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#listGraphs()
-	 */
-	public Iterator listGraphs() {
-		return this.ngs.listGraphs();
-	}
-
-	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#clear()
-	 */
-	public void clear() {
-		this.ngs.clear();
-	}
-
-	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#countGraphs()
-	 */
-	public long countGraphs() {
-		return this.ngs.countGraphs();
-	}
-
-	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#isEmpty()
-	 */
-	public boolean isEmpty() {
-		return this.ngs.isEmpty();
-	}
-
-	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#addQuad(de.fuberlin.wiwiss.ng4j.Quad)
-	 */
-	public void addQuad(Quad quad) {
-		this.ngs.addQuad(quad);
-	}
-
-	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#containsQuad(de.fuberlin.wiwiss.ng4j.Quad)
-	 */
-	public boolean containsQuad(Quad pattern) {
-		return this.ngs.containsQuad(pattern);
-	}
-
-	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#removeQuad(de.fuberlin.wiwiss.ng4j.Quad)
-	 */
-	public void removeQuad(Quad pattern) {
-		this.ngs.removeQuad(pattern);
-	}
-
-	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#countQuads()
-	 */
-	public int countQuads() {
-		return this.ngs.countQuads();
-	}
-
-	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#findQuads(de.fuberlin.wiwiss.ng4j.Quad)
-	 */
-	public Iterator findQuads(Quad pattern) {
-		return this.ngs.findQuads(pattern);
-	}
-
-	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#findQuads(com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node)
-	 */
-	public Iterator findQuads(Node graphName, Node subject, Node predicate,
-			Node object) {
-		return this.ngs.findQuads(graphName, subject, predicate, object);
-	}
-
-	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#asJenaGraph(com.hp.hpl.jena.graph.Node)
-	 */
-	public Graph asJenaGraph(Node defaultGraphForAdding) {
-		return this.ngs.asJenaGraph(defaultGraphForAdding);
-	}
-
-	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#asJenaModel(java.lang.String)
-	 */
-	public NamedGraphModel asJenaModel(String defaultGraphForAdding) {
-		return this.ngs.asJenaModel(defaultGraphForAdding);
-	}
 
 	/* (non-Javadoc)
 	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#close()
 	 */
 	public void close() {
-		this.ngs.close();
+		this.close();
 		this.retrievedUris.clear();
 		this.urisToRetrieve.clear();
-	}
-
-	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#read(java.lang.String, java.lang.String)
-	 */
-	public void read(String url, String lang) {
-		this.ngs.read(url,lang);
-	}
-
-	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#read(java.io.InputStream, java.lang.String, java.lang.String)
-	 */
-	public void read(InputStream source, String lang, String baseURI) {
-		this.ngs.read(source,lang,baseURI);
-	}
-
-	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#read(java.io.Reader, java.lang.String, java.lang.String)
-	 */
-	public void read(Reader source, String lang, String baseURI) {
-		this.ngs.read(source,lang,baseURI);
-
-	}
-
-	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#write(java.io.OutputStream, java.lang.String, java.lang.String)
-	 */
-	public void write(OutputStream out, String lang, String baseURI) {
-		this.ngs.write(out,lang,baseURI);
-	}
-
-	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#write(java.io.Writer, java.lang.String, java.lang.String)
-	 */
-	public void write(Writer out, String lang, String baseURI) {
-		this.ngs.write(out,lang,baseURI);
 	}
 	
 	/**
@@ -344,15 +169,6 @@ public class SemanticWebClientImpl implements SemanticWebClient {
 	 */
 	public List getRetrievedUris(){
 		return this.retrievedUris;
-	}
-	
-	/**
-	 * Returns the NamedGraphSet.
-	 * 
-	 * @return NamedGraphSet.
-	 */
-	public NamedGraphSet getNamedGraphSet(){
-		return this.ngs;
 	}
 	
 	/**

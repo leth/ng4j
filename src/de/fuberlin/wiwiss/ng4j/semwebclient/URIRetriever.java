@@ -1,10 +1,7 @@
 package de.fuberlin.wiwiss.ng4j.semwebclient;
 
-import java.util.Iterator;
+import com.hp.hpl.jena.graph.TripleMatch;
 
-import com.hp.hpl.jena.graph.Node;
-
-import de.fuberlin.wiwiss.ng4j.NamedGraph;
 
 
 public class URIRetriever implements ListListener{
@@ -34,6 +31,12 @@ public class URIRetriever implements ListListener{
 	 * The corresponding ThreadObserver.
 	 */
 	private ThreadObserver observer;
+	
+	
+	/**
+	 * The triple to match
+	 */
+	private TripleMatch triple = null;
 
 	/**
 	 * Constructor
@@ -150,6 +153,14 @@ public class URIRetriever implements ListListener{
 	 */
 	public void setMaxthreads(int maxthreads) {
 		this.maxthreads = maxthreads;
+	}
+	
+	public void setTriplePattern(TripleMatch triple){
+		this.triple = triple;
+	}
+	
+	public TripleMatch getTriplePattern(){
+		return this.triple;
 	}
 
 }
