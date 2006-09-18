@@ -180,6 +180,7 @@ public class UriConnector extends Thread {
 			}
 		}
 		if(this.step >= this.retriever.getMaxsteps())
+			// response code ??
 			this.responseCode = 666;
 		
 		this.isReady = true;
