@@ -137,8 +137,6 @@ public class SemWebIterator implements Iterator, FindListener {
 					this.wait();
 					this.replaceIterator(finished);
 				} catch (Exception e) {
-					System.out.println("Fehler beim einschläfern"
-							+ e.getLocalizedMessage());
 					return false;
 				}
 			} else {

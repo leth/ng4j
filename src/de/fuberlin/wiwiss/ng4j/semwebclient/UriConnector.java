@@ -146,7 +146,6 @@ public class UriConnector extends Thread {
 					.toString());
 			this.uriRetrieved = true;
 		} catch (Exception e) {
-			System.out.println(e.getLocalizedMessage());
 			this.uriRetrieved = false;
 		}
 	}
