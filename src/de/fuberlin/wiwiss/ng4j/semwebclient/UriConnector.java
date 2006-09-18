@@ -166,6 +166,9 @@ public class UriConnector extends Thread {
 			try {
 				this.connection = (HttpURLConnection) this.url.openConnection();
 				if (this.connection.getContentType() != null) {
+					// ToDo Http 303
+					//System.out.println(this.connection.getResponseCode());
+					//this.retriever.getClient().addRemoteGraph();
 					String lang = null;
 					if (this.connection.getContentType().startsWith("application/rdf+xml")){
 							lang = "RDF/XML";
