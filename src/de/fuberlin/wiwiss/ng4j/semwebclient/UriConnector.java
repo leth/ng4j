@@ -142,7 +142,7 @@ public class UriConnector extends Thread {
 		try {
 			if(lang.equals("default"))
 				lang = null;
-			this.tempNgs.read(this.connection.getInputStream(), lang, this.url
+				this.tempNgs.read(this.connection.getInputStream(), lang, this.url
 					.toString());
 			this.uriRetrieved = true;
 		} catch (Exception e) {
