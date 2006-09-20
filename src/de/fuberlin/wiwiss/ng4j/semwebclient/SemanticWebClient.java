@@ -1,4 +1,4 @@
-// $Id: SemanticWebClient.java,v 1.1 2006/09/15 13:02:12 tgauss Exp $
+// $Id: SemanticWebClient.java,v 1.2 2006/09/20 07:36:56 tgauss Exp $
 package de.fuberlin.wiwiss.ng4j.semwebclient;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
@@ -60,6 +60,24 @@ public interface SemanticWebClient extends NamedGraphSet {
 	 */
 	public Iterator find(TripleMatch pattern);
 	
+	/**
+     * Finds Triples that match a triple pattern. The argument may contain
+	 * wildcards ({@link Node#ANY}). 
+	 * 
+	 * The implementation of the find method uses multithreading, thus the first
+	 * triples can already be used while there is still information being retrieved 
+	 * in the background.
+	 * 
+	 * Returned triples have a sourceGraphs() method which returns an iterator over 
+	 * all graphs names in which contain the triple.
+	 * The returned iterator has a retrievalFinished() method which returns true when 
+	 * the retrieval process for all URIs and see:Also links is finished.
+     * 
+	 * @param pattern
+	 * @return 
+	 */
+	public void find(TripleMatch pattern,TripleListener listener);
+	
 		
 	/**
 	 * Adds a remote graph to the graphset.
@@ -80,13 +98,13 @@ public interface SemanticWebClient extends NamedGraphSet {
 	 * Sets a configuration option.
 	 * Like Timeout or MaxRetrievalSize
 	 */
-	public void setConfig(String option, ConfigValue value);
+	public void setConfig(String option, String value);
 
 	/**
 	 * Get a configuration option.
 	 * Like Timeout or MaxRetrievalSize MaxThreads
 	 */
-	public ConfigValue getConfig(String option);
+	public String getConfig(String option);
 
 	
 	/**

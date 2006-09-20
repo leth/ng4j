@@ -12,19 +12,19 @@ public class RetrieveResult {
 	 */
 	private String uri;
 	/**
-	 * The corresponding http response code.
+	 * The reason why the uri could not be retrieved.
 	 */
-	private int response;
+	private String reason;
 	
 	/**
 	 * Constructor
 	 * 
 	 * @param uri The URI.
-	 * @param response The response.
+	 * @param reason.
 	 */
-	public RetrieveResult(String uri, int response){
+	public RetrieveResult(String uri, String reason){
 		this.uri = uri;
-		this.response = response;
+		this.reason = reason;
 	}
 	
 	/**
@@ -35,10 +35,10 @@ public class RetrieveResult {
 	}
 	
 	/**
-	 * @return The response code.
+	 * @return The reason.
 	 */
-	public int getResponse(){
-		return this.response;
+	public String getReason(){
+		return this.reason;
 	}
 
 }

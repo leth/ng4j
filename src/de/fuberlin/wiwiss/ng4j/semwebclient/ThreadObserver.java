@@ -135,12 +135,21 @@ public class ThreadObserver extends Thread {
 					connector.wakeUp();
 					this.retriever.getClient().getUrisToRetrieve().remove(
 							connector.getUriString());
-					if(connector.uriRetrieved()){
+					if(connector.uriRetrieved()==1){
 						this.retriever.getClient().getRetrievedUris().add(
 								connector.getUriString());
-					}else{
+					}else if(connector.uriRetrieved()==-1){
+						// unable to parse
 						this.retriever.getClient().getUnretrievedURIs().add(
-								new RetrieveResult(connector.getUriString(), connector.responseCode()));
+								new RetrieveResult(connector.getUriString(), "unable to parse"));
+					}else if(connector.uriRetrieved()==-2){
+						// malformed URL
+						this.retriever.getClient().getUnretrievedURIs().add(
+								new RetrieveResult(connector.getUriString(), "malformed URL"));
+					}else if(connector.uriRetrieved()==-3){
+						// unable to connect
+						this.retriever.getClient().getUnretrievedURIs().add(
+								new RetrieveResult(connector.getUriString(), "unable to connect"));
 					}
 					this.finishedCheck();
 					this.threadlist.remove(connector);

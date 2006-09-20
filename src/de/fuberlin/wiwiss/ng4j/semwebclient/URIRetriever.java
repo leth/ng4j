@@ -14,18 +14,18 @@ public class URIRetriever implements ListListener{
 	/**
 	 * Maximum simultaneous executed threads.
 	 */
-	private int maxthreads = 20;
+	private int maxthreads;
 
 	
 	/**
 	 * Maximum retrieval steps.
 	 */
-	private int maxsteps = 3;
+	private int maxsteps;
 	
 	/**
 	 * Maximum execution time.
 	 */
-	private long timeout = 300000;
+	private long timeout;
 	
 	/**
 	 * The corresponding ThreadObserver.

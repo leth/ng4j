@@ -4,28 +4,23 @@
  */
 package de.fuberlin.wiwiss.ng4j.semwebclient;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.graph.TripleMatch;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
-import de.fuberlin.wiwiss.ng4j.NamedGraphModel;
-import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
 public class SemanticWebClientImpl extends NamedGraphSetImpl implements SemanticWebClient {
-	//private NamedGraphSet ngs;
+	public static final int MAXSTEPS_DEFAULT = 3;
+	public static final int MAXTHREADS_DEFAULT = 30;
+	public static final long TIMEOUT_DEFAULT = 30000;
 	private List retrievedUris;
 	private UriList urisToRetrieve;
 	private URIRetriever retriever;
@@ -34,13 +29,15 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements Semantic
 	public boolean retrievalFinished;
 	
 	/**
-	 * Constructor for the SemantciWebClient.
+	 * Creates a Semantic Web Client.
 	 */
 	public SemanticWebClientImpl() {
 		super();
 		this.createGraph("http://localhost/provenanceInformation");
-		//this.ngs = new NamedGraphSetImpl();
 		this.retriever       = new URIRetriever(this);
+		this.retriever.setMaxsteps(MAXSTEPS_DEFAULT);
+		this.retriever.setMaxthreads(MAXTHREADS_DEFAULT);
+		this.retriever.setTimeout(TIMEOUT_DEFAULT);
 		this.retrievedUris   = Collections.synchronizedList(new ArrayList());
 		this.unretrievedURIs = Collections.synchronizedList(new ArrayList());
 		this.urisToRetrieve  = new UriList(); 
@@ -71,6 +68,29 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements Semantic
 		}
 		return iter2;
 	}
+	
+	public void find(TripleMatch pattern, TripleListener listener){
+		this.retriever.setTriplePattern(pattern);
+		this.retrievalFinished = false;
+		Triple t =pattern.asTriple();
+		
+		Node sub  = t.getSubject();
+		Node pred = t.getPredicate();
+		Node obj  = t.getObject();
+		
+		TripleFinder finder = new TripleFinder(sub,pred,obj,this,listener);
+		finder.start();
+		Iterator iter = this.findQuads(Node.ANY,sub,pred,obj);
+
+		this.inspectTriple(t,-1);
+		
+		while(iter.hasNext()){
+			Quad quad = (Quad) iter.next();
+			Triple tr = quad.getTriple();
+			this.inspectTriple(tr,-1);
+		}
+		
+	}
 
 	/* (non-Javadoc)
 	 * @see de.fuberlin.wiwiss.ng4j.semWebClient.SemanticWebClient#addRemoteGraph(java.lang.String)
@@ -92,27 +112,47 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements Semantic
 	/* (non-Javadoc)
 	 * @see de.fuberlin.wiwiss.ng4j.semWebClient.SemanticWebClient#setConfig(java.lang.String, java.lang.Object)
 	 */
-	public void setConfig(String option, ConfigValue value) {
-		if(option.equals("maxsteps"))
-			this.retriever.setMaxsteps(value.steps);
-		if(option.equals("maxthreads"))
-			this.retriever.setMaxsteps(value.threads);
-		if(option.equals("timeout"))
-			this.retriever.setTimeout(value.timeout);
+	public void setConfig(String option, String value) {
+		if(option.equals("maxsteps")){
+			int val;
+			try{
+				val = Integer.parseInt(value);
+			}catch(NumberFormatException e){
+				val = MAXSTEPS_DEFAULT;
+			}
+			this.retriever.setMaxsteps(val);
+		}
+		if(option.equals("maxthreads")){
+			int val;
+			try{
+				val = Integer.parseInt(value);
+			}catch(NumberFormatException e){
+				val = MAXTHREADS_DEFAULT;
+			}
+			this.retriever.setMaxthreads(val);
+		}
+		if(option.equals("timeout")){
+			long val;
+			try{
+				val = Long.parseLong(value);
+			}catch(NumberFormatException e){
+				val = TIMEOUT_DEFAULT;
+			}
+			this.retriever.setTimeout(val);
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see de.fuberlin.wiwiss.ng4j.semWebClient.SemanticWebClient#getConfig(java.lang.String)
 	 */
-	public ConfigValue getConfig(String option) {
-		ConfigValue value = new ConfigValue();
-		
+	public String getConfig(String option) {
+		String value = null;
 		if(option.toLowerCase().equals("maxsteps"))
-			value.steps = this.retriever.getMaxsteps();
+			value = String.valueOf(this.retriever.getMaxsteps());
 		if(option.toLowerCase().equals("maxthreads"))
-			value.threads = this.retriever.getMaxthreads();
+			value = String.valueOf(this.retriever.getMaxthreads());
 		if(option.toLowerCase().equals("timeout"))
-			value.timeout = this.retriever.getTimeout();
+			value = String.valueOf(this.retriever.getTimeout());
 		
 		return value;
 

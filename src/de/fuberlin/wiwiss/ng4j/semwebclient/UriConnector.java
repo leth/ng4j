@@ -60,9 +60,14 @@ public class UriConnector extends Thread {
 	protected String uri;
 
 	/**
-	 * Is true if the URI is succsessfully retrieved fals otherwise.
+	 * URI retrieval status:
+	 *  1  = uri retrieved
+	 *  0  = retrieval aborted
+	 * -1  = unable to parse
+	 * -2  = malformed url
+	 * -3  = unable to connect
 	 */
-	private boolean uriRetrieved;
+	private int uriRetrieved;
 
 	/**
 	 * The URL object.
@@ -86,7 +91,7 @@ public class UriConnector extends Thread {
 			this.url = new URL(uri);
 		} catch (MalformedURLException e) {
 			this.url = null;
-			this.uriRetrieved = false;
+			this.uriRetrieved = -2;
 			this.stopped = true;
 		}
 	}
@@ -147,9 +152,9 @@ public class UriConnector extends Thread {
 			
 				this.tempNgs.read(this.connection.getInputStream(), lang, this.url
 					.toString());
-			this.uriRetrieved = true;
+			this.uriRetrieved = 1;
 		} catch (Exception e) {
-			this.uriRetrieved = false;
+			this.uriRetrieved = -1;
 		}
 	}
 
@@ -164,7 +169,6 @@ public class UriConnector extends Thread {
 
 	public void run() {
 		this.isReady = false;
-		this.uriRetrieved = false;
 		if (!this.stopped && !(this.step >= this.retriever.getMaxsteps())) {
 			try {
 				this.connection = (HttpURLConnection) this.url.openConnection();
@@ -180,14 +184,16 @@ public class UriConnector extends Thread {
 					}
 						if(lang!=null)
 							this.parseRdf(lang);
+					}else{
+						this.uriRetrieved = -3;
+						this.responseCode = this.connection.getResponseCode();
 					}
 			} catch (Exception e) {
-				this.uriRetrieved = false;
+				this.uriRetrieved = -1;
 			}
 		}
 		if(this.step >= this.retriever.getMaxsteps()){
-			// response code ??
-			this.responseCode = 666;
+			this.uriRetrieved = 0;
 		}
 		
 		this.isReady = true;
@@ -210,7 +216,7 @@ public class UriConnector extends Thread {
 			}catch(Exception e){
 				
 			}
-		
+		this.uriRetrieved = 0;
 	}
 
 	/**
@@ -218,7 +224,7 @@ public class UriConnector extends Thread {
 	 * 
 	 * @return boolean
 	 */
-	public boolean uriRetrieved() {
+	public int uriRetrieved() {
 		return this.uriRetrieved;
 	}
 
