@@ -66,27 +66,6 @@ public class URIRetriever implements ListListener{
 	public void retrievalFinished() {
 		this.observer.stopObserver();
 		this.getClient().retrievalFinished();
-		// dbug
-		/*
-		System.out.println("FINISH!!!. NGS Size: "
-				+ this.getClient().getNamedGraphSet().countQuads());
-
-		int count = 0;
-		Iterator it1 = this.getClient().getNamedGraphSet().listGraphs();
-		while(it1.hasNext()){
-			NamedGraph g = (NamedGraph) it1.next();
-			if(!g.getGraphName().getURI().equals("http://localhost/provenanceInformation")){
-				Iterator iterator = g.find(Node.ANY,Node.createURI("http://xmlns.com/foaf/0.1/knows"),Node.ANY);
-				int findcount = 0;
-				while(iterator.hasNext()){
-			    	iterator.next();
-			    	findcount++;
-			    	count++;
-			    }
-			}
-		}
-	    System.out.println("should find : "+count);
-	    */
 	}
 
 
