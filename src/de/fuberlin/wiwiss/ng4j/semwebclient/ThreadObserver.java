@@ -165,7 +165,6 @@ public class ThreadObserver extends Thread {
 	 */
 	synchronized private void finishedCheck() {
 		if (this.threadlist.size() == 1 && (this.waitingThreads.isEmpty())) {
-			System.out.println("finished!!!!einself");
 			this.retriever.retrievalFinished();
 			this.stopObserver();
 		}
