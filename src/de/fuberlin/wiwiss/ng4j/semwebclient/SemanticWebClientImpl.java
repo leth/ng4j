@@ -17,6 +17,10 @@ import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
+/**
+ * @author Tobias Gauﬂ
+ *
+ */
 public class SemanticWebClientImpl extends NamedGraphSetImpl implements SemanticWebClient {
 	public static final int MAXSTEPS_DEFAULT = 3;
 	public static final int MAXTHREADS_DEFAULT = 30;
@@ -69,6 +73,9 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements Semantic
 		return iter2;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.semwebclient.SemanticWebClient#find(com.hp.hpl.jena.graph.TripleMatch, de.fuberlin.wiwiss.ng4j.semwebclient.TripleListener)
+	 */
 	public void find(TripleMatch pattern, TripleListener listener){
 		this.retriever.setTriplePattern(pattern);
 		this.retrievalFinished = false;
