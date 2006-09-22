@@ -3,8 +3,9 @@ package de.fuberlin.wiwiss.ng4j.semwebclient;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 
-import com.hp.hpl.jena.rdf.model.RDFReader;
+import com.hp.hpl.jena.rdf.model.impl.RDFDefaultErrorHandler;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
@@ -149,6 +150,10 @@ public class UriConnector extends Thread {
 		try {
 			if(lang.equals("default"))
 				lang = null;
+			    RDFDefaultErrorHandler.silent = true;
+				//RDFDefaultErrorHandler handler = new RDFDefaultErrorHandler();
+			
+				//this.tempNgs.asJenaModel("dummy").getReader().setErrorHandler(handler);
 			
 				this.tempNgs.read(this.connection.getInputStream(), lang, this.url
 					.toString());
@@ -170,11 +175,15 @@ public class UriConnector extends Thread {
 	public void run() {
 		this.isReady = false;
 		if (!this.stopped && !(this.step >= this.retriever.getMaxsteps())) {
-			try {
+			try {			
 				this.connection = (HttpURLConnection) this.url.openConnection();
+					this.connection.addRequestProperty("accept","application/rdf+xml");
+					this.connection.addRequestProperty("accept","application/octet-stream");
+					this.connection.addRequestProperty("accept","text/plain");
+				    this.connection.addRequestProperty("accept","application/xml");
+					this.connection.addRequestProperty("accept","text/rdf+n3");
 				if (this.connection.getContentType() != null) {
 					// ToDo Http 303
-					//System.out.println(this.connection.getResponseCode());
 					//this.retriever.getClient().addRemoteGraph();
 					String lang = null;
 					if (this.connection.getContentType().startsWith("application/rdf+xml")){
