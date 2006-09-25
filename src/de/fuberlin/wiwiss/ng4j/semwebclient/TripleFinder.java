@@ -38,6 +38,7 @@ public class TripleFinder extends Thread{
 			SemWebTriple triple = (SemWebTriple) iter2.next();
 			listener.tripleFound(new TripleFoundEvent(this,triple));
 		}
+		this.listener.findFinished(new TripleFoundEvent(this,null));
 	}
 
 }

@@ -237,7 +237,7 @@ public class ThreadObserver extends Thread {
 			this.clearThreads();
 			this.refillThreadlist();
 			try {
-				this.wait(50);
+				this.wait(1);
 			} catch (Exception e) {
 			}
 			this.checkTime();
@@ -277,8 +277,7 @@ public class ThreadObserver extends Thread {
 			}
 		}
 		this.waitingThreads.clear();
-		this.retriever
-				.retrievalFinished();
+		this.retriever.retrievalFinished();
 	}
 
 }

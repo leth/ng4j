@@ -85,8 +85,6 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements Semantic
 		Node pred = t.getPredicate();
 		Node obj  = t.getObject();
 		
-		TripleFinder finder = new TripleFinder(sub,pred,obj,this,listener);
-		finder.start();
 		Iterator iter = this.findQuads(Node.ANY,sub,pred,obj);
 
 		this.inspectTriple(t,-1);
@@ -96,6 +94,8 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements Semantic
 			Triple tr = quad.getTriple();
 			this.inspectTriple(tr,-1);
 		}
+		TripleFinder finder = new TripleFinder(sub,pred,obj,this,listener);
+		finder.start();
 		
 	}
 
