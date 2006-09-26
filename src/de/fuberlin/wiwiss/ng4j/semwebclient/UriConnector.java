@@ -151,9 +151,6 @@ public class UriConnector extends Thread {
 			if(lang.equals("default"))
 				lang = null;
 			    RDFDefaultErrorHandler.silent = true;
-				//RDFDefaultErrorHandler handler = new RDFDefaultErrorHandler();
-			
-				//this.tempNgs.asJenaModel("dummy").getReader().setErrorHandler(handler);
 			
 				this.tempNgs.read(this.connection.getInputStream(), lang, this.url
 					.toString());

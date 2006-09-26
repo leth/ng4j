@@ -1,4 +1,4 @@
-// $Id: SemanticWebClient.java,v 1.2 2006/09/20 07:36:56 tgauss Exp $
+// $Id: SemanticWebClient.java,v 1.3 2006/09/26 09:59:42 tgauss Exp $
 package de.fuberlin.wiwiss.ng4j.semwebclient;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
@@ -7,7 +7,7 @@ import com.hp.hpl.jena.graph.TripleMatch;
 import com.hp.hpl.jena.graph.Node;
 
 /**
- * <p>The SematicWeb interface enables applications to access the 
+ * <p>The SematicWebClient interface enables applications to access the 
  * Semantic Web.</p>
  * 
  * <p>The Semantic Web is represended as a single, global RDF graph. 
@@ -27,15 +27,10 @@ import com.hp.hpl.jena.graph.Node;
  *
  * <p>If the result of dereferencing a URI is a RDF graph, the graph is added as
  *  a named graph (named with the retrieval URI) to graph set. <BR>
- * If the result of dereferencing a URI is a HTML document, then it is attempted 
- * to retrieve a RDF representation by following link rel="meta" links in the 
- * HEAD of the document, or if a link to a GRDDL stylesheet is present to transform the HTML document into RDF.
- * its content into RDF </p>
  *
  * Within each graphset there is a graph http://localhost/provenanceInformation, which 
  * contains provenance information for each retrieved graph. Each graph is described 
- * with a swp:sourceURL and a swp:retrievalTimestamp property. If a graph was created
- * using GRDDL, it is described with a swp:grddlHTML link to the original HTML file.
+ * with a swp:sourceURL and a swp:retrievalTimestamp property. 
  *  
  * @author Chris Bizer (chris@bizer.de)
  * @author Richard Cyganiak (richard@cyganiak.de)
