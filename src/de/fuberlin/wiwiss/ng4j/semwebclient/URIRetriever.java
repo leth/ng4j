@@ -47,7 +47,7 @@ public class URIRetriever implements ListListener{
 		this.client = client;
 		this.observer = new ThreadObserver(this);
 		this.observer.setName("Observer");
-		this.observer.start();
+		
 	}
 
 
@@ -55,6 +55,10 @@ public class URIRetriever implements ListListener{
 	 * @see de.fuberlin.wiwiss.ng4j.semWebClient.ListListener#retrieveUri(de.fuberlin.wiwiss.ng4j.semWebClient.UriListEvent)
 	 */
 	public void retrieveUri(UriListEvent e) {
+		if(!this.observer.isAlive()){
+			this.observer = new ThreadObserver(this);
+			this.observer.start();
+		}
 		String uri = e.getUri();
 		int step = e.getStep();
 		this.derefUri(uri, step);
@@ -140,6 +144,10 @@ public class URIRetriever implements ListListener{
 	
 	public TripleMatch getTriplePattern(){
 		return this.triple;
+	}
+	
+	public void close(){
+		this.observer.stopObserver();
 	}
 
 }

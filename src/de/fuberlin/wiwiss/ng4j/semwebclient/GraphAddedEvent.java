@@ -12,7 +12,7 @@ public class GraphAddedEvent extends EventObject{
 	private String graphuri;
 
 	/**
-	 * Constructor
+	 * Constructs a GraphAddedEvent.
 	 * 
 	 * @param source The event source.
 	 * @param graphuri The graph URI.

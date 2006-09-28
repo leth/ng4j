@@ -4,7 +4,7 @@ import java.util.EventListener;
 
 
 /**
- * Listener to handle UriListEvents
+ * Listener to handle UriListEvents.
  * 
  * @author Tobias Gauß
  */

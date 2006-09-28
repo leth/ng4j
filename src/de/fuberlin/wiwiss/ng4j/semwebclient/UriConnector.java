@@ -1,9 +1,12 @@
 package de.fuberlin.wiwiss.ng4j.semwebclient;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
+import java.util.regex.Pattern;
 
 import com.hp.hpl.jena.rdf.model.impl.RDFDefaultErrorHandler;
 
@@ -17,7 +20,6 @@ import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
  * NamedGraphSet which cosists of the parsed data.
  * 
  * @author Tobias Gauﬂ
- *
  */
 public class UriConnector extends Thread {
 	/**
@@ -182,7 +184,26 @@ public class UriConnector extends Thread {
 				if (this.connection.getContentType() != null) {
 					// ToDo Http 303
 					//this.retriever.getClient().addRemoteGraph();
+		//			Map keymap = this.connection.getHeaderFields();
+		//			String test = this.connection.getHeaderFieldKey(9);
 					String lang = null;
+					
+					///////////dbug
+	//			String type = this.connection.getContentType();
+	//			String site = null;
+	//				if (type.equals("text/html")){
+						
+	//					InputStream stream = this.connection.getInputStream();
+	//					BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+	//					StringBuffer sb = new StringBuffer();
+	//					String line = null;
+
+	//					while ((line = br.readLine()) != null) {
+	//					sb.append(line + "\n");
+	//					}
+	//					site = sb.toString();	
+	//				}
+					//////////////////////
 					if (this.connection.getContentType().startsWith("application/rdf+xml")){
 							lang = "RDF/XML";
 					}else{

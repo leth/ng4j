@@ -178,6 +178,7 @@ public class ThreadObserver extends Thread {
 	 */
 	synchronized private void inspectNgs(NamedGraphSet ngs, int step) {
 		TripleMatch pattern = this.retriever.getTriplePattern();
+		if(pattern != null){
 		pattern.asTriple();
 		
 
@@ -187,6 +188,7 @@ public class ThreadObserver extends Thread {
 			Quad q = (Quad) iter.next();
 			Triple t = q.getTriple();
 			this.retriever.getClient().inspectTriple(t, step);
+		}
 		}
 	}
 
@@ -233,7 +235,8 @@ public class ThreadObserver extends Thread {
 	}
 
 	synchronized public void run() {
-		while (!stopped) {
+		
+		while (!this.stopped) {
 			this.clearThreads();
 			this.refillThreadlist();
 			try {
@@ -279,5 +282,5 @@ public class ThreadObserver extends Thread {
 		this.waitingThreads.clear();
 		this.retriever.retrievalFinished();
 	}
-
+	
 }

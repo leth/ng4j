@@ -103,6 +103,8 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements Semantic
 	 * @see de.fuberlin.wiwiss.ng4j.semWebClient.SemanticWebClient#addRemoteGraph(java.lang.String)
 	 */
 	public void addRemoteGraph(String URI) {
+		this.retrievalFinished = false;
+		
 		this.urisToRetrieve.add(URI,-1);
 	}
 
@@ -110,9 +112,11 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements Semantic
 	 * @see de.fuberlin.wiwiss.ng4j.semWebClient.SemanticWebClient#reloadRemoteGraph(java.lang.String)
 	 */
 	public void reloadRemoteGraph(String URI) {
+		this.retrievalFinished = false;
+		
 		if(this.retrievedUris.contains(URI)){
 			this.retrievedUris.remove(URI);
-			this.urisToRetrieve.add(URI);
+			this.urisToRetrieve.add(URI,-1);
 		}
 	}
 
@@ -210,7 +214,7 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements Semantic
 		return this.urisToRetrieve;
 	}
 	/**
-	 * Returns a List with alreadz retrieved URIs.
+	 * Returns a List with already retrieved URIs.
 	 * 
 	 * @return List
 	 */
