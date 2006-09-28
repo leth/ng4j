@@ -13,14 +13,13 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.Quad;
 
 /**
- * If a URI is added to the "to retrieve"- list the ThreadObserver
- * generates a new UriConnector thread to retrieve this URI. It 
- * recurring checks the ThreadList for finished threads
- * fetches the collected data and adds it to the underlying
- * NamedGraphSet.
+ * If a URI is added to the "to retrieve"- list the ThreadObserver generates a
+ * new UriConnector thread to retrieve this URI. It recurring checks the
+ * ThreadList for finished threads fetches the collected data and adds it to the
+ * underlying NamedGraphSet.
  * 
  * @author Tobias Gauﬂ
- *
+ * 
  */
 public class ThreadObserver extends Thread {
 	/**
@@ -51,7 +50,8 @@ public class ThreadObserver extends Thread {
 	/**
 	 * Constructor
 	 * 
-	 * @param retriever the corresponding URIRetriever.
+	 * @param retriever
+	 *            the corresponding URIRetriever.
 	 */
 	public ThreadObserver(URIRetriever retriever) {
 		this.retriever = retriever;
@@ -59,11 +59,11 @@ public class ThreadObserver extends Thread {
 	}
 
 	/**
-	 * If a URI is successfully retrieved this method is called to 
-	 * add provenance information about the graph to the underlying
-	 * NamedGraphSet.
+	 * If a URI is successfully retrieved this method is called to add
+	 * provenance information about the graph to the underlying NamedGraphSet.
 	 * 
-	 * @param uri A URI string.
+	 * @param uri
+	 *            A URI string.
 	 */
 	synchronized private void addProvenanceInformation(String uri) {
 		String label = Long.toString(Calendar.getInstance().getTimeInMillis());
@@ -80,7 +80,8 @@ public class ThreadObserver extends Thread {
 	/**
 	 * Adds a Thread to the threadlist if the variable stopped is not true.
 	 * 
-	 * @param t The thread to add.
+	 * @param t
+	 *            The thread to add.
 	 */
 	synchronized public void addThread(Thread t) {
 		if (!this.stopped)
@@ -88,14 +89,15 @@ public class ThreadObserver extends Thread {
 	}
 
 	/**
-	 * Fetches the retrieved data from a finished URIConnector and
-	 * adds it to the underlying NamedGraphSet.
+	 * Fetches the retrieved data from a finished URIConnector and adds it to
+	 * the underlying NamedGraphSet.
 	 * 
-	 * @param connector The URIConnector which contains the retrieved data.
+	 * @param connector
+	 *            The URIConnector which contains the retrieved data.
 	 */
 	synchronized private void addToGraphset(UriConnector connector) {
-		this.lookupNgs(this.retriever.getClient(), connector
-				.getUriString(), connector.getStep());
+		this.lookupNgs(this.retriever.getClient(), connector.getUriString(),
+				connector.getStep());
 		NamedGraphSet ngs = connector.getNgs();
 
 		Iterator it = ngs.listGraphs();
@@ -111,8 +113,7 @@ public class ThreadObserver extends Thread {
 	}
 
 	/**
-	 *  Checks how long the Observer runs and stops it if the
-	 *  timeout is reached.
+	 * Checks how long the Observer runs and stops it if the timeout is reached.
 	 */
 	synchronized private void checkTime() {
 		long now = Calendar.getInstance().getTimeInMillis();
@@ -135,21 +136,24 @@ public class ThreadObserver extends Thread {
 					connector.wakeUp();
 					this.retriever.getClient().getUrisToRetrieve().remove(
 							connector.getUriString());
-					if(connector.uriRetrieved()==1){
+					if (connector.uriRetrieved() == 1) {
 						this.retriever.getClient().getRetrievedUris().add(
 								connector.getUriString());
-					}else if(connector.uriRetrieved()==-1){
+					} else if (connector.uriRetrieved() == -1) {
 						// unable to parse
 						this.retriever.getClient().getUnretrievedURIs().add(
-								new RetrieveResult(connector.getUriString(), "unable to parse"));
-					}else if(connector.uriRetrieved()==-2){
+								new RetrieveResult(connector.getUriString(),
+										"unable to parse"));
+					} else if (connector.uriRetrieved() == -2) {
 						// malformed URL
 						this.retriever.getClient().getUnretrievedURIs().add(
-								new RetrieveResult(connector.getUriString(), "malformed URL"));
-					}else if(connector.uriRetrieved()==-3){
+								new RetrieveResult(connector.getUriString(),
+										"malformed URL"));
+					} else if (connector.uriRetrieved() == -3) {
 						// unable to connect
 						this.retriever.getClient().getUnretrievedURIs().add(
-								new RetrieveResult(connector.getUriString(), "unable to connect"));
+								new RetrieveResult(connector.getUriString(),
+										"unable to connect"));
 					}
 					this.finishedCheck();
 					this.threadlist.remove(connector);
@@ -160,8 +164,8 @@ public class ThreadObserver extends Thread {
 	}
 
 	/**
-	 * If the last thread is removed and there are no waiting threads left
-	 * the retrieval is finihed and the Observer stopped.
+	 * If the last thread is removed and there are no waiting threads left the
+	 * retrieval is finihed and the Observer stopped.
 	 */
 	synchronized private void finishedCheck() {
 		if (this.threadlist.size() == 1 && (this.waitingThreads.isEmpty())) {
@@ -173,32 +177,38 @@ public class ThreadObserver extends Thread {
 	/**
 	 * Checks the given NamedGraphSet ngs for uris.
 	 * 
-	 * @param ngs The NamedgraphSet to inspect
-	 * @param step The retrieval step
+	 * @param ngs
+	 *            The NamedgraphSet to inspect
+	 * @param step
+	 *            The retrieval step
 	 */
 	synchronized private void inspectNgs(NamedGraphSet ngs, int step) {
 		TripleMatch pattern = this.retriever.getTriplePattern();
-		if(pattern != null){
-		pattern.asTriple();
-		
+		if (pattern != null) {
+			pattern.asTriple();
 
-		Iterator iter = ngs.findQuads(Node.ANY, pattern.asTriple().getSubject(), pattern.asTriple().getPredicate(), pattern.asTriple().getObject());
+			Iterator iter = ngs.findQuads(Node.ANY, pattern.asTriple()
+					.getSubject(), pattern.asTriple().getPredicate(), pattern
+					.asTriple().getObject());
 
-		while (iter.hasNext()) {
-			Quad q = (Quad) iter.next();
-			Triple t = q.getTriple();
-			this.retriever.getClient().inspectTriple(t, step);
-		}
+			while (iter.hasNext()) {
+				Quad q = (Quad) iter.next();
+				Triple t = q.getTriple();
+				this.retriever.getClient().inspectTriple(t, step);
+			}
 		}
 	}
 
 	/**
-	 * Checks a given NamedGraphSet ngs for rdfs:seeAlso tags and 
-	 * adds the found uris to the "to retrieve" list.
+	 * Checks a given NamedGraphSet ngs for rdfs:seeAlso tags and adds the found
+	 * uris to the "to retrieve" list.
 	 * 
-	 * @param ngs The NamedGraphSet to inspect.
-	 * @param uri The URI.
-	 * @param step The retrieval step.
+	 * @param ngs
+	 *            The NamedGraphSet to inspect.
+	 * @param uri
+	 *            The URI.
+	 * @param step
+	 *            The retrieval step.
 	 */
 	synchronized private void lookupNgs(NamedGraphSet ngs, String uri, int step) {
 		synchronized (this) {
@@ -221,8 +231,8 @@ public class ThreadObserver extends Thread {
 	}
 
 	/**
-	 * Checks if there are waiting threads and adds them
-	 * to the ThreadList if there are free slots.
+	 * Checks if there are waiting threads and adds them to the ThreadList if
+	 * there are free slots.
 	 */
 	synchronized private void refillThreadlist() {
 		if (!this.waitingThreads.isEmpty()
@@ -235,7 +245,7 @@ public class ThreadObserver extends Thread {
 	}
 
 	synchronized public void run() {
-		
+
 		while (!this.stopped) {
 			this.clearThreads();
 			this.refillThreadlist();
@@ -256,8 +266,7 @@ public class ThreadObserver extends Thread {
 	}
 
 	/**
-	 * Tries to stop all running Threads and removes them
-	 * from the Threadlist.
+	 * Tries to stop all running Threads and removes them from the Threadlist.
 	 */
 	synchronized private void stopThreads() {
 		while (!this.threadlist.isEmpty()) {
@@ -282,5 +291,5 @@ public class ThreadObserver extends Thread {
 		this.waitingThreads.clear();
 		this.retriever.retrievalFinished();
 	}
-	
+
 }

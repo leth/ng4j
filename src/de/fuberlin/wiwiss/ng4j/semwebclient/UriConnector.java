@@ -1,12 +1,8 @@
 package de.fuberlin.wiwiss.ng4j.semwebclient;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.regex.Pattern;
 
 import com.hp.hpl.jena.rdf.model.impl.RDFDefaultErrorHandler;
 
@@ -14,10 +10,10 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
 /**
- * The UriConnector tries to Retrieve a given URI.
- * It builds a HttpURLConnection, creates an InputStream and
- * tries to parse it. If the Thread is finished it contains a
- * NamedGraphSet which cosists of the parsed data.
+ * The UriConnector tries to Retrieve a given URI. It builds a
+ * HttpURLConnection, creates an InputStream and tries to parse it. If the
+ * Thread is finished it contains a NamedGraphSet which cosists of the parsed
+ * data.
  * 
  * @author Tobias Gauß
  */
@@ -63,12 +59,8 @@ public class UriConnector extends Thread {
 	protected String uri;
 
 	/**
-	 * URI retrieval status:
-	 *  1  = uri retrieved
-	 *  0  = retrieval aborted
-	 * -1  = unable to parse
-	 * -2  = malformed url
-	 * -3  = unable to connect
+	 * URI retrieval status: 1 = uri retrieved 0 = retrieval aborted -1 = unable
+	 * to parse -2 = malformed url -3 = unable to connect
 	 */
 	private int uriRetrieved;
 
@@ -80,9 +72,12 @@ public class UriConnector extends Thread {
 	/**
 	 * Generates the UriConnector.
 	 * 
-	 * @param retriever The corresponding UriRetriever.
-	 * @param uri The URI to retrieve.
-	 * @param step The retrieval step.
+	 * @param retriever
+	 *            The corresponding UriRetriever.
+	 * @param uri
+	 *            The URI to retrieve.
+	 * @param step
+	 *            The retrieval step.
 	 */
 	public UriConnector(URIRetriever retriever, String uri, int step) {
 		this.uri = uri;
@@ -109,7 +104,7 @@ public class UriConnector extends Thread {
 	}
 
 	/**
-	 * Returns the retrieval step. 
+	 * Returns the retrieval step.
 	 * 
 	 * @return int
 	 */
@@ -127,8 +122,7 @@ public class UriConnector extends Thread {
 	}
 
 	/**
-	 * Returns true if the Thread has finished retrieving the URI
-	 * false if not.
+	 * Returns true if the Thread has finished retrieving the URI false if not.
 	 * 
 	 * @return boolean
 	 */
@@ -150,11 +144,11 @@ public class UriConnector extends Thread {
 	 */
 	private void parseRdf(String lang) {
 		try {
-			if(lang.equals("default"))
+			if (lang.equals("default"))
 				lang = null;
-			    RDFDefaultErrorHandler.silent = true;
-			
-				this.tempNgs.read(this.connection.getInputStream(), lang, this.url
+			RDFDefaultErrorHandler.silent = true;
+
+			this.tempNgs.read(this.connection.getInputStream(), lang, this.url
 					.toString());
 			this.uriRetrieved = 1;
 		} catch (Exception e) {
@@ -174,55 +168,59 @@ public class UriConnector extends Thread {
 	public void run() {
 		this.isReady = false;
 		if (!this.stopped && !(this.step >= this.retriever.getMaxsteps())) {
-			try {			
+			try {
 				this.connection = (HttpURLConnection) this.url.openConnection();
-					this.connection.addRequestProperty("accept","application/rdf+xml");
-					this.connection.addRequestProperty("accept","application/octet-stream");
-					this.connection.addRequestProperty("accept","text/plain");
-				    this.connection.addRequestProperty("accept","application/xml");
-					this.connection.addRequestProperty("accept","text/rdf+n3");
+				this.connection.addRequestProperty("accept",
+						"application/rdf+xml");
+				this.connection.addRequestProperty("accept",
+						"application/octet-stream");
+				this.connection.addRequestProperty("accept", "text/plain");
+				this.connection.addRequestProperty("accept", "application/xml");
+				this.connection.addRequestProperty("accept", "text/rdf+n3");
 				if (this.connection.getContentType() != null) {
 					// ToDo Http 303
-					//this.retriever.getClient().addRemoteGraph();
-		//			Map keymap = this.connection.getHeaderFields();
-		//			String test = this.connection.getHeaderFieldKey(9);
+					// this.retriever.getClient().addRemoteGraph();
+					// Map keymap = this.connection.getHeaderFields();
+					// String test = this.connection.getHeaderFieldKey(9);
 					String lang = null;
-					
-					///////////dbug
-	//			String type = this.connection.getContentType();
-	//			String site = null;
-	//				if (type.equals("text/html")){
-						
-	//					InputStream stream = this.connection.getInputStream();
-	//					BufferedReader br = new BufferedReader(new InputStreamReader(stream));
-	//					StringBuffer sb = new StringBuffer();
-	//					String line = null;
 
-	//					while ((line = br.readLine()) != null) {
-	//					sb.append(line + "\n");
-	//					}
-	//					site = sb.toString();	
-	//				}
-					//////////////////////
-					if (this.connection.getContentType().startsWith("application/rdf+xml")){
-							lang = "RDF/XML";
-					}else{
+					// /////////dbug
+					// String type = this.connection.getContentType();
+					// String site = null;
+					// if (type.equals("text/html")){
+
+					// InputStream stream = this.connection.getInputStream();
+					// BufferedReader br = new BufferedReader(new
+					// InputStreamReader(stream));
+					// StringBuffer sb = new StringBuffer();
+					// String line = null;
+
+					// while ((line = br.readLine()) != null) {
+					// sb.append(line + "\n");
+					// }
+					// site = sb.toString();
+					// }
+					// ////////////////////
+					if (this.connection.getContentType().startsWith(
+							"application/rdf+xml")) {
+						lang = "RDF/XML";
+					} else {
 						lang = "default";
 					}
-						if(lang!=null)
-							this.parseRdf(lang);
-					}else{
-						this.uriRetrieved = -3;
-						this.responseCode = this.connection.getResponseCode();
-					}
+					if (lang != null)
+						this.parseRdf(lang);
+				} else {
+					this.uriRetrieved = -3;
+					this.responseCode = this.connection.getResponseCode();
+				}
 			} catch (Exception e) {
 				this.uriRetrieved = -1;
 			}
 		}
-		if(this.step >= this.retriever.getMaxsteps()){
+		if (this.step >= this.retriever.getMaxsteps()) {
 			this.uriRetrieved = 0;
 		}
-		
+
 		this.isReady = true;
 		synchronized (this) {
 			try {
@@ -237,11 +235,11 @@ public class UriConnector extends Thread {
 	 */
 	public void stopConnector() {
 		if (this.connection != null)
-			try{
+			try {
 				this.connection.disconnect();
 				this.stopped = true;
-			}catch(Exception e){
-				
+			} catch (Exception e) {
+
 			}
 		this.uriRetrieved = 0;
 	}
