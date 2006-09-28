@@ -1,0 +1,156 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><head><title>Semantic Web Client for NG4J</title><!--h1, h2, h3 { background: white; color: #005a9c; }-->
+
+
+
+  
+
+<style type="text/css">
+body { background: white; color: black; font-family: sans-serif; line-height: 1.4em; padding: 2.5em 3em; margin: 0; }
+:link { color: #00c; }
+:visited { color: #609; }
+a:link img { border: none; }
+a:visited img { border: none; }
+h1, h2, h3 { background: white; color: #800; }
+h1 { font: 170% sans-serif; margin: 0; }
+h2 { font: 140% sans-serif; margin: 1.5em 0 -0.5em 0; }
+h3 { font: 120% sans-serif; margin: 1.5em 0 -0.5em 0; }
+h4 { font: bold 100% sans-serif; }
+h5 { font: italic 100% sans-serif; }
+h6 { font: small-caps 100% sans-serif; }
+.hide { display: none; }
+pre { background: #fff6bb; font-family: monospace; line-height: 1.2em; padding: 1em 2em; }
+dt { font-weight: bold; margin-top: 0; margin-bottom: 0; }
+dd { margin-top: 0; margin-bottom: 0; }
+code, tt { font-family: monospace; }
+ul.toc { list-style-type: none; }
+ol.toc li a { text-decoration: none; }
+.note { color: red; }
+#header { border-bottom: 1px solid #ccc; }
+#logo { float: right; }
+#authors { clear: right; float: right; font-size: 80%; text-align: right; }
+#content { clear: both; margin: 2em auto 0 0; text-align: justify }
+#download { font-family: sans-serif; margin-bottom: 1em; text-align: center; }
+#download h2 { font-size: 125%; margin: 1.5em 0 -0.2em 0; }
+#download small { color: #888; font-size: 80%; }
+#footer { border-top: 1px solid #ccc; color: #aaa; margin: 2em 0 0; }
+
+@media Print {
+* { font-size: 92%; }
+body { padding: 0; line-height: 1.2em; }
+#content { margin: 0; width: 100%; }
+}
+@media Aural {
+h1 { stress: 20; richness: 90; }
+h2 { stress: 20; richness: 90; }
+h3 { stress: 20; richness: 90; }
+.hide { speak: none; }
+dt { pause-before: 20%; }
+pre { speak-punctuation: code; }
+}
+.Stil1 {color: #FF0000}
+</style>
+</head><body>
+
+<div id="logo">
+  <a href="http://www.fu-berlin.de/"><img src="fu-logo.gif" alt="Freie Universität Berlin Logo"></a>
+</div>
+
+<div id="header">
+  <h1 style="font-size: 250%;">Semantic Web Client </h1>
+  <div id="tagline">for NG4J </div>
+</div>
+
+<div id="authors">
+  <a href="http://www.bizer.de/" target="_blank">Chris Bizer</a><br>
+  <a href="http://richard.cyganiak.de/" target="_blank">Richard Cyganiak</a><br>
+  <a href="mailto:tobias.gauss@web.de">Tobias Gau&szlig;</a>
+</div>
+
+<div id="content">
+
+<p>The SematicWebClient is a NG4J extension that enables applications to access the Semantic Web. The Semantic Web is represented as a single, global RDF graph. Applications can use the find(TripleMatch pattern) method to retrieve information from the Semantic Web. </p>
+
+<p>During the execution of a find() query, information about all resources that appear in the triple pattern and in the query results is dynamically loaded from the Semantic Web by dereferencing the URI of each resource using the HTTP protocol and following all known rdf:seeAlso links for each resource as described in [Verweis ?]. Internally, retrieved information is represented as a set of named graphs, which allows applications to keep track of information provenance. If the result of dereferencing a URI is a RDF graph, the graph is added as a named graph (named with the retrieval URI) to graph set. Within each graphset there is a graph http://localhost/provenanceInformation, which contains provenance information for each retrieved graph. Each graph is described with a swp:sourceURL and a swp:retrievalTimestamp property. (noch keine Property für RetrievalTimestamp gefunden). </p>
+<p>The Semantic Web Client provides two different find Methods. The first one find(TripleMatch) returns an iterator over all matching Triples. </p>
+<pre>// create a Semantic WebClient
+SemanticWebClientImpl  semWeb = new SemanticWebClientImpl();
+
+// add some data
+semWeb.read(&quot;http://richard.cyganiak.de/foaf.rdf&quot;);
+
+// create a triple
+Triple t = new Triple(Node.ANY,Node.createURI("http://xmlns.com/foaf/0.1/knows"),Node.ANY);
+
+// search for the triple
+Iterator iter = semWeb.find(t);
+
+// loop over all matching triples
+while(iter.hasNext()){
+	SemWebTriple triple = (SemWebTriple) iter.next();
+	System.out.println(triple.toString());
+}
+</pre>
+
+<p>The find( TripleMatch, TripleListener) returns nothing. It is called with a second parameter a TripleListener which implements the methods tripleFound() and findFinished(). </p>
+
+<p>A simple Listener which implements the TripleListener Interface: </p>
+<pre>public class ExampleListener implements TripleListener{
+	public int count = 0;
+	public boolean finished = false;
+	
+	public void tripleFound(TripleFoundEvent e){
+		System.out.println(e.getTriple().toString());
+		this.count++;
+	}
+	public int getCount(){
+		return this.count;
+	}
+	public void findFinished(TripleFoundEvent e){
+		System.out.println("findFinshed");
+		this.finished = true;
+	}
+	
+}
+// create a Semantic WebClient
+SemanticWebClientImpl  semWeb = new SemanticWebClientImpl();
+
+// add some data
+semWeb.read(&quot;http://richard.cyganiak.de/foaf.rdf&quot;);
+
+// create a triple
+Triple t = new Triple(Node.ANY,Node.createURI("http://xmlns.com/foaf/0.1/knows"),Node.ANY);
+
+// create a new TestListener
+ExampleListener listener = new ExampleListener();
+
+// search for the triple and add the listener to the semantic web client
+Iterator iter = semWeb.find(t,listener);
+
+// while retrieval not finished do something
+while(!l.finished){
+			// do something
+}
+</pre>
+
+<p> The retrieve mechanism uses multithreading to retrieve the different URIs. The maximal number of simultan threads, steps and maximal execution time can be configured by calling the setConfig() method. </p>
+
+<pre>// create a Semantic WebClient
+SemanticWebClientImpl  semWeb = new SemanticWebClientImpl();
+
+semWeb.setConfig("maxsteps","3");
+semWeb.setConfig("maxsthreads","10");
+semweb.setConfig("timeout","10000");
+</pre>
+
+<p>.....</p>
+<h2>&nbsp;</h2>
+<p><a href="http://sourceforge.net/projects/ng4j/"><img src="sflogo.png" alt="SourceForge Logo"></a></p>
+
+
+<div id="footer">
+  <small>$Id: index.html,v 1.1 2006/09/28 14:11:12 tgauss Exp $</small>
+</div>
+</div>
+
+</body></html>
