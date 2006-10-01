@@ -34,6 +34,9 @@ public class URIRetriever implements ListListener {
 	 */
 	private TripleMatch triple = null;
 
+	
+	public int count;
+	
 	/**
 	 * Constructor
 	 * 
@@ -41,10 +44,9 @@ public class URIRetriever implements ListListener {
 	 *            the corresponding SemanticWebClient.
 	 */
 	public URIRetriever(SemanticWebClientImpl client) {
+		count = 0;
 		this.client = client;
-		this.observer = new ThreadObserver(this);
-		this.observer.setName("Observer");
-
+		//this.observer = new ThreadObserver(this);
 	}
 
 	/*
@@ -53,10 +55,8 @@ public class URIRetriever implements ListListener {
 	 * @see de.fuberlin.wiwiss.ng4j.semWebClient.ListListener#retrieveUri(de.fuberlin.wiwiss.ng4j.semWebClient.UriListEvent)
 	 */
 	public void retrieveUri(UriListEvent e) {
-		if (!this.observer.isAlive()) {
-			this.observer = new ThreadObserver(this);
-			this.observer.start();
-		}
+	//	System.out.println("uris: "+this.getClient().getUrisToRetrieve().counta);
+	//	System.out.println(this.observer.threadlist.countc);
 		String uri = e.getUri();
 		int step = e.getStep();
 		this.derefUri(uri, step);
@@ -82,7 +82,12 @@ public class URIRetriever implements ListListener {
 	 */
 	private void derefUri(String uri, int step) {
 		Thread t = new UriConnector(this, uri, step);
+		if(this.observer == null)
+			this.refreshObserver(t);
+		if(this.observer.stopped)
+			this.refreshObserver(t);
 		this.observer.addThread(t);
+		
 	}
 
 	/**
@@ -143,11 +148,23 @@ public class URIRetriever implements ListListener {
 
 	public void setTriplePattern(TripleMatch triple) {
 		this.triple = triple;
+		//this.refreshObserver();
+		//this.observer.start();
 	}
 
 	public TripleMatch getTriplePattern() {
 		return this.triple;
 	}
+	
+	
+	private void refreshObserver(Thread t){
+		if(this.observer!=null)
+			this.observer.stopObserver();
+		this.observer = new ThreadObserver(this,t);
+		this.observer.setName("Observer");
+		this.observer.start();
+	}
+	
 
 	public void close() {
 		this.observer.stopObserver();

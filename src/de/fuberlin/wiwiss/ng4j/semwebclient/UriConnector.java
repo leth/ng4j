@@ -220,12 +220,12 @@ public class UriConnector extends Thread {
 		if (this.step >= this.retriever.getMaxsteps()) {
 			this.uriRetrieved = 0;
 		}
-
 		this.isReady = true;
 		synchronized (this) {
 			try {
 				this.wait();
 			} catch (Exception e) {
+				
 			}
 		}
 	}

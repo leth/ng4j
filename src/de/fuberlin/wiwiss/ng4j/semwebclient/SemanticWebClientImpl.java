@@ -9,9 +9,11 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.graph.TripleMatch;
+import com.hp.hpl.jena.util.iterator.WrappedIterator;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.Quad;
@@ -40,6 +42,8 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 	private List unretrievedURIs;
 
 	public boolean retrievalFinished;
+	
+	//private List listenerList = Collections.synchronizedList(new ArrayList());
 
 	/**
 	 * Creates a Semantic Web Client.
@@ -55,6 +59,10 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 		this.unretrievedURIs = Collections.synchronizedList(new ArrayList());
 		this.urisToRetrieve = new UriList();
 		this.urisToRetrieve.addListListener(this.retriever);
+		this.retrievalFinished = true;
+		// debug
+		
+		
 	}
 
 	/*
@@ -62,9 +70,11 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 	 * 
 	 * @see de.fuberlin.wiwiss.ng4j.semWebClient.SemanticWebClient#find(com.hp.hpl.jena.graph.TripleMatch)
 	 */
-	public Iterator find(TripleMatch pattern) {
+	public SemWebIterator find(TripleMatch pattern) {
+		while(!this.retrievalFinished){
+			
+		}
 		this.retriever.setTriplePattern(pattern);
-		this.retrievalFinished = false;
 		Triple t = pattern.asTriple();
 
 		Node sub = t.getSubject();
@@ -83,6 +93,7 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 		}
 		return iter2;
 	}
+	
 
 	/*
 	 * (non-Javadoc)
@@ -120,7 +131,6 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 	 */
 	public void addRemoteGraph(String URI) {
 		this.retrievalFinished = false;
-
 		this.urisToRetrieve.add(URI, -1);
 	}
 
@@ -218,11 +228,20 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 	 */
 	public void addGraph(NamedGraph graph) {
 		super.addGraph(graph);
+		
 		if (this.listener != null) {
-			this.listener.graphAdded(new GraphAddedEvent(this, graph
-					.getGraphName().getURI()));
+			this.listener.graphAdded(new GraphAddedEvent(this, graph.getGraphName().getURI()));
 		}
-
+		
+		/*
+		String name = graph.getGraphName().getURI();
+		Iterator it = this.listenerList.iterator();
+		while(it.hasNext()){
+			FindListener l = (FindListener) it.next();
+			l.graphAdded(new GraphAddedEvent(this, name));
+		}
+		*/
+		
 	}
 
 	/*
@@ -263,25 +282,28 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 	 * @param step
 	 *            The retrieval step.
 	 */
-	public void inspectTriple(Triple t, int step) {
+	synchronized public void inspectTriple(Triple t, int step) {
 		Node sub = t.getSubject();
 		Node pred = t.getPredicate();
 		Node obj = t.getObject();
 
 		if (sub.isURI()) {
 			if (!this.urisToRetrieve.contains(sub.getURI())
-					&& !this.retrievedUris.contains(sub.getURI()))
+					&& !this.retrievedUris.contains(sub.getURI()) && !this.unretrievedURIs.contains(sub.getURI())){
 				this.urisToRetrieve.add(sub.getURI(), step);
+			this.retrievalFinished = false;}
 		}
 		if (pred.isURI()) {
 			if (!this.urisToRetrieve.contains(pred.getURI())
-					&& !this.retrievedUris.contains(pred.getURI()))
+					&& !this.retrievedUris.contains(pred.getURI())&& !this.unretrievedURIs.contains(pred.getURI())){
 				this.urisToRetrieve.add(pred.getURI(), step);
+			this.retrievalFinished = false;}
 		}
 		if (obj.isURI()) {
 			if (!this.urisToRetrieve.contains(obj.getURI())
-					&& !this.retrievedUris.contains(obj.getURI()))
+					&& !this.retrievedUris.contains(obj.getURI())&& !this.unretrievedURIs.contains(obj.getURI())){
 				this.urisToRetrieve.add(obj.getURI(), step);
+			this.retrievalFinished = false;}
 		}
 
 	}
@@ -293,6 +315,7 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 	 *            The FindListener to add.
 	 */
 	public void addFindListener(FindListener listener) {
+		//this.listenerList.add(listener);
 		this.listener = listener;
 	}
 
@@ -300,11 +323,21 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 	 * Is performed when the retrieval is finished.
 	 */
 	public void retrievalFinished() {
+		/*
 		this.retrievalFinished = true;
-		if (this.listener != null) {
-			this.listener
-					.uriRetrievalFininshed(new GraphAddedEvent(this, null));
+		Iterator it = this.listenerList.iterator();
+		while(it.hasNext()){
+			FindListener l = (FindListener) it.next();
+			l.uriRetrievalFininshed(new GraphAddedEvent(this, null));
 		}
+		*/
+		this.retrievalFinished = true;
+		if(this.listener != null){
+			this.listener.uriRetrievalFininshed(new GraphAddedEvent(this, null));
+			//this.listener = null;
+		}
+		
+		
 	}
 
 	/**
@@ -315,5 +348,18 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 	public List getUnretrievedURIs() {
 		return this.unretrievedURIs;
 	}
+	
+	public Graph asJenaGraph(Node defaultGraphForAdding){
+		return new SemWebMultiUnion(this);
+	}
+	
+	public void removeFindListener(){
+		this.listener = null;
+	}
+	
+	synchronized void addUriToRetrieve(String uri, int step){
+		this.urisToRetrieve.add(uri,step);
+	}
+
 
 }

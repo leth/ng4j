@@ -9,6 +9,7 @@ import java.util.NoSuchElementException;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
+import com.hp.hpl.jena.util.iterator.NiceIterator;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.Quad;
@@ -23,7 +24,7 @@ import de.fuberlin.wiwiss.ng4j.Quad;
  * @author Tobias Gauß
  * 
  */
-public class SemWebIterator implements Iterator, FindListener {
+public class SemWebIterator implements Iterator, FindListener  {
 
 	/**
 	 * The corresponding client.
@@ -64,6 +65,8 @@ public class SemWebIterator implements Iterator, FindListener {
 	 * The subject node.
 	 */
 	private Node s;
+	
+	private boolean retrievalFinished;
 
 	/**
 	 * Creates a SemWebIterator.
@@ -85,6 +88,10 @@ public class SemWebIterator implements Iterator, FindListener {
 		this.fillGraphList();
 		this.initIterator();
 		this.client.addFindListener(this);
+		if(this.client.retrievalFinished)
+			this.retrievalFinished = true;
+		else
+			this.retrievalFinished = false;
 	}
 
 	/**
@@ -130,11 +137,15 @@ public class SemWebIterator implements Iterator, FindListener {
 		boolean finished = false;
 		while (!finished) {
 			if (!this.iter.hasNext()) {
-				if (this.client.retrievalFinished)
+				if (this.retrievalFinished && this.graphList.isEmpty()){
 					return false;
+				}		
 				try {
-					this.wait();
-					this.replaceIterator(finished);
+					if(!this.replaceIterator(finished)){
+						this.wait();
+					if(!this.replaceIterator(finished))
+						return false;
+					}
 				} catch (Exception e) {
 					return false;
 				}
@@ -202,7 +213,8 @@ public class SemWebIterator implements Iterator, FindListener {
 	 * @param finished
 	 *            boolean
 	 */
-	synchronized public void replaceIterator(boolean finished) {
+	synchronized public boolean replaceIterator(boolean finished) {
+		boolean result = false;
 		if (!this.graphList.isEmpty()) {
 			NamedGraph graph = null;
 			boolean loop = true;
@@ -211,26 +223,29 @@ public class SemWebIterator implements Iterator, FindListener {
 			while (loop) {
 				if (this.getGraphList().isEmpty()) {
 					finished = true;
-					return;
+					return false;
 				}
 				String graphname = (String) this.graphList.getFirst();
 				graph = this.client.getGraph(graphname);
-				if (graph == null) {
-					finished = true;
-				} else if (graph.size() > 0) {
-					replace = true;
-					loop = false;
-				}
+				if (graph != null) {
+					if (graph.size() > 0) {
+						replace = true;
+						loop = false;
+					}
+				} 
 				this.removedList.add(this.graphList.getFirst());
 				this.graphList.removeFirst();
 			}
 			if (replace) {
 				this.iter = graph.find(this.s, this.p, this.o);
 				this.graph = graph.getGraphName();
+				return true;
 			}
 		} else {
 			finished = true;
+			return false;
 		}
+		return result;
 	}
 
 	/*
@@ -239,7 +254,36 @@ public class SemWebIterator implements Iterator, FindListener {
 	 * @see de.fuberlin.wiwiss.ng4j.semWebClient.FindListener#uriRetrievalFininshed(de.fuberlin.wiwiss.ng4j.semWebClient.GraphAddedEvent)
 	 */
 	synchronized public void uriRetrievalFininshed(GraphAddedEvent e) {
+		this.retrievalFinished = true;
 		this.notify();
 	}
+	
+//////////debug
+	/*
+	synchronized public ExtendedIterator filterKeep( Filter f ){
+		return NullIterator.instance;
+	}
+	synchronized public Object removeNext(){
+		return Object.class;
+	}
+	synchronized public ExtendedIterator mapWith( Map1 map1 ){
+		return NullIterator.instance;
+	}
+	synchronized public ExtendedIterator andThen( ClosableIterator other ){
+		return NullIterator.instance;
+	}
 
+	synchronized public Set toSet( ){
+		Set set=null;
+		return set;
+	}
+	synchronized public ExtendedIterator filterDrop( Filter f ){
+		return NullIterator.instance;
+	}
+
+	synchronized public List toList(){
+		List list=null;
+		return list;
+	}
+	*/
 }
