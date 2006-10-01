@@ -59,10 +59,7 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 		this.unretrievedURIs = Collections.synchronizedList(new ArrayList());
 		this.urisToRetrieve = new UriList();
 		this.urisToRetrieve.addListListener(this.retriever);
-		this.retrievalFinished = true;
-		// debug
-		
-		
+		this.retrievalFinished = true;	
 	}
 
 	/*
@@ -315,7 +312,6 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 	 *            The FindListener to add.
 	 */
 	public void addFindListener(FindListener listener) {
-		//this.listenerList.add(listener);
 		this.listener = listener;
 	}
 
@@ -323,18 +319,9 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 	 * Is performed when the retrieval is finished.
 	 */
 	public void retrievalFinished() {
-		/*
-		this.retrievalFinished = true;
-		Iterator it = this.listenerList.iterator();
-		while(it.hasNext()){
-			FindListener l = (FindListener) it.next();
-			l.uriRetrievalFininshed(new GraphAddedEvent(this, null));
-		}
-		*/
 		this.retrievalFinished = true;
 		if(this.listener != null){
 			this.listener.uriRetrievalFininshed(new GraphAddedEvent(this, null));
-			//this.listener = null;
 		}
 		
 		

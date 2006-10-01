@@ -11,8 +11,6 @@ import java.util.ArrayList;
  */
 public class UriList extends ArrayList {
 	private ListListener listener;
-	public int counta = 0;
-	public int countb = 0;
 
 	/**
 	 * Adds a new URI to the UriList. Returns true if the URI is succsessfully
@@ -38,7 +36,6 @@ public class UriList extends ArrayList {
 	 * @return
 	 */
 	synchronized public boolean add(String uri, int step) {
-		this.counta++;
 		this.listener.retrieveUri(new UriListEvent(this, uri, step));
 		return super.add(uri);
 		
@@ -60,7 +57,6 @@ public class UriList extends ArrayList {
 	 * @see java.util.Collection#remove(java.lang.Object)
 	 */
 	synchronized public boolean remove(Object o) {
-		this.countb++;
 		return super.remove(o);
 	}
 

@@ -9,7 +9,6 @@ import java.util.LinkedList;
  * 
  */
 public class ThreadList extends LinkedList {
-	public int countc = 0;
 
 	/**
 	 * Adds a Thread to the ThreadList and starts it
@@ -24,7 +23,6 @@ public class ThreadList extends LinkedList {
 	}
 	
 	public boolean remove (Object o){
-		countc++;
 		return super.remove(o);
 	}
 

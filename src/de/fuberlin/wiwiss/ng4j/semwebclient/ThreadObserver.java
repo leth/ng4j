@@ -157,8 +157,6 @@ public class ThreadObserver extends Thread {
 					}
 					this.finishedCheck();
 					this.threadlist.remove(connector);
-					//this.retriever.getClient().getUrisToRetrieve().remove(
-					//		connector.getUriString());
 					break;
 				}
 			}
@@ -172,7 +170,6 @@ public class ThreadObserver extends Thread {
 	 */
 	synchronized private void finishedCheck() {
 		if (this.threadlist.isEmpty() && (this.waitingThreads.isEmpty())) {
-		//if(this.retriever.getClient().getUrisToRetrieve().isEmpty()){
 			this.stopObserver();
 			this.retriever.retrievalFinished();	
 		}
@@ -228,8 +225,6 @@ public class ThreadObserver extends Thread {
 							&& !this.retriever.getClient().getRetrievedUris()
 									.contains(obj.getURI())&& !this.retriever.getClient().getUnretrievedURIs().contains(obj.getURI()))
 						this.retriever.getClient().addUriToRetrieve(obj.getURI(),step);
-						//this.retriever.getClient().getUrisToRetrieve().add(
-						//		obj.getURI(), step);
 				}
 			}
 		}
@@ -243,8 +238,6 @@ public class ThreadObserver extends Thread {
 		if (!this.waitingThreads.isEmpty()
 				&& this.threadlist.size() < this.retriever.getMaxthreads()) {
 			Thread t = (Thread) this.waitingThreads.getFirst();
-			//int i = this.waitingThreads.indexOf(t);
-			//this.waitingThreads.remove(i);
 			this.waitingThreads.remove(t);
 			this.threadlist.add(t);
 		}
@@ -282,8 +275,6 @@ public class ThreadObserver extends Thread {
 				UriConnector connector = (UriConnector) iter.next();
 				if (connector.isReady()) {
 					connector.wakeUp();
-					//this.retriever.getClient().getUrisToRetrieve().remove(
-					//		connector.getUriString());
 					this.retriever.getClient().getRetrievedUris().add(
 							connector.getUriString());
 					this.finishedCheck();
