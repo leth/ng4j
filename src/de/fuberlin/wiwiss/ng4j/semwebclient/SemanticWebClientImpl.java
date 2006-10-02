@@ -77,11 +77,12 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 		Node sub = t.getSubject();
 		Node pred = t.getPredicate();
 		Node obj = t.getObject();
-
+		this.inspectTriple(t, -1);
+		
 		SemWebIterator iter2 = new SemWebIterator(this, sub, pred, obj);
 		Iterator iter = this.findQuads(Node.ANY, sub, pred, obj);
 
-		this.inspectTriple(t, -1);
+		
 
 		while (iter.hasNext()) {
 			Quad quad = (Quad) iter.next();

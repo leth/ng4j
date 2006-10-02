@@ -124,8 +124,9 @@ public class SemWebIterator implements Iterator, FindListener  {
 		if (!this.removedList.contains(e.getGraphUri())
 				&& !this.graphList.contains(e.getGraphUri())) {
 			this.graphList.add(e.getGraphUri());
+			this.notify();
 		}
-		this.notify();
+		
 	}
 
 	/*
@@ -239,6 +240,7 @@ public class SemWebIterator implements Iterator, FindListener  {
 			if (replace) {
 				this.iter = graph.find(this.s, this.p, this.o);
 				this.graph = graph.getGraphName();
+				finished = true;
 				return true;
 			}
 		} else {
