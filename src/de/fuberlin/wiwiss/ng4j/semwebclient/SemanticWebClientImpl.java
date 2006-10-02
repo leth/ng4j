@@ -42,7 +42,8 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 
 	public boolean retrievalFinished;
 	
-	//private List listenerList = Collections.synchronizedList(new ArrayList());
+	//dbg
+	private List listenerList = Collections.synchronizedList(new ArrayList());
 
 	/**
 	 * Creates a Semantic Web Client.
@@ -67,9 +68,8 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 	 * @see de.fuberlin.wiwiss.ng4j.semWebClient.SemanticWebClient#find(com.hp.hpl.jena.graph.TripleMatch)
 	 */
 	public SemWebIterator find(TripleMatch pattern) {
-		while(!this.retrievalFinished){
-			
-		}
+	//	while(!this.retrievalFinished){
+	//	}
 		this.retriever.setTriplePattern(pattern);
 		Triple t = pattern.asTriple();
 
@@ -235,18 +235,18 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 	public void addGraph(NamedGraph graph) {
 		super.addGraph(graph);
 		
-		if (this.listener != null) {
-			this.listener.graphAdded(new GraphAddedEvent(this, graph.getGraphName().getURI()));
-		}
+	//	if (this.listener != null) {
+	//		this.listener.graphAdded(new GraphAddedEvent(this, graph.getGraphName().getURI()));
+	//	}
 		
-		/*
+		
 		String name = graph.getGraphName().getURI();
 		Iterator it = this.listenerList.iterator();
 		while(it.hasNext()){
 			FindListener l = (FindListener) it.next();
 			l.graphAdded(new GraphAddedEvent(this, name));
 		}
-		*/
+		
 		
 	}
 
@@ -318,18 +318,27 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 	 *            The FindListener to add.
 	 */
 	public void addFindListener(FindListener listener) {
-		this.listener = listener;
+		this.listenerList.add(listener);
+		//this.listener = listener;
 	}
 
 	/**
 	 * Is performed when the retrieval is finished.
 	 */
 	public void retrievalFinished() {
+		
 		this.retrievalFinished = true;
+		/*
 		if(this.listener != null){
 			this.listener.uriRetrievalFininshed(new GraphAddedEvent(this, null));
 		}
+		*/
 		
+		Iterator it = this.listenerList.iterator();
+		while(it.hasNext()){
+			FindListener l = (FindListener) it.next();
+			l.uriRetrievalFininshed(new GraphAddedEvent(this, null));
+		}
 		
 	}
 
