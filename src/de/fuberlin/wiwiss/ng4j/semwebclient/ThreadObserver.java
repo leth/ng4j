@@ -155,7 +155,7 @@ public class ThreadObserver extends Thread {
 								new RetrieveResult(connector.getUriString(),
 										"unable to connect"));
 					}
-					this.finishedCheck();
+					//this.finishedCheck();
 					this.threadlist.remove(connector);
 					break;
 				}

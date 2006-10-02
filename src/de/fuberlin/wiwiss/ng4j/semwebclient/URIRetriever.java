@@ -44,7 +44,6 @@ public class URIRetriever implements ListListener {
 	 *            the corresponding SemanticWebClient.
 	 */
 	public URIRetriever(SemanticWebClientImpl client) {
-		count = 0;
 		this.client = client;
 		//this.observer = new ThreadObserver(this);
 	}
@@ -55,8 +54,6 @@ public class URIRetriever implements ListListener {
 	 * @see de.fuberlin.wiwiss.ng4j.semWebClient.ListListener#retrieveUri(de.fuberlin.wiwiss.ng4j.semWebClient.UriListEvent)
 	 */
 	public void retrieveUri(UriListEvent e) {
-	//	System.out.println("uris: "+this.getClient().getUrisToRetrieve().counta);
-	//	System.out.println(this.observer.threadlist.countc);
 		String uri = e.getUri();
 		int step = e.getStep();
 		this.derefUri(uri, step);
