@@ -30,52 +30,51 @@ public interface TriQLParserConstants {
   int FOR = 33;
   int STR_EQ = 34;
   int STR_NE = 35;
-  int METRIC = 36;
-  int COUNT = 37;
-  int BOOLEAN_LITERAL = 38;
-  int NULL_LITERAL = 39;
-  int DIGITS = 40;
-  int NCName = 41;
-  int LPAREN = 42;
-  int RPAREN = 43;
-  int LBRACE = 44;
-  int RBRACE = 45;
-  int LBRACKET = 46;
-  int RBRACKET = 47;
-  int SEMICOLON = 48;
-  int COMMA = 49;
-  int DOT = 50;
-  int ASSIGN = 51;
-  int GT = 52;
-  int LT = 53;
-  int BANG = 54;
-  int TILDE = 55;
-  int HOOK = 56;
-  int COLON = 57;
-  int EQ = 58;
-  int NEQ = 59;
-  int LE = 60;
-  int GE = 61;
-  int SC_OR = 62;
-  int SC_AND = 63;
-  int INCR = 64;
-  int DECR = 65;
-  int PLUS = 66;
-  int MINUS = 67;
-  int STAR = 68;
-  int SLASH = 69;
-  int BIT_AND = 70;
-  int BIT_OR = 71;
-  int BIT_XOR = 72;
-  int REM = 73;
-  int LSHIFT = 74;
-  int RSIGNEDSHIFT = 75;
-  int RUNSIGNEDSHIFT = 76;
-  int STR_MATCH = 77;
-  int STR_NMATCH = 78;
-  int DATATYPE = 79;
-  int AT = 80;
-  int PATTERN = 81;
+  int COUNT = 36;
+  int BOOLEAN_LITERAL = 37;
+  int NULL_LITERAL = 38;
+  int DIGITS = 39;
+  int NCName = 40;
+  int LPAREN = 41;
+  int RPAREN = 42;
+  int LBRACE = 43;
+  int RBRACE = 44;
+  int LBRACKET = 45;
+  int RBRACKET = 46;
+  int SEMICOLON = 47;
+  int COMMA = 48;
+  int DOT = 49;
+  int ASSIGN = 50;
+  int GT = 51;
+  int LT = 52;
+  int BANG = 53;
+  int TILDE = 54;
+  int HOOK = 55;
+  int COLON = 56;
+  int EQ = 57;
+  int NEQ = 58;
+  int LE = 59;
+  int GE = 60;
+  int SC_OR = 61;
+  int SC_AND = 62;
+  int INCR = 63;
+  int DECR = 64;
+  int PLUS = 65;
+  int MINUS = 66;
+  int STAR = 67;
+  int SLASH = 68;
+  int BIT_AND = 69;
+  int BIT_OR = 70;
+  int BIT_XOR = 71;
+  int REM = 72;
+  int LSHIFT = 73;
+  int RSIGNEDSHIFT = 74;
+  int RUNSIGNEDSHIFT = 75;
+  int STR_MATCH = 76;
+  int STR_NMATCH = 77;
+  int DATATYPE = 78;
+  int AT = 79;
+  int PATTERN = 80;
 
   int DEFAULT = 0;
   int READ_IDENTIFIER = 1;
@@ -122,7 +121,6 @@ public interface TriQLParserConstants {
     "\"for\"",
     "\"eq\"",
     "\"ne\"",
-    "\"metric\"",
     "\"count\"",
     "<BOOLEAN_LITERAL>",
     "\"null\"",

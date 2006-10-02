@@ -179,7 +179,6 @@ TOKEN [IGNORE_CASE] :
   < FOR:         "for" >
 | < STR_EQ: "eq" >
 | < STR_NE: "ne" >
-| < METRIC: "metric" >
 | < COUNT: "count" >
 }
 
@@ -588,18 +587,9 @@ void UnaryExpressionNotPlusMinus() #void :
   PrimaryExpression()
 }
 
-// TriQL.P metrics -- not necessary for vanilla TriQL!
-void MetricExpression() :
-{}
-{
-  <METRIC> <LPAREN> URI() ( <COMMA> Expression() )* <RPAREN>
-}
-
 void PrimaryExpression() #void :
 {}
 {
-  MetricExpression()		// Only for TriQL.P metrics
-|						// Only for TriQL.P metrics
   Var()
 |
   Literal()
