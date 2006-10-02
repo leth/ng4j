@@ -9,6 +9,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
@@ -36,14 +39,14 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 
 	private URIRetriever retriever;
 
-	private FindListener listener = null;
-
 	private List unretrievedURIs;
 
 	public boolean retrievalFinished;
 
 	//dbg
 	private List listenerList = Collections.synchronizedList(new ArrayList());
+
+	private Log log = LogFactory.getLog(SemanticWebClientImpl.class);
 
 	/**
 	 * Creates a Semantic Web Client.
@@ -232,7 +235,6 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 		//	if (this.listener != null) {
 		//		this.listener.graphAdded(new GraphAddedEvent(this, graph.getGraphName().getURI()));
 		//	}
-
 		String name = graph.getGraphName().getURI();
 		Iterator it = this.listenerList.iterator();
 		while (it.hasNext()) {
@@ -294,11 +296,7 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 	
 	synchronized void inspectNode(Node n, int step){
 		if (n.isURI()) {
-			if (!this.markedUris.contains(n.getURI())) {
-				this.markedUris.add(n.getURI(), step);
-				this.retrievalFinished = false;
-				
-			}
+			addUriToRetrieve(n.getURI(), step);
 		}
 		if (n.isURI()||n.isBlank()){
 			this.retriever.getObserver().checkSeeAlso(this,n,step);
@@ -315,6 +313,11 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 		this.listenerList.add(listener);
 		//this.listener = listener;
 	}
+
+	public void removeFindListener(FindListener listener) {
+		this.listenerList.remove(listener);
+	}
+
 
 	/**
 	 * Is performed when the retrieval is finished.
@@ -349,12 +352,17 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 		return new SemWebMultiUnion(this);
 	}
 
-	public void removeFindListener() {
-		this.listener = null;
-	}
-
 	synchronized void addUriToRetrieve(String uri, int step) {
+		if (this.markedUris.contains(uri)) {
+			// already retrieved or in queue, don't queue again
+			return;
+		}
+		if (step > this.retriever.getMaxsteps()) {
+			this.log.debug("Ignored (maxsteps reached): " + uri);
+			return;
+		}
+		this.log.debug("Queued (" + step + " steps): " + uri);
 		this.markedUris.add(uri, step);
+		this.retrievalFinished = false;
 	}
-
 }

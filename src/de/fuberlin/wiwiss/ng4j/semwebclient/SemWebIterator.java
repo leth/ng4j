@@ -9,7 +9,6 @@ import java.util.NoSuchElementException;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.util.iterator.NiceIterator;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.Quad;
@@ -126,7 +125,6 @@ public class SemWebIterator implements Iterator, FindListener  {
 			this.graphList.add(e.getGraphUri());
 			this.notify();
 		}
-		
 	}
 
 	/*
@@ -142,10 +140,11 @@ public class SemWebIterator implements Iterator, FindListener  {
 					return false;
 				}		
 				try {
-					if(!this.replaceIterator(finished)){
+					if (!this.replaceIterator(finished)) {
 						this.wait();
-					if(!this.replaceIterator(finished))
-						return false;
+						if(!this.replaceIterator(finished)) {
+							return false;
+						}
 					}
 				} catch (Exception e) {
 					return false;

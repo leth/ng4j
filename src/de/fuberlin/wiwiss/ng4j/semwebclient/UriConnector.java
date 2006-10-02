@@ -1,13 +1,11 @@
 package de.fuberlin.wiwiss.ng4j.semwebclient;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.hp.hpl.jena.rdf.model.impl.RDFDefaultErrorHandler;
 
@@ -23,6 +21,11 @@ import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
  * @author Tobias Gauß
  */
 public class UriConnector extends Thread {
+	private final static int STATUS_OK = 1;
+	private final static int STATUS_PARSING_FAILED = -1;
+	private final static int STATUS_MALFORMED_URL = -2;
+	private final static int STATUS_UNABLE_TO_CONNECT = -3;
+	
 	/**
 	 * The connection.
 	 */
@@ -64,8 +67,7 @@ public class UriConnector extends Thread {
 	protected String uri;
 
 	/**
-	 * URI retrieval status: 1 = uri retrieved 0 = retrieval aborted -1 = unable
-	 * to parse -2 = malformed url -3 = unable to connect
+	 * One of the STATUS_XXX constants
 	 */
 	private int uriRetrieved;
 
@@ -74,6 +76,8 @@ public class UriConnector extends Thread {
 	 */
 	protected URL url;
 
+	private Log log = LogFactory.getLog(UriConnector.class);
+	
 	/**
 	 * Generates the UriConnector.
 	 * 
@@ -94,7 +98,7 @@ public class UriConnector extends Thread {
 			this.url = new URL(uri);
 		} catch (MalformedURLException e) {
 			this.url = null;
-			this.uriRetrieved = -2;
+			this.uriRetrieved = STATUS_MALFORMED_URL;
 			this.stopped = true;
 		}
 	}
@@ -155,9 +159,10 @@ public class UriConnector extends Thread {
 
 			this.tempNgs.read(this.connection.getInputStream(), lang, this.url
 					.toString());
-			this.uriRetrieved = 1;
+			this.uriRetrieved = STATUS_OK;
 		} catch (Exception e) {
-			this.uriRetrieved = -1;
+			this.log.debug(e.getMessage());
+			this.uriRetrieved = STATUS_PARSING_FAILED;
 		}
 	}
 
@@ -172,7 +177,7 @@ public class UriConnector extends Thread {
 
 	public void run() {
 		this.isReady = false;
-		if (!this.stopped && !(this.step >= this.retriever.getMaxsteps())) {
+		if (!this.stopped) {
 			try {
 				// application/rdf+xml;q=1.0, */*;q=0.5
 				this.connection = (HttpURLConnection) this.url.openConnection();
@@ -184,6 +189,8 @@ public class UriConnector extends Thread {
 				this.connection.addRequestProperty("accept", "application/xml");
 				this.connection.addRequestProperty("accept", "text/rdf+n3");
 				//this.connection.addRequestProperty("accept", "text/html");
+
+				this.log.debug(this.connection.getResponseCode() + " " + this.url + " (" + this.connection.getContentType() + ")");
 				
 				String type = this.connection.getContentType();
 				
@@ -208,20 +215,20 @@ public class UriConnector extends Thread {
 					} else {
 						lang = "default";
 					}
-					if (lang != null)
+					if (lang != null) {
 						this.parseRdf(lang);
+					}
 				} else {
-					this.uriRetrieved = -3;
+					this.uriRetrieved = STATUS_UNABLE_TO_CONNECT;
 					this.responseCode = this.connection.getResponseCode();
 				}
 			} catch (Exception e) {
-				this.uriRetrieved = -1;
+				this.log.debug(e.getMessage());
+				this.uriRetrieved = STATUS_PARSING_FAILED;
 			}
 		}
-		if (this.step >= this.retriever.getMaxsteps()) {
-			this.uriRetrieved = 0;
-		}
 		this.isReady = true;
+		this.log.debug("Ready & sleeping");
 		synchronized (this) {
 			try {
 				this.wait();
@@ -229,6 +236,7 @@ public class UriConnector extends Thread {
 				
 			}
 		}
+		this.log.debug("Done");
 	}
 
 	/**

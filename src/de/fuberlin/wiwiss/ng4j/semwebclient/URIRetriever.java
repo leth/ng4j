@@ -34,7 +34,6 @@ public class URIRetriever implements ListListener {
 	 */
 	private TripleMatch triple = null;
 
-	
 	public int count;
 	
 	/**
@@ -162,11 +161,10 @@ public class URIRetriever implements ListListener {
 		this.observer.start();
 	}
 	
-	
-
 	public void close() {
 		this.observer.stopObserver();
 	}
+	
 	public ThreadObserver getObserver(){
 		return this.observer;
 	}

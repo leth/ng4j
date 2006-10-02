@@ -88,8 +88,6 @@ public class ThreadObserver extends Thread {
 	synchronized public void addThread(Thread t) {
 		if (!this.stopped){
 			this.waitingThreads.add(t);
-			UriConnector c = (UriConnector) t;
-			//this.lookupNgs(this.retriever.getClient(),c.getUriString(),c.getStep());
 		}
 	}
 
@@ -108,8 +106,9 @@ public class ThreadObserver extends Thread {
 		Iterator it = ngs.listGraphs();
 		while (it.hasNext()) {
 			NamedGraph g = (NamedGraph) it.next();
-			if (g.size() > 0)
+			if (g.size() > 0) {
 				this.retriever.getClient().addGraph(g);
+			}
 			this.addProvenanceInformation(connector.getUriString());
 		}
 		this.checkSeeAlso(ngs, Node.createURI(connector.getUriString()), connector.getStep());
@@ -122,8 +121,9 @@ public class ThreadObserver extends Thread {
 	 */
 	synchronized private void checkTime() {
 		long now = Calendar.getInstance().getTimeInMillis();
-		if ((now - this.started) > this.retriever.getTimeout())
+		if ((now - this.started) > this.retriever.getTimeout()) {
 			this.stopObserver();
+		}
 	}
 
 	/**
@@ -131,41 +131,39 @@ public class ThreadObserver extends Thread {
 	 * addToGraphset method and removes the finished Threads from the list.
 	 */
 	synchronized private void clearThreads() {
-		if (!this.threadlist.isEmpty()) {
-			Iterator iter = this.threadlist.iterator();
-			while (iter.hasNext()) {
-				UriConnector connector = (UriConnector) iter.next();
-				if (connector.isReady()) {
-					this.addToGraphset(connector);
-
-					connector.wakeUp();
-					
-					if (connector.uriRetrieved() == 1) {
-						this.retriever.getClient().getRetrievedUris().add(
-								connector.getUriString());
-					} else if (connector.uriRetrieved() == -1) {
-						// unable to parse
-						this.retriever.getClient().getUnretrievedURIs().add(
-								new RetrieveResult(connector.getUriString(),
-										"unable to parse"));
-					} else if (connector.uriRetrieved() == -2) {
-						// malformed URL
-						this.retriever.getClient().getUnretrievedURIs().add(
-								new RetrieveResult(connector.getUriString(),
-										"malformed URL"));
-					} else if (connector.uriRetrieved() == -3) {
-						// unable to connect
-						this.retriever.getClient().getUnretrievedURIs().add(
-								new RetrieveResult(connector.getUriString(),
-										"unable to connect"));
-					}
-					//this.finishedCheck();
-					this.threadlist.remove(connector);
-					break;
-				}
+		Iterator iter = this.threadlist.iterator();
+		while (iter.hasNext()) {
+			UriConnector connector = (UriConnector) iter.next();
+			if (!connector.isReady()) {
+				continue;
 			}
+			this.addToGraphset(connector);
+			connector.wakeUp();
+			
+			if (connector.uriRetrieved() == 1) {
+				this.retriever.getClient().getRetrievedUris().add(
+						connector.getUriString());
+			} else if (connector.uriRetrieved() == -1) {
+				// unable to parse
+				this.retriever.getClient().getUnretrievedURIs().add(
+						new RetrieveResult(connector.getUriString(),
+								"unable to parse"));
+			} else if (connector.uriRetrieved() == -2) {
+				// malformed URL
+				this.retriever.getClient().getUnretrievedURIs().add(
+						new RetrieveResult(connector.getUriString(),
+								"malformed URL"));
+			} else if (connector.uriRetrieved() == -3) {
+				// unable to connect
+				this.retriever.getClient().getUnretrievedURIs().add(
+						new RetrieveResult(connector.getUriString(),
+								"unable to connect"));
+			}
+			//this.finishedCheck();
+			this.threadlist.remove(connector);
+			break;
 		}
-		this.finishedCheck();
+		this.finishedCheck();		// TODO necessary here?
 	}
 
 	/**
@@ -223,8 +221,7 @@ public class ThreadObserver extends Thread {
 				Quad quad = (Quad) iter.next();
 				Node obj = quad.getObject();
 				if (obj.isURI()) {
-					if (!this.retriever.getClient().getUrisToRetrieve().contains(obj.getURI()))
-						this.retriever.getClient().addUriToRetrieve(obj.getURI(),step);
+					this.retriever.getClient().addUriToRetrieve(obj.getURI(),step);
 				}
 			}
 		}
@@ -255,6 +252,7 @@ public class ThreadObserver extends Thread {
 			this.checkTime();
 			this.finishedCheck();
 		}
+		this.retriever.retrievalFinished();
 		this.stopThreads();
 	}
 
