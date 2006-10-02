@@ -1,4 +1,4 @@
-// $Id: SemanticWebClient.java,v 1.5 2006/10/01 19:06:11 tgauss Exp $
+// $Id: SemanticWebClient.java,v 1.6 2006/10/02 11:32:16 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.semwebclient;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
@@ -46,6 +46,10 @@ import com.hp.hpl.jena.graph.Node;
  */
 public interface SemanticWebClient extends NamedGraphSet {
 
+	public String CONFIG_MAXSTEPS = "maxsteps";
+	public String CONFIG_MAXTHREADS = "maxthreads";
+	public String CONFIG_TIMEOUT = "timeout";
+	
 	/**
 	 * Finds Triples that match a triple pattern. The argument may contain
 	 * wildcards ({@link Node#ANY}).

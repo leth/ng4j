@@ -13,7 +13,6 @@ import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.graph.TripleMatch;
-import com.hp.hpl.jena.util.iterator.WrappedIterator;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.Quad;
@@ -25,11 +24,11 @@ import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
  */
 public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 		SemanticWebClient {
-	public static final int MAXSTEPS_DEFAULT = 3;
+	private static final int MAXSTEPS_DEFAULT = 3;
 
-	public static final int MAXTHREADS_DEFAULT = 30;
+	private static final int MAXTHREADS_DEFAULT = 30;
 
-	public static final long TIMEOUT_DEFAULT = 30000;
+	private static final long TIMEOUT_DEFAULT = 30000;
 
 	private List retrievedUris;
 
@@ -153,30 +152,39 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 	 *      java.lang.Object)
 	 */
 	public void setConfig(String option, String value) {
-		if (option.equals("maxsteps")) {
+		if (option.equals(SemanticWebClient.CONFIG_MAXSTEPS)) {
 			int val;
 			try {
 				val = Integer.parseInt(value);
 			} catch (NumberFormatException e) {
-				val = MAXSTEPS_DEFAULT;
+				throw new IllegalArgumentException(
+						"value '" + value + "' for config " + 
+						SemanticWebClient.CONFIG_MAXSTEPS + 
+						" is not numeric");
 			}
 			this.retriever.setMaxsteps(val);
 		}
-		if (option.equals("maxthreads")) {
+		if (option.equals(SemanticWebClient.CONFIG_MAXTHREADS)) {
 			int val;
 			try {
 				val = Integer.parseInt(value);
 			} catch (NumberFormatException e) {
-				val = MAXTHREADS_DEFAULT;
+				throw new IllegalArgumentException(
+						"value '" + value + "' for config " + 
+						SemanticWebClient.CONFIG_MAXTHREADS + 
+						" is not numeric");
 			}
 			this.retriever.setMaxthreads(val);
 		}
-		if (option.equals("timeout")) {
+		if (option.equals(SemanticWebClient.CONFIG_TIMEOUT)) {
 			long val;
 			try {
 				val = Long.parseLong(value);
 			} catch (NumberFormatException e) {
-				val = TIMEOUT_DEFAULT;
+				throw new IllegalArgumentException(
+						"value '" + value + "' for config " + 
+						SemanticWebClient.CONFIG_TIMEOUT + 
+						" is not numeric");
 			}
 			this.retriever.setTimeout(val);
 		}
@@ -189,11 +197,11 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 	 */
 	public String getConfig(String option) {
 		String value = null;
-		if (option.toLowerCase().equals("maxsteps"))
+		if (option.toLowerCase().equals(SemanticWebClient.CONFIG_MAXSTEPS))
 			value = String.valueOf(this.retriever.getMaxsteps());
-		if (option.toLowerCase().equals("maxthreads"))
+		if (option.toLowerCase().equals(SemanticWebClient.CONFIG_MAXTHREADS))
 			value = String.valueOf(this.retriever.getMaxthreads());
-		if (option.toLowerCase().equals("timeout"))
+		if (option.toLowerCase().equals(SemanticWebClient.CONFIG_TIMEOUT))
 			value = String.valueOf(this.retriever.getTimeout());
 
 		return value;
