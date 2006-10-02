@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.graph.TripleMatch;
+import com.hp.hpl.jena.vocabulary.RDFS;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
@@ -85,8 +86,11 @@ public class ThreadObserver extends Thread {
 	 *            The thread to add.
 	 */
 	synchronized public void addThread(Thread t) {
-		if (!this.stopped)
+		if (!this.stopped){
 			this.waitingThreads.add(t);
+			UriConnector c = (UriConnector) t;
+			//this.lookupNgs(this.retriever.getClient(),c.getUriString(),c.getStep());
+		}
 	}
 
 	/**
@@ -97,8 +101,8 @@ public class ThreadObserver extends Thread {
 	 *            The URIConnector which contains the retrieved data.
 	 */
 	synchronized private void addToGraphset(UriConnector connector) {
-		this.lookupNgs(this.retriever.getClient(), connector.getUriString(),
-				connector.getStep());
+		//this.checkSeeAlso(this.retriever.getClient(), Node.createURI(connector.getUriString()),
+		//		connector.getStep());
 		NamedGraphSet ngs = connector.getNgs();
 
 		Iterator it = ngs.listGraphs();
@@ -108,7 +112,7 @@ public class ThreadObserver extends Thread {
 				this.retriever.getClient().addGraph(g);
 			this.addProvenanceInformation(connector.getUriString());
 		}
-		this.lookupNgs(ngs, connector.getUriString(), connector.getStep());
+		this.checkSeeAlso(ngs, Node.createURI(connector.getUriString()), connector.getStep());
 		this.inspectNgs(ngs, connector.getStep());
 
 	}
@@ -211,10 +215,9 @@ public class ThreadObserver extends Thread {
 	 * @param step
 	 *            The retrieval step.
 	 */
-	synchronized private void lookupNgs(NamedGraphSet ngs, String uri, int step) {
+	synchronized public void checkSeeAlso(NamedGraphSet ngs, Node n, int step) {
 		synchronized (this) {
-			Iterator iter = ngs.findQuads(Node.ANY, Node.createURI(uri), Node
-					.createURI("http://www.w3.org/2000/01/rdf-schema#seeAlso"),
+			Iterator iter = ngs.findQuads(Node.ANY, n, RDFS.seeAlso.asNode(),
 					Node.ANY);
 			while (iter.hasNext()) {
 				Quad quad = (Quad) iter.next();

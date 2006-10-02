@@ -162,9 +162,13 @@ public class URIRetriever implements ListListener {
 		this.observer.start();
 	}
 	
+	
 
 	public void close() {
 		this.observer.stopObserver();
+	}
+	public ThreadObserver getObserver(){
+		return this.observer;
 	}
 
 }
