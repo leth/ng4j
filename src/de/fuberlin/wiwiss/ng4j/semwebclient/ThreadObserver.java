@@ -220,10 +220,7 @@ public class ThreadObserver extends Thread {
 				Quad quad = (Quad) iter.next();
 				Node obj = quad.getObject();
 				if (obj.isURI()) {
-					if (!this.retriever.getClient().getUrisToRetrieve()
-							.contains(obj.getURI())
-							&& !this.retriever.getClient().getRetrievedUris()
-									.contains(obj.getURI())&& !this.retriever.getClient().getUnretrievedURIs().contains(obj.getURI()))
+					if (!this.retriever.getClient().getUrisToRetrieve().contains(obj.getURI()))
 						this.retriever.getClient().addUriToRetrieve(obj.getURI(),step);
 				}
 			}

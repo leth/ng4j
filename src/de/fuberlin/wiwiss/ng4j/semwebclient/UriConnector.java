@@ -1,8 +1,13 @@
 package de.fuberlin.wiwiss.ng4j.semwebclient;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.hp.hpl.jena.rdf.model.impl.RDFDefaultErrorHandler;
 
@@ -169,6 +174,7 @@ public class UriConnector extends Thread {
 		this.isReady = false;
 		if (!this.stopped && !(this.step >= this.retriever.getMaxsteps())) {
 			try {
+				// application/rdf+xml;q=1.0, */*;q=0.5
 				this.connection = (HttpURLConnection) this.url.openConnection();
 				this.connection.addRequestProperty("accept",
 						"application/rdf+xml");
@@ -177,7 +183,11 @@ public class UriConnector extends Thread {
 				this.connection.addRequestProperty("accept", "text/plain");
 				this.connection.addRequestProperty("accept", "application/xml");
 				this.connection.addRequestProperty("accept", "text/rdf+n3");
-				if (this.connection.getContentType() != null) {
+				//this.connection.addRequestProperty("accept", "text/html");
+				
+				String type = this.connection.getContentType();
+				
+				if (type != null) {
 					// ToDo Http 303
 					// this.retriever.getClient().addRemoteGraph();
 					// Map keymap = this.connection.getHeaderFields();
@@ -185,21 +195,12 @@ public class UriConnector extends Thread {
 					String lang = null;
 
 					// /////////dbug
-					// String type = this.connection.getContentType();
-					// String site = null;
-					// if (type.equals("text/html")){
+					
+				//	if (type.equals("text/html")){
+				//		this.parseHTML();
+				//	}
 
-					// InputStream stream = this.connection.getInputStream();
-					// BufferedReader br = new BufferedReader(new
-					// InputStreamReader(stream));
-					// StringBuffer sb = new StringBuffer();
-					// String line = null;
-
-					// while ((line = br.readLine()) != null) {
-					// sb.append(line + "\n");
-					// }
-					// site = sb.toString();
-					// }
+					
 					// ////////////////////
 					if (this.connection.getContentType().startsWith(
 							"application/rdf+xml")) {
@@ -259,5 +260,31 @@ public class UriConnector extends Thread {
 	synchronized public void wakeUp() {
 		this.notify();
 	}
+	/*
+	public void parseHTML(){
+		 String site = null;
+		 try{
+		 InputStream stream = this.connection.getInputStream();
+		 BufferedReader br = new BufferedReader(new
+		 InputStreamReader(stream));
+		 StringBuffer sb = new StringBuffer();
+		 String line = null;
+
+		 while ((line = br.readLine()) != null) {
+		 sb.append(line + "\n");
+		 }
+		 site = sb.toString();
+		 Pattern p = Pattern.compile("<link\\s*rel");
+		 Matcher match = p.matcher(site);
+		 int start = match.start(1);
+		 int end   = match.end(1);
+		
+	}catch(Exception e){
+		System.out.println(e.getLocalizedMessage());
+	}
+	int i = 0;
+	i++;
+	}
+	*/
 
 }

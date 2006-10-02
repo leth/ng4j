@@ -101,7 +101,7 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 	 */
 	public void find(TripleMatch pattern, TripleListener listener) {
 		this.retriever.setTriplePattern(pattern);
-		this.retrievalFinished = false;
+		//this.retrievalFinished = false;
 		Triple t = pattern.asTriple();
 
 		Node sub = t.getSubject();
@@ -286,20 +286,17 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 		Node obj = t.getObject();
 
 		if (sub.isURI()) {
-			if (!this.urisToRetrieve.contains(sub.getURI())
-					&& !this.retrievedUris.contains(sub.getURI()) && !this.unretrievedURIs.contains(sub.getURI())){
+			if (!this.urisToRetrieve.contains(sub.getURI())){
 				this.urisToRetrieve.add(sub.getURI(), step);
 			this.retrievalFinished = false;}
 		}
 		if (pred.isURI()) {
-			if (!this.urisToRetrieve.contains(pred.getURI())
-					&& !this.retrievedUris.contains(pred.getURI())&& !this.unretrievedURIs.contains(pred.getURI())){
+			if (!this.urisToRetrieve.contains(pred.getURI())){
 				this.urisToRetrieve.add(pred.getURI(), step);
 			this.retrievalFinished = false;}
 		}
 		if (obj.isURI()) {
-			if (!this.urisToRetrieve.contains(obj.getURI())
-					&& !this.retrievedUris.contains(obj.getURI())&& !this.unretrievedURIs.contains(obj.getURI())){
+			if (!this.urisToRetrieve.contains(obj.getURI())){
 				this.urisToRetrieve.add(obj.getURI(), step);
 			this.retrievalFinished = false;}
 		}
