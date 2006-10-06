@@ -266,6 +266,10 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 	public Graph asJenaGraph(Node defaultGraphForAdding) {
 		return new SemWebMultiUnion(this);
 	}
+	
+	public synchronized void addGraph(NamedGraph graph){
+		super.addGraph(graph);
+	}
 
 	public synchronized boolean requestDereferencing(String uri, int step,
 			final DereferencingListener listener) {
