@@ -1,17 +1,13 @@
 package de.fuberlin.wiwiss.ng4j.semwebclient;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
-import de.fuberlin.wiwiss.ng4j.Quad;
 
 /**
  * A Semantic Web Client Iterator which is returned from the find(TripleMatch
@@ -23,268 +19,91 @@ import de.fuberlin.wiwiss.ng4j.Quad;
  * @author Tobias Gauß
  * 
  */
-public class SemWebIterator implements Iterator, FindListener  {
+public class SemWebIterator implements Iterator {
+	private LinkedList graphQueue = new LinkedList();
+	private Iterator currentIterator = null;
+	private Node currentGraphName = null;
+	private Triple pattern;
+	private Triple nextTriple = null;
+	private boolean noMoreGraphs = false;
+	private FindQuery findQuery;
 
-	/**
-	 * The corresponding client.
-	 */
-	private SemanticWebClientImpl client;
+	public SemWebIterator(FindQuery observer, Triple pattern) {
+		this.findQuery = observer;
+		this.pattern = pattern;
+	}
 
-	/**
-	 * The current graph.
-	 */
-	private Node graph = null;
-
-	/**
-	 * A LinkedList which contains all graphs to inspect.
-	 */
-	private LinkedList graphList = new LinkedList();
-
-	/**
-	 * The current iterator.
-	 */
-	private Iterator iter;
-
-	/**
-	 * The object node.
-	 */
-	private Node o;
-
-	/**
-	 * The predicate node.
-	 */
-	private Node p;
-
-	/**
-	 * A List wich contains graphs which has already been inspected.
-	 */
-	private List removedList = Collections.synchronizedList(new ArrayList());
-
-	/**
-	 * The subject node.
-	 */
-	private Node s;
+	public synchronized void queueNamedGraphs(Iterator graphs) {
+		while (graphs.hasNext()) {
+			NamedGraph graph = (NamedGraph) graphs.next();
+			this.graphQueue.addLast(graph);
+		}
+		notify();
+	}
 	
-	private boolean retrievalFinished;
-
-	/**
-	 * Creates a SemWebIterator.
-	 * 
-	 * @param client
-	 *            The corresponding SemanticWebClient.
-	 * @param s
-	 *            The subject node.
-	 * @param p
-	 *            The predicate node.
-	 * @param o
-	 *            The object node.
-	 */
-	public SemWebIterator(SemanticWebClientImpl client, Node s, Node p, Node o) {
-		this.client = client;
-		this.s = s;
-		this.p = p;
-		this.o = o;
-		this.fillGraphList();
-		this.initIterator();
-		this.client.addFindListener(this);
-		if(this.client.retrievalFinished)
-			this.retrievalFinished = true;
-		else
-			this.retrievalFinished = false;
+	public synchronized void noMoreGraphs() {
+		this.noMoreGraphs = true;
+		notify();
 	}
 
-	/**
-	 * Fills the graphlist with graphs wich have been in the NamedGraphSet
-	 * before the retrieval started.
-	 */
-	synchronized private void fillGraphList() {
-		Iterator iter = this.client.listGraphs();
-		while (iter.hasNext()) {
-			NamedGraph g = (NamedGraph) iter.next();
-			this.graphList.add(g.getGraphName().getURI());
+	public boolean hasNext() {
+		if (this.nextTriple == null) {
+			this.nextTriple = tryFetchNextTriple();
 		}
+		return this.nextTriple != null;
 	}
-
-	/**
-	 * Returns the graphlist.
-	 * 
-	 * @return List
-	 */
-	public List getGraphList() {
-		return this.graphList;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.fuberlin.wiwiss.ng4j.semWebClient.FindListener#graphAdded(de.fuberlin.wiwiss.ng4j.semWebClient.GraphAddedEvent)
-	 */
-	synchronized public void graphAdded(GraphAddedEvent e) {
-		if (!this.removedList.contains(e.getGraphUri())
-				&& !this.graphList.contains(e.getGraphUri())) {
-			this.graphList.add(e.getGraphUri());
-			this.notify();
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.Iterator#hasNext()
-	 */
-	synchronized public boolean hasNext() {
-		boolean finished = false;
-		while (!finished) {
-			if (!this.iter.hasNext()) {
-				if (this.retrievalFinished && this.graphList.isEmpty()){
-					return false;
-				}		
-				try {
-					if (!this.replaceIterator(finished)) {
-						this.wait();
-						if(!this.replaceIterator(finished)) {
-							return false;
-						}
-					}
-				} catch (Exception e) {
-					return false;
-				}
-			} else {
-				return true;
+	
+	private synchronized Triple tryFetchNextTriple() {		
+		while (true) {
+			if (this.currentIterator != null && this.currentIterator.hasNext()) {
+				return createSemWebTriple((Triple) this.currentIterator.next());
+			}
+			if (!this.graphQueue.isEmpty()) {
+				NamedGraph graph = (NamedGraph) this.graphQueue.removeFirst();
+				this.currentIterator = graph.find(this.pattern);
+				this.currentGraphName = graph.getGraphName();
+				continue;
+			}
+			if (this.noMoreGraphs) {
+				return null;
+			}
+			try {
+				this.wait();
+			} catch (InterruptedException ex) {
+				// We don't know when this happens
+				throw new RuntimeException(ex);
 			}
 		}
-		return this.iter.hasNext();
-
 	}
 
-	/**
-	 * Initiates an Iterator.
-	 */
-	synchronized private void initIterator() {
-		String graphname = (String) this.graphList.getFirst();
-		NamedGraph g = this.client.getGraph(graphname);
-		this.graph = g.getGraphName();
-		this.iter = g.find(this.s, this.p, this.o);
-		this.removedList.add(this.graphList.getFirst());
-		this.graphList.removeFirst();
+	private SemWebTriple createSemWebTriple(Triple t) {
+		return new SemWebTriple(t, this.currentGraphName);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.Iterator#next()
-	 */
-	synchronized public Object next() {
-		if (this.hasNext()) {
-			SemWebTriple triple = null;
-
-			if (this.graph == null) {
-				Quad q = (Quad) this.iter.next();
-				triple = new SemWebTriple(q.getSubject(), q.getPredicate(), q
-						.getObject());
-				triple.setSource(q.getGraphName());
-			} else {
-				Triple t = (Triple) this.iter.next();
-				triple = new SemWebTriple(t.getSubject(), t.getPredicate(), t
-						.getObject());
-				triple.setSource(this.graph);
-			}
-			return triple;
-		} else {
-			return new NoSuchElementException();
+	
+	public Object next() {
+		if (!this.hasNext()) {
+			throw new NoSuchElementException();
 		}
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.Iterator#remove()
-	 */
-	public void remove() {
-		this.iter.remove();
-
-	}
-
-	/**
-	 * If the hasNext() method returns false the graphlist is checked and the
-	 * current Iterator is replaced by a new one.
-	 * 
-	 * @param finished
-	 *            boolean
-	 */
-	synchronized public boolean replaceIterator(boolean finished) {
-		boolean result = false;
-		if (!this.graphList.isEmpty()) {
-			NamedGraph graph = null;
-			boolean loop = true;
-			boolean replace = false;
-
-			while (loop) {
-				if (this.getGraphList().isEmpty()) {
-					finished = true;
-					return false;
-				}
-				String graphname = (String) this.graphList.getFirst();
-				graph = this.client.getGraph(graphname);
-				if (graph != null) {
-					if (graph.size() > 0) {
-						replace = true;
-						loop = false;
-					}
-				} 
-				this.removedList.add(this.graphList.getFirst());
-				this.graphList.removeFirst();
-			}
-			if (replace) {
-				this.iter = graph.find(this.s, this.p, this.o);
-				this.graph = graph.getGraphName();
-				finished = true;
-				return true;
-			}
-		} else {
-			finished = true;
-			return false;
-		}
+		Triple result = this.nextTriple;
+		this.nextTriple = null;
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.fuberlin.wiwiss.ng4j.semWebClient.FindListener#uriRetrievalFininshed(de.fuberlin.wiwiss.ng4j.semWebClient.GraphAddedEvent)
-	 */
-	synchronized public void uriRetrievalFininshed(GraphAddedEvent e) {
-		this.retrievalFinished = true;
-		this.notify();
+	public void remove() {
+		throw new UnsupportedOperationException();
+	}
+
+	public Triple getTriple() {
+		return this.pattern;
 	}
 	
-//////////debug
-	/*
-	synchronized public ExtendedIterator filterKeep( Filter f ){
-		return NullIterator.instance;
+	public synchronized void close() {
+		if (this.findQuery != null) {
+			this.findQuery.close();
+			this.findQuery = null;
+		}
+		this.noMoreGraphs = true;
+		this.currentIterator = null;
+		this.graphQueue.clear();
 	}
-	synchronized public Object removeNext(){
-		return Object.class;
-	}
-	synchronized public ExtendedIterator mapWith( Map1 map1 ){
-		return NullIterator.instance;
-	}
-	synchronized public ExtendedIterator andThen( ClosableIterator other ){
-		return NullIterator.instance;
-	}
-
-	synchronized public Set toSet( ){
-		Set set=null;
-		return set;
-	}
-	synchronized public ExtendedIterator filterDrop( Filter f ){
-		return NullIterator.instance;
-	}
-
-	synchronized public List toList(){
-		List list=null;
-		return list;
-	}
-	*/
 }

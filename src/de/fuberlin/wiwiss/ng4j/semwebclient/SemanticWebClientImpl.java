@@ -5,9 +5,12 @@
 package de.fuberlin.wiwiss.ng4j.semwebclient;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,7 +21,7 @@ import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.graph.TripleMatch;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
-import de.fuberlin.wiwiss.ng4j.Quad;
+import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
 /**
@@ -29,22 +32,26 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 		SemanticWebClient {
 	private static final int MAXSTEPS_DEFAULT = 3;
 
-	private static final int MAXTHREADS_DEFAULT = 30;
+	private static final int MAXTHREADS_DEFAULT = 10;
 
 	private static final long TIMEOUT_DEFAULT = 30000;
 
 	private List retrievedUris;
 
-	private UriList markedUris;
+	private Set markedUris = new HashSet();
 
-	private URIRetriever retriever;
+	private DereferencingTaskQueue uriQueue = null;
 
 	private List unretrievedURIs;
 
-	public boolean retrievalFinished;
-
+	private boolean isClosed = false;
+	
+	private long timeout = TIMEOUT_DEFAULT;
+	private int maxsteps = MAXSTEPS_DEFAULT;
+	private int maxthreads = MAXTHREADS_DEFAULT;
+	
 	//dbg
-	private List listenerList = Collections.synchronizedList(new ArrayList());
+//	private List listenerList = Collections.synchronizedList(new ArrayList());
 
 	private Log log = LogFactory.getLog(SemanticWebClientImpl.class);
 
@@ -54,53 +61,22 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 	public SemanticWebClientImpl() {
 		super();
 		this.createGraph("http://localhost/provenanceInformation");
-		this.retriever = new URIRetriever(this);
-		this.retriever.setMaxsteps(MAXSTEPS_DEFAULT);
-		this.retriever.setMaxthreads(MAXTHREADS_DEFAULT);
-		this.retriever.setTimeout(TIMEOUT_DEFAULT);
 		this.retrievedUris = Collections.synchronizedList(new ArrayList());
 		this.unretrievedURIs = Collections.synchronizedList(new ArrayList());
-		this.markedUris = new UriList();
-		this.markedUris.addListListener(this.retriever);
-		this.retrievalFinished = true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.fuberlin.wiwiss.ng4j.semWebClient.SemanticWebClient#find(com.hp.hpl.jena.graph.TripleMatch)
-	 */
-	public SemWebIterator find(TripleMatch pattern) {
-		//	while(!this.retrievalFinished){
-		//	}
-		this.retriever.setTriplePattern(pattern);
-		Triple t = pattern.asTriple();
-
-		Node sub = t.getSubject();
-		Node pred = t.getPredicate();
-		Node obj = t.getObject();
-		this.inspectTriple(t, -1);
-
-		SemWebIterator iter2 = new SemWebIterator(this, sub, pred, obj);
-		Iterator iter = this.findQuads(Node.ANY, sub, pred, obj);
-
-		while (iter.hasNext()) {
-			Quad quad = (Quad) iter.next();
-			Triple tr = quad.getTriple();
-			this.inspectTriple(tr, -1);
-		}
-		return iter2;
+	synchronized public SemWebIterator find(TripleMatch pattern) {
+		return new FindQuery(this, pattern.asTriple()).iterator();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.fuberlin.wiwiss.ng4j.semwebclient.SemanticWebClient#find(com.hp.hpl.jena.graph.TripleMatch,
-	 *      de.fuberlin.wiwiss.ng4j.semwebclient.TripleListener)
-	 */
 	public void find(TripleMatch pattern, TripleListener listener) {
-		this.retriever.setTriplePattern(pattern);
+		//this.retriever.setTriplePattern(pattern);
 		//this.retrievalFinished = false;
+		
+		
+		
+		
+		/*
 		Triple t = pattern.asTriple();
 
 		Node sub = t.getSubject();
@@ -118,30 +94,39 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 		}
 		TripleFinder finder = new TripleFinder(sub, pred, obj, this, listener);
 		finder.start();
+		*/
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.fuberlin.wiwiss.ng4j.semWebClient.SemanticWebClient#addRemoteGraph(java.lang.String)
-	 */
-	public void addRemoteGraph(String URI) {
-		this.retrievalFinished = false;
-		this.markedUris.add(URI, -1);
+	public void addRemoteGraph(String uri) {
+		final Object lock = new Object();
+		DereferencingListener listener = new DereferencingListener() {
+			public void dereferencingFailed(DereferencingTask task, int errorCode) {
+				synchronized (lock) {
+					lock.notify();
+				}
+			}
+			public void dereferencingSuccessful(DereferencingTask task, NamedGraphSet result) {
+				synchronized (lock) {
+					lock.notify();
+				}
+			}
+		};
+		requestDereferencing(uri, 1, listener);
+		synchronized (lock) {
+			try {
+				lock.wait();
+			} catch (InterruptedException ex) {
+				// We don't know when this happens
+				throw new RuntimeException(ex);
+			}
+		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.fuberlin.wiwiss.ng4j.semWebClient.SemanticWebClient#reloadRemoteGraph(java.lang.String)
-	 */
-	public void reloadRemoteGraph(String URI) {
-		this.retrievalFinished = false;
-
-		if (this.retrievedUris.contains(URI)) {
-			this.retrievedUris.remove(URI);
-			this.markedUris.add(URI, -1);
+	public synchronized void reloadRemoteGraph(String uri) {
+		if (containsGraph(uri)) {
+			removeGraph(uri);
+			addRemoteGraph(uri);
 		}
 	}
 
@@ -161,7 +146,7 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 						+ "' for config " + SemanticWebClient.CONFIG_MAXSTEPS
 						+ " is not numeric");
 			}
-			this.retriever.setMaxsteps(val);
+			this.maxsteps = val;
 		}
 		if (option.equals(SemanticWebClient.CONFIG_MAXTHREADS)) {
 			int val;
@@ -172,7 +157,7 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 						+ "' for config " + SemanticWebClient.CONFIG_MAXTHREADS
 						+ " is not numeric");
 			}
-			this.retriever.setMaxthreads(val);
+			this.maxthreads = val;
 		}
 		if (option.equals(SemanticWebClient.CONFIG_TIMEOUT)) {
 			long val;
@@ -183,7 +168,7 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 						+ "' for config " + SemanticWebClient.CONFIG_TIMEOUT
 						+ " is not numeric");
 			}
-			this.retriever.setTimeout(val);
+			this.timeout = val;
 		}
 	}
 
@@ -195,112 +180,63 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 	public String getConfig(String option) {
 		String value = null;
 		if (option.toLowerCase().equals(SemanticWebClient.CONFIG_MAXSTEPS))
-			value = String.valueOf(this.retriever.getMaxsteps());
+			value = String.valueOf(this.maxsteps);
 		if (option.toLowerCase().equals(SemanticWebClient.CONFIG_MAXTHREADS))
-			value = String.valueOf(this.retriever.getMaxthreads());
+			value = String.valueOf(this.maxthreads);
 		if (option.toLowerCase().equals(SemanticWebClient.CONFIG_TIMEOUT))
-			value = String.valueOf(this.retriever.getTimeout());
+			value = String.valueOf(this.timeout);
 
 		return value;
-
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.fuberlin.wiwiss.ng4j.semWebClient.SemanticWebClient#successfullyDereferencedURIs()
-	 */
 	public Iterator successfullyDereferencedURIs() {
 		return this.retrievedUris.iterator();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.fuberlin.wiwiss.ng4j.semWebClient.SemanticWebClient#unsuccessfullyDereferencedURIs()
-	 */
 	public Iterator unsuccessfullyDereferencedURIs() {
 		return this.unretrievedURIs.iterator();
 	}
 
-	// ------------------------------------------------------
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#addGraph(de.fuberlin.wiwiss.ng4j.NamedGraph)
-	 */
-	public void addGraph(NamedGraph graph) {
-		super.addGraph(graph);
+//	synchronized public void addGraph(NamedGraph graph, ThreadObserver observer) {
+//		super.addGraph(graph);
 
 		//	if (this.listener != null) {
 		//		this.listener.graphAdded(new GraphAddedEvent(this, graph.getGraphName().getURI()));
 		//	}
-		String name = graph.getGraphName().getURI();
-		Iterator it = this.listenerList.iterator();
-		while (it.hasNext()) {
-			FindListener l = (FindListener) it.next();
-			l.graphAdded(new GraphAddedEvent(this, name));
-		}
-
-	}
+//		String name = graph.getGraphName().getURI();
+		//Iterator it = this.listenerList.iterator();
+		
+	
+//		SemWebIterator l = observer.getSemWebIterator();
+//		l.graphAdded(new GraphAddedEvent(this, name));
+//	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#close()
 	 */
-	public void close() {
-		this.close();
+	public synchronized void close() {
+		this.isClosed = true;
+		if (this.uriQueue != null) {
+			this.uriQueue.close();
+		}
 		this.retrievedUris.clear();
 		this.markedUris.clear();
+		super.close();
 	}
 
-	/**
-	 * Returns a UriList which contains the URIs to retrieve.
-	 * 
-	 * @return UriList
-	 */
-	public UriList getUrisToRetrieve() {
-		return this.markedUris;
+	public boolean isClosed() {
+		return this.isClosed;
 	}
-
+	
 	/**
 	 * Returns a List with already retrieved URIs.
 	 * 
 	 * @return List
 	 */
-	public List getRetrievedUris() {
-		return this.retrievedUris;
-	}
-
-	/**
-	 * Inspects a Triple if it contains URIs. If a URI is found it is added to
-	 * the UriList.
-	 * 
-	 * @param t
-	 *            The triple to inspect.
-	 * @param step
-	 *            The retrieval step.
-	 */
-	synchronized public void inspectTriple(Triple t, int step) {
-		Node sub = t.getSubject();
-		Node pred = t.getPredicate();
-		Node obj = t.getObject();
-		
-		this.inspectNode(sub,step);
-		this.inspectNode(pred,step);
-		this.inspectNode(obj,step);
-
-
-	}
-	
-	synchronized void inspectNode(Node n, int step){
-		if (n.isURI()) {
-			addUriToRetrieve(n.getURI(), step);
-		}
-		if (n.isURI()||n.isBlank()){
-			this.retriever.getObserver().checkSeeAlso(this,n,step);
-		}
+	public synchronized List getRetrievedUris() {
+		return new ArrayList(this.retrievedUris);
 	}
 
 	/**
@@ -309,35 +245,14 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 	 * @param listener
 	 *            The FindListener to add.
 	 */
-	public void addFindListener(FindListener listener) {
-		this.listenerList.add(listener);
+//	public void addFindListener(FindListener listener) {
+//		this.listenerList.add(listener);
 		//this.listener = listener;
-	}
+//	}
 
-	public void removeFindListener(FindListener listener) {
-		this.listenerList.remove(listener);
-	}
-
-
-	/**
-	 * Is performed when the retrieval is finished.
-	 */
-	public void retrievalFinished() {
-
-		this.retrievalFinished = true;
-		/*
-		 if(this.listener != null){
-		 this.listener.uriRetrievalFininshed(new GraphAddedEvent(this, null));
-		 }
-		 */
-
-		Iterator it = this.listenerList.iterator();
-		while (it.hasNext()) {
-			FindListener l = (FindListener) it.next();
-			l.uriRetrievalFininshed(new GraphAddedEvent(this, null));
-		}
-
-	}
+//	public void removeFindListener(FindListener listener) {
+//		this.listenerList.remove(listener);
+//	}
 
 	/**
 	 * Returns a List with unretrievable URIs
@@ -352,17 +267,61 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 		return new SemWebMultiUnion(this);
 	}
 
-	synchronized void addUriToRetrieve(String uri, int step) {
+	public synchronized boolean requestDereferencing(String uri, int step,
+			final DereferencingListener listener) {
 		if (this.markedUris.contains(uri)) {
 			// already retrieved or in queue, don't queue again
-			return;
+			return false;
 		}
-		if (step > this.retriever.getMaxsteps()) {
+		if (step > this.maxsteps) {
 			this.log.debug("Ignored (maxsteps reached): " + uri);
-			return;
+			return false;
 		}
 		this.log.debug("Queued (" + step + " steps): " + uri);
-		this.markedUris.add(uri, step);
-		this.retrievalFinished = false;
+		this.markedUris.add(uri);
+		DereferencingListener myListener = new DereferencingListener() {
+			public void dereferencingFailed(DereferencingTask task, int errorCode) {
+				SemanticWebClientImpl.this.unretrievedURIs.add(task.getURI());
+			}
+			public void dereferencingSuccessful(DereferencingTask task, NamedGraphSet result) {
+				if (isClosed()) {
+					return;
+				}
+				addProvenanceInformation(task.getURI());
+				Iterator it = result.listGraphs();
+				while (it.hasNext()) {
+					addGraph((NamedGraph) it.next());
+				}
+				SemanticWebClientImpl.this.retrievedUris.add(task.getURI());
+				listener.dereferencingSuccessful(task, result);
+			}
+		};
+		getURIQueue().addTask(new DereferencingTask(myListener, uri, step + 1));
+		return true;
+	}
+	
+	/**
+	 * If a URI is successfully retrieved this method is called to add
+	 * provenance information about the graph to the underlying NamedGraphSet.
+	 * 
+	 * @param uri
+	 *            A URI string.
+	 */
+	private void addProvenanceInformation(String uri) {
+		String label = Long.toString(Calendar.getInstance().getTimeInMillis());
+		NamedGraph provenanceGraph = getGraph("http://localhost/provenanceInformation");
+		provenanceGraph.add(new Triple(Node.createURI(uri), Node
+				.createURI("http://purl.org/net/scutter/source"), Node
+				.createURI(uri)));
+		provenanceGraph.add(new Triple(Node.createURI(uri), Node
+				.createURI("http://purl.org/net/scutter/lastModified"), Node
+				.createLiteral(label)));
+	}
+
+	private DereferencingTaskQueue getURIQueue() {
+		if (this.uriQueue == null) {
+			this.uriQueue = new DereferencingTaskQueue(this.maxthreads);
+		}
+		return this.uriQueue;
 	}
 }

@@ -1,6 +1,8 @@
 package de.fuberlin.wiwiss.ng4j.semwebclient;
 
-import com.hp.hpl.jena.graph.Node;
+import java.util.Iterator;
+
+import com.hp.hpl.jena.graph.Triple;
 
 /**
  * A Thread which starts a retrieval process and reports every found triple to a
@@ -9,12 +11,8 @@ import com.hp.hpl.jena.graph.Node;
  * @author Tobias Gauﬂ
  */
 public class TripleFinder extends Thread {
-	private Node sub;
-
-	private Node pred;
-
-	private Node obj;
-
+	private Triple triple;
+	
 	private SemanticWebClientImpl client;
 
 	private TripleListener listener;
@@ -33,23 +31,20 @@ public class TripleFinder extends Thread {
 	 * @param listener
 	 *            The TripleListener.
 	 */
-	public TripleFinder(Node sub, Node pred, Node obj,
+	public TripleFinder(Triple t,
 			SemanticWebClientImpl client, TripleListener listener) {
-		this.sub = sub;
-		this.pred = pred;
-		this.obj = obj;
+		this.triple = t;
 		this.client = client;
 		this.listener = listener;
 	}
 
 	public void run() {
-		SemWebIterator iter2 = new SemWebIterator(this.client, this.sub,
-				this.pred, this.obj);
-		while (iter2.hasNext()) {
-			SemWebTriple triple = (SemWebTriple) iter2.next();
-			listener.tripleFound(new TripleFoundEvent(this, triple));
+		Iterator it = new FindQuery(this.client, this.triple).iterator();
+		while (it.hasNext()) {
+			SemWebTriple triple = (SemWebTriple) it.next();
+			listener.tripleFound(triple);
 		}
-		this.listener.findFinished(new TripleFoundEvent(this, null));
+		this.listener.findFinished();
 	}
 
 }

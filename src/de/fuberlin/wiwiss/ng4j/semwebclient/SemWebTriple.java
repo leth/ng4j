@@ -29,6 +29,11 @@ public class SemWebTriple extends Triple {
 		super(s, p, o);
 	}
 
+	public SemWebTriple(Triple t, Node sourceURI) {
+		this(t.getSubject(), t.getPredicate(), t.getObject());
+		setSource(sourceURI);
+	}
+	
 	/**
 	 * Sets the triple's source.
 	 * 

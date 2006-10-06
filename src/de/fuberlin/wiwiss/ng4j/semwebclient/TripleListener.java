@@ -2,6 +2,8 @@ package de.fuberlin.wiwiss.ng4j.semwebclient;
 
 import java.util.EventListener;
 
+import com.hp.hpl.jena.graph.Triple;
+
 /**
  * Listener to handle TripleFoundEvents.
  * 
@@ -12,14 +14,12 @@ public interface TripleListener extends EventListener {
 	/**
 	 * Is performed when a triple is found.
 	 * 
-	 * @param e
+	 * @param t
 	 */
-	public void tripleFound(TripleFoundEvent e);
+	public void tripleFound(Triple t);
 
 	/**
 	 * Is performed when the retrieval process is finished.
-	 * 
-	 * @param e
 	 */
-	public void findFinished(TripleFoundEvent e);
+	public void findFinished();
 }
