@@ -65,7 +65,7 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 		this.unretrievedURIs = Collections.synchronizedList(new ArrayList());
 	}
 
-	synchronized public SemWebIterator find(TripleMatch pattern) {
+	public SemWebIterator find(TripleMatch pattern) {
 		return new FindQuery(this, pattern.asTriple()).iterator();
 	}
 

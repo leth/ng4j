@@ -105,5 +105,6 @@ public class SemWebIterator implements Iterator {
 		this.noMoreGraphs = true;
 		this.currentIterator = null;
 		this.graphQueue.clear();
+		notify();
 	}
 }

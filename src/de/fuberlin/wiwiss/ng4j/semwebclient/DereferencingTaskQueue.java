@@ -17,6 +17,7 @@ public class DereferencingTaskQueue extends Thread {
 	
 	public DereferencingTaskQueue(int maxThreads) {
 		this.maxthreads = maxThreads;
+		setName("Queue");
 		start();
 	}
 	

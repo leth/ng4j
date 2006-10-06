@@ -30,9 +30,10 @@ public class FindQuery implements DereferencingListener {
 		this.client = client;
 		this.semiter = new SemWebIterator(this, pattern);
 		this.timeoutThread = new TimeoutThread(this.semiter);
+		this.timeoutThread.setName("Timeout");
+		this.semiter.queueNamedGraphs(this.client.listGraphs());
 		this.inspectTriple(this.client, pattern, 1);
 		this.inspectNgs(this.client, pattern, 1);
-		this.semiter.queueNamedGraphs(this.client.listGraphs());
 		checkIfProcessingFinished();
 	}
 
