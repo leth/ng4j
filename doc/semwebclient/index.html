@@ -1,5 +1,5 @@
-ï»¿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><head><title>Semantic Web Client for NG4J</title><!--h1, h2, h3 { background: white; color: #005a9c; }-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><head><title>Semantic Web Client Library</title><!--h1, h2, h3 { background: white; color: #005a9c; }-->
 
 
 
@@ -50,31 +50,362 @@ pre { speak-punctuation: code; }
 }
 .Stil1 {color: #FF0000}
 </style>
-</head><body>
+</head>
+<body>
 
 <div id="logo">
-  <a href="http://www.fu-berlin.de/"><img src="fu-logo.gif" alt="Freie UniversitÃ¤t Berlin Logo"></a>
+  <a href="http://www.fu-berlin.de/"><img src="fu-logo.gif" alt="Freie Universität Berlin Logo"></a>
 </div>
 
 <div id="header">
-  <h1 style="font-size: 250%;">Semantic Web Client </h1>
-  <div id="tagline">for NG4J </div>
+  <h1 style="font-size: 250%;">Semantic Web Client Library </h1>
+  <div id="tagline">Querying the Semantic Web with SPARQL. </div>
 </div>
-
 <div id="authors">
-  <a href="http://www.bizer.de/" target="_blank">Chris Bizer</a><br>
-  <a href="http://richard.cyganiak.de/" target="_blank">Richard Cyganiak</a><br>
-  <a href="mailto:tobias.gauss@web.de">Tobias Gau&szlig;</a>
+  <p><a href="http://www.bizer.de/" target="_blank">Chris Bizer<br />
+  </a><a href="mailto:tobias.gauss@web.de">Tobias Gau&szlig;<br />
+  </a> 
+    <a href="http://richard.cyganiak.de/" target="_blank">Richard Cyganiak</a><br>
+  </p>
 </div>
 
 <div id="content">
 
-<p>The SematicWebClient is a NG4J extension that enables applications to access the Semantic Web. The Semantic Web is represented as a single, global RDF graph. Applications can use the find(TripleMatch pattern) method to retrieve information from the Semantic Web. </p>
+<p>&nbsp;</p>
+<p>The <strong>Sematic Web Client 
 
-<p>During the execution of a find() query, information about all resources that appear in the triple pattern and in the query results is dynamically loaded from the Semantic Web by dereferencing the URI of each resource using the HTTP protocol and following all known rdf:seeAlso links for each resource as described in [Verweis ?]. Internally, retrieved information is represented as a set of named graphs, which allows applications to keep track of information provenance. If the result of dereferencing a URI is a RDF graph, the graph is added as a named graph (named with the retrieval URI) to graph set. Within each graphset there is a graph http://localhost/provenanceInformation, which contains provenance information for each retrieved graph. Each graph is described with a swp:sourceURL and a swp:retrievalTimestamp property. (noch keine Property fÃ¼r RetrievalTimestamp gefunden). </p>
-<p>The Semantic Web Client provides two different find Methods. The first one find(TripleMatch) returns an iterator over all matching Triples. </p>
-<pre>// create a Semantic WebClient
-SemanticWebClientImpl  semWeb = new SemanticWebClientImpl();
+
+ Library
+
+</strong> represents the complete Semantic Web as a single, global RDF graph. The library enables applications to query this global  graph using SPARQL- and find(SPO) queries. For answering  queries, the library dynanically retrieves information from the Semantic Web  by dereferencing URIs and by following rdfs:seeAlso links. </p>
+<h2>Contents</h2>
+<ol>
+  <li><a href="#intro">Introduction</a></li>
+  <li><a href="#how">How does the Library work? </a></li>
+  <li><a href="#examples">Example Queries </a></li>
+  <li><a href="#command">Using the Library on the Command Line </a></li>
+  <li><a href="#using">Using the Library in your Applications </a></li>
+  <li><a href="#download">Download</a></li>
+  <li><a href="#support">Support and Feedback </a></li>
+</ol>
+<p>&nbsp;</p>
+<h2><a name="intro" id="intro"></a>1. Introduction</h2>
+<p><br />
+  There is a current tendency in the Semantic Web community to stress the WEB aspect of the <a href="http://www.w3.org/2001/sw/" target="_blank">Semantic Web</a>, meaning that the Semantic Web is increasingly getting perceived    as a single, global information space consisting of interlinked RDF data. </p>
+<p>This tendency is 
+  
+ 
+    carried by the revitalization of  ideas around interlinking data on the Semantic Web. Current W3C efforts stress the fact that URI references should be dereference-able (<a href="http://www.w3.org/TR/swbp-vocab-pub/" target="_blank">W3C working draft on Best Practice Recipes for Publishing RDF Vocabularies</a>). There is a nice memo by Tim Berners-Lee about the role of links on the Semantic Web (<a href="http://www.w3.org/DesignIssues/LinkedData.html" target="_blank">Berners-Lee: Linked Data</a>). There are efforts around <a href="http://swoogle.umbc.edu/">Swoogle</a> to measure the size and characterize the content of the Semantic Web (<a href="http://ebiquity.umbc.edu/paper/html/id/316/Characterizing-the-Semantic-Web-on-the-Web" target="_blank">Ding, Finin: Characterizing the Semantic Web on the Web</a>). There are tools like the <a href="http://www.w3.org/2005/ajar/About.html" target="_blank">Tabulator</a> browser, that enable surfers to browse interlinked data on the Semantic Web (<a href="http://swui.semanticweb.org/swui06/papers/Berners-Lee/Berners-Lee.pdf">Berners-Lee et al: Tabulator: Exploring and Analyzing linked data on the Semantic Web</a>). Tools like <a href="http://sites.wiwiss.fu-berlin.de/suhl/bizer/d2r-server/">D2R Server</a> make it easy to publish the conent of relational databases on the Semantic Web (<a href="http://sites.wiwiss.fu-berlin.de/suhl/bizer/pub/Bizer-Cyganiak-D2R-Server-ISWC2006.pdf">Bizer, Cyganiak: D2R Server – Publishing Relational Databases on the Semantic Web</a>).</p>
+<p>All these efforts are based on the assumption that, for being part of the  Semantic Web, data should 
+
+ 
+  ideally fullfil the following requirements:</p>
+<ol>
+  <li>Information resources, real-world resources as well as vocabulary terms should be identified by URI references.</li>
+<li>All  URI references should be <a href="http://www.w3.org/TR/2004/REC-webarch-20041215/#dereference-uri">dereference-able</a>, meaning that  an application can look up  URIs  and retrieve RDF information about the identified resource.</li>
+<li>Resource description should contain <a href="http://www.w3.org/TR/rdf-schema/#ch_seealso">rdfs:seeAlso</a> links that point at other resources which provide  related information. </li>
+<li>Data should be represented using the <a href="http://www.w3.org/TR/rdf-syntax-grammar/">RDF/XML</a> or <a href="http://www.dajobe.org/2004/01/turtle/">Turtle</a> syntax. If data is embedded into other Web documents, these documents should give hints how to extract RDF data from them, for instance using <a href="http://www.w3.org/TR/2006/WD-grddl-scenarios-20061002/" target="_blank">GRDDL</a>.</li>
+</ol>
+<p>The <strong>Semantic Web Client Library</strong> regards all data that is published according to the rules above as a  single, global set of <a href="http://www.w3.org/2004/03/trix/">named RDF graphs</a>. The library allows application to query the merge of this graph set using the <a href="http://www.w3.org/TR/rdf-sparql-query/">SPARQL</a> query language or using find(SPO) queries. The triples that are returned by a find(SPO) query are linked to the graphs in which they occur, meaning that applications can keep track of information  provenance. </p>
+<p>Technically, the library represents the Semantic Web as a single <a href="http://jena.sourceforge.net/">Jena RDF graph or Jena Model</a>. As both interfaces are commonly used within RDF applications, the library can be used to replace local RDF stores. Meaning that an RDF application is turned into a Semantic Web application. For instance, it might be fun to plug the library  below existing RDF browsers. </p>
+<h2><a name="how" id="how"></a>2. How does the Library work?</h2>
+<p><br />
+  For answering SPARQL and find(SPO) queries, the library dynanically retrieves information from the Semantic Web. In order to prevent unnessessary information from being retrieved, the library uses a directed-browsing algorithm that is similar to the algorithm used by the Tabulator browser (See section 4 of the <a href="http://swui.semanticweb.org/swui06/papers/Berners-Lee/Berners-Lee.pdf" target="_blank">Tabulator paper</a>). </p>
+<p>The library caches retrieved information  locally as a set of named graphs. The SPARQL query engine  that is used by the library (<a href="jena.sourceforge.net/ARQ/">ARQ</a>) splits  SPARQL queries into a set of triple patterns which are 
+  
+ 
+  consecutively matched against the Semantic Web.</p>
+<p>For each triple pattern, the library executes the following algorithm:</p>
+<ol>
+  <li>look up all URIs that apear in the triple pattern. Add retrieved graphs to the local graph set.</li>
+  <li>look up any URI y where the graph set includes the triple { x rdfs:seeAlso y} and x is a URI from the triple pattern. Add retrieved graphs to the local graph set.</li>
+  <li>match the triple pattern against all graphs in the local graph set.</li>
+<li>for each triple that matches the triple pattern
+  <ol>
+<li>look up  all new URIs that apear in the triple. Add retrieved graphs to the local graph set.</li>
+  <li>look up any new URI y where the graph set includes the triple { x rdfs:seeAlso y} and x is a URI from a matching triple. Add retrieved graphs to the local graph set.</li>
+</ol>
+</li>
+<li>match the triple pattern against all newly retrieved graphs.</li>
+<li>repreat step 4 and 5 until the maximum mumber of retrieval steps or the timeout is reached.</li>
+</ol>
+<p>Retrieved graphs are kept in the local cache after the query execution is finished. Thus, the local cache 
+
+ 
+  is cumulatively filled by executing queries and the same query might return different results if it is asked again after some other queries have been executed. For providing the algorithm with proper starting points, it is also helpful to manually load some graphs into the local cache before querying. </p>
+<h2><a name="examples" id="examples"></a>3. Example Queries </h2>
+<p>The following sections list the results of some example queries against the Semantic Web. For each query, we list the graphs that have been reloaded, the query result and the graph that have been retrieved in the query process.</p>
+<h3>3.1 SPARQL Query</h3>
+<p><br />
+  <strong>Query</strong> </p>
+<p>&quot;Find all developers of the Tabulator Project, their email addresses and  other projects they are involved.&quot; </p>
+<p><strong>Preloaded Graph</strong></p>
+<p><a href="http://dig.csail.mit.edu/2005/ajar/ajaw/data">http://dig.csail.mit.edu/2005/ajar/ajaw/data</a></p>
+<p><strong>SPARQL Query</strong></p>
+<pre><p>PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/ &gt; <br />PREFIX doap: &lt;http://usefulinc.com/ns/doap#&gt; <br />PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; <br />
+SELECT DISTINCT ?name ?mbox ?furtherProjects 
+WHERE { 
+   &lt; http://dig.csail.mit.edu/2005/ajar/ajaw/data#Tabulator &gt; doap:developer ?dev . <br />  ?dev foaf:name ?name 
+  OPTIONAL {?dev foaf:mbox ?mbox}
+  OPTIONAL {?dev doap:Project ?proj . 
+            ?proj foaf:name ?furtherProjects }
+}</pre>
+<p><strong>Query Result</strong></p>
+<table width="90%"  border="1">
+  <tr>
+    <td>?name</td>
+    <td> ?mbox </td>
+    <td>?furherProjects</td>
+  </tr>
+  <tr>
+    <td>"Ruth Dhanaraj"</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>"Timothy Berners-Lee"</td>
+    <td>&lt; <a href="mailto:timbl@w3.org">mailto:timbl@w3.org </a>&gt; </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>"David Sheets"</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>"James Hollenbach" </td>
+    <td>&lt; <a href="mailto:jambo@mit.edu">mailto:jambo@mit.edu </a>&gt; </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>"Dan Connolly"</td>
+    <td>&lt; <a href="mailto:connolly@w3.org">mailto:connolly@w3.org </a>&gt; </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>"Adam Lerer"</td>
+    <td>"alerer@mit.edu" </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>"Yuhsin Joyce Chen"</td>
+    <td>"yuhsin@mit.edu"</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>"Yu-hsin Chen"</td>
+    <td>"yuhsin@mit.edu" </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>"Lydia Chilton"</td>
+    <td>"hmslydia@gmail.com"</td>
+    <td>"The 
+illustrious project II"</td>
+  </tr>
+  <tr>
+    <td>"Lydia Chilton"</td>
+    <td>"hmslydia@gmail.com"</td>
+    <td>"The 
+inimitable project III"</td>
+  </tr>
+</table>
+<p><strong><br />
+  Retrieved Graphs</strong></p>
+<p>The following graphs have been retrieved by the library's directed browsing algorithm for anwering the query: <br />
+    <br />
+    <a href="http://dig.csail.mit.edu/2005/ajar/ajaw/data#Tabulator">http://dig.csail.mit.edu/2005/ajar/ajaw/data#Tabulator </a><br />
+    <a href="http://web.mit.edu/ruthdhan/www/foaf.rdf%23ruthdhan">http://web.mit.edu/ruthdhan/www/foaf.rdf#ruthdhan </a><br />
+    <a href="http://web.mit.edu/dsheets/www/foaf.rdf%23dsheets">http://web.mit.edu/dsheets/www/foaf.rdf#dsheets </a><br />
+    <a href="http://web.mit.edu/hmslydia/Public/foaf.rdf%23hmslydia">http://web.mit.edu/hmslydia/Public/foaf.rdf#hmslydia </a><br />
+    <a href="http://www.w3.org/People/Berners-Lee/card#i">http://www.w3.org/People/Berners-Lee/card#i </a><br />
+    <a href="http://xmlns.com/foaf/0.1/name">http://xmlns.com/foaf/0.1/name </a><br />
+    <a href="http://usefulinc.com/ns/doap%23developer">http://usefulinc.com/ns/doap#developer </a><br />
+    <a href="http://web.mit.edu/jambo/www/foaf.rdf%23jambo">http://web.mit.edu/jambo/www/foaf.rdf#jambo </a><br />
+    <a href="http://web.mit.edu/yuhsin/www/foaf.rdf%23yuhsin">http://web.mit.edu/yuhsin/www/foaf.rdf#yuhsin </a><br />
+    <a href="http://web.mit.edu/alerer/www/foaf.rdf%23alerer">http://web.mit.edu/alerer/www/foaf.rdf#alerer </a><br />
+    <a href="http://xmlns.com/foaf/0.1/mbox">http://xmlns.com/foaf/0.1/mbox </a><br />
+    <a href="http://www.w3.org/People/Connolly/home-smart.rdf">http://www.w3.org/People/Connolly/home-smart.rdf </a><br />
+    <a href="http://www.w3.org/People/Connolly/travel-sched">http://www.w3.org/People/Connolly/travel-sched </a><br />
+    <a href="http://web.mit.edu/hmslydia/Public/project02.rdf%23project02">http://web.mit.edu/hmslydia/Public/project02.rdf#project02 </a><br />
+    <a href="http://web.mit.edu/hmslydia/Public/project03.rdf%23project03">http://web.mit.edu/hmslydia/Public/project03.rdf#project03 </a><br />
+ </p>
+<h3>3.2 find(SPO) Query</h3>
+<p>oder zweite SPARQL query &uuml;ber FOAF.</p>
+<p>z.B. &quot;Get all people with their email adresses and homepages that I know and get all people that my friends know.&quot; </p>
+<p>Beispiel mit Richard's foaf .... </p>
+<p>&nbsp;</p>
+<h2><a name="command" id="command"></a>4. Using the Library on the Command Line </h2>
+<p>The library provides a command line tool that allows you to execute SPARQL and find(SPO) queries against the Semantic Web. The example below illustrates the usage of the tool.</p>
+<pre>
+
+SemanticWebQuery -sparql &quot;PREFIX foaf: ...&quot; -load http://dig.csail.mit.edu/2005/ajar/ajaw/data -retrieveduris<br /><br />
+</pre>
+<p>The following table gives an overview about the parameters of the command line interface.</p>
+<table border="1" cellpadding="3" cellspacing="0">
+  <tr>
+    <td valign="top"><strong>Parameter</strong></td>
+    <td><strong>Description</strong></td>
+  </tr>
+  <tr>
+    <td valign="top">-sparql &lt;Query&gt; </td>
+    <td>Executes a SPARQL query against the Semantic Web. </td>
+  </tr>
+  <tr>
+    <td valign="top" width="28%">-find &lt;TriplePattern&gt; </td>
+    <td width="72%">Executes a find(SPO) query against the Semantic Web. Example:<br />
+      -find &quot;&lt;http://www.w3.org/People/Berners-Lee/card#i&gt; ANY ANY&quot; </td>
+  </tr>
+  <tr>
+    <td valign="top">-maxsteps &lt;Integer&gt; <br /></td>
+    <td>Sets the 
+
+
+ maximal
+
+ number of 
+
+
+ iterations
+
+ of the retrieval algorithm. The default value is 3. </td>
+  </tr>
+  <tr>
+    <td valign="top">-timeout &lt;Integer&gt; <br /></td>
+    <td>Sets the timeout of the query in 
+
+
+ milliseconds. The default value is 10000. </td>
+  </tr>
+  <tr>
+    <td valign="top">-maxthreads &lt;Integer&gt; <br /></td>
+    <td>Sets the 
+
+
+ maximal
+
+ number of parallel threads for retrieving URIs. The default value is 10. </td>
+  </tr>
+  <tr>
+    <td valign="top">-load &lt;URI&gt; <br /></td>
+    <td>Loads a graph from the Web into the local cache before the query is executed. </td>
+  </tr>
+  <tr>
+    <td valign="top">-savetrig &lt;Filename&gt; <br /></td>
+    <td>Saves all graphs that have been retrieved during the query execution into a file using the <a href="http://sites.wiwiss.fu-berlin.de/suhl/bizer/TriG/" target="_blank">TriG syntax</a>. </td>
+  </tr>
+  <tr>
+    <td valign="top">-loadtrig &lt;Filename&gt; <br /></td>
+    <td>Loads a set of named graphs from a file before the query is executed. Using -savetrig and -loadtrig together in the same SemanticWebQuery command allows you to cumulatively fill the cache with several queries. </td>
+  </tr>
+  <tr>
+    <td valign="top">-retrieveduris<br /></td>
+    <td>Outputs a list of all 
+
+
+ successfully
+
+ retrieved URIs. </td>
+  </tr>
+  <tr>
+    <td valign="top">-faileduris<br /></td>
+    <td>Outputs a list of all  URIs that 
+
+
+ could
+
+ not be retrieved. </td>
+  </tr>
+</table>
+<p>The SemanticWebQuery command line tool creates an output like <a href="ExampleOutput.txt">this</a>. </p>
+<p>For using the command line interface, you have to:</p>
+<ol>
+  <li><a href="#download">Download</a> the library.</li>
+<li class="Stil1">Make sure that .... PATH, Java 1.4? </li>
+</ol>
+<h2><a name="using" id="using"></a>5. Using the Library in your Applications  </h2>
+<p>The Semantic Web Client Library is based on <a href="http://sites.wiwiss.fu-berlin.de/suhl/bizer/ng4j/" target="_blank">NG4J - Named Graphs API for Jena</a>. </p>
+<p> The main interface of the Library is the SemanticWebClient interface. The tables below give an overview about its most important methods. See <a href="javadoc/index.html">JavaDoc </a> for details about all methods. </p>
+<table border="1" cellpadding="3" cellspacing="0">
+  <tr>
+    <td colspan="2"><strong>SemanticWebClient</strong> extends NamedGraphSet </td>
+  </tr>
+  <tr>
+    <td colspan="2">Semantic Web Client regards all data that is published according to the rules above as a single, global set of named RDF graphs. Applications can query the merge of this graph set using the SPARQL query language or using find(SPO) queries. </td>
+  </tr>
+  <tr>
+    <td valign="top">addGraph(namedgraph) </td>
+    <td>Adds a NamedGraph to the set. </td>
+  </tr>
+  <tr>
+    <td valign="top">find(triple)</td>
+    <td>...</td>
+  </tr>
+  <tr>
+    <td valign="top" width="28%">find(triple, listener)</td>
+    <td width="72%">...</td>
+  </tr>
+  <tr>
+    <td valign="top">read(url, lang) <br /></td>
+    <td>Read NamedGraphs from a URL into the NamedGraphSet. Supported RDF serialization languages are TriX, TriG, RDF/XML, N-Triples and N3. </td>
+  </tr>
+  <tr>
+    <td valign="top">write(writer, lang, baseURI) </td>
+    <td>Writes a serialized representation of the NamedGraphSet to a Writer. Supported RDF serialization languages are TriX, TriG, RDF/XML, N-Triples and N3. If the specified serialization language doesn't support Named Graphs, then the union graph will be serialized, and knowledge about graph names is lost. Only TriX and TriG support graph naming. <br /></td>
+  </tr>
+  <tr>
+    <td valign="top">asJenaGraph(defaultGraphForAdding) </td>
+    <td>Returns a Jena Graph view on the NamedGraphSet, equivalent to the union graph of all graphs in the graph set. </td>
+  </tr>
+  <tr>
+    <td valign="top">asJenaModel(defaultGraphForAdding) </td>
+    <td>Returns a Jena Model view on the NamedGraphSet, equivalent to the union graph of all graphs in the graph set. All Statements returned by this NamedGraphsModel can be casted to NamedGraphStatements in order to access provenance information about the graphs they are contained in. </td>
+  </tr>
+  <tr>
+    <td colspan="2"><a href="xxx">More ... </a></td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<h3>5.1 Executing a SPARQL Query</h3>
+<p>The following code example demonstrates, how .... </p>
+<pre>
+
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QueryFactory;
+import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.ResultSetFormatter; 
+
+import de.fuberlin.wiwiss.ng4j.semwebclient.SemanticWebClient; 
+import de.fuberlin.wiwiss.ng4j.semwebclient.SemanticWebClientImpl; 
+
+SemanticWebClient semweb = new SemanticWebClientImpl(); <br /> 
+// Load Tabulator doap <br />semweb.read(" <a href="http://dig.csail.mit.edu/2005/ajar/ajaw/data">http://dig.csail.mit.edu/2005/ajar/ajaw/data</a>","RDF/XML"); <br /> 
+// find the developers of the Tabulator Project, their email addresses and the <br />// labels of other projects they are involved in. <br /> 
+String queryString = <br />"PREFIX foaf: &lt; <a href="http://xmlns.com/foaf/0.1/">http://xmlns.com/foaf/0.1/ </a>&gt; " + <br />"PREFIX doap: &lt; <a href="http://usefulinc.com/ns/doap%23">http://usefulinc.com/ns/doap# </a>&gt; " +   <br />"PREFIX rdfs: &lt; <a href="http://www.w3.org/2000/01/rdf-schema%23">http://www.w3.org/2000/01/rdf-schema# </a>&gt; " + <br />"SELECT DISTINCT ?name ?mbox ?furtherProjects " + <br />"WHERE {&lt; <a href="http://dig.csail.mit.edu/2005/ajar/ajaw/data%23Tabulator">http://dig.csail.mit.edu/2005/ajar/ajaw/data#Tabulator </a>&gt; doap:developer ?dev . " + <br />"?dev foaf:name ?name OPTIONAL {?dev foaf:mbox ?mbox}" + <br />"OPTIONAL {?dev doap:Project ?proj . ?proj foaf:name ?furtherProjects}}"; <br /> 
+Query query = QueryFactory.create(queryString); <br /> 
+// Execute the query and obtain results <br />QueryExecution qe = QueryExecutionFactory.create(query, semweb.asJenaModel("default")); 
+ResultSet results = qe.execSelect(); <br />
+// Output query results   <br />ResultSetFormatter.out(System.out, results, query); <br />
+// close the SemWebClient
+semWeb.close();
+</pre>
+<p>&nbsp;</p>
+<h3>5.2 Executing a find(SPO) Query </h3>
+<p>The Semantic Web Client provides two different find methods. The first one find(TripleMatch) returns an iterator over all matching Triples. </p>
+<pre>
+import java.util.Iterator;
+
+import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.graph.Triple;
+
+import de.fuberlin.wiwiss.ng4j.semwebclient.SemWebTriple;
+import de.fuberlin.wiwiss.ng4j.semwebclient.SemanticWebClient;
+import de.fuberlin.wiwiss.ng4j.semwebclient.SemanticWebClientImpl;
+
+// create a Semantic WebClient
+SemanticWebClient  semWeb = new SemanticWebClientImpl();
 
 // add some data
 semWeb.read(&quot;http://richard.cyganiak.de/foaf.rdf&quot;);
@@ -90,67 +421,116 @@ while(iter.hasNext()){
 	SemWebTriple triple = (SemWebTriple) iter.next();
 	System.out.println(triple.toString());
 }
+
+// close the SemWebClient
+semWeb.close();
 </pre>
 
 <p>The find( TripleMatch, TripleListener) returns nothing. It is called with a second parameter a TripleListener which implements the methods tripleFound() and findFinished(). </p>
 
 <p>A simple Listener which implements the TripleListener Interface: </p>
-<pre>public class ExampleListener implements TripleListener{
+<pre>
+import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.graph.Triple;
+
+import de.fuberlin.wiwiss.ng4j.semwebclient.SemanticWebClientImpl;
+import de.fuberlin.wiwiss.ng4j.semwebclient.TripleListener;
+
+class ExampleListener implements TripleListener{
 	public int count = 0;
-	public boolean finished = false;
+	public boolean isFinished = false;
 	
-	public void tripleFound(TripleFoundEvent e){
-		System.out.println(e.getTriple().toString());
+	public void tripleFound(Triple t){
+		System.out.println("Found Triple: " + t.toString());
 		this.count++;
 	}
+			
+	public void findFinished(){
+		System.out.println("Find finshed");
+		this.isFinished = true;
+	}
+			
 	public int getCount(){
 		return this.count;
 	}
-	public void findFinished(TripleFoundEvent e){
-		System.out.println("findFinshed");
-		this.finished = true;
+			
+	public boolean isFinished(){
+		return isFinished;
 	}
-	
+			
 }
-// create a Semantic WebClient
+//create a Semantic WebClient
 SemanticWebClientImpl  semWeb = new SemanticWebClientImpl();
 
-// add some data
-semWeb.read(&quot;http://richard.cyganiak.de/foaf.rdf&quot;);
+//add some data
+semWeb.read("http://richard.cyganiak.de/foaf.rdf","RDF/XML");
 
-// create a triple
+//create a triple
 Triple t = new Triple(Node.ANY,Node.createURI("http://xmlns.com/foaf/0.1/knows"),Node.ANY);
 
-// create a new TestListener
+//create a new TestListener
 ExampleListener listener = new ExampleListener();
 
-// search for the triple and add the listener to the semantic web client
-Iterator iter = semWeb.find(t,listener);
+//search for the triple and add the listener to the semantic web client
+semWeb.find(t,listener);
 
-// while retrieval not finished do something
-while(!l.finished){
+//while retrieval not finished do something
+while(!listener.isFinished()){
 			// do something
 }
+		
+//get the number of matched Triples
+System.out.println(listener.getCount()+" Triples found");
+		
+//close the SemWebClient
+semWeb.close();
 </pre>
 
-<p> The retrieve mechanism uses multithreading to retrieve the different URIs. The maximal number of simultan threads, steps and maximal execution time can be configured by calling the setConfig() method. </p>
-
+<p>&nbsp;</p>
+<h3>Configurating the Library </h3>
+<p>The retrieve mechanism uses multithreading to retrieve  URIs. The maximal number of simultanious threads, the maximal number iterations ofthe directed-browsing algorithms  and maximal retrieval execution time can be configured by calling the setConfig() method. </p>
 <pre>// create a Semantic WebClient
 SemanticWebClientImpl  semWeb = new SemanticWebClientImpl();
 
 semWeb.setConfig("maxsteps","3");
-semWeb.setConfig("maxsthreads","10");
-semweb.setConfig("timeout","10000");
+semWeb.setConfig("maxthreads","10");
+semWeb.setConfig("timeout","10000");
 </pre>
 
-<p>.....</p>
-<h2>&nbsp;</h2>
-<p><a href="http://sourceforge.net/projects/ng4j/"><img src="sflogo.png" alt="SourceForge Logo"></a></p>
-
-
+<p>&nbsp;</p>
+<h3>Information Provenance </h3>
+<p>Todo: Explain how to ask a triple for its provenance. </p>
+<p>Todo: Explain how the retireved and failed graphs are accessed. </p>
+<p>Todo: Explain http://localhost/provenanceInformation graph. </p>
+<p> Within each graphset there is a graph http://localhost/provenanceInformation, which contains provenance information for each retrieved graph. Each graph is described with a swp:sourceURL and a swp:retrievalTimestamp property. (noch keine Property für RetrievalTimestamp gefunden). </p>
+<h3>&nbsp; </h3>
+<h2>6. <a name="download" id="download"></a>Download</h2>
+<p>The Semantic Web Client Library is part of<a href="http://sites.wiwiss.fu-berlin.de/suhl/bizer/ng4j/" target="_blank"> NG4J - Named Graphs API for Jena</a>. </p>
+<div id="download">
+  <h2><a href="http://sourceforge.net/project/showfiles.php?group_id=111002&amp;package_id=188901">Download NG4J</a></h2>
+  <small>v0.4, released 2006-10-15</small> </div>
+<h3>Requirements</h3>
+<p>You need:</p>
+<ul>
+  <li><strong>Java 1.4</strong> or newer on the path (check with <tt>java -version</tt> if you're not sure),</li>
+  <li class="Stil1">Anything else ??</li>
+</ul>
+<h3>Lisence</h3>
+<p> The Semantic Web Client Libarary is lisenced under the terms of the Berkeley Software Distribution (BSD) license. </p>
+<h3>Source code and development</h3>
+<p>The Semantic Web Client Library is hosted by <a href="http://sourceforge.net/">SourceForge.net</a> as part of the <a href="http://sourceforge.net/projects/ng4j/%20">NG4J project</a>. The latest source code is available from the project's <a href="http://sourceforge.net/cvs/?group_id=118754">CVS repository</a> and can be <a href="http://ng4j.cvs.sourceforge.net/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/semwebclient/">browsed online</a>.</p>
+<h2><a name="support" id="support"></a>7. Support and feedback</h2>
+<p>We are interested in hearing about your experiece with the library. </p>
+<p>Good starting points for playing around with the library is the interlinked data published by the  Tabulator project (<a href="http://dig.csail.mit.edu/2005/ajar/ajaw/data">http://dig.csail.mit.edu/2005/ajar/ajaw/data</a>) and the D2R demo server running at <a href="http://www3.wiwiss.fu-berlin.de:2020/">http://www3.wiwiss.fu-berlin.de:2020/</a>. If you find other interesting chunks of interlinked data on the Semantic Web that can be queried using the library, please tell us. </p>
+<p>Please sentcomments to the NG4J-namedgraphs mailing list: </p>
+<p><a href="mailto:ng4j-namedgraphs@lists.sourceforge.net">ng4j-namedgraphs@lists.sourceforge.net </a></p>
+<p>The archives of the list are found at <a href="http://sourceforge.net/mailarchive/forum.php?forum=ng4j-namedgraphs">http://sourceforge.net/mailarchive/forum.php?forum=ng4j-namedgraphs </a><br />
+  You can subscribe to the list at <a href="http://lists.sourceforge.net/lists/listinfo/ng4j-namedgraphs">http://lists.sourceforge.net/lists/listinfo/ng4j-namedgraphs </a></p>
+<p><a href="http://sourceforge.net/projects/d2rq-map/"><img src="http://sourceforge.net/sflogo.php?group_id=111002&amp;type=5" alt="SourceForge Logo" /></a></p>
 <div id="footer">
-  <small>$Id: index.html,v 1.1 2006/09/28 14:11:12 tgauss Exp $</small>
+  <small>$Id: index.html,v 1.2 2006/10/07 10:49:22 tgauss Exp $</small>
 </div>
 </div>
 
-</body></html>
+</body>
+</html>
