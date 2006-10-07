@@ -1,4 +1,4 @@
-// $Id: GraphReaderService.java,v 1.6 2005/06/21 09:25:35 cyganiak Exp $
+// $Id: GraphReaderService.java,v 1.7 2006/10/07 15:39:49 tgauss Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import java.io.File;
@@ -76,10 +76,12 @@ public class GraphReaderService {
 	public GraphReaderService() {
 		// TODO: Replace this by some kind of extensible registry
 		this.mimeTypes.put("application/rdf+xml", "RDF/XML");
+		this.mimeTypes.put("application/rss+xml", "RDF/XML");
 		this.mimeTypes.put("text/rdf+xml", "RDF/XML");
 		this.mimeTypes.put("application/n3", "N3");
 		this.mimeTypes.put("application/x-turtle", "N3");
 		this.mimeTypes.put("application/x-trig", "TRIG");
+		this.mimeTypes.put("text/rdf+n3", "N3");
 //		mimeTypes.put("text/plain", "N-TRIPLES");	// too error-prone
 		this.fileExtensions.put("rdf", "RDF/XML");
 		this.fileExtensions.put("rdfs", "RDF/XML");
