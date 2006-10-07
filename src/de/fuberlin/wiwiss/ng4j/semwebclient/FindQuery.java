@@ -150,6 +150,8 @@ public class FindQuery implements DereferencingListener {
 		}
 		if (uri.indexOf("#") >= 0) {
 			uri = uri.substring(0, uri.indexOf("#"));
+			// TODO: But we have to check for rdfs:seeAlso triples involving the original URI
+			// after retrieval has finished! This does not currently happen.
 		}
 		if (this.client.requestDereferencing(uri, step, this)) {
 			this.urisInProcessing.add(uri);
