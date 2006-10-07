@@ -108,6 +108,8 @@ public class DereferencerThread extends Thread {
 		try {
 			// application/rdf+xml;q=1.0, */*;q=0.5
 			this.connection = (HttpURLConnection) this.url.openConnection();
+			
+			/*
 			this.connection.addRequestProperty("accept",
 					"application/rdf+xml");
 			this.connection.addRequestProperty("accept",
@@ -115,6 +117,16 @@ public class DereferencerThread extends Thread {
 			this.connection.addRequestProperty("accept", "text/plain");
 			this.connection.addRequestProperty("accept", "application/xml");
 			this.connection.addRequestProperty("accept", "text/rdf+n3");
+			
+			*/
+			this.connection.addRequestProperty("accept", "application/rdf+xml ; q=1, " +
+					"text/xml ; q=0.6 , text/rdf+n3 ; q=0.9 , " +
+					"application/octet-stream ; q=0.5 , " +
+					"application/xml q=0.5, application/rss+xml ; q=0.5 , " +
+					"text/plain ; q=0.5, application/x-turtle ; q=0.5, " +
+					"application/x-trig ; q=0.5");
+			
+			// TODO html handling
 			//this.connection.addRequestProperty("accept", "text/html");
 
 			this.log.debug(this.connection.getResponseCode() + " " + this.url + " (" + this.connection.getContentType() + ")");
@@ -125,24 +137,15 @@ public class DereferencerThread extends Thread {
 				return createErrorResult(DereferencingResult.STATUS_UNABLE_TO_CONNECT, null);
 			}
 			// TODO Http 303
-			String lang = null;
-//			if (type.equals("text/html")){
-//				this.parseHTML();
-//			}
-			if (this.connection.getContentType().startsWith(
-					"application/rdf+xml")) {
-				lang = "RDF/XML";
-			} else {
-				lang = "default";
-			}
-			if (lang != null) {
+		
+			String lang = setLang();
 				try {
 					this.parseRdf(lang);
 				} catch (Exception ex) {		// parse error
 					this.log.debug(ex.getMessage());
 					return createErrorResult(DereferencingResult.STATUS_PARSING_FAILED, ex);
 				}
-			}
+		//	}
 		} catch (IOException e) {
 			this.log.debug(e.getMessage());
 			return createErrorResult(DereferencingResult.STATUS_PARSING_FAILED, e);
@@ -160,6 +163,26 @@ public class DereferencerThread extends Thread {
 		this.tempNgs.read(this.connection.getInputStream(), lang, this.url
 				.toString());
 	}
+	
+	
+	private String setLang(){
+		String type = this.connection.getContentType();
+			if(type == null)
+				return "default";
+			
+			if(type.startsWith("application/rdf+xml")||type.startsWith("text/xml")||
+					type.startsWith("application/xml")||type.startsWith("application/rss+xml")||
+					type.startsWith("text/plain"))
+					return "RDF/XML";
+			if(type.startsWith("application/n3")||type.startsWith("application/x-turtle")||
+					type.startsWith("text/rdf+n3"))
+					return "N3";
+		
+			return type;
+	}
+		
+		
+	
 
 	/**
 	 * Stops the UriConnector from retrieving the URI.
