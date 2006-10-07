@@ -69,32 +69,8 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 	}
 
 	public void find(TripleMatch pattern, TripleListener listener) {
-		//this.retriever.setTriplePattern(pattern);
-		//this.retrievalFinished = false;
-		
-		
-		
-		
-		/*
-		Triple t = pattern.asTriple();
-
-		Node sub = t.getSubject();
-		Node pred = t.getPredicate();
-		Node obj = t.getObject();
-
-		Iterator iter = this.findQuads(Node.ANY, sub, pred, obj);
-
-		this.inspectTriple(t, -1);
-
-		while (iter.hasNext()) {
-			Quad quad = (Quad) iter.next();
-			Triple tr = quad.getTriple();
-			this.inspectTriple(tr, -1);
-		}
-		TripleFinder finder = new TripleFinder(sub, pred, obj, this, listener);
+		TripleFinder finder = new TripleFinder(pattern.asTriple(), this, listener);
 		finder.start();
-		*/
-
 	}
 
 	public void addRemoteGraph(String uri) {
