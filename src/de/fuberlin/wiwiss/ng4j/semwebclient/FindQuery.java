@@ -4,6 +4,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.vocabulary.RDFS;
@@ -21,30 +24,33 @@ import de.fuberlin.wiwiss.ng4j.Quad;
  * 
  */
 public class FindQuery implements DereferencingListener {
-	private SemWebIterator semiter;
+	private SemWebIterator iterator;
 	private SemanticWebClientImpl client;
 	private List urisInProcessing = new LinkedList();
 	private TimeoutThread timeoutThread;
-
+	private boolean stopped;
+	private Log log = LogFactory.getLog(FindQuery.class);
+	
 	public FindQuery(SemanticWebClientImpl client, Triple pattern) {
 		this.client = client;
-		this.semiter = new SemWebIterator(this, pattern);
-		this.timeoutThread = new TimeoutThread(this.semiter);
+		this.iterator = new SemWebIterator(this, pattern);
+		this.timeoutThread = new TimeoutThread(this.iterator);
 		this.timeoutThread.setName("Timeout");
-		this.semiter.queueNamedGraphs(this.client.listGraphs());
-		this.inspectTriple(this.client, pattern, 1);
-		this.inspectNgs(this.client, pattern, 1);
+		synchronized (this.client) {
+			this.iterator.queueNamedGraphs(this.client.listGraphs());
+		}
+		// TODO The inspect operations can be expensive and shouldn't be executed by the application thread
+		this.inspectTriple(this.client, pattern, 0);
+		this.inspectNgs(this.client, pattern, 0);
 		checkIfProcessingFinished();
 	}
 
-	public void dereferencingSuccessful(DereferencingTask task, NamedGraphSet result) {
-		inspectNgs(result, this.semiter.getTriple(), task.getStep());
-		this.semiter.queueNamedGraphs(result.listGraphs());
-		uriProcessingFinished(task.getURI());
-	}
-
-	public void dereferencingFailed(DereferencingTask task, int errorCode) {
-		uriProcessingFinished(task.getURI());
+	public void dereferenced(DereferencingResult result) {
+		if (result.isSuccess()) {
+			inspectNgs(result.getResultData(), this.iterator.getTriple(), result.getTask().getStep());
+			this.iterator.queueNamedGraphs(result.getResultData().listGraphs());
+		}
+		uriProcessingFinished(result.getURI());
 	}
 
 	private synchronized void uriProcessingFinished(String uri) {
@@ -56,8 +62,8 @@ public class FindQuery implements DereferencingListener {
 		if (!this.urisInProcessing.isEmpty()) {
 			return;
 		}
-		this.semiter.noMoreGraphs();
-		this.timeoutThread.cancel();
+		this.iterator.noMoreGraphs();
+		close();
 	}
 	
 	/**
@@ -69,7 +75,7 @@ public class FindQuery implements DereferencingListener {
 	 * @param step
 	 *            The retrieval step.
 	 */
-	private synchronized void inspectTriple(NamedGraphSet ngs, Triple t, int step) {
+	private void inspectTriple(NamedGraphSet ngs, Triple t, int step) {
 		Node sub = t.getSubject();
 		Node pred = t.getPredicate();
 		Node obj = t.getObject();
@@ -79,9 +85,9 @@ public class FindQuery implements DereferencingListener {
 		this.inspectNode(ngs, obj, step);
 	}
 	
-	private synchronized void inspectNode(NamedGraphSet ngs, Node n, int step){
+	private void inspectNode(NamedGraphSet ngs, Node n, int step){
 		if (n.isURI()) {
-			requestDereferencing(n.getURI(), step);
+			requestDereferencing(n.getURI(), step + 1);
 		}
 		if (n.isURI() || n.isBlank()) {
 			checkSeeAlso(ngs, n, step);
@@ -97,7 +103,7 @@ public class FindQuery implements DereferencingListener {
 	 *            The retrieval step
 	 */
 	private void inspectNgs(NamedGraphSet ngs, Triple pattern, int step) {
-		if (pattern != null) {
+		synchronized (ngs) {
 			Iterator iter = ngs.findQuads(Node.ANY, pattern.getSubject(),
 					pattern.getPredicate(), pattern.getObject());
 
@@ -121,33 +127,42 @@ public class FindQuery implements DereferencingListener {
 	 *            The retrieval step.
 	 */
 	private void checkSeeAlso(NamedGraphSet ngs, Node n, int step) {
-		synchronized (this) {
+		synchronized (ngs) {
 			Iterator iter = ngs.findQuads(Node.ANY, n, RDFS.seeAlso.asNode(),
 					Node.ANY);
 			while (iter.hasNext()) {
 				Quad quad = (Quad) iter.next();
 				Node obj = quad.getObject();
 				if (obj.isURI()) {
-					requestDereferencing(obj.getURI(), step);
+					requestDereferencing(obj.getURI(), step + 1);
 				}
 			}
 		}
 	}
 
 	private void requestDereferencing(String uri, int step) {
+		if (this.stopped) {
+			return;
+		}
+		if (!uri.startsWith("http://") && !uri.startsWith("https://")) {
+			// Don't try to reference mailto:, file: and other URI schemes
+			return;
+		}
+		if (uri.indexOf("#") >= 0) {
+			uri = uri.substring(0, uri.indexOf("#"));
+		}
 		if (this.client.requestDereferencing(uri, step, this)) {
 			this.urisInProcessing.add(uri);
 		}
 	}
 	
-	public void close() {
-		synchronized (this.timeoutThread) {
-			this.timeoutThread.notify();
-		}
+	public synchronized void close() {
+		this.stopped = true;
+		this.timeoutThread.cancel();
 	}
 
 	public SemWebIterator iterator(){
-		return this.semiter;
+		return this.iterator;
 	}
 	
 	private long getTimeout() {
@@ -174,6 +189,8 @@ public class FindQuery implements DereferencingListener {
 				throw new RuntimeException(ex);
 			}
 			if (this.closeIterator) {
+				log.debug("Timeout");
+				stopped = true;
 				this.iterator.close();
 			}
 		}

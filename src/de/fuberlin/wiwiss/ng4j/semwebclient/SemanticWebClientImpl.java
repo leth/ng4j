@@ -21,7 +21,6 @@ import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.graph.TripleMatch;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
-import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
 /**
@@ -99,28 +98,7 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 	}
 
 	public void addRemoteGraph(String uri) {
-		final Object lock = new Object();
-		DereferencingListener listener = new DereferencingListener() {
-			public void dereferencingFailed(DereferencingTask task, int errorCode) {
-				synchronized (lock) {
-					lock.notify();
-				}
-			}
-			public void dereferencingSuccessful(DereferencingTask task, NamedGraphSet result) {
-				synchronized (lock) {
-					lock.notify();
-				}
-			}
-		};
-		requestDereferencing(uri, 1, listener);
-		synchronized (lock) {
-			try {
-				lock.wait();
-			} catch (InterruptedException ex) {
-				// We don't know when this happens
-				throw new RuntimeException(ex);
-			}
-		}
+		requestDereferencing(uri, 0, null);
 	}
 
 	public synchronized void reloadRemoteGraph(String uri) {
@@ -217,6 +195,7 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#close()
 	 */
 	public synchronized void close() {
+		this.log.debug("Closing ...");
 		this.isClosed = true;
 		if (this.uriQueue != null) {
 			this.uriQueue.close();
@@ -224,6 +203,7 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 		this.retrievedUris.clear();
 		this.markedUris.clear();
 		super.close();
+		this.log.debug("Closed");
 	}
 
 	public boolean isClosed() {
@@ -271,9 +251,9 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 		super.addGraph(graph);
 	}
 
-	public synchronized boolean requestDereferencing(String uri, int step,
+	public boolean requestDereferencing(String uri, int step,
 			final DereferencingListener listener) {
-		if (this.markedUris.contains(uri)) {
+		if (this.markedUris.contains(uri) || containsGraph(uri)) {
 			// already retrieved or in queue, don't queue again
 			return false;
 		}
@@ -284,23 +264,27 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 		this.log.debug("Queued (" + step + " steps): " + uri);
 		this.markedUris.add(uri);
 		DereferencingListener myListener = new DereferencingListener() {
-			public void dereferencingFailed(DereferencingTask task, int errorCode) {
-				SemanticWebClientImpl.this.unretrievedURIs.add(task.getURI());
-			}
-			public void dereferencingSuccessful(DereferencingTask task, NamedGraphSet result) {
+			public void dereferenced(DereferencingResult result) {
 				if (isClosed()) {
 					return;
 				}
-				addProvenanceInformation(task.getURI());
-				Iterator it = result.listGraphs();
-				while (it.hasNext()) {
-					addGraph((NamedGraph) it.next());
+				if (result.isSuccess()) {
+					addProvenanceInformation(result.getURI());
+					Iterator it = result.getResultData().listGraphs();
+					while (it.hasNext()) {
+						addGraph((NamedGraph) it.next());
+					}
+					SemanticWebClientImpl.this.retrievedUris.add(result.getURI());
+				} else {
+					// TODO: URIs get marked unretrievable when the worker thread gets interrupted 
+					SemanticWebClientImpl.this.unretrievedURIs.add(result.getURI());
 				}
-				SemanticWebClientImpl.this.retrievedUris.add(task.getURI());
-				listener.dereferencingSuccessful(task, result);
+				if (listener != null) {
+					listener.dereferenced(result);
+				}
 			}
 		};
-		getURIQueue().addTask(new DereferencingTask(myListener, uri, step + 1));
+		getURIQueue().addTask(new DereferencingTask(myListener, uri, step));
 		return true;
 	}
 	

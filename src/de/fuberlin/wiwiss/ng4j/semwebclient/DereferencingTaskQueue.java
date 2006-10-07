@@ -28,16 +28,7 @@ public class DereferencingTaskQueue extends Thread {
 		this.notify();
 	}
 
-	public void initThreadPool(int numThreads){
-		for(int i = 0; i < numThreads; i++) {
-			DereferencerThread thread = new DereferencerThread();
-			thread.setName("DerefThread"+i);
-			thread.start();
-			this.threads.add(thread);
-		}
-	}
-
-	public void run(){
+	public void run() {
 		initThreadPool(this.maxthreads);
 		while (!this.stopped) {
 			checkForTasksAndWait();
@@ -54,7 +45,7 @@ public class DereferencingTaskQueue extends Thread {
 		notify();
 	}
 	
-	private synchronized void checkForTasksAndWait() {
+	private void checkForTasksAndWait() {
 		while (!this.tasks.isEmpty()) {
 			DereferencingTask task = (DereferencingTask) this.tasks.getFirst();
 			if (tryAssignTask(task)) {
@@ -67,7 +58,9 @@ public class DereferencingTaskQueue extends Thread {
 		}
 		try {
 			// TODO Wake up when a worker thread is finished
-			wait(100);
+			synchronized (this) {
+				wait(100);
+			}
 		} catch (InterruptedException ex) {
 			// Don't know when this happens
 			throw new RuntimeException(ex);
@@ -83,5 +76,14 @@ public class DereferencingTaskQueue extends Thread {
 			}
 		}
 		return false;
+	}
+
+	private void initThreadPool(int numThreads) {
+		for (int i = 0; i < numThreads; i++) {
+			DereferencerThread thread = new DereferencerThread();
+			thread.setName("DerefThread"+i);
+			thread.start();
+			this.threads.add(thread);
+		}
 	}
 }

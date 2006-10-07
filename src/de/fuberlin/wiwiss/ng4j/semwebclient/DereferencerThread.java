@@ -1,5 +1,6 @@
 package de.fuberlin.wiwiss.ng4j.semwebclient;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -21,39 +22,37 @@ import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
  * @author Tobias Gauﬂ
  */
 public class DereferencerThread extends Thread {
-	private final static int STATUS_PARSING_FAILED = -1;
-	private final static int STATUS_MALFORMED_URL = -2;
-	private final static int STATUS_UNABLE_TO_CONNECT = -3;
-	
 	private DereferencingTask task = null;
 	private HttpURLConnection connection;
 	private boolean stopped = false;
 	private boolean available = true;
-
-	/**
-	 * The NamedGraphSet which contains the retrieved data.
-	 */
 	private NamedGraphSet tempNgs = null;
 	private URL url;
 
 	private Log log = LogFactory.getLog(DereferencerThread.class);
+
+	public DereferencerThread() {
+		// Lower priority a little bit
+		setPriority(getPriority() - 1);
+	}
 	
 	public void run() {
+		this.log.debug("Thread started.");
 		while (!this.stopped) {
 			if (hasTask()) {
-				dereferenceAndDeliver();
+				DereferencingResult result = dereference();
+				deliver(result);
 				clearTask();
-			}
-			if (this.stopped) {
-				break;
 			}
 			try {
 				synchronized(this) {
+					if (this.stopped) {
+						break;
+					}
 					wait();
 				}
 			} catch (InterruptedException ex) {
-				// Don't know when this happens
-				throw new RuntimeException(ex);
+				// Happens when the thread is stopped
 			}
 		}
 		this.log.debug("Thread stopped.");
@@ -64,13 +63,17 @@ public class DereferencerThread extends Thread {
 	}
 	
 	public synchronized boolean startDereferencingIfAvailable(DereferencingTask task) {
-		if (!isAvailable()) {
+		if (!isAvailable() || this.stopped) {
 			return false;
 		}
 		this.task = task;
-		this.url = toURL(task.getURI());
+		try {
+			this.url = new URL(task.getURI());
+		} catch (MalformedURLException ex) {
+			deliver(createErrorResult(DereferencingResult.STATUS_MALFORMED_URL, ex));
+			return true;
+		}
 		if (this.url == null) {
-			deliverError(STATUS_MALFORMED_URL);
 		}
 		this.available = false;
 		this.notify();
@@ -80,7 +83,7 @@ public class DereferencerThread extends Thread {
 	private boolean hasTask() {
 		return this.task != null;
 	}
-	
+
 	private void clearTask() {
 		this.task = null;
 		this.url = null;
@@ -89,11 +92,18 @@ public class DereferencerThread extends Thread {
 		this.available = true;
 	}
 	
-	private void deliverError(int errorCode) {
-		this.task.getListener().dereferencingFailed(this.task, errorCode);
+	private DereferencingResult createErrorResult(int errorCode, Exception exception) {
+		return new DereferencingResult(this.task, errorCode, null, exception);
+	}
+
+	private synchronized void deliver(DereferencingResult result) {
+		if (this.stopped) {
+			return;
+		}
+		this.task.getListener().dereferenced(result);
 	}
 	
-	private void dereferenceAndDeliver() {
+	private DereferencingResult dereference() {
 		this.tempNgs = new NamedGraphSetImpl();
 		try {
 			// application/rdf+xml;q=1.0, */*;q=0.5
@@ -112,8 +122,7 @@ public class DereferencerThread extends Thread {
 			String type = this.connection.getContentType();
 			
 			if (type == null) {
-				deliverError(STATUS_UNABLE_TO_CONNECT);
-				return;
+				return createErrorResult(DereferencingResult.STATUS_UNABLE_TO_CONNECT, null);
 			}
 			// TODO Http 303
 			String lang = null;
@@ -127,54 +136,38 @@ public class DereferencerThread extends Thread {
 				lang = "default";
 			}
 			if (lang != null) {
-				if (!this.parseRdf(lang)) {
-					// There was a parse error
-					return;
+				try {
+					this.parseRdf(lang);
+				} catch (Exception ex) {		// parse error
+					this.log.debug(ex.getMessage());
+					return createErrorResult(DereferencingResult.STATUS_PARSING_FAILED, ex);
 				}
 			}
-		} catch (Exception e) {
+		} catch (IOException e) {
 			this.log.debug(e.getMessage());
-			deliverError(STATUS_PARSING_FAILED);
+			return createErrorResult(DereferencingResult.STATUS_PARSING_FAILED, e);
 		}
-		this.task.getListener().dereferencingSuccessful(this.task, this.tempNgs);
+		return new DereferencingResult(this.task, DereferencingResult.STATUS_OK, this.tempNgs, null);
 	}
 	
 	/**
 	 * Parses an RDF String and adds the collected data to the NamedGraphSet.
 	 */
-	private boolean parseRdf(String lang) {
-		try {
-			if (lang.equals("default"))
-				lang = null;
-			RDFDefaultErrorHandler.silent = true;
-	
-			this.tempNgs.read(this.connection.getInputStream(), lang, this.url
-					.toString());
-			return true;
-		} catch (Exception e) {
-			this.log.debug(e.getMessage());
-			deliverError(STATUS_PARSING_FAILED);
-			return false;
-		}
-	}
-
-	private URL toURL(String uri){
-		try {
-			return new URL(uri);
-		} catch (MalformedURLException e) {
-			return null;
-		}
+	private void parseRdf(String lang) throws Exception {
+		if (lang.equals("default"))
+			lang = null;
+		RDFDefaultErrorHandler.silent = true;
+		this.tempNgs.read(this.connection.getInputStream(), lang, this.url
+				.toString());
 	}
 
 	/**
 	 * Stops the UriConnector from retrieving the URI.
 	 */
 	public synchronized void stopThread() {
-		// TODO: How to close hanging HTTP connections here?
 		this.stopped = true;
 		this.available = false;
-		this.notify();
-		this.log.debug("Received stop message");
+		this.interrupt();
 	}
 
 	/*

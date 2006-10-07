@@ -4,6 +4,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 
@@ -27,7 +30,8 @@ public class SemWebIterator implements Iterator {
 	private Triple nextTriple = null;
 	private boolean noMoreGraphs = false;
 	private FindQuery findQuery;
-
+	private Log log = LogFactory.getLog(SemWebIterator.class);
+	
 	public SemWebIterator(FindQuery observer, Triple pattern) {
 		this.findQuery = observer;
 		this.pattern = pattern;
@@ -37,6 +41,7 @@ public class SemWebIterator implements Iterator {
 		while (graphs.hasNext()) {
 			NamedGraph graph = (NamedGraph) graphs.next();
 			this.graphQueue.addLast(graph);
+			this.log.debug("Queue result graph: <" + graph.getGraphName() + "> (" + graph.size() + " triples)");
 		}
 		notify();
 	}
@@ -62,6 +67,7 @@ public class SemWebIterator implements Iterator {
 				NamedGraph graph = (NamedGraph) this.graphQueue.removeFirst();
 				this.currentIterator = graph.find(this.pattern);
 				this.currentGraphName = graph.getGraphName();
+				this.log.debug("Searching <" + this.currentGraphName + ">");
 				continue;
 			}
 			if (this.noMoreGraphs) {
@@ -103,8 +109,10 @@ public class SemWebIterator implements Iterator {
 			this.findQuery = null;
 		}
 		this.noMoreGraphs = true;
-		this.currentIterator = null;
-		this.graphQueue.clear();
 		notify();
+	}
+	
+	public String toString() {
+		return "SemWebIterator(" + this.pattern + ")";
 	}
 }
