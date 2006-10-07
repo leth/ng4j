@@ -1,0 +1,48 @@
+---------------------------------
+Semantic Web Client Library V0.4
+---------------------------------
+
+Sucessfully loaded: http://dig.csail.mit.edu/2005/ajar/ajaw/data
+Sucessfully loaded TriG file: c:/cache.trig
+
+---------------------------------
+Executing SPARQL Query:
+
+PREFIX foaf: <http://xmlns.com/foaf/0.1/ > 
+PREFIX doap: <http://usefulinc.com/ns/doap#> 
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+SELECT DISTINCT ?name ?mbox ?furtherProjects 
+WHERE { 
+  < http://dig.csail.mit.edu/2005/ajar/ajaw/data#Tabulator > doap:developer ?dev .   
+  ?dev foaf:name ?name 
+  OPTIONAL {?dev foaf:mbox ?mbox}
+  OPTIONAL {?dev doap:Project ?proj . 
+            ?proj foaf:name ?furtherProjects }
+}
+
+---------------------------------
+Query Results:
+
+?name	| ?mbox | ?furherProjects
+
+"Ruth Dhanaraj" | | 
+"Timothy Berners-Lee" | < mailto:timbl@w3.org > |
+"Lydia Chilton" | "hmslydia@gmail.com" | "The inimitable project III"
+
+---------------------------------
+Sucessfully retrieved URIs:
+
+http://dig.csail.mit.edu/2005/ajar/ajaw/data#Tabulator 
+http://web.mit.edu/ruthdhan/www/foaf.rdf#ruthdhan 
+http://web.mit.edu/dsheets/www/foaf.rdf#dsheets 
+http://web.mit.edu/hmslydia/Public/foaf.rdf#hmslydia 
+
+---------------------------------
+Failed to retreive the following URIs:
+
+http://web.mit.edu/dsheets/www/foaf.rdf#ds 
+http://web.mit.edu/hmslydia/Public/foaf.rdf#hm
+
+Sucessfully saved retrieved graphs to TriG file: c:/cache.trig
+
+
