@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -183,7 +182,11 @@ public class CommandLineClient {
 		if(this.sparqlQueryFromFile != null){
 			BufferedReader in = new BufferedReader(
 					new InputStreamReader(new FileInputStream(this.sparqlQueryFromFile) ) );
-			this.sparqlQuery = in.readLine();
+			String line;
+			this.sparqlQuery = "";
+			while((line = in.readLine()) != null){
+				this.sparqlQuery += line;
+			}
 			in.close();
 		}
 	}
@@ -228,11 +231,11 @@ public class CommandLineClient {
 		}	
 	}
 	
-	private void executeWriteGraphset()throws FileNotFoundException{
+	private void executeWriteGraphset()throws FileNotFoundException,IOException{
 		if(this.writeGraphSetDestination != null){
-			OutputStream out;
-			out = new FileOutputStream(this.writeGraphSetDestination); 
+			FileOutputStream out =new FileOutputStream(this.writeGraphSetDestination); 
 			this.client.write(out,this.writeGraphSetFormat,null);
+			out.close();
 		}
 	}
 	
