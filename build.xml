@@ -14,7 +14,7 @@
 	<property name="lib" value="lib"/>
 	<property name="doc" value="doc"/>
 	<property name="javadoc" value="${doc}/javadoc"/>
-	<property name="jar" value="${project}.jar"/>
+	<property name="jar" value="${lib}/${project}.jar"/>
 	<property name="zip" value="${project}.zip"/>
 	<property name="javacc.home" value="bin/javacc-2.1"/>
 
@@ -174,10 +174,11 @@
 
 	<target name="zip" depends="jar,javadoc">
 		<!-- Creates a release zip file containing sources, tests,
-			 docs (includig javadoc), the jar file, and the build file. -->
+			 docs (includig javadoc), the jar file, required jars,
+			 and the build file. -->
 		<zip destfile="${zip}"
 			 basedir="."
-			 excludes="${lib}/** ${build}/** ${build.tests}/** ${zip}"/>
+			 excludes="${build}/** ${build.tests}/** ${zip}"/>
 	</target>
 
 	<target name="all" depends="zip"/>

@@ -1,6 +1,5 @@
 build
 bin-tests
-ng4j.jar
 ng4j.zip
 .DS_Store
 build-tests
