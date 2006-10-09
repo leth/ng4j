@@ -116,7 +116,7 @@ public class CommandLineQuery {
 	 */
 	public void setLoadGraphSet(String file, String format) {	// format is "TRIG" or "TRIX"
 		this.loadGraphSetSource = file;
-		this.loadGraphSetSource = format;	
+		this.loadGraphSetFormat = format;	
 	}
 	
 	/**
