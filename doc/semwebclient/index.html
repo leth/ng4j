@@ -510,41 +510,41 @@ It is invoked using the <tt>semwebquery</tt> command, which is found in the <tt>
 
 
 <h2><a name="using" id="using"></a>5. Using the Library in your Applications  </h2>
-<p>The Semantic Web Client Library is based on the <a href="http://sites.wiwiss.fu-berlin.de/suhl/bizer/ng4j/" target="_blank">NG4J - Named Graphs API for Jena</a>. The main interface of the Library is the SemanticWebClient interface. The table shows its most important methods. See <a href="javadoc/index.html">JavaDoc</a> for details about all methods.</p>
+<p>The Semantic Web Client Library is based on the <a href="http://sites.wiwiss.fu-berlin.de/suhl/bizer/ng4j/" target="_blank">NG4J - Named Graphs API for Jena</a>. The main interface of the Library is the SemanticWebClient interface. The table shows its most important methods. See <a href="../javadoc/index.html">JavaDoc</a> for details about all methods.</p>
 
 <table border="1" cellpadding="3" cellspacing="0">
   <tr>
-    <td colspan="2"><strong>SemanticWebClient</strong> extends NamedGraphSet </td>
+    <td colspan="2"><a href="../javadoc/de/fuberlin/wiwiss/ng4j/semwebclient/SemanticWebClient.html"><strong>SemanticWebClient</strong></a> extends <a href="../javadoc/de/fuberlin/wiwiss/ng4j/NamedGraphSet.html">NamedGraphSet</a></td>
   </tr>
   <tr>
     <td colspan="2">Semantic Web Client represents all data that is published on the Semantic Web a global set of named RDF graphs. Applications can query the merge of this graph set using the SPARQL query language or using find(SPO) queries. </td>
   </tr>
   <tr>
-    <td valign="top">find(triple)</td>
+    <td valign="top"><a href="../javadoc/de/fuberlin/wiwiss/ng4j/semwebclient/SemanticWebClient.html#find(com.hp.hpl.jena.graph.TripleMatch)">find(pattern)</a></td>
     <td>Returns a iterator over all matching triples. </td>
   </tr>
   <tr>
-    <td valign="top" width="28%">find(triple, listener)</td>
+    <td valign="top" width="28%"><a href="../javadoc/de/fuberlin/wiwiss/ng4j/semwebclient/SemanticWebClient.html#find(com.hp.hpl.jena.graph.TripleMatch,%20de.fuberlin.wiwiss.ng4j.semwebclient.TripleListener)">find(pattern,listener)</a></td>
     <td width="72%">Returns void. A Triple listener which notifies an application when a triple is found or the retrieval process is finished can be passed.</td>
   </tr>
   <tr>
-    <td valign="top">read(url, lang) <br /></td>
+    <td valign="top"><a href="../javadoc/de/fuberlin/wiwiss/ng4j/impl/NamedGraphSetIO.html#read(java.lang.String,%20java.lang.String)">read(url,lang)</a><br /></td>
     <td>Read NamedGraphs from a URL into the NamedGraphSet. Supported RDF serialization languages are TriX, TriG, RDF/XML, N-Triples and N3. </td>
   </tr>
   <tr>
-    <td valign="top">write(writer, lang, baseURI) </td>
+    <td valign="top"><a href="../javadoc/de/fuberlin/wiwiss/ng4j/impl/NamedGraphSetIO.html#write(java.io.Writer,%20java.lang.String,%20java.lang.String)">write(url,lang,baseURI)</a> </td>
     <td>Writes a serialized representation of the NamedGraphSet to a writer. Supported RDF serialization languages are TriX, TriG, RDF/XML, N-Triples and N3. If the specified serialization language doesn't support Named Graphs, then the union graph will be serialized, and knowledge about graph names is lost. Only TriX and TriG support graph naming. </td>
   </tr>
   <tr>
-    <td valign="top">asJenaGraph(defaultGraphForAdding) </td>
+    <td valign="top"><a href="../javadoc/de/fuberlin/wiwiss/ng4j/impl/NamedGraphSetImpl.html#asJenaGraph(com.hp.hpl.jena.graph.Node)">asJenaGraph(defaultGraphForAdding)</a>  </td>
     <td>Returns a Jena Graph view on the NamedGraphSet, equivalent to the union graph of all graphs in the graph set. </td>
   </tr>
   <tr>
-    <td valign="top">asJenaModel(defaultGraphForAdding) </td>
+    <td valign="top"><a href="../javadoc/de/fuberlin/wiwiss/ng4j/impl/NamedGraphSetImpl.html#asJenaModel(java.lang.String)">asJenaModel(defaultGraphForAdding)</a> </td>
     <td>Returns a Jena Model view on the NamedGraphSet, equivalent to the union graph of all graphs in the graph set. All Statements returned by this NamedGraphsModel can be casted to NamedGraphStatements in order to access provenance information about the graphs they are contained in. </td>
   </tr>
   <tr>
-    <td colspan="2"><a href="xxx">More ... </a></td>
+    <td colspan="2"><a href="../javadoc/de/fuberlin/wiwiss/ng4j/semwebclient/SemanticWebClient.html">More...</a></td>
   </tr>
 </table>
 <h3>5.1 Executing a SPARQL Query</h3>
@@ -659,7 +659,7 @@ semWeb.setConfig("maxsteps","3");</pre>
 <p>Good starting points for playing around with the library is interlinked data published by the Tabulator project (<a href="http://dig.csail.mit.edu/2005/ajar/ajaw/data">http://dig.csail.mit.edu/2005/ajar/ajaw/data</a>) and the D2R demo server running at <a href="http://www3.wiwiss.fu-berlin.de:2020/">http://www3.wiwiss.fu-berlin.de:2020/</a>. If you find other interesting chunks of interlinked data on the Semantic Web that can be queried using the library, please tell us. </p>
 <p><a href="http://sourceforge.net/projects/d2rq-map/"><img src="http://sourceforge.net/sflogo.php?group_id=111002&amp;type=5" alt="SourceForge Logo" /></a></p>
 <div id="footer">
-  <small>$Id: index.html,v 1.5 2006/10/09 14:22:09 bizer Exp $</small>
+  <small>$Id: index.html,v 1.6 2006/10/09 16:04:43 tgauss Exp $</small>
 </div>
 </div>
 
