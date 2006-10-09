@@ -58,7 +58,7 @@ public class DereferencerThread extends Thread {
 	}
 	
 	public synchronized boolean isAvailable() {
-		return hasTask() && !this.stopped;
+		return !hasTask() && !this.stopped;
 	}
 	
 	public synchronized boolean startDereferencingIfAvailable(DereferencingTask task) {
