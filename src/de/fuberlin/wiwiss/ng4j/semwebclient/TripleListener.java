@@ -2,8 +2,6 @@ package de.fuberlin.wiwiss.ng4j.semwebclient;
 
 import java.util.EventListener;
 
-import com.hp.hpl.jena.graph.Triple;
-
 /**
  * Listener to handle TripleFoundEvents.
  * 
