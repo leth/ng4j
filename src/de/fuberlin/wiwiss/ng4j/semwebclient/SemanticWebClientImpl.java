@@ -275,10 +275,10 @@ public class SemanticWebClientImpl extends NamedGraphSetImpl implements
 		String label = Long.toString(Calendar.getInstance().getTimeInMillis());
 		NamedGraph provenanceGraph = getGraph("http://localhost/provenanceInformation");
 		provenanceGraph.add(new Triple(Node.createURI(uri), Node
-				.createURI("http://purl.org/net/scutter/source"), Node
+				.createURI("http://www.w3.org/2004/03/trix/swp-2/sourceURL"), Node
 				.createURI(uri)));
 		provenanceGraph.add(new Triple(Node.createURI(uri), Node
-				.createURI("http://purl.org/net/scutter/lastModified"), Node
+				.createURI("http://www.w3.org/2004/03/trix/swp-2/retrievalTimestamp"), Node
 				.createLiteral(label)));
 	}
 

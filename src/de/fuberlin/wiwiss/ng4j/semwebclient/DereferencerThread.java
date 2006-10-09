@@ -74,6 +74,9 @@ public class DereferencerThread extends Thread {
 			return true;
 		}
 		if (this.url == null) {
+			// 
+			deliver(createErrorResult(DereferencingResult.STATUS_MALFORMED_URL, new MalformedURLException()));
+			return true;
 		}
 		this.available = false;
 		this.notify();
