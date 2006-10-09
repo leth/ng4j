@@ -25,7 +25,6 @@ public class DereferencerThread extends Thread {
 	private DereferencingTask task = null;
 	private HttpURLConnection connection;
 	private boolean stopped = false;
-	private boolean available = true;
 	private NamedGraphSet tempNgs = null;
 	private URL url;
 
@@ -59,28 +58,22 @@ public class DereferencerThread extends Thread {
 	}
 	
 	public synchronized boolean isAvailable() {
-		return this.available;
+		return hasTask() && !this.stopped;
 	}
 	
 	public synchronized boolean startDereferencingIfAvailable(DereferencingTask task) {
-		if (!isAvailable() || this.stopped) {
+		if (!isAvailable()) {
 			return false;
 		}
-		this.task = task;
 		try {
 			this.url = new URL(task.getURI());
+			this.task = task;
+			this.notify();
+			return true;
 		} catch (MalformedURLException ex) {
 			deliver(createErrorResult(DereferencingResult.STATUS_MALFORMED_URL, ex));
 			return true;
 		}
-		if (this.url == null) {
-			// 
-			deliver(createErrorResult(DereferencingResult.STATUS_MALFORMED_URL, new MalformedURLException()));
-			return true;
-		}
-		this.available = false;
-		this.notify();
-		return true;
 	}
 	
 	private boolean hasTask() {
@@ -88,11 +81,10 @@ public class DereferencerThread extends Thread {
 	}
 
 	private void clearTask() {
-		this.task = null;
 		this.url = null;
 		this.connection = null;
 		this.tempNgs = null;
-		this.available = true;
+		this.task = null;
 	}
 	
 	private DereferencingResult createErrorResult(int errorCode, Exception exception) {
@@ -192,7 +184,6 @@ public class DereferencerThread extends Thread {
 	 */
 	public synchronized void stopThread() {
 		this.stopped = true;
-		this.available = false;
 		this.interrupt();
 	}
 
