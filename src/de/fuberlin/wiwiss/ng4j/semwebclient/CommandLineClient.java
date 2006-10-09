@@ -172,7 +172,7 @@ public class CommandLineClient {
 			}
 		}
 	}
-	private void executeLoadNamendGraphSet() throws Exception{
+	private void executeLoadNamendGraphSet(){
 		if(this.loadGraphSetSource != null){
 			this.client.read(this.loadGraphSetSource,this.loadGraphSetFormat);
 		}
@@ -191,7 +191,7 @@ public class CommandLineClient {
 		}
 	}
 	
-	private void executeSparqlQuery()throws Exception{
+	private void executeSparqlQuery(){
 		if(this.sparqlQuery != null){
 			Query query;
 			query = QueryFactory.create(this.sparqlQuery); 
@@ -202,7 +202,7 @@ public class CommandLineClient {
 		
 	}
 	
-	private void executeFindQuery()throws Exception{
+	private void executeFindQuery(){
 		if(this.queryTriple != null){
 			SemWebIterator iter = this.client.find(this.queryTriple);
 			while (iter.hasNext()) {
@@ -212,7 +212,7 @@ public class CommandLineClient {
 		}
 	}
 	
-	private void executeOutput()throws Exception{
+	private void executeOutput(){
 		if(this.outputRetrievedURIs){
 			System.out.println("Successfully dereferenced URIs: ");
 			Iterator it = this.client.successfullyDereferencedURIs();
@@ -255,7 +255,7 @@ public class CommandLineClient {
 		return type;
 	}
 	
-	private void executeConfigure()throws Exception{
+	private void executeConfigure(){
 		if(this.maxsteps != -1)
 			this.client.setConfig("maxsteps",Integer.toString(this.maxsteps));
 		if(this.timeout != -1)
