@@ -150,6 +150,7 @@ public class CommandLineClient {
 	public void run() throws Exception {
 		executeConfigure();
 		executeLoadNamendGraphSet();
+		executeWriteIntro();
 		executeAddGraphs();
 		executeSparqlFromFile();
 		executeSparqlQuery();
@@ -167,14 +168,16 @@ public class CommandLineClient {
 			HttpURLConnection connection = null;
 			url = new URL(graphuri);
 			if(url !=null){
-				connection = (HttpURLConnection) url.openConnection();	
+				connection = (HttpURLConnection) url.openConnection();
 				this.client.read(connection.getInputStream(), guessLanguage(connection), url.toString());	
+				System.out.println("Successfully added: " + graphuri );	
 			}
 		}
 	}
 	private void executeLoadNamendGraphSet(){
 		if(this.loadGraphSetSource != null){
 			this.client.read(this.loadGraphSetSource,this.loadGraphSetFormat);
+			System.out.println("Successfully loaded: " + this.loadGraphSetSource );
 		}
 	}
 	
@@ -185,7 +188,7 @@ public class CommandLineClient {
 			String line;
 			this.sparqlQuery = "";
 			while((line = in.readLine()) != null){
-				this.sparqlQuery += line;
+				this.sparqlQuery += line +"\n";
 			}
 			in.close();
 		}
@@ -193,6 +196,8 @@ public class CommandLineClient {
 	
 	private void executeSparqlQuery(){
 		if(this.sparqlQuery != null){
+			System.out.println("\nExecuting SPARQL query: \n");
+			System.out.println(this.sparqlQuery);
 			Query query;
 			query = QueryFactory.create(this.sparqlQuery); 
 			QueryExecution qe = QueryExecutionFactory.create(query, this.client.asJenaModel("default")); 
@@ -204,30 +209,38 @@ public class CommandLineClient {
 	
 	private void executeFindQuery(){
 		if(this.queryTriple != null){
+			System.out.println("\nExecuting find query: \n");
+			System.out.println(this.queryTriple);
+			System.out.println("--------------------------------");
+			System.out.println("Query Results :\n");
 			SemWebIterator iter = this.client.find(this.queryTriple);
 			while (iter.hasNext()) {
 				SemWebTriple triple = (SemWebTriple) iter.next();
 				System.out.println(triple.toString());	
 			}
+			System.out.println("--------------------------------");
+			
 		}
 	}
 	
 	private void executeOutput(){
 		if(this.outputRetrievedURIs){
-			System.out.println("Successfully dereferenced URIs: ");
+			System.out.println("Successfully dereferenced URIs: \n");
 			Iterator it = this.client.successfullyDereferencedURIs();
 			while (it.hasNext()) {
 				String uri = (String) it.next();
 				System.out.println(uri);
 			}
+			System.out.println("--------------------------------");
 		}
 		if(this.outputFailedURIs){
-			System.out.println("Unsuccessfully dereferenced URIs: ");
+			System.out.println("Unsuccessfully dereferenced URIs: \n");
 			Iterator it = this.client.unsuccessfullyDereferencedURIs();
 			while (it.hasNext()) {
 				String uri = (String) it.next();
 				System.out.println(uri);
 			}
+			System.out.println("--------------------------------");
 		}	
 	}
 	
@@ -262,5 +275,11 @@ public class CommandLineClient {
 			this.client.setConfig("timeout",Long.toString(this.timeout));
 		if(this.maxthreads != -1)
 			this.client.setConfig("maxthreads",Long.toString(this.maxthreads));
+	}
+	
+	private void executeWriteIntro(){
+		System.out.println("--------------------------------");
+		System.out.println("Semantic Web Client Library V0.1");
+		System.out.println("--------------------------------");
 	}
 }
