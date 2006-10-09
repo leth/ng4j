@@ -9,7 +9,7 @@
 	<classpathentry kind="lib" path="lib/log4j-1.2.12.jar"/>
 	<classpathentry kind="lib" path="lib/junit.jar"/>
 	<classpathentry kind="lib" path="lib/json.jar"/>
-	<classpathentry sourcepath="/WIQA/jena-src.zip" kind="lib" path="lib/jena.jar"/>
+	<classpathentry sourcepath="/Jena-2.4/src" kind="lib" path="lib/jena.jar"/>
 	<classpathentry kind="lib" path="lib/iri.jar"/>
 	<classpathentry kind="lib" path="lib/icu4j_3_4.jar"/>
 	<classpathentry kind="lib" path="lib/concurrent.jar"/>
