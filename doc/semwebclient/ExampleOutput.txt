@@ -1,48 +1,55 @@
----------------------------------
-Semantic Web Client Library V0.4
----------------------------------
+--------------------------------
+Semantic Web Client Library V0.1
+--------------------------------
 
-Sucessfully loaded: http://dig.csail.mit.edu/2005/ajar/ajaw/data
-Sucessfully loaded TriG file: c:/cache.trig
+Executing SPARQL query: 
 
----------------------------------
-Executing SPARQL Query:
-
-PREFIX foaf: <http://xmlns.com/foaf/0.1/ > 
-PREFIX doap: <http://usefulinc.com/ns/doap#> 
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
-SELECT DISTINCT ?name ?mbox ?furtherProjects 
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX doap: <http://usefulinc.com/ns/doap#>
+SELECT DISTINCT ?name ?mbox ?projectName 
 WHERE { 
-  < http://dig.csail.mit.edu/2005/ajar/ajaw/data#Tabulator > doap:developer ?dev .   
-  ?dev foaf:name ?name 
-  OPTIONAL {?dev foaf:mbox ?mbox}
-  OPTIONAL {?dev doap:Project ?proj . 
-            ?proj foaf:name ?furtherProjects }
+  <http://dig.csail.mit.edu/2005/ajar/ajaw/data#Tabulator> doap:developer ?dev .
+  ?dev foaf:name ?name .
+  OPTIONAL { ?dev foaf:mbox ?mbox }
+  OPTIONAL { ?dev doap:Project ?proj . 
+             ?proj foaf:name ?projectName }
 }
 
----------------------------------
-Query Results:
+------------------------------------------------------------------------------------
+| name                   | mbox                     | projectName                  |
+====================================================================================
+| "Ruth Dhanaraj"        |                          |                              |
+| "Timothy Berners-Lee"  | <mailto:timbl@w3.org>    |                              |
+| "David Sheets"         |                          |                              |
+| "James Hollenbach"     | <mailto:jambo@mit.edu>   |                              |
+| "Dan Connolly"         | <mailto:connolly@w3.org> |                              |
+| "\n\n\n\nDan Connolly" | <mailto:connolly@w3.org> |                              |
+| "Adam Lerer"           | "alerer@mit.edu"         |                              |
+| "Yuhsin Joyce Chen"    | "yuhsin@mit.edu"         |                              |
+| "Yu-hsin Chen"         | "yuhsin@mit.edu"         |                              |
+| "Lydia Chilton"        | "hmslydia@gmail.com"     |                              |
+| "Lydia Chilton"        | "hmslydia@gmail.com"     | "The illustrious project II" |
+| "Lydia Chilton"        | "hmslydia@gmail.com"     | "The inimitable project III" |
+------------------------------------------------------------------------------------
+Successfully dereferenced URIs: 
 
-?name	| ?mbox | ?furherProjects
+http://dig.csail.mit.edu/2005/ajar/ajaw/data
+http://usefulinc.com/ns/doap
+http://web.mit.edu/jambo/www/foaf.rdf
+http://www.w3.org/People/Berners-Lee/card
+http://web.mit.edu/hmslydia/Public/foaf.rdf
+http://web.mit.edu/alerer/www/foaf.rdf
+http://web.mit.edu/yuhsin/www/foaf.rdf
+http://web.mit.edu/ruthdhan/www/foaf.rdf
+http://web.mit.edu/dsheets/www/foaf.rdf
+http://xmlns.com/foaf/0.1/mbox
+http://xmlns.com/foaf/0.1/name
+http://www.w3.org/People/Connolly/home-smart.rdf
+http://web.mit.edu/hmslydia/Public/project02.rdf
+http://web.mit.edu/hmslydia/Public/project03.rdf
+--------------------------------
+Unsuccessfully dereferenced URIs: 
 
-"Ruth Dhanaraj" | | 
-"Timothy Berners-Lee" | < mailto:timbl@w3.org > |
-"Lydia Chilton" | "hmslydia@gmail.com" | "The inimitable project III"
-
----------------------------------
-Sucessfully retrieved URIs:
-
-http://dig.csail.mit.edu/2005/ajar/ajaw/data#Tabulator 
-http://web.mit.edu/ruthdhan/www/foaf.rdf#ruthdhan 
-http://web.mit.edu/dsheets/www/foaf.rdf#dsheets 
-http://web.mit.edu/hmslydia/Public/foaf.rdf#hmslydia 
-
----------------------------------
-Failed to retreive the following URIs:
-
-http://web.mit.edu/dsheets/www/foaf.rdf#ds 
-http://web.mit.edu/hmslydia/Public/foaf.rdf#hm
-
-Sucessfully saved retrieved graphs to TriG file: c:/cache.trig
-
-
+http://www.w3.org/People/Connolly/
+http://open.bbc.co.uk/catalogue/xml/contributor/169456
+--------------------------------
