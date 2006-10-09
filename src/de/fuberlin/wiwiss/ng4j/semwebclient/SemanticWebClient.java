@@ -241,6 +241,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	 * Has to be called to determine a Sementic Web Client.
 	 */
 	public synchronized void close() {
+		// TODO Throw exception if find() and other methods are called after close()?
 		this.log.debug("Closing ...");
 		this.isClosed = true;
 		if (this.uriQueue != null) {
