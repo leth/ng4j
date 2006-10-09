@@ -50,6 +50,7 @@ public class SemWebTriple extends Triple {
 	 * @return Node
 	 */
 	public Node getSource() {
+		// TODO return String ?
 		return this.source;
 	}
 
