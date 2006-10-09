@@ -248,6 +248,7 @@ public class CommandLineQuery {
 		if(this.writeGraphSetDestination != null){
 			FileOutputStream out =new FileOutputStream(this.writeGraphSetDestination); 
 			this.client.write(out,this.writeGraphSetFormat,null);
+			System.out.println("Graphset written to: "+this.writeGraphSetDestination);
 			out.close();
 		}
 	}
