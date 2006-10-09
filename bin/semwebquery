@@ -1,0 +1,12 @@
+#!/bin/bash
+# $Id: dump-rdf,v 1.2 2006/09/18 11:58:34 cyganiak Exp $
+NG4J_ROOT=${0%/*}/..
+SEP=':'
+if [ "$(uname)" = "Cygwin" ]; then SEP=';'; fi
+CP=$NG4J_ROOT/build:$NG4J_ROOT/ng4j.jar
+for jar in "$NG4J_ROOT"/lib/*.jar
+do
+  if [ ! -e "$jar" ]; then continue; fi
+  CP="$CP$SEP$jar"
+done
+exec java -cp "$CP" semweb.query "$@"
