@@ -193,11 +193,21 @@ public class CommandLineQuery {
 	}
 
 	private void executeAddGraphs() throws MalformedURLException, IOException {
+		// TODO same code as in dereferencing thread (accept) ?
 		Iterator it = this.graphsToAdd.iterator();
 		while (it.hasNext()) {
 			String graphuri = (String) it.next();
 			URL url = null;
 			HttpURLConnection connection = null;
+			connection
+			.addRequestProperty(
+					"accept",
+					"application/rdf+xml ; q=1, "
+							+ "text/xml ; q=0.6 , text/rdf+n3 ; q=0.9 , "
+							+ "application/octet-stream ; q=0.5 , "
+							+ "application/xml q=0.5, application/rss+xml ; q=0.5 , "
+							+ "text/plain ; q=0.5, application/x-turtle ; q=0.5, "
+							+ "application/x-trig ; q=0.5");
 			url = new URL(graphuri);
 			if (url != null) {
 				connection = (HttpURLConnection) url.openConnection();
