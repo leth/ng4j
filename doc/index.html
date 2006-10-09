@@ -185,7 +185,7 @@ P.footer {
     Richard Cyganiak, Freie Universität Berlin</p>
 </div>
 <DIV class=head> 
-  <H1 id=title>NG4J - Named Graphs API for Jena V0.4</H1>
+  <H1 id=title>NG4J - Named Graphs API for Jena V0.5</H1>
   <DIV class=nav>
 <P><STRONG>Nearby:</STRONG> <A 
 href="http://www.w3.org/2004/03/trix/" target="_blank">W3C Named Graphs Webite</A> 
@@ -202,32 +202,38 @@ href="http://www.w3.org/2001/sw/interest/">Semantic Web Interest Group</A> | <A
 href="http://www.w3.org/RDF/">RDF</A> | </P>
   </DIV>
   <P>The Named Graphs API for Jena (NG4J) is an extension to the Jena Semantic 
-    Web framework for parsing, manipulating and serializing sets of Named Graphs. 
+    Web framework for parsing, manipulating and serializing sets of Named Graphs.
   </P>
-  <P>NG4J V0.4 extends Jena with:</P>
+
+
+<h3>News</h3>
+<ul>
+  <li><strong>09/10/2006: NG4J 0.5 released.</strong> It adds SPARQL support, the <a href="semwebclient/">Semantic Web Client Library</a>, and support for the PostgreSQL and HSQLDB databases.</li>
+  <li><strong>18/10/2005: New <A href="http://lists.sourceforge.net/lists/listinfo/ng4j-namedgraphs">ng4j-namedgraphs</A> mailing list.</strong> As the NG4J user community is growing and we are receiving an increasing number of interesting new ideas around the toolkit and Named Graphs in general, we have opened up a NG4J  mailing list which is also scoped to be a forum for general discussions around Named Graphs and related technologies.</li>
+  <li><strong>23/05/2005:</strong> There is ongoing work to align NG4J with <a href="http://www.w3.org/TR/2005/WD-rdf-sparql-query-20050419/#rdfDataset"><strong>SPARQL's  RDF data sets</strong></a>. Please contact Richard or Chris for information about the current status of this work.</li>
+  <li><strong>15/04/2005: NG4J will be presented as a poster</strong> at the <a href="http://www.eswc2005.org/">2nd European Semantic Web Conference (ESWC 2005)</a>, Heraklion, Greece, May 2005: Christian Bizer, Richard Cyganiak, Rowland Watkins: <a href="../pub/Bizer-NG4J-ESWC2005.pdf">NG4J &ndash; Named Graphs API for Jena</a>  (<a href="../pub/Bizer-NG4J-ESWC2005-Poster.pdf">Poster</a>) . </li>
+  <li><strong>10/03/2005: Named Graphs paper</strong> will be presented at <a href="http://www.WWW2005.org/">WWW2005</a>, May 10-14, 2005, in Chiba, Japan.: <a href="http://www.wiwiss.fu-berlin.de/suhl/bizer/pub/Carroll_etall-WWW2005.pdf" target="_blank">Jeremy Carroll, Chris Bizer, Pat Hayes, Patrick Stickler: Named Graphs, Provenance and Trust</a>.</li>
+</ul>
+
+
+<h3>Features</h3>
+
+  <P>NG4J V0.5 extends Jena with:</P>
   </DIV>
 <ul>
-  <li>graph-centric methods for manipulating sets of Named Graphs</li>
-  <li>quad-centric methods for manipulating sets of Named Graphs</li>
-  <li>viewing graphsets as Jena models and Jena graphs</li>
-  <li>provenance-enabled Jena statements</li>
-  <li>querying of Named Graphs with the TriQL query language</li>
-  <li>integrated parser and serializer for the TriX syntax including
-    XSLT syntactic extensions</li>
-  <li>integrated parser and serializer for the TriG syntax</li>
-  <li>in-memory or database-persisted graphset storage</li>
-  <li>API support for the Semantic Web Publishing (SWP) vocabulary</li>
-  <li>creation and verification of graph signatures using X.509 certificates</li>
-  <li>directory reader for importing existing RDF files.</li>
-  <li>directory writer for serializing graph sets a classic RDF files.</li>
+  <li>Graph-centric and quad-centric methods for <strong>manipulating sets of Named Graphs</strong></li>
+  <li><strong>In-memory</strong> or <strong>database-persisted</strong> graphset storage</li>
+  <li><strong>Semantic Web Client Library</strong> represents the complete Semantic Web as a single RDF graph</li>
+  <li>Viewing graphsets as Jena models and Jena graphs</li>
+  <li>Provenance-enabled Jena statements</li>
+  <li>Querying of Named Graphs with the <strong>SPARQL</strong> and <strong>TriQL</strong> query languages</li>
+  <li>Integrated parser and serializer for the <strong>TriG</strong> and <strong>TriX</strong> syntaxes including TriX syntactic extensions</li>
+  <li>API support for the Semantic Web Publishing <strong>(SWP)</strong> vocabulary</li>
+  <li>Creation and verification of <strong>graph signatures</strong> using X.509 certificates</li>
+  <li>Directory reader and writer for importing and exporting graph sets as sets of classic RDF files.</li>
 </ul>
-<DIV class=status> 
-  <P>NG4J is an <strong>exerimental implementation</strong> of the new syntaxes 
-    (<a href="http://swdev.nokia.com/trix/TriX.html" target="_blank">TriX</a>, 
-    <a href="http://www.wiwiss.fu-berlin.de/suhl/bizer/TriG/" target="_blank">TriG</a>) 
-    and query language (<a href="http://www.wiwiss.fu-berlin.de/suhl/bizer/TriQL/" target="_blank">TriQL</a>) 
-    developed within the Semantic Web Interest Group. </P>
-</DIV>
+
+
 <HR>
 <h2>Contents</h2>
 <ol>
@@ -248,6 +254,7 @@ href="#example">Usage Examples</A> </DIV>
       <li><A href="#TriQL">Querying Named Graphs with TriQL</A></li>
       <li><A href="#Persistence">Using Database Persistence</A></li>
       <li><A href="#SWP">Semantic Web Publishing (SWP) API and Digital Signatures</A></li>
+      <li><A href="#client">Semantic Web Client Library</A></li>
     </ol>
   </li>
   <li> 
@@ -295,20 +302,20 @@ href="#example">Usage Examples</A> </DIV>
   these problems several authors propose quads, consisting of an RDF triple and 
   a further URIref or blank node or ID. The proposals vary widely in the semantic 
   of the fourth element, using it to refer to information sources, to model IDs 
-  or statement IDs or more generally to ‘contexts’. Named Graphs propose a general 
+  or statement IDs or more generally to "contexts". Named Graphs propose a general 
   and simple variation on RDF, using sets of named RDF graphs. </P>
 <P><DIV class="trigInner"> A set of Named Graphs is a collection of RDF graphs. Each one is named 
   with a URIref. </DIV></P>
 <P>The name of a graph may occur either in the graph itself, in other graphs, 
   or not at all. Graphs may share URIrefs but not blank nodes. Named Graphs can 
-  be seen as a reformulation of quads in which the fourth element’s distinct syntactic 
-  and semantic properties are clearly distinguished, and the relationship to RDF’s 
+  be seen as a reformulation of quads in which the fourth element's distinct syntactic 
+  and semantic properties are clearly distinguished, and the relationship to RDF's 
   triples, abstract syntax and semantics is clearer.</P>
 <P>Further details about Named Graphs are found in:</P>
 <ul>
   <li><a href="http://www.w3.org/2004/03/trix/" target="_blank">W3C Named Graphs 
     Website</a></li>
-  <li><a href="http://www.hpl.hp.com/techreports/2004/HPL-2004-57" target="_blank">Jeremy 
+  <li><a href="http://www.wiwiss.fu-berlin.de/suhl/bizer/pub/Carroll_etall-WWW2005.pdf" target="_blank">Jeremy 
     Carroll, Chris Bizer, Pat Hayes, Patrick Stickler: Named Graphs, Provenance 
     and Trust</a>.</li>
 </ul>
@@ -914,13 +921,23 @@ The SWP Framework relies heavily on the PKI (Public Key Infrastructure) to provi
 <p>You should now have a file called <tt>newcert.p12</tt>. This is the file that you should use as input to any of the methods in SWPNamedGraphSet.</p>
 
 <p>&nbsp;</p>
-<hr />
 
+<h3 id="client">2.6 Semantic Web Client Library</h3>
+
+<p>NG4J's Semantic Web Client Library represents the complete Semantic Web
+as a single set of named graphs. When queried, the SemanticWebClient
+dynamically retrieves information from the Semantic Web by dereferencing
+HTTP URIs and by following <tt>rdfs:seeAlso</tt> links. It is described
+in a separate document:
+<a href="semwebclient/"><strong>Semantic Web Client Library</strong></a>.</p>
+
+<hr />
+<p>&nbsp;</p>
 <h2><A id=Download name=Download>3. Download</A></h2>
 <ul>
   <li>NG4J can be downloaded from Sourceforge: <a href="http://sourceforge.net/projects/ng4j/" target="_blank">http://sourceforge.net/projects/ng4j/ 
     </a></li>
-  <li>NG4J is designed to work with Jena 2.2. Expect problems when using it with
+  <li>NG4J is designed to work with Jena 2.4. Expect problems when using it with
     older versions of Jena.</li>
   <li>NG4J is lisenced under the terms of the Berkeley Software Distribution (BSD) License.</li>
 </ul>
@@ -930,6 +947,11 @@ The SWP Framework relies heavily on the PKI (Public Key Infrastructure) to provi
       <TH> Version </TH>
       <TH> Comment </TH>
       <TH>Release Date</TH>
+    </TR>
+    <TR> 
+      <TD align=middle>V0.5</TD>
+      <TD align=left>Semantic Web Client Library, SPARQL support, PostgreSQL and HSQLDB support, bugfixes.</TD>
+      <TD align=middle valign="top">2006-10-09</TD>
     </TR>
     <TR> 
       <TD align=middle>V0.4</TD>
@@ -955,31 +977,26 @@ The SWP Framework relies heavily on the PKI (Public Key Infrastructure) to provi
   </TBODY>
 </TABLE>
 <p><A href="http://sourceforge.net"> <IMG src="http://sourceforge.net/sflogo.php?group_id=118754&amp;type=5" width="210" height="62" border="0" alt="SourceForge.net Logo" /></A></p>
-<p><A id=Installation name=Installation><strong>Installation</strong></A></p>
-<ol>
-  <li>Download and install the <a href="http://jena.sourceforge.net/">Jena Semantic Web Framework</a>.</li>
-  <li>Download NG4J and unzip the archive into any directory.</li>
-  <li>Copy the file <tt>ng4j.jar</tt> into Jena's <tt>lib</tt> directory and add it to the classpath of your project.</li>
-  <li>That's it!</li>
-</ol>
 
 <HR title="Separator for header">
 <h2><A id=acknowledgements name=acknowledgements>4. Acknowledgements</A></h2>
+<p>NG4J is developed by:
+<ul>
+  <li>Chris Bizer (<a href="mailto:chris@bizer.de">chris@bizer.de</a>, <a href="http://www.bizer.de" target="_blank">www.bizer.de</a>)</li>
+  <li>Richard Cyganiak (<a href="mailto:richard@cyganiak.de">richard@cyganiak.de</a>, <a href="http://richard.cyganiak.de/" target="_blank">richard.cyganiak.de</a>)</li>
+  <li>Tobias Gau&szlig; (<a href="mailto:tobias.gauss@web.de">tobias.gauss@web.de</a>)</li>
+</ul>
 <p>Lots of thanks to Rowland Watkins (erw01r at ecs.soton.ac.uk) for his work on the SWP API.</p>
 
 <HR title="Separator for header">
-<h2><A id=feedback name=feedback>5. Feedback</A></h2>
-<p>We are very interested in hearing about your experience and your opinion about 
-  NG4J. Please send your comments to Chris Bizer and Richard Cyganiak.</p>
-<p>Chris Bizer<br>
-  <a href="mailto:chris@bizer.de">chris@bizer.de</a><br>
-  <a href="http://www.bizer.de" target="_blank">www.bizer.de </a></p>
-<p>Richard Cyganiak<br>
-  <a href="mailto:richard@cyganiak.de">richard@cyganiak.de</a><br>
-  <a href="http://page.mi.fu-berlin.de/%7Ecyganiak/" target="_blank">http://page.mi.fu-berlin.de/~cyganiak/</a><br>
-</p>
+<h2><A id=feedback name=feedback>5. Support and Feedback</A></h2>
+<p>We are interested in hearing about your opinion and your experience with NG4J.
+Please sent comments and bug reports to the NG4J-namedgraphs mailing list:</p>
+<p><a href="mailto:ng4j-namedgraphs@lists.sourceforge.net">ng4j-namedgraphs@lists.sourceforge.net</a></p>
+<p>The archives of the list are found at <a href="http://sourceforge.net/mailarchive/forum.php?forum=ng4j-namedgraphs">http://sourceforge.net/mailarchive/forum.php?forum=ng4j-namedgraphs </a><br />
+  You can subscribe to the list at <a href="http://lists.sourceforge.net/lists/listinfo/ng4j-namedgraphs">http://lists.sourceforge.net/lists/listinfo/ng4j-namedgraphs</a>.</p>
 <HR title="Separator for header">
-<p>$Date: 2006/10/09 14:10:49 $<br />
-  $Id: index.html,v 1.17 2006/10/09 14:10:49 cyganiak Exp $</p>
+<p>$Date: 2006/10/09 15:37:34 $<br />
+  $Id: index.html,v 1.18 2006/10/09 15:37:34 cyganiak Exp $</p>
 </BODY>
 </HTML>
