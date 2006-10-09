@@ -1,5 +1,4 @@
 #!/bin/bash
-# $Id: semwebquery,v 1.1 2006/10/09 12:27:22 cyganiak Exp $
 NG4J_ROOT=${0%/*}/..
 SEP=':'
 if [ "$(uname)" = "Cygwin" ]; then SEP=';'; fi
