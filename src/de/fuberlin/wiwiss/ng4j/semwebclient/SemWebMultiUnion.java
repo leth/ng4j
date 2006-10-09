@@ -6,12 +6,12 @@ import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.util.iterator.WrappedIterator;
 
 public class SemWebMultiUnion extends GraphBase{
-	private SemanticWebClientImpl client;
+	private SemanticWebClient client;
 	
 	public SemWebMultiUnion(){
 		super();
 	}
-	public SemWebMultiUnion(SemanticWebClientImpl client){
+	public SemWebMultiUnion(SemanticWebClient client){
 		super();
 		this.client = client;
 		

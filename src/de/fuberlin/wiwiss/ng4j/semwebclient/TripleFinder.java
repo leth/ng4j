@@ -13,7 +13,7 @@ import com.hp.hpl.jena.graph.Triple;
 public class TripleFinder extends Thread {
 	private Triple triple;
 	
-	private SemanticWebClientImpl client;
+	private SemanticWebClient client;
 
 	private TripleListener listener;
 
@@ -32,7 +32,7 @@ public class TripleFinder extends Thread {
 	 *            The TripleListener.
 	 */
 	public TripleFinder(Triple t,
-			SemanticWebClientImpl client, TripleListener listener) {
+			SemanticWebClient client, TripleListener listener) {
 		this.triple = t;
 		this.client = client;
 		this.listener = listener;

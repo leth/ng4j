@@ -54,7 +54,7 @@ public class CommandLineQuery {
 	
 	
 	public CommandLineQuery(){
-		this.client = new SemanticWebClientImpl();
+		this.client = new SemanticWebClient();
 	}
 
 	/**

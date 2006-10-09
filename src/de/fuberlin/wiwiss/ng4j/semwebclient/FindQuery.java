@@ -25,13 +25,13 @@ import de.fuberlin.wiwiss.ng4j.Quad;
  */
 public class FindQuery implements DereferencingListener {
 	private SemWebIterator iterator;
-	private SemanticWebClientImpl client;
+	private SemanticWebClient client;
 	private List urisInProcessing = new LinkedList();
 	private TimeoutThread timeoutThread;
 	private boolean stopped;
 	private Log log = LogFactory.getLog(FindQuery.class);
 	
-	public FindQuery(SemanticWebClientImpl client, Triple pattern) {
+	public FindQuery(SemanticWebClient client, Triple pattern) {
 		this.client = client;
 		this.iterator = new SemWebIterator(this, pattern);
 		this.timeoutThread = new TimeoutThread(this.iterator);
@@ -170,7 +170,7 @@ public class FindQuery implements DereferencingListener {
 	private long getTimeout() {
 		try {
 			return Long.parseLong(
-					this.client.getConfig(SemanticWebClient.CONFIG_TIMEOUT));
+					this.client.getConfig(client.CONFIG_TIMEOUT));
 		} catch (NumberFormatException ex) {
 			throw new RuntimeException(ex);
 		}
