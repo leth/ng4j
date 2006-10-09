@@ -21,7 +21,7 @@ import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
 
-public class CommandLineClient {
+public class CommandLineQuery {
 	
 	private SemanticWebClient client = null;
 	
@@ -53,7 +53,7 @@ public class CommandLineClient {
 	
 	
 	
-	public CommandLineClient(){
+	public CommandLineQuery(){
 		this.client = new SemanticWebClientImpl();
 	}
 

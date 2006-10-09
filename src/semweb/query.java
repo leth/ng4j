@@ -15,7 +15,7 @@ import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.rdf.model.AnonId;
 import com.hp.hpl.jena.shared.PrefixMapping;
 
-import de.fuberlin.wiwiss.ng4j.semwebclient.CommandLineClient;
+import de.fuberlin.wiwiss.ng4j.semwebclient.CommandLineQuery;
 
 /**
  * The semwebquery command line tool. Executes SPARQL or
@@ -25,7 +25,7 @@ import de.fuberlin.wiwiss.ng4j.semwebclient.CommandLineClient;
  *       RDF/XML, N3, N-Triple, SPARQL XML results, SPARQL JSON results, CSV, ...
  * 
  * @author Richard Cyganiak (richard@cyganiak.de)
- * @version $Id: query.java,v 1.1 2006/10/09 12:27:22 cyganiak Exp $
+ * @version $Id: query.java,v 1.2 2006/10/09 12:29:29 cyganiak Exp $
  */
 public class query {
 	private static boolean verbose = false;
@@ -50,7 +50,7 @@ public class query {
 				printUsage();
 				System.exit(0);
 			}
-			CommandLineClient client = initClient(cmd);
+			CommandLineQuery client = initClient(cmd);
 			client.run();
 		} catch (Exception ex) {
 			if (verbose || ex.getMessage() == null) {
@@ -62,8 +62,8 @@ public class query {
 		}
 	}
 	
-	private static CommandLineClient initClient(CommandLine cmd) {
-		CommandLineClient client = new CommandLineClient();
+	private static CommandLineQuery initClient(CommandLine cmd) {
+		CommandLineQuery client = new CommandLineQuery();
 		String queryType = null;
 		if (cmd.hasArg("sparql")) {
 			client.setSPARQLQuery(cmd.getValue("sparql"));
