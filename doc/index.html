@@ -244,6 +244,7 @@ href="#intro">Introduction</A></DIV>
 href="#example">Usage Examples</A> </DIV>
     <ol>
       <li><a href="#operations">Operations on GraphSet and Model Level</a></li>
+      <li><A href="#SPARQL">Querying Named Graphs with SPARQL</A></li>
       <li><A href="#TriQL">Querying Named Graphs with TriQL</A></li>
       <li><A href="#Persistence">Using Database Persistence</A></li>
       <li><A href="#SWP">Semantic Web Publishing (SWP) API and Digital Signatures</A></li>
@@ -571,8 +572,62 @@ while (it.hasNext()) {
 model.write(System.out, "TRIG", "http://richard.cyganiak.de/foaf.rdf");</pre>
 </DIV>
 <p>When run, the example code will write <a href="example_output.txt">this output</a> to System.out.</p>
+<p>&nbsp;</p>
 
-<p>&nbsp;</p><h3><A id=TriQL name=TriQL>2.2 Querying Named Graphs with TriQL</A></h3>
+
+<h3><A id="SPARQL" name="SPARQL">2.2 Querying Named Graphs with SPARQL</A></h3>
+
+<p>The <a href="http://www.w3.org/TR/rdf-sparql-query/">SPARQL</a> RDF query language
+  supports queries on sets of named graphs. The <tt>GRAPH</tt> keyword can be used
+  to select a specific graph, or to bind to a variable the names of all graphs
+  whose contents match a query pattern:</p>
+
+<DIV class="trigInner">
+  <pre>PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+SELECT ?otherFoafFile
+WHERE {
+  GRAPH &lt;http://example.org/my-foaf.rdf&gt; {
+    ?me foaf:mbox &lt;mailto:me@example.org&gt; .
+  }
+  GRAPH ?otherFoafFile {
+    ?otherFoafFile foaf:maker ?someone
+    ?someone foaf:knows ?me .
+  }
+}</pre>
+</DIV>
+
+<p>The first part reads my FOAF file and selects the resource representing
+  me (by matching my email address). The second part finds and
+  returns all FOAF files whose makers claim to know me. Note that all
+  the files in question must have been loaded into the graph set before
+  the query is executed.</p>
+
+<p>As an alternative approach, NG4J also includes a
+  <a href="semwebclient/">Semantic Web Client</a> that tries to load
+  files transparently from the Web as required to answer a query.</p>
+
+<p>Here's the code for running a SPARQL query against a NamedGraphSet:</p>
+
+<DIV class="trigInner">
+<pre>Query sparql = QueryFactory.create(
+        "SELECT * WHERE { GRAPH ?graph { ?s ?p ?o } }");
+QueryExecution qe = QueryExecutionFactory.create(
+        sparql, new NamedGraphDataset(set));
+ResultSet results = qe.execSelect();
+while (results.hasNext()) {
+    QuerySolution result = results.nextSolution();
+    RDFNode graph = result.get("graph");
+    RDFNode s = result.get("s");
+    RDFNode p = result.get("p");
+    RDFNode o = result.get("o");
+    System.out.println(graph + " { " + s + " " + p + " " + o + " . }");
+}</pre>
+</DIV>
+<p>This will run the query and print the results.</p>
+
+
+<p>&nbsp;</p>
+<h3><A id=TriQL name=TriQL>2.3 Querying Named Graphs with TriQL</A></h3>
 
 <p><a href="http://www.wiwiss.fu-berlin.de/suhl/bizer/TriQL/">TriQL</a> is a query 
   language for querying sets of named graphs. The basic idea of TriQL is using 
@@ -644,7 +699,7 @@ while (it.hasNext()) {
 <p>Alternatively, you can create a new TriQLQuery instance and set various parameters 
   before executing the query. <a href="javadoc/de/fuberlin/wiwiss/ng4j/triql/TriQLQuery.html">See JavaDoc for details.</a></p>
 <p>&nbsp;</p>
-<h3><A id=Persistence name=Persistence>2.3 Using Database Persistence</A></h3>
+<h3><A id=Persistence name=Persistence>2.4 Using Database Persistence</A></h3>
 <p>NamedGraphSets can be stored in a relational database. As of NG4J v0.3, only 
   MySQL is supported. To create a persistent NamedGraphSet, you have to set up 
   a java.sql database connection, and create a new NamedGraphSetDB instance:</p>
@@ -670,7 +725,7 @@ NamedGraphSetDB.delete(connection, "myapp");</pre>
 </DIV>
 <p>&nbsp;</p>
 
-<h3 id="SWP">2.4 Semantic Web Publishing (SWP) API and Digital Signatures</h3>
+<h3 id="SWP">2.5 Semantic Web Publishing (SWP) API and Digital Signatures</h3>
 <p><strong>Working with Digital Signatures and Named Graphs</strong></p>
 
 <p>The Semantic Web Publishing Vocabulary (SWP) is used for publishing Named Graphs on the Web. It allows authorities to indicate whether they assert or quote a graph and to sign graphs using digital signatures. More information about the SWP vocabulary is available on the <a href="http://www.wiwiss.fu-berlin.de/suhl/bizer/TriQLP/">TriQL.P Trust Architecture</a> page.</p>
@@ -924,7 +979,7 @@ The SWP Framework relies heavily on the PKI (Public Key Infrastructure) to provi
   <a href="http://page.mi.fu-berlin.de/%7Ecyganiak/" target="_blank">http://page.mi.fu-berlin.de/~cyganiak/</a><br>
 </p>
 <HR title="Separator for header">
-<p>$Date: 2005/02/24 09:15:44 $<br />
-  $Id: index.html,v 1.16 2005/02/24 09:15:44 cyganiak Exp $</p>
+<p>$Date: 2006/10/09 14:10:49 $<br />
+  $Id: index.html,v 1.17 2006/10/09 14:10:49 cyganiak Exp $</p>
 </BODY>
 </HTML>

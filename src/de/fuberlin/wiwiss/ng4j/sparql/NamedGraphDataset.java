@@ -14,17 +14,38 @@ import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 
 /**
- * Implementation of ARQ's DataSet interface on top of an NG4J NamedGraphSet
+ * Implementation of ARQ's Dataset interface on top of an NG4J NamedGraphSet
  */
-public class NamedGraphDataSet implements Dataset {
+public class NamedGraphDataset implements Dataset {
 	private NamedGraphSet set;
-	private Node defaultGraphName;
+	private Graph defaultGraph;
 	private Lock lock;
+
+	/**
+	 * Creates a new instance whose default graph is the merge of
+	 * all named graphs. 
+	 */
+	public NamedGraphDataset(NamedGraphSet baseNamedGraphSet) {
+		this(baseNamedGraphSet, baseNamedGraphSet.asJenaGraph(null));
+	}
 	
-	public NamedGraphDataSet(NamedGraphSet baseNamedGraphSet,
+	/**
+	 * Creates a new instance where one of the named graph is
+	 * used as the default graph. The graph must already exist
+	 * in the NamedGraphSet.
+	 */
+	public NamedGraphDataset(NamedGraphSet baseNamedGraphSet,
 			Node defaultGraphName) {
+		this(baseNamedGraphSet, baseNamedGraphSet.getGraph(defaultGraphName));
+	}
+	
+	/**
+	 * Creates a new instance with a given default graph.
+	 */
+	public NamedGraphDataset(NamedGraphSet baseNamedGraphSet,
+			Graph defaultGraph) {
 		this.set = baseNamedGraphSet;
-		this.defaultGraphName = defaultGraphName;
+		this.defaultGraph = defaultGraph;
 	}
 	
 	public boolean containsNamedModel(String uri) {
@@ -32,11 +53,7 @@ public class NamedGraphDataSet implements Dataset {
 	}
 
 	public Model getDefaultModel() {
-		Graph defaultGraph = this.set.getGraph(this.defaultGraphName);
-		if (defaultGraph == null) {
-			return null;
-		}
-		return new ModelCom(defaultGraph);
+		return new ModelCom(this.defaultGraph);
 	}
 
 	public Model getNamedModel(String graphName) {

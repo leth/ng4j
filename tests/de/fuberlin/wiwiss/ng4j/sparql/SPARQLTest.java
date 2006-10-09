@@ -24,7 +24,7 @@ public class SPARQLTest extends TestCase {
 		set.read(this.getClass().getResourceAsStream("test.trig"), "TRIG", null);
 		ResultSet rs = QueryExecutionFactory.create(
 				QueryFactory.create(query),
-				new NamedGraphDataSet(set, Node.createURI("http://example.com/aliceFoaf"))).execSelect();
+				new NamedGraphDataset(set, Node.createURI("http://example.com/aliceFoaf"))).execSelect();
 		TestResultSet expected = new TestResultSet(ModelFactory.createDefaultModel());
 		expected.addVar("foafFile", Node.createURI("http://example.com/bobFoaf"));
 		expected.addVar("mbox", Node.createURI("mailto:bob@example.com"));
@@ -33,5 +33,6 @@ public class SPARQLTest extends TestCase {
 		expected.addVar("name", Node.createLiteral("Charlie"));
 		expected.addVar("mbox", Node.createURI("mailto:charlie@example.com"));
 		expected.addSolution();
+		// TODO Unfinished!!!
 	}
 }
