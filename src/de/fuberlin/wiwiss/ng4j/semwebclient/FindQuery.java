@@ -15,13 +15,10 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.Quad;
 
 /**
- * If a URI is added to the "to retrieve"- list the ThreadObserver generates a
- * new UriConnector thread to retrieve this URI. It recurring checks the
- * ThreadList for finished threads fetches the collected data and adds it to the
- * underlying NamedGraphSet.
+ * The FindQuery runs a find query against the Semantic Web. If there are
+ * URIs that match the triple the FindQuery requests dereferencing.
  * 
  * @author Tobias Gauﬂ
- * 
  */
 public class FindQuery implements DereferencingListener {
 	private SemWebIterator iterator;

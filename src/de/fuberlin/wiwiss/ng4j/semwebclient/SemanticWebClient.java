@@ -30,18 +30,19 @@ import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
  * </p>
  * 
  * <p>
- * The Semantic Web is represended as a single, global RDF graph. Applications
- * can use the find(TripleMatch pattern) method to retrieve information from the
- * Semantic Web.
+ * The Semantic Web is represended as a single, global RDF graph. The library 
+ * enables applications to query this global graph using SPARQL- and find(SPO) 
+ * queries. To answer queries, the library dynamically retrieves information 
+ * from the Semantic Web.
  * </p>
  * 
  * <p>
- * During the execution of a find() query, information about all resources that
- * appear in the triple pattern and in the query results is dynamically loaded
+ * During the execution of a query, information about all resources that
+ * appear in triple patterns and in the query results is dynamically loaded
  * from the Semantic Web by:
  * <ul>
  * <li>dereferencing the URI of each resource using the HTTP protocol,
- * <li>following all known rdf:seeAlso links for each resource.
+ * <li>following all known rdf:seeAlso links for a resource.
  * </ul>
  * </p>
  * 
@@ -55,11 +56,17 @@ import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
  * named graph (named with the retrieval URI) to graph set. <BR>
  * 
  * Within each graphset there is a graph http://localhost/provenanceInformation,
- * which contains provenance information for each retrieved graph. Each graph is
- * described with a swp:sourceURL and a swp:retrievalTimestamp property.
+ * which contains provenance information for each retrieved graph. The graph 
+ * contains a swp:sourceURL and a swp:retrievalTimestamp triple for each 
+ * retrieved graph.
+ * 
+ * More information about the Semantic Web Client is found on the project's website:
+ * http://sites.wiwiss.fu-berlin.de/suhl/bizer/ng4j/semwebclient/
  * 
  * @author Chris Bizer (chris@bizer.de)
  * @author Richard Cyganiak (richard@cyganiak.de)
+ * @author Tobias Gauﬂ (tobias.gauss@web.de)
+ 
  */
 public class SemanticWebClient extends NamedGraphSetImpl {
 	public String CONFIG_MAXSTEPS = "maxsteps";
@@ -85,9 +92,6 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	private long timeout = TIMEOUT_DEFAULT;
 	private int maxsteps = MAXSTEPS_DEFAULT;
 	private int maxthreads = MAXTHREADS_DEFAULT;
-	
-	//dbg
-//	private List listenerList = Collections.synchronizedList(new ArrayList());
 
 	private Log log = LogFactory.getLog(SemanticWebClient.class);
 
@@ -109,10 +113,8 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	* triples can already be used while there is still information being
 	* retrieved in the background.
 	* 
-	* Returned triples have a sourceGraphs() method which returns an iterator
-	* over all graphs names in which contain the triple. The returned iterator
-	* has a retrievalFinished() method which returns true when the retrieval
-	* process for all URIs and see:Also links is finished.
+	* Returned triples have a getSource() method which returns the URL from 
+	* which the triple was retrieved.
 	* 
 	* @param pattern
 	* @return
@@ -129,10 +131,9 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	* triples can already be used while there is still information being
 	* retrieved in the background.
 	* 
-	* Returned triples have a sourceGraphs() method which returns an iterator
-	* over all graphs names in which contain the triple. The returned iterator
-	* has a retrievalFinished() method which returns true when the retrieval
-	* process for all URIs and see:Also links is finished.
+	* This method is called with a TripleListener as second parameter which is
+	* notified each time when a triple is found and when the retrieval process 
+	* is finished.
 	* 
 	* @param pattern
 	* @return
@@ -165,7 +166,10 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	}
 
 	/**
-	 * Sets a configuration option. Like Timeout or MaxRetrievalSize
+	 * Sets a configuration option. Possible options are
+	 * "maxsteps" for the maximum retrieval steps ,"timeout"
+	 * for the timeout and "maxthreads" for the maximum of simultaneous
+	 * working DereferencerThreads  .
 	 */
 	public void setConfig(String option, String value) {
 		if (option.equals(CONFIG_MAXSTEPS)) {
@@ -204,7 +208,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	}
 
 	/**
-	 * Get a configuration option. Like Timeout or MaxRetrievalSize MaxThreads
+	 * Returns the value of a given configuration option. 
 	 */
 	public String getConfig(String option) {
 		String value = null;
@@ -220,42 +224,21 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 
 	/**
 	 * Returns an iterator over all successfully dereferenced URIs.
-	 * 
-	 * @return
 	 */
 	public Iterator successfullyDereferencedURIs() {
 		return this.retrievedUris.iterator();
 	}
 
 	/**
-	 * Returns an iterator over all URIs that couldn't be dereferenced. The
-	 * elements of the list are pairs (URI, errorcode) describing the problem
-	 * that appeared in the retrieval process.
-	 * 
-	 * @return
+	 * Returns an iterator over all URIs that couldn't be dereferenced.
 	 */
 	public Iterator unsuccessfullyDereferencedURIs() {
 		return this.unretrievedURIs.iterator();
 	}
 
-//	synchronized public void addGraph(NamedGraph graph, ThreadObserver observer) {
-//		super.addGraph(graph);
-
-		//	if (this.listener != null) {
-		//		this.listener.graphAdded(new GraphAddedEvent(this, graph.getGraphName().getURI()));
-		//	}
-//		String name = graph.getGraphName().getURI();
-		//Iterator it = this.listenerList.iterator();
-		
-	
-//		SemWebIterator l = observer.getSemWebIterator();
-//		l.graphAdded(new GraphAddedEvent(this, name));
-//	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#close()
+	/** 
+	 * Determines all retrieval threads. 
+	 * Has to be called to determine a Sementic Web Client.
 	 */
 	public synchronized void close() {
 		this.log.debug("Closing ...");
@@ -269,51 +252,31 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 		this.log.debug("Closed");
 	}
 
+	/**
+	 * Returns true if the SemanticWebCliend is already closed false if not.
+	 */
 	public boolean isClosed() {
 		return this.isClosed;
 	}
 	
-	/**
-	 * Returns a List with already retrieved URIs.
-	 * 
-	 * @return List
+
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#asJenaGraph(com.hp.hpl.jena.graph.Node)
 	 */
-	public synchronized List getRetrievedUris() {
-		return new ArrayList(this.retrievedUris);
-	}
-
-	/**
-	 * Adds a FindListener to the Semantic Web Client.
-	 * 
-	 * @param listener
-	 *            The FindListener to add.
-	 */
-//	public void addFindListener(FindListener listener) {
-//		this.listenerList.add(listener);
-		//this.listener = listener;
-//	}
-
-//	public void removeFindListener(FindListener listener) {
-//		this.listenerList.remove(listener);
-//	}
-
-	/**
-	 * Returns a List with unretrievable URIs
-	 * 
-	 * @return List of unretrieved URIs.
-	 */
-	public List getUnretrievedURIs() {
-		return this.unretrievedURIs;
-	}
-
 	public Graph asJenaGraph(Node defaultGraphForAdding) {
 		return new SemWebMultiUnion(this);
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#addGraph(de.fuberlin.wiwiss.ng4j.NamedGraph)
+	 */
 	public synchronized void addGraph(NamedGraph graph){
 		super.addGraph(graph);
 	}
 
+	/**
+	 * Initiates a new retrieval process for a given uri.
+	 */
 	public boolean requestDereferencing(String uri, int step,
 			final DereferencingListener listener) {
 		if (this.markedUris.contains(uri) || containsGraph(uri)) {
@@ -353,10 +316,9 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	
 	/**
 	 * If a URI is successfully retrieved this method is called to add
-	 * provenance information about the graph to the underlying NamedGraphSet.
+	 * provenance information about the graph to the SemanticWebClient.
 	 * 
-	 * @param uri
-	 *            A URI string.
+	 * @param uri A URI string.
 	 */
 	private void addProvenanceInformation(String uri) {
 		String label = Long.toString(Calendar.getInstance().getTimeInMillis());

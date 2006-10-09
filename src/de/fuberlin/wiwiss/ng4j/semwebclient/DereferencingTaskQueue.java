@@ -8,6 +8,12 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+/**
+ * The DereferencingTaskQueue is a thread which observes the
+ * DereferencerThreads. It starts all DereferencerThreads tries to 
+ * assign new tasks to free DereferencerThreads and interrupts them
+ * if the timeout is reached.
+ */
 public class DereferencingTaskQueue extends Thread {
 	private int maxthreads;
 	private List threads = new ArrayList();

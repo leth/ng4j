@@ -1,5 +1,8 @@
 package de.fuberlin.wiwiss.ng4j.semwebclient;
 
+/**
+ * A DereferencingTask represents a URI which has to be retrieved. 
+ */
 public class DereferencingTask {
 	private DereferencingListener listener;
 	private String uri;

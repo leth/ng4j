@@ -16,7 +16,7 @@ public interface TripleListener extends EventListener {
 	 * 
 	 * @param t
 	 */
-	public void tripleFound(Triple t);
+	public void tripleFound(SemWebTriple t);
 
 	/**
 	 * Is performed when the retrieval process is finished.

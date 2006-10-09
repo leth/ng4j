@@ -3,7 +3,8 @@ package de.fuberlin.wiwiss.ng4j.semwebclient;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 
 /**
- * The URI retrieval result.
+ * The dereferencing result contains informations about the
+ * success or failure of a DereferencingTasks execution.
  * 
  * @author Tobias Gauﬂ
  * 

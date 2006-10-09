@@ -17,6 +17,9 @@ public class SemWebMultiUnion extends GraphBase{
 		
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.impl.GraphBase#graphBaseFind(com.hp.hpl.jena.graph.TripleMatch)
+	 */
 	public ExtendedIterator graphBaseFind(TripleMatch m){
 		return WrappedIterator.create(this.client.find(m));
 		

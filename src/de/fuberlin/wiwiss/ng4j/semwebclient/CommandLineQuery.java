@@ -22,130 +22,162 @@ import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
 
 public class CommandLineQuery {
-	
+
 	private SemanticWebClient client = null;
-	
+
 	private String sparqlQuery = null;
-	
+
 	private String sparqlQueryFromFile = null;
-	
+
 	private Triple queryTriple = null;
-	
+
 	private boolean outputRetrievedURIs = false;
-	
+
 	private boolean outputFailedURIs = false;
-	
+
 	private List graphsToAdd = new ArrayList();
-	
+
 	private String writeGraphSetDestination = null;
-	
+
 	private String writeGraphSetFormat = null;
-	
+
 	private String loadGraphSetSource = null;
-	
+
 	private String loadGraphSetFormat = null;
-	
+
 	private int maxsteps = -1;
-	
+
 	private long timeout = -1;
-	
+
 	private int maxthreads = -1;
-	
-	
-	
-	public CommandLineQuery(){
+
+	public CommandLineQuery() {
 		this.client = new SemanticWebClient();
 	}
 
 	/**
 	 * Sets a SPARQL query to be executed against the Semantic Web.
+	 * 
+	 * @param query
 	 */
 	public void setSPARQLQuery(String query) {
 		this.sparqlQuery = query;
-		
-		
+
 	}
 
 	/**
-	 * A SPARQL query is loaded from a file and executed against the Semantic Web.
+	 * A SPARQL query is loaded from a file and executed against the Semantic
+	 * Web.
+	 * 
+	 * @param filename
 	 */
 	public void setSPARQLFile(String filename) {
 		this.sparqlQueryFromFile = filename;
 	}
-	
+
 	/**
-	 * Sets a triple pattern to be used as a query against the Semantic Web. 
-	 * @param triple An RDF triple, may contain Node.ANY wildcards
+	 * Sets a triple pattern to be used as a query against the Semantic Web.
+	 * 
+	 * @param triple
+	 *            An RDF triple, may contain Node.ANY wildcards
 	 */
 	public void setFindTriple(Triple triple) {
 		this.queryTriple = triple;
 	}
-	
+
 	/**
-	 * Sets the maximal number of iterations of the retrieval algorithm. The default value is 3.
+	 * Sets the maximal number of iterations of the retrieval algorithm. The
+	 * default value is 3.
+	 * 
+	 * @param maxSteps
 	 */
 	public void setMaxSteps(int maxSteps) {
 		this.maxsteps = maxSteps;
 	}
-	
+
 	/**
-	 * Sets the timeout of the query in milliseconds. The default value is 10000.
+	 * Sets the timeout of the query in milliseconds. The default value is
+	 * 60000.
+	 * 
+	 * @param timeoutMilliseconds
 	 */
 	public void setTimeout(long timeoutMilliseconds) {
 		this.timeout = timeoutMilliseconds;
 	}
 
 	/**
-	 * Sets the maximal number of parallel threads for retrieving URIs. The default is 10.
+	 * Sets the maximal number of parallel threads for retrieving URIs. The
+	 * default is 10.
+	 * 
+	 * @param maxThreads
 	 */
 	public void setMaxThreads(int maxThreads) {
 		this.maxthreads = maxThreads;
 	}
-	
+
 	/**
 	 * Loads a file from the Web before the query is executed.
+	 * 
+	 * @param uri
 	 */
-	public void addSourceURI(String uri) {	// Can be called multiple times
+	public void addSourceURI(String uri) { // Can be called multiple times
 		this.graphsToAdd.add(uri);
 	}
-	
+
 	/**
 	 * Loads a set of graphs from a file before the query is executed.
-	 * @param file Filename of the graph set file
-	 * @param format "TRIG" or "TRIX"
+	 * 
+	 * @param file
+	 *            Filename of the graph set file
+	 * @param format
+	 *            "TRIG" or "TRIX"
 	 */
-	public void setLoadGraphSet(String file, String format) {	// format is "TRIG" or "TRIX"
+	public void setLoadGraphSet(String file, String format) { // format is
+																// "TRIG" or
+																// "TRIX"
 		this.loadGraphSetSource = file;
-		this.loadGraphSetFormat = format;	
+		this.loadGraphSetFormat = format;
 	}
-	
+
 	/**
-	 * Saves all graphs that have been retrieved into a file after query execution has finished.
-	 * @param file Filename of the destination file
-	 * @param format "TRIG" or "TRIX"
+	 * Saves all graphs that have been retrieved into a file after query
+	 * execution has finished.
+	 * 
+	 * @param file
+	 *            Filename of the destination file
+	 * @param format
+	 *            "TRIG" or "TRIX"
 	 */
-	public void setWriteGraphSet(String file, String format) {	// format is "TRIG" or "TRIX"
+	public void setWriteGraphSet(String file, String format) { // format is
+																// "TRIG" or
+																// "TRIX"
 		this.writeGraphSetDestination = file;
 		this.writeGraphSetFormat = format;
 	}
-	
+
 	/**
 	 * Output a list of all successfully retrieved URIs?
+	 * 
+	 * @param outputRetrievedURIs
 	 */
 	public void setOutputRetrievedURIs(boolean outputRetrievedURIs) {
 		this.outputRetrievedURIs = outputRetrievedURIs;
 	}
-	
+
 	/**
 	 * Output a list of all URIs that could not be retrieved?
+	 * 
+	 * @param outputFailedURIs
 	 */
 	public void setOutputFailedURIs(boolean outputFailedURIs) {
 		this.outputFailedURIs = outputFailedURIs;
 	}
-	
+
 	/**
 	 * Executes the query specified using the other options.
-	 * @throws Exception Indicates an error
+	 * 
+	 * @throws Exception
+	 *             Indicates an error
 	 */
 	public void run() throws Exception {
 		executeConfigure();
@@ -159,56 +191,61 @@ public class CommandLineQuery {
 		executeWriteGraphset();
 		this.client.close();
 	}
-	
-	private void executeAddGraphs()throws MalformedURLException,IOException{
+
+	private void executeAddGraphs() throws MalformedURLException, IOException {
 		Iterator it = this.graphsToAdd.iterator();
 		while (it.hasNext()) {
 			String graphuri = (String) it.next();
 			URL url = null;
 			HttpURLConnection connection = null;
 			url = new URL(graphuri);
-			if(url !=null){
+			if (url != null) {
 				connection = (HttpURLConnection) url.openConnection();
-				this.client.read(connection.getInputStream(), guessLanguage(connection), url.toString());	
-				System.out.println("Successfully added: " + graphuri );	
+				this.client.read(connection.getInputStream(),
+						guessLanguage(connection), url.toString());
+				System.out.println("Successfully added: " + graphuri);
 			}
 		}
 	}
-	private void executeLoadNamendGraphSet(){
-		if(this.loadGraphSetSource != null){
-			this.client.read(this.loadGraphSetSource,this.loadGraphSetFormat);
-			System.out.println("Successfully loaded: " + this.loadGraphSetSource );
+
+	private void executeLoadNamendGraphSet() {
+		if (this.loadGraphSetSource != null) {
+			this.client.read(this.loadGraphSetSource, this.loadGraphSetFormat);
+			System.out.println("Successfully loaded: "
+					+ this.loadGraphSetSource);
 		}
 	}
-	
-	private void executeSparqlFromFile() throws FileNotFoundException, IOException{
-		if(this.sparqlQueryFromFile != null){
-			BufferedReader in = new BufferedReader(
-					new InputStreamReader(new FileInputStream(this.sparqlQueryFromFile) ) );
+
+	private void executeSparqlFromFile() throws FileNotFoundException,
+			IOException {
+		if (this.sparqlQueryFromFile != null) {
+			BufferedReader in = new BufferedReader(new InputStreamReader(
+					new FileInputStream(this.sparqlQueryFromFile)));
 			String line;
 			this.sparqlQuery = "";
-			while((line = in.readLine()) != null){
-				this.sparqlQuery += line +"\n";
+			while ((line = in.readLine()) != null) {
+				this.sparqlQuery += line + "\n";
 			}
 			in.close();
 		}
 	}
-	
-	private void executeSparqlQuery(){
-		if(this.sparqlQuery != null){
+
+	private void executeSparqlQuery() {
+		if (this.sparqlQuery != null) {
 			System.out.println("\nExecuting SPARQL query: \n");
 			System.out.println(this.sparqlQuery);
 			Query query;
-			query = QueryFactory.create(this.sparqlQuery); 
-			QueryExecution qe = QueryExecutionFactory.create(query, this.client.asJenaModel("default")); 
-			ResultSet results = qe.execSelect(); 
-			ResultSetFormatter.out(System.out, results, query); 
+			query = QueryFactory.create(this.sparqlQuery);
+			QueryExecution qe = QueryExecutionFactory.create(query, this.client
+					.asJenaModel("default"));
+			ResultSet results = qe.execSelect();
+			ResultSetFormatter.out(System.out, results, query);
 		}
-		
+
 	}
-	
-	private void executeFindQuery(){
-		if(this.queryTriple != null){
+
+	private void executeFindQuery() {
+		if (this.queryTriple != null) {
 			System.out.println("\nExecuting find query: \n");
 			System.out.println(this.queryTriple);
 			System.out.println("--------------------------------");
@@ -216,15 +253,15 @@ public class CommandLineQuery {
 			SemWebIterator iter = this.client.find(this.queryTriple);
 			while (iter.hasNext()) {
 				SemWebTriple triple = (SemWebTriple) iter.next();
-				System.out.println(triple.toString());	
+				System.out.println(triple.toString());
 			}
 			System.out.println("--------------------------------");
-			
+
 		}
 	}
-	
-	private void executeOutput(){
-		if(this.outputRetrievedURIs){
+
+	private void executeOutput() {
+		if (this.outputRetrievedURIs) {
 			System.out.println("Successfully dereferenced URIs: \n");
 			Iterator it = this.client.successfullyDereferencedURIs();
 			while (it.hasNext()) {
@@ -233,7 +270,7 @@ public class CommandLineQuery {
 			}
 			System.out.println("--------------------------------");
 		}
-		if(this.outputFailedURIs){
+		if (this.outputFailedURIs) {
 			System.out.println("Unsuccessfully dereferenced URIs: \n");
 			Iterator it = this.client.unsuccessfullyDereferencedURIs();
 			while (it.hasNext()) {
@@ -241,44 +278,50 @@ public class CommandLineQuery {
 				System.out.println(uri);
 			}
 			System.out.println("--------------------------------");
-		}	
+		}
 	}
-	
-	private void executeWriteGraphset()throws FileNotFoundException,IOException{
-		if(this.writeGraphSetDestination != null){
-			FileOutputStream out =new FileOutputStream(this.writeGraphSetDestination); 
-			this.client.write(out,this.writeGraphSetFormat,null);
-			System.out.println("Graphset written to: "+this.writeGraphSetDestination);
+
+	private void executeWriteGraphset() throws FileNotFoundException,
+			IOException {
+		if (this.writeGraphSetDestination != null) {
+			FileOutputStream out = new FileOutputStream(
+					this.writeGraphSetDestination);
+			this.client.write(out, this.writeGraphSetFormat, null);
+			System.out.println("Graphset written to: "
+					+ this.writeGraphSetDestination);
 			out.close();
 		}
 	}
-	
-	private String guessLanguage(HttpURLConnection con){
+
+	private String guessLanguage(HttpURLConnection con) {
 		String type = con.getContentType();
-		if(type == null)
+		if (type == null)
 			return null;
-		
-		if(type.startsWith("application/rdf+xml")||type.startsWith("text/xml")||
-				type.startsWith("application/xml")||type.startsWith("application/rss+xml")||
-				type.startsWith("text/plain"))
-				return "RDF/XML";
-		if(type.startsWith("application/n3")||type.startsWith("application/x-turtle")||
-				type.startsWith("text/rdf+n3"))
-				return "N3";
-	
+
+		if (type.startsWith("application/rdf+xml")
+				|| type.startsWith("text/xml")
+				|| type.startsWith("application/xml")
+				|| type.startsWith("application/rss+xml")
+				|| type.startsWith("text/plain"))
+			return "RDF/XML";
+		if (type.startsWith("application/n3")
+				|| type.startsWith("application/x-turtle")
+				|| type.startsWith("text/rdf+n3"))
+			return "N3";
+
 		return type;
 	}
-	
-	private void executeConfigure(){
-		if(this.maxsteps != -1)
-			this.client.setConfig("maxsteps",Integer.toString(this.maxsteps));
-		if(this.timeout != -1)
-			this.client.setConfig("timeout",Long.toString(this.timeout));
-		if(this.maxthreads != -1)
-			this.client.setConfig("maxthreads",Long.toString(this.maxthreads));
+
+	private void executeConfigure() {
+		if (this.maxsteps != -1)
+			this.client.setConfig("maxsteps", Integer.toString(this.maxsteps));
+		if (this.timeout != -1)
+			this.client.setConfig("timeout", Long.toString(this.timeout));
+		if (this.maxthreads != -1)
+			this.client.setConfig("maxthreads", Long.toString(this.maxthreads));
 	}
-	
-	private void executeWriteIntro(){
+
+	private void executeWriteIntro() {
 		System.out.println("--------------------------------");
 		System.out.println("Semantic Web Client Library V0.1");
 		System.out.println("--------------------------------");

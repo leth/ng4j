@@ -51,6 +51,9 @@ public class SemWebIterator implements Iterator {
 		notify();
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.Iterator#hasNext()
+	 */
 	public boolean hasNext() {
 		if (this.nextTriple == null) {
 			this.nextTriple = tryFetchNextTriple();
@@ -86,6 +89,9 @@ public class SemWebIterator implements Iterator {
 		return new SemWebTriple(t, this.currentGraphName);
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.util.Iterator#next()
+	 */
 	public Object next() {
 		if (!this.hasNext()) {
 			throw new NoSuchElementException();

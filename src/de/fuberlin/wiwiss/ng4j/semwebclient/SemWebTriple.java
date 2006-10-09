@@ -18,12 +18,9 @@ public class SemWebTriple extends Triple {
 	/**
 	 * Creates a SemWebTriple.
 	 * 
-	 * @param s
-	 *            The subject Node.
-	 * @param p
-	 *            The predicate Node.
-	 * @param o
-	 *            The object Node.
+	 * @param s The subject Node.
+	 * @param p The predicate Node.
+	 * @param o The object Node.
 	 */
 	public SemWebTriple(Node s, Node p, Node o) {
 		super(s, p, o);
@@ -37,8 +34,7 @@ public class SemWebTriple extends Triple {
 	/**
 	 * Sets the triple's source.
 	 * 
-	 * @param n
-	 *            The source Node.
+	 * @param n The source Node.
 	 */
 	public void setSource(Node n) {
 		this.source = n;
