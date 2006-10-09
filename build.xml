@@ -57,7 +57,7 @@
 
 	<target name="compile" depends="init" description="compiles ${project}">
 		<!-- Compile the java code from ${src} into ${build} -->
-		<javac srcdir="${src}" destdir="${build}" debug="on">
+		<javac srcdir="${src}" destdir="${build}" debug="on" source="1.4" target="1.4">
 			<classpath refid="project.class.path"/>
 		</javac>
 	</target>
@@ -80,7 +80,7 @@
 	<target name="compile.tests" depends="init.tests,compile"
 			description="compiles the unit tests">
 		<!-- Compile the unit tests from ${src.tests} into ${build.tests} -->
-		<javac srcdir="${src.tests}" destdir="${build.tests}" debug="on">
+		<javac srcdir="${src.tests}" destdir="${build.tests}" debug="on" source="1.4" target="1.4">
 			<classpath>
 				<path refid="project.class.path"/>
 				<pathelement path="${build}"/>
