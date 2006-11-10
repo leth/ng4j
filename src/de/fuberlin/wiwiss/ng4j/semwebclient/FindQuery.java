@@ -46,6 +46,13 @@ public class FindQuery implements DereferencingListener {
 		if (result.isSuccess()) {
 			inspectNgs(result.getResultData(), this.iterator.getTriple(), result.getTask().getStep());
 			this.iterator.queueNamedGraphs(result.getResultData().listGraphs());
+		}else if(result.getResultCode()== DereferencingResult.STATUS_NEW_URIS_FOUND){
+			Iterator it = result.getUriList().iterator();
+			while (it.hasNext()) {
+				String uri = (String) it.next();
+				requestDereferencing(uri, result.getTask().getStep()+1);
+			}
+			
 		}
 		uriProcessingFinished(result.getURI());
 	}

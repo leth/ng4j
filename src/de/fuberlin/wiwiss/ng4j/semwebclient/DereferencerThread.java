@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -127,6 +129,21 @@ public class DereferencerThread extends Thread {
 	}
 
 	/**
+	 * Creates a new DereferencingResult which contains information about the
+	 * retrieval failure.
+	 * 
+	 * @param errorCode
+	 *            the error code
+	 * @param exception
+	 *            the thrown exception
+	 * @return
+	 */
+	private DereferencingResult createNewUrisResult(int errorCode, ArrayList urilist) {
+		return new DereferencingResult(this.task, errorCode, urilist);
+	}	
+	
+	
+	/**
 	 * Delivers the retrieval result.
 	 * 
 	 * @param result
@@ -139,6 +156,7 @@ public class DereferencerThread extends Thread {
 	}
 
 	private DereferencingResult dereference() {
+		DereferencingResult result = null;
 		this.tempNgs = new NamedGraphSetImpl();
 		try {
 			this.connection = (HttpURLConnection) this.url.openConnection();
@@ -151,9 +169,10 @@ public class DereferencerThread extends Thread {
 									+ "application/octet-stream ; q=0.5 , "
 									+ "application/xml q=0.5, application/rss+xml ; q=0.5 , "
 									+ "text/plain ; q=0.5, application/x-turtle ; q=0.5, "
-									+ "application/x-trig ; q=0.5");
+									+ "application/x-trig ; q=0.5,"
+									+ "text/html ; q=0.5"
+									);
 
-			// TODO html handling
 
 			this.log.debug(this.connection.getResponseCode() + " " + this.url
 					+ " (" + this.connection.getContentType() + ")");
@@ -168,7 +187,7 @@ public class DereferencerThread extends Thread {
 
 			String lang = setLang();
 			try {
-				this.parseRdf(lang);
+				result = this.parseRdf(lang);
 			} catch (Exception ex) { // parse error
 				this.log.debug(ex.getMessage());
 				return createErrorResult(
@@ -180,19 +199,36 @@ public class DereferencerThread extends Thread {
 			return createErrorResult(DereferencingResult.STATUS_PARSING_FAILED,
 					e);
 		}
-		return new DereferencingResult(this.task,
-				DereferencingResult.STATUS_OK, this.tempNgs, null);
+		//return new DereferencingResult(this.task,
+		//		DereferencingResult.STATUS_OK, this.tempNgs, null);
+		return result;
 	}
 
 	/**
 	 * Parses an RDF String.
 	 */
-	private void parseRdf(String lang) throws Exception {
+	private DereferencingResult parseRdf(String lang) throws Exception {
 		if (lang.equals("default"))
 			lang = null;
+		if (lang.equals("html")){
+			ArrayList l = HtmlLinkFetcher.fetchLinks(this.connection.getInputStream());
+			Iterator iter = l.iterator();
+			ArrayList urilist = new ArrayList();
+			while (iter.hasNext()) {
+				String link = (String) iter.next();		
+				int pos = this.url.toString().lastIndexOf("/");
+				String newurl = this.url.toString().substring(0,pos+1);
+				newurl+=link;
+				urilist.add(newurl);
+			}
+			return createNewUrisResult(DereferencingResult.STATUS_NEW_URIS_FOUND, urilist);
+		}
+			
 		RDFDefaultErrorHandler.silent = true;
 		this.tempNgs.read(this.connection.getInputStream(), lang, this.url
 				.toString());
+		return new DereferencingResult(this.task,
+						DereferencingResult.STATUS_OK, this.tempNgs, null);
 	}
 
 	/**
@@ -215,6 +251,8 @@ public class DereferencerThread extends Thread {
 				|| type.startsWith("application/x-turtle")
 				|| type.startsWith("text/rdf+n3"))
 			return "N3";
+		if (type.startsWith("text/html"))
+			return "html";
 
 		return type;
 	}
