@@ -24,7 +24,7 @@ public class HtmlLinkFetcher {
 			//System.out.println(e.getLocalizedMessage());
 		}
 		
-	    Pattern linkPattern = Pattern.compile ("<link[^>]*href=\"?[^(>| )]*\"?[^>]*(/>|>)", Pattern.CASE_INSENSITIVE);
+	    Pattern linkPattern = Pattern.compile ("<link[^>]*(rel=\"meta\"|rel=\"alternate\")[^>]*href=\"?[^(>| )]*\"?[^>]*(/>|>)", Pattern.CASE_INSENSITIVE);
 	    Pattern prePattern  = Pattern.compile ("href=\"?");
 	    Pattern postPattern = Pattern.compile ("( |\"|>)");
 	    Matcher linkMatcher = linkPattern.matcher (header);
