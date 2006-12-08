@@ -160,17 +160,16 @@ public class DereferencerThread extends Thread {
 		this.tempNgs = new NamedGraphSetImpl();
 		try {
 			this.connection = (HttpURLConnection) this.url.openConnection();
-
 			this.connection
 					.addRequestProperty(
 							"accept",
-							"application/rdf+xml ; q=1, "
-									+ "text/xml ; q=0.6 , text/rdf+n3 ; q=0.9 , "
-									+ "application/octet-stream ; q=0.5 , "
-									+ "application/xml q=0.5, application/rss+xml ; q=0.5 , "
-									+ "text/plain ; q=0.5, application/x-turtle ; q=0.5, "
-									+ "application/x-trig ; q=0.5,"
-									+ "text/html ; q=0.5"
+							"application/rdf+xml;q=1,"
+									+ "text/xml;q=0.6,text/rdf+n3;q=0.9,"
+									+ "application/octet-stream;q=0.5,"
+									+ "application/xml q=0.5,application/rss+xml;q=0.5,"
+									+ "text/plain; q=0.5,application/x-turtle;q=0.5,"
+									+ "application/x-trig;q=0.5,"
+									+ "text/html;q=0.5"
 									);
 
 
