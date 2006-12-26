@@ -25,7 +25,7 @@ import de.fuberlin.wiwiss.ng4j.semwebclient.CommandLineQuery;
  *       RDF/XML, N3, N-Triple, SPARQL XML results, SPARQL JSON results, CSV, ...
  * 
  * @author Richard Cyganiak (richard@cyganiak.de)
- * @version $Id: query.java,v 1.2 2006/10/09 12:29:29 cyganiak Exp $
+ * @version $Id: query.java,v 1.3 2006/12/26 14:18:39 tgauss Exp $
  */
 public class query {
 	private static boolean verbose = false;
@@ -36,6 +36,7 @@ public class query {
 		cmd.add(true, "sparqlfile");
 		cmd.add(true, "find");
 		cmd.add(true, "maxsteps");
+		cmd.add(true, "maxfilesize");
 		cmd.add(true, "maxthreads");
 		cmd.add(true, "timeout");
 		cmd.add(true, "load");
@@ -89,6 +90,9 @@ public class query {
 		if (cmd.hasArg("maxsteps")) {
 			client.setMaxSteps((int) parseNumber(cmd.getValue("maxsteps"), "maxsteps", 0));
 		}
+		if (cmd.hasArg("maxfilesize")) {
+			client.setMaxFilesize((int) parseNumber(cmd.getValue("maxfilesize"), "maxfilesize", 0));
+		}
 		if (cmd.hasArg("maxthreads")) {
 			client.setMaxThreads((int) parseNumber(cmd.getValue("maxthreads"), "maxthreads", 0));
 		}
@@ -131,6 +135,7 @@ public class query {
 		System.out.println("    -find \"s p o\"        Execute a find query with an N-Triple style pattern;");
 		System.out.println("                           use ANY as a wildcard");
 		System.out.println("    -maxsteps <steps>      Set maximal depth of link following. Default: 3");
+		System.out.println("    -maxfilesize <size>    Set maximal filesize in bytes of URIs to retrieve. Default: 100000000");
 		System.out.println("    -maxthreads <threads>  Set number of threads for loading URIs. Default: 10");
 		System.out.println("    -timeout <seconds>     Set query timeout. Default: 60 seconds");
 		System.out.println("    -load <URL>            Load seed graph from the Web");
