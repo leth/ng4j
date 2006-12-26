@@ -30,6 +30,8 @@ public class DereferencerThread extends Thread {
 	private boolean stopped = false;
 
 	private NamedGraphSet tempNgs = null;
+	
+	private int maxfilesize = -1;
 
 	private URL url;
 
@@ -224,7 +226,8 @@ public class DereferencerThread extends Thread {
 		}
 			
 		RDFDefaultErrorHandler.silent = true;
-		this.tempNgs.read(this.connection.getInputStream(), lang, this.url
+		LimitedInputStream lis = new LimitedInputStream(this.connection.getInputStream(),this.maxfilesize);
+		this.tempNgs.read(lis, lang, this.url
 				.toString());
 		return new DereferencingResult(this.task,
 						DereferencingResult.STATUS_OK, this.tempNgs, null);
@@ -262,6 +265,10 @@ public class DereferencerThread extends Thread {
 	public synchronized void stopThread() {
 		this.stopped = true;
 		this.interrupt();
+	}
+	
+	public synchronized void setMaxfilesize(int size){
+		this.maxfilesize = size;
 	}
 
 	/*

@@ -50,6 +50,8 @@ public class CommandLineQuery {
 	private long timeout = -1;
 
 	private int maxthreads = -1;
+	
+	private int maxfilesize = -1;
 
 	public CommandLineQuery() {
 		this.client = new SemanticWebClient();
@@ -93,6 +95,16 @@ public class CommandLineQuery {
 	 */
 	public void setMaxSteps(int maxSteps) {
 		this.maxsteps = maxSteps;
+	}
+	
+	/**
+	 * Sets the maximal number of iterations of the retrieval algorithm. The
+	 * default value is 3.
+	 * 
+	 * @param maxSteps
+	 */
+	public void setMaxFilesize(int maxFilesize) {
+		this.maxfilesize = maxFilesize;
 	}
 
 	/**
@@ -273,7 +285,7 @@ public class CommandLineQuery {
 	private void executeOutput() {
 		if (this.outputRetrievedURIs) {
 			System.out.println("Successfully dereferenced URIs: \n");
-			Iterator it = this.client.successfullyDereferencedURIs();
+			Iterator it = this.client.successfullyDereferencedURIs().iterator();
 			while (it.hasNext()) {
 				String uri = (String) it.next();
 				System.out.println(uri);
@@ -282,7 +294,7 @@ public class CommandLineQuery {
 		}
 		if (this.outputFailedURIs) {
 			System.out.println("Unsuccessfully dereferenced URIs: \n");
-			Iterator it = this.client.unsuccessfullyDereferencedURIs();
+			Iterator it = this.client.unsuccessfullyDereferencedURIs().iterator();
 			while (it.hasNext()) {
 				String uri = (String) it.next();
 				System.out.println(uri);
@@ -329,6 +341,8 @@ public class CommandLineQuery {
 			this.client.setConfig("timeout", Long.toString(this.timeout));
 		if (this.maxthreads != -1)
 			this.client.setConfig("maxthreads", Long.toString(this.maxthreads));
+		if (this.maxfilesize != -1)
+			this.client.setConfig("maxfilesize", Integer.toString(this.maxfilesize));
 	}
 
 	private void executeWriteIntro() {

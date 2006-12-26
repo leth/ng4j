@@ -72,12 +72,18 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	public String CONFIG_MAXSTEPS = "maxsteps";
 	public String CONFIG_MAXTHREADS = "maxthreads";
 	public String CONFIG_TIMEOUT = "timeout";
+	public String CONFIG_MAXGRAPHS = "maxgraphs";
+	public String CONFIG_MAXFILESIZE = "maxfilesize";
 	
 	private static final int MAXSTEPS_DEFAULT = 3;
 
 	private static final int MAXTHREADS_DEFAULT = 10;
 
 	private static final long TIMEOUT_DEFAULT = 30000;
+	
+	private static final int MAXFILESIZE_DEFAULT = 100000000;
+	
+	//private static final long MAXGRAPHS_DEFAULT = 30000;
 
 	private List retrievedUris;
 
@@ -92,6 +98,8 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	private long timeout = TIMEOUT_DEFAULT;
 	private int maxsteps = MAXSTEPS_DEFAULT;
 	private int maxthreads = MAXTHREADS_DEFAULT;
+	private int maxfilesize = MAXFILESIZE_DEFAULT;
+	//private long maxgraphs = MAXGRAPHS_DEFAULT;
 
 	private Log log = LogFactory.getLog(SemanticWebClient.class);
 
@@ -194,6 +202,28 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 			}
 			this.maxthreads = val;
 		}
+		if (option.equals(CONFIG_MAXFILESIZE)) {
+			int val;
+			try {
+				val = Integer.parseInt(value);
+			} catch (NumberFormatException e) {
+				throw new IllegalArgumentException("value '" + value
+						+ "' for config " + CONFIG_MAXFILESIZE
+						+ " is not numeric");
+			}
+			this.maxfilesize = val;
+		}
+//		if (option.equals(CONFIG_MAXGRAPHS)) {
+//			long val;
+//			try {
+//				val = Long.parseLong(value);
+//			} catch (NumberFormatException e) {
+//				throw new IllegalArgumentException("value '" + value
+//						+ "' for config " + CONFIG_MAXGRAPHS
+//						+ " is not numeric");
+//			}
+//			this.maxgraphs = val;
+//		}
 		if (option.equals(CONFIG_TIMEOUT)) {
 			long val;
 			try {
@@ -218,6 +248,8 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 			value = String.valueOf(this.maxthreads);
 		if (option.toLowerCase().equals(CONFIG_TIMEOUT))
 			value = String.valueOf(this.timeout);
+		if (option.toLowerCase().equals(CONFIG_MAXFILESIZE))
+			value = String.valueOf(this.maxfilesize);
 
 		return value;
 	}
@@ -225,15 +257,15 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	/**
 	 * Returns an iterator over all successfully dereferenced URIs.
 	 */
-	public Iterator successfullyDereferencedURIs() {
-		return this.retrievedUris.iterator();
+	public List successfullyDereferencedURIs() {
+		return this.retrievedUris;
 	}
 
 	/**
 	 * Returns an iterator over all URIs that couldn't be dereferenced.
 	 */
-	public Iterator unsuccessfullyDereferencedURIs() {
-		return this.unretrievedURIs.iterator();
+	public List unsuccessfullyDereferencedURIs() {
+		return this.unretrievedURIs;
 	}
 
 	/** 
@@ -272,6 +304,8 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#addGraph(de.fuberlin.wiwiss.ng4j.NamedGraph)
 	 */
 	public synchronized void addGraph(NamedGraph graph){
+	//	if(this.countGraphs()-1>=maxgraphs)
+	//		throw new JenaException("SemWebClient full.");
 		super.addGraph(graph);
 	}
 
@@ -334,7 +368,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 
 	private DereferencingTaskQueue getURIQueue() {
 		if (this.uriQueue == null) {
-			this.uriQueue = new DereferencingTaskQueue(this.maxthreads);
+			this.uriQueue = new DereferencingTaskQueue(this.maxthreads,this.maxfilesize);
 		}
 		return this.uriQueue;
 	}
