@@ -48,6 +48,8 @@ public class DereferencingTaskQueue extends Thread {
 		while (it.hasNext()) {
 			DereferencerThread thread = (DereferencerThread) it.next();
 			thread.stopThread();
+			thread.interrupt();
+			thread = null;
 		}
 		this.stopped = true;
 		notify();

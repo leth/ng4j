@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -20,7 +21,7 @@ import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
  * HttpURLConnection, creates an InputStream and tries to parse it. If the
  * Thread is finished it delivers the retrieval result.
  * 
- * @author Tobias Gauß
+ * @author Tobias Gauï¿½
  */
 public class DereferencerThread extends Thread {
 	private DereferencingTask task = null;
@@ -161,9 +162,10 @@ public class DereferencerThread extends Thread {
 		DereferencingResult result = null;
 		this.tempNgs = new NamedGraphSetImpl();
 		try {
-			this.connection = (HttpURLConnection) this.url.openConnection();
-			this.connection
-					.addRequestProperty(
+			URLConnection con = this.url.openConnection();
+			con.setReadTimeout(60000);
+			this.connection = (HttpURLConnection) con;
+					this.connection.addRequestProperty(
 							"accept",
 							"application/rdf+xml;q=1,"
 									+ "text/xml;q=0.6,text/rdf+n3;q=0.9,"
