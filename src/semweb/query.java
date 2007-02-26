@@ -25,7 +25,7 @@ import de.fuberlin.wiwiss.ng4j.semwebclient.CommandLineQuery;
  *       RDF/XML, N3, N-Triple, SPARQL XML results, SPARQL JSON results, CSV, ...
  * 
  * @author Richard Cyganiak (richard@cyganiak.de)
- * @version $Id: query.java,v 1.3 2006/12/26 14:18:39 tgauss Exp $
+ * @version $Id: query.java,v 1.4 2007/02/26 23:53:39 sfakste Exp $
  */
 public class query {
 	private static boolean verbose = false;
@@ -45,6 +45,7 @@ public class query {
 		cmd.add(false, "retrieveduris");
 		cmd.add(false, "faileduris");
 		cmd.add(false, "verbose");
+		cmd.add(false, "grddl");
 		try {
 			cmd.process(args);
 			if (!cmd.hasArgs() || cmd.hasItems()) {
@@ -101,6 +102,9 @@ public class query {
 		} else {
 			client.setTimeout(60000);
 		}
+		if (cmd.hasArg("grddl")) {
+			client.setEnableGrddl(true);
+		}
 		if (cmd.hasArg("load")) {
 			Iterator it = cmd.getValues("load").iterator();
 			while (it.hasNext()) {
@@ -139,6 +143,7 @@ public class query {
 		System.out.println("    -maxthreads <threads>  Set number of threads for loading URIs. Default: 10");
 		System.out.println("    -timeout <seconds>     Set query timeout. Default: 60 seconds");
 		System.out.println("    -load <URL>            Load seed graph from the Web");
+		System.out.println("    -grddl                 Perform GRDDL transformations");
 		System.out.println("    -loadtrig <file>       Load seed graphs from a TriG file before starting");
 		System.out.println("    -savetrig <file>       Save loaded graphs to a TriG file after finishing");
 		System.out.println("    -retrieveduris         Output a list of all successfully retrieved URIs");

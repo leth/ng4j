@@ -53,6 +53,8 @@ public class CommandLineQuery {
 	
 	private int maxfilesize = -1;
 
+        private boolean enablegrddl = false;
+
 	public CommandLineQuery() {
 		this.client = new SemanticWebClient();
 	}
@@ -125,6 +127,16 @@ public class CommandLineQuery {
 	 */
 	public void setMaxThreads(int maxThreads) {
 		this.maxthreads = maxThreads;
+	}
+
+	/**
+	 * Enables the GRDDL transformations. The
+	 * default is false.
+	 * 
+	 * @param enableGrddl
+	 */
+	public void setEnableGrddl(boolean enableGrddl) {
+		this.enablegrddl = enableGrddl;
 	}
 
 	/**
@@ -211,6 +223,9 @@ public class CommandLineQuery {
 			String graphuri = (String) it.next();
 			URL url = null;
 			HttpURLConnection connection = null;
+			url = new URL(graphuri);
+			if (url != null) {
+				connection = (HttpURLConnection) url.openConnection();
 			connection
 			.addRequestProperty(
 					"accept",
@@ -220,9 +235,6 @@ public class CommandLineQuery {
 							+ "application/xml q=0.5, application/rss+xml ; q=0.5 , "
 							+ "text/plain ; q=0.5, application/x-turtle ; q=0.5, "
 							+ "application/x-trig ; q=0.5");
-			url = new URL(graphuri);
-			if (url != null) {
-				connection = (HttpURLConnection) url.openConnection();
 				this.client.read(connection.getInputStream(),
 						guessLanguage(connection), url.toString());
 				System.out.println("Successfully added: " + graphuri);
@@ -330,6 +342,9 @@ public class CommandLineQuery {
 				|| type.startsWith("application/x-turtle")
 				|| type.startsWith("text/rdf+n3"))
 			return "N3";
+		if (type.startsWith("application/xhtml")
+				|| type.startsWith("text/html"))
+			return "HTML";
 
 		return type;
 	}
@@ -343,6 +358,8 @@ public class CommandLineQuery {
 			this.client.setConfig("maxthreads", Long.toString(this.maxthreads));
 		if (this.maxfilesize != -1)
 			this.client.setConfig("maxfilesize", Integer.toString(this.maxfilesize));
+		if (this.enablegrddl != false)
+		    this.client.setConfig("enablegrddl", Boolean.toString(this.enablegrddl));
 	}
 
 	private void executeWriteIntro() {

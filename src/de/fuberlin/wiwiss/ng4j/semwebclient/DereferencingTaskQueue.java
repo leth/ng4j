@@ -21,10 +21,12 @@ public class DereferencingTaskQueue extends Thread {
 	private LinkedList tasks = new LinkedList();
 	private Log log = LogFactory.getLog(DereferencingTaskQueue.class);
 	private int maxfilesize;
-	
-	public DereferencingTaskQueue(int maxThreads,int maxfilesize) {
+        private boolean enablegrddl;
+
+        public DereferencingTaskQueue(int maxThreads,int maxfilesize, boolean enablegrddl) {
 		this.maxthreads = maxThreads;
 		this.maxfilesize = maxfilesize;
+		this.enablegrddl = enablegrddl;
 		setName("Queue");
 		start();
 	}
@@ -93,6 +95,7 @@ public class DereferencingTaskQueue extends Thread {
 			DereferencerThread thread = new DereferencerThread();
 			thread.setName("DerefThread"+i);
 			thread.setMaxfilesize(this.maxfilesize);
+			thread.setEnableGrddl(this.enablegrddl);
 			thread.start();
 			this.threads.add(thread);
 		}

@@ -74,6 +74,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	public String CONFIG_TIMEOUT = "timeout";
 	public String CONFIG_MAXGRAPHS = "maxgraphs";
 	public String CONFIG_MAXFILESIZE = "maxfilesize";
+	public String CONFIG_ENABLEGRDDL = "enablegrddl";
 	
 	private static final int MAXSTEPS_DEFAULT = 3;
 
@@ -82,6 +83,8 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	private static final long TIMEOUT_DEFAULT = 30000;
 	
 	private static final int MAXFILESIZE_DEFAULT = 100000000;
+	
+	private static final boolean ENABLEGRDDL_DEFAULT = false;
 	
 	//private static final long MAXGRAPHS_DEFAULT = 30000;
 
@@ -100,6 +103,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	private int maxthreads = MAXTHREADS_DEFAULT;
 	private int maxfilesize = MAXFILESIZE_DEFAULT;
 	//private long maxgraphs = MAXGRAPHS_DEFAULT;
+        private boolean enablegrddl = ENABLEGRDDL_DEFAULT;
 
 	private Log log = LogFactory.getLog(SemanticWebClient.class);
 
@@ -191,7 +195,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 			}
 			this.maxsteps = val;
 		}
-		if (option.equals(CONFIG_MAXTHREADS)) {
+		else if (option.equals(CONFIG_MAXTHREADS)) {
 			int val;
 			try {
 				val = Integer.parseInt(value);
@@ -202,7 +206,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 			}
 			this.maxthreads = val;
 		}
-		if (option.equals(CONFIG_MAXFILESIZE)) {
+		else if (option.equals(CONFIG_MAXFILESIZE)) {
 			int val;
 			try {
 				val = Integer.parseInt(value);
@@ -224,7 +228,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 //			}
 //			this.maxgraphs = val;
 //		}
-		if (option.equals(CONFIG_TIMEOUT)) {
+		else if (option.equals(CONFIG_TIMEOUT)) {
 			long val;
 			try {
 				val = Long.parseLong(value);
@@ -235,6 +239,9 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 			}
 			this.timeout = val;
 		}
+		else if (option.equals(CONFIG_ENABLEGRDDL)) {
+			this.enablegrddl = Boolean.parseBoolean(value);
+		}
 	}
 
 	/**
@@ -244,12 +251,14 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 		String value = null;
 		if (option.toLowerCase().equals(CONFIG_MAXSTEPS))
 			value = String.valueOf(this.maxsteps);
-		if (option.toLowerCase().equals(CONFIG_MAXTHREADS))
+		else if (option.toLowerCase().equals(CONFIG_MAXTHREADS))
 			value = String.valueOf(this.maxthreads);
-		if (option.toLowerCase().equals(CONFIG_TIMEOUT))
+		else if (option.toLowerCase().equals(CONFIG_TIMEOUT))
 			value = String.valueOf(this.timeout);
-		if (option.toLowerCase().equals(CONFIG_MAXFILESIZE))
+		else if (option.toLowerCase().equals(CONFIG_MAXFILESIZE))
 			value = String.valueOf(this.maxfilesize);
+		else if (option.toLowerCase().equals(CONFIG_ENABLEGRDDL))
+			value = String.valueOf(this.enablegrddl);
 
 		return value;
 	}
@@ -368,7 +377,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 
 	private DereferencingTaskQueue getURIQueue() {
 		if (this.uriQueue == null) {
-			this.uriQueue = new DereferencingTaskQueue(this.maxthreads,this.maxfilesize);
+		    this.uriQueue = new DereferencingTaskQueue(this.maxthreads,this.maxfilesize, this.enablegrddl);
 		}
 		return this.uriQueue;
 	}
