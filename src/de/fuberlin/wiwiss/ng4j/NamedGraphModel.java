@@ -1,4 +1,4 @@
-// $Id: NamedGraphModel.java,v 1.3 2004/12/13 22:56:31 cyganiak Exp $
+// $Id: NamedGraphModel.java,v 1.4 2007/03/06 18:18:24 zedlitz Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.io.InputStream;
@@ -14,6 +14,7 @@ import java.io.Writer;
 import com.hp.hpl.jena.graph.Node;
 
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ResourceF;
 
 import com.hp.hpl.jena.rdf.model.Property;
 
@@ -34,6 +35,7 @@ import com.hp.hpl.jena.rdf.model.impl.ModelCom;
 
 
 import de.fuberlin.wiwiss.ng4j.impl.GraphReaderService;
+import de.fuberlin.wiwiss.ng4j.impl.NamedGraphResourceImpl;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphStatementIterator;
 import de.fuberlin.wiwiss.ng4j.trig.TriGWriter;
 import de.fuberlin.wiwiss.ng4j.trix.TriXWriter;
@@ -249,6 +251,21 @@ public class NamedGraphModel extends ModelCom implements Model {
 	private StmtIterator convertStatementsToNamedGraphStatements(StmtIterator it) {
 		return new NamedGraphStatementIterator(it, this);
 	}
+
+    /**
+     * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#getResource(java.lang.String)
+     */
+    public Resource getResource(String uri) {
+        return new NamedGraphResourceImpl(super.getResource(uri),this);
+    }
+    
+    /**
+     * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#getResource(java.lang.String, com.hp.hpl.jena.rdf.model.ResourceF)
+     */
+    public Resource getResource(String uri, ResourceF f) {
+        return new NamedGraphResourceImpl(super.getResource(uri, f),this);
+    }
+    
 }
 
 /*
