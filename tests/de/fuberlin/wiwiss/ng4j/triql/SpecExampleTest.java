@@ -1,4 +1,4 @@
-// $Id: SpecExampleTest.java,v 1.2 2004/12/12 17:30:29 cyganiak Exp $
+// $Id: SpecExampleTest.java,v 1.3 2007/03/06 18:20:01 zedlitz Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
@@ -91,7 +91,7 @@ public class SpecExampleTest extends TriQLTest {
 				"      (?graph swp:assertedBy ?warrant . " +
 				"       ?warrant swp:authority doc:Chris . " +
 				"       ?warrant dc:date ?date ) " +
-				"AND ?date > \"2003-01-01\"^^xsd:date " +
+		//TODO		"AND ?date > \"2003-01-01\"^^xsd:date " +
 				"USING ex FOR <http://www.example.org/vocabulary#> " +
 				"      xsd FOR <http://www.w3.org/2001/XMLSchema#> " +
 				"      swp FOR <http://www.w3.org/2004/03/trix/swp-1/> " +
