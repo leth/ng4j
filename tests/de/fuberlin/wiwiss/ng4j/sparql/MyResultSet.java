@@ -13,7 +13,7 @@ import com.hp.hpl.jena.query.core.ResultBinding;
 import com.hp.hpl.jena.rdf.model.Model;
 
 
-public class TestResultSet implements ResultSet {
+public class MyResultSet implements ResultSet {
 	private Model model;
 	private List resultVars = new ArrayList();
 	private List bindings = new ArrayList();
@@ -21,7 +21,7 @@ public class TestResultSet implements ResultSet {
 	private Iterator bindingIterator = null;
 	private int rowNumber = 0;
 	
-	public TestResultSet(Model model) {
+	public MyResultSet(Model model) {
 		this.model = model;
 	}
 	

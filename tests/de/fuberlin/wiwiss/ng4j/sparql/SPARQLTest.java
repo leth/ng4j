@@ -25,7 +25,7 @@ public class SPARQLTest extends TestCase {
 		ResultSet rs = QueryExecutionFactory.create(
 				QueryFactory.create(query),
 				new NamedGraphDataset(set, Node.createURI("http://example.com/aliceFoaf"))).execSelect();
-		TestResultSet expected = new TestResultSet(ModelFactory.createDefaultModel());
+		MyResultSet expected = new MyResultSet(ModelFactory.createDefaultModel());
 		expected.addVar("foafFile", Node.createURI("http://example.com/bobFoaf"));
 		expected.addVar("mbox", Node.createURI("mailto:bob@example.com"));
 		expected.addSolution();
