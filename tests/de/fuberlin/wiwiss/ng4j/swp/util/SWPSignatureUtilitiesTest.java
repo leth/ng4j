@@ -7,7 +7,6 @@ package de.fuberlin.wiwiss.ng4j.swp.util;
 import java.io.ByteArrayInputStream;
 import java.security.GeneralSecurityException;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateFactory;
@@ -263,21 +262,21 @@ public class SWPSignatureUtilitiesTest extends TestCase
 	SWPSignatureException, 
 	SWPCertificateException, 
 	SWPNoSuchAlgorithmException, 
-	SWPValidationException 
+	SWPValidationException, SWPAlgorithmNotSupportedException 
 	{
 		Certificate[] certs = PKCS12Utils.getCertChain( keystore, password );
 		
-		String signature = "Q5giVuVAnlhxj9XEDws5erZA4yBmPHyzrh+BaI/7aIOAH9inXcaav1+yluhA5IG898ycUZsSqQLw" +
-						"JdVtQhaZOvEUVggv7WWO0/RpjJnrrm1BpVFKGF8Wb/9mls+FDFAPFR03nPxCvWzpU+n4RRMbWqtf" +
-						"6laHEeKwHV64f4L6tcw=";
-		
-		String badsignature = "Q5giVuVAnlhxj9XEDws5erZA4yBmPHyzrh+B/7aIOAH9inXcaav1+yluhA5IG898ycUZsSqQLw" +
-						"JdVthaZOvEUVggv7WWO0/RpjJnrrm1pVFKGF8Wb/9mls+FDFAPFR03nPxCvWzpU+n4RRMbWqtf" +
-						"6laHEeKwHV64f4L6tcw=";
+		final String signature = "yqskH08WOauqwIiQXJVCBUCKqlqK1WdVAFoYA9e++uZK+sRJjTyaAz+HL5VBDUytNDQPsiknmlB6"
+                + "c1gVwF6/iWRzUd/25Lnz3IiS//WTFmCaDpkjeInj15zEw/uvQxdC1NXmGQiJlddotpsVMoOi+6Oy"
+                + "ae4N0WrP9yLP/nVvqEA=";
+
+        final String badsignature = "yqskH08W--wrong--JVCBUCKqlqK1WdVAFoYA9e++uZK+sRJjTyaAz+HL5VBDUytNDQPsiknmlB6"
+            + "c1gVwF6/iWRzUd/25Lnz3IiS//WTFmCaDpkjeInj15zEw/uvQxdC1NXmGQiJlddotpsVMoOi+6Oy"
+            + "ae4N0WrP9yLP/nVvqEA=";
 		
 		ArrayList list = new ArrayList();
 		list.add( certs[1]);
-		
+
 		assertTrue( SWPSignatureUtilities.validateSignature( g1, 
 															SWP.JjcRdfC14N_rsa_sha224, 
 															signature, 
@@ -303,13 +302,13 @@ public class SWPSignatureUtilitiesTest extends TestCase
 	{
 		Certificate[] certs = PKCS12Utils.getCertChain( keystore, password );
 		
-		String signature = "Q5giVuVAnlhxj9XEDws5erZA4yBmPHyzrh+BaI/7aIOAH9inXcaav1+yluhA5IG898ycUZsSqQLw" +
-						"JdVtQhaZOvEUVggv7WWO0/RpjJnrrm1BpVFKGF8Wb/9mls+FDFAPFR03nPxCvWzpU+n4RRMbWqtf" +
-						"6laHEeKwHV64f4L6tcw=";
-		
-		String badsignature = "Q5giVuVAnlhxj9XEDws5erZA4yBmPHyzrh+B/7aIOAH9inXcaav1+yluhA5IG898ycUZsSqQLw" +
-						"JdVthaZOvEUVggv7WWO0/RpjJnrrm1pVFKGF8Wb/9mls+FDFAPFR03nPxCvWzpU+n4RRMbWqtf" +
-						"6laHEeKwHV64f4L6tcw=";
+        final String signature = "yqskH08WOauqwIiQXJVCBUCKqlqK1WdVAFoYA9e++uZK+sRJjTyaAz+HL5VBDUytNDQPsiknmlB6"
+            + "c1gVwF6/iWRzUd/25Lnz3IiS//WTFmCaDpkjeInj15zEw/uvQxdC1NXmGQiJlddotpsVMoOi+6Oy"
+            + "ae4N0WrP9yLP/nVvqEA=";
+
+        final String badsignature = "yqskH08W--wrong--JVCBUCKqlqK1WdVAFoYA9e++uZK+sRJjTyaAz+HL5VBDUytNDQPsiknmlB6"
+                + "c1gVwF6/iWRzUd/25Lnz3IiS//WTFmCaDpkjeInj15zEw/uvQxdC1NXmGQiJlddotpsVMoOi+6Oy"
+                + "ae4N0WrP9yLP/nVvqEA=";
 		
 		ArrayList list = new ArrayList();
 		list.add( certs[1]);
