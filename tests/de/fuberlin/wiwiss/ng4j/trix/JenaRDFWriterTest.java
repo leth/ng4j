@@ -1,5 +1,5 @@
 /*
- * $Id: JenaRDFWriterTest.java,v 1.1 2004/10/23 13:31:23 cyganiak Exp $
+ * $Id: JenaRDFWriterTest.java,v 1.2 2007/03/06 16:26:34 zedlitz Exp $
  */
 package de.fuberlin.wiwiss.ng4j.trix;
 
@@ -38,8 +38,8 @@ public class JenaRDFWriterTest extends TestCase {
 		model.add(model.createResource("http://example.org/#foo"),
 				model.createProperty("http://example.org/#bar"),
 				model.createLiteral("<\"&"));
-		String actual = modelToString(model, new JenaRDFWriter(), "file:/test");
-		String expected = TestHelpers.getFileContents("tests/escape.xml");
+		String actual = modelToString(model, new JenaRDFWriter(), "file:/test").replaceAll("\r\n", "\n");
+		String expected = TestHelpers.getFileContents("tests/escape.xml").replaceAll("\r\n", "\n");
 		assertEquals(expected, actual);
 	}
 
