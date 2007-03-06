@@ -1,4 +1,4 @@
-//$Id: SWPNamedGraphSetTest.java,v 1.8 2005/03/15 18:44:40 erw Exp $
+//$Id: SWPNamedGraphSetTest.java,v 1.9 2007/03/06 19:25:04 zedlitz Exp $
 package de.fuberlin.wiwiss.ng4j.swp;
 
 import java.security.cert.Certificate;
@@ -98,7 +98,7 @@ public class SWPNamedGraphSetTest extends TestCase
 			assertTrue( itr.hasNext() );
 			
 			Iterator itr2 = warrant.getGraphs();
-			assertTrue( itr.hasNext() );
+			assertTrue( itr2.hasNext() );
 			
 			Iterator itr3 = warrant.getQuotedGraphs();
 			assertFalse( itr3.hasNext() );
@@ -136,7 +136,7 @@ public class SWPNamedGraphSetTest extends TestCase
 			assertTrue( itr.hasNext() );
 			
 			Iterator itr2 = warrant.getGraphs();
-			assertTrue( itr.hasNext() );
+			assertTrue( itr2.hasNext() );
 			
 			Iterator itr3 = warrant.getQuotedGraphs();
 			assertFalse( itr3.hasNext() );
@@ -175,7 +175,7 @@ public class SWPNamedGraphSetTest extends TestCase
 			assertTrue( itr.hasNext() );
 			
 			Iterator itr2 = warrant.getGraphs();
-			assertTrue( itr.hasNext() );
+			assertTrue( itr2.hasNext() );
 			
 			Iterator itr3 = warrant.getQuotedGraphs();
 			assertTrue( itr3.hasNext() );
@@ -214,7 +214,7 @@ public class SWPNamedGraphSetTest extends TestCase
 			assertTrue( itr.hasNext() );
 			
 			Iterator itr2 = warrant.getGraphs();
-			assertTrue( itr.hasNext() );
+			assertTrue( itr2.hasNext() );
 			
 			Iterator itr3 = warrant.getQuotedGraphs();
 			assertTrue( itr3.hasNext() );
