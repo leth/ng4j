@@ -1,4 +1,4 @@
-// $Id: NamedGraphModelTest.java,v 1.1 2004/10/23 13:31:25 cyganiak Exp $
+// $Id: NamedGraphModelTest.java,v 1.2 2007/03/06 18:16:55 zedlitz Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.util.ArrayList;
@@ -9,8 +9,8 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.mem.ModelMem;
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.SimpleSelector;
@@ -65,7 +65,7 @@ public class NamedGraphModelTest extends TestCase {
 	}
 	
 	public void testAddModel() {
-		Model other = new ModelMem();
+		Model other = ModelFactory.createDefaultModel();
 		other.add(twoStatementsList());
 		this.model.add(other);
 		assertTwoStatementsAdded();
