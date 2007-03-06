@@ -1,4 +1,4 @@
-// $Id: TriGReaderTest.java,v 1.4 2004/12/12 17:39:28 cyganiak Exp $
+// $Id: TriGReaderTest.java,v 1.5 2007/03/06 14:10:47 zedlitz Exp $
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import java.io.InputStream;
@@ -50,7 +50,7 @@ public class TriGReaderTest extends TestCase {
 	
 	public void testEncoding() {
 		assertTrue(this.ngs.containsQuad(new Quad(Node.ANY, Node.ANY, Node.ANY,
-				Node.createLiteral("ŠšŸ", null, null))));
+				Node.createLiteral("\u00e4\u00f6\u00fc", null, null))));
 	}
 
 	public void testNoAdditionalQuads() {
