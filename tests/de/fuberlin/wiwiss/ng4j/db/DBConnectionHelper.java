@@ -1,4 +1,4 @@
-// $Id: DBConnectionHelper.java,v 1.2 2006/08/21 20:21:21 cyganiak Exp $
+// $Id: DBConnectionHelper.java,v 1.3 2007/03/06 14:09:05 zedlitz Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -12,10 +12,10 @@ import java.sql.SQLException;
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class DBConnectionHelper {
-	private static String URL = "jdbc:mysql://127.0.0.1/ng4j";
-	private static String USER = "root";
+	private static String URL = "jdbc:hsqldb:mem:ng4j";
+	private static String USER = "sa";
 	private static String PW = "";
-	private static String DRIVER = "com.mysql.jdbc.Driver";
+	private static String DRIVER = "org.hsqldb.jdbcDriver";
 	
 	static NamedGraphSetDB createNamedGraphSetDB() {
 		return new NamedGraphSetDB(getConnection());
