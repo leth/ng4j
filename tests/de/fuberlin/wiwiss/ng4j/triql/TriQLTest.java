@@ -1,4 +1,4 @@
-//$Id: TriQLTest.java,v 1.4 2005/01/30 22:09:00 cyganiak Exp $
+//$Id: TriQLTest.java,v 1.5 2007/03/06 14:13:33 zedlitz Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import java.util.HashMap;
@@ -19,7 +19,7 @@ import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
  *
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
-public class TriQLTest extends TestCase {
+public abstract class TriQLTest extends TestCase {
 	private String query;
 	private TriQLQuery q;
 	private List results;
