@@ -16,15 +16,10 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.Signature;
 import java.security.SignatureException;
-import java.security.cert.CertPath;
-import java.security.cert.CertPathValidator;
-import java.security.cert.CertPathValidatorException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateNotYetValidException;
-import java.security.cert.PKIXParameters;
-import java.security.cert.TrustAnchor;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.RSAPrivateKey;
@@ -67,9 +62,9 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP;
 
 /**
  * 
- * Last commit info    :   $Author: erw $
- * $Date: 2005/10/29 18:36:53 $
- * $Revision: 1.7 $
+ * Last commit info    :   $Author: zedlitz $
+ * $Date: 2007/03/07 08:59:57 $
+ * $Revision: 1.8 $
  * 
  * 
  * SWPSignatureUtilities
@@ -170,7 +165,6 @@ public class SWPSignatureUtilities
     public static String getCanonicalGraphSet( NamedGraphSet set )
     {
     	String graph = "urn:uuid"+ uuidGen.nextUUID();
-    	NamedGraphSet sSet = new NamedGraphSetImpl();
 		ArrayList result = new ArrayList();
 		
 		Model model = set.asJenaModel( graph );
@@ -234,7 +228,6 @@ public class SWPSignatureUtilities
         }
         
 		byte[]  resBuf = new byte[ digest.getDigestSize() ];
-        String  resStr;
         digest.update( data.getBytes(), 0, data.getBytes().length );
         digest.doFinal( resBuf, 0 );
     
@@ -262,7 +255,6 @@ public class SWPSignatureUtilities
         {
             Digest  digest = new SHA1Digest();
             byte[]  resBuf = new byte[ digest.getDigestSize() ];
-            String  resStr;
             digest.update( data.getBytes(), 0, data.getBytes().length );
             digest.doFinal( resBuf, 0 );
 	    
@@ -272,7 +264,6 @@ public class SWPSignatureUtilities
 		{
 			 Digest  digest = new SHA224Digest();
 	         byte[]  resBuf = new byte[ digest.getDigestSize() ];
-	         String  resStr;
 	         digest.update( data.getBytes(), 0, data.getBytes().length );
 	         digest.doFinal( resBuf, 0 );
 		    
@@ -282,7 +273,6 @@ public class SWPSignatureUtilities
 		{
 			 Digest  digest = new SHA256Digest();
 	         byte[]  resBuf = new byte[ digest.getDigestSize() ];
-	         String  resStr;
 	         digest.update( data.getBytes(), 0, data.getBytes().length );
 			 digest.doFinal( resBuf, 0 );
 		    
@@ -292,7 +282,6 @@ public class SWPSignatureUtilities
 		{
 			 Digest  digest = new SHA384Digest();
 	         byte[]  resBuf = new byte[ digest.getDigestSize() ];
-	         String  resStr;
 	         digest.update( data.getBytes(), 0, data.getBytes().length );
 			 digest.doFinal( resBuf, 0 );
 		    
@@ -302,7 +291,6 @@ public class SWPSignatureUtilities
 		{
 			 Digest  digest = new SHA512Digest();
 	         byte[]  resBuf = new byte[ digest.getDigestSize() ];
-	         String  resStr;
 	         digest.update( data.getBytes(), 0, data.getBytes().length );
 	         digest.doFinal( resBuf, 0 );
 		    
@@ -830,7 +818,6 @@ public class SWPSignatureUtilities
     SWPCertificateException
 	{
     	String canonicalGraph = getCanonicalGraph( graph );
-    	boolean result = false;
     	
     	Signature sig = null;
     	byte[] signature = null;
