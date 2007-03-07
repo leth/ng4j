@@ -1,6 +1,8 @@
-//$Id: SWPNamedGraphSetTest.java,v 1.9 2007/03/06 19:25:04 zedlitz Exp $
+//$Id: SWPNamedGraphSetTest.java,v 1.10 2007/03/07 09:44:44 zedlitz Exp $
 package de.fuberlin.wiwiss.ng4j.swp;
 
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -18,7 +20,9 @@ import de.fuberlin.wiwiss.ng4j.swp.impl.SWPAuthorityImpl;
 import de.fuberlin.wiwiss.ng4j.swp.impl.SWPNamedGraphSetImpl;
 import de.fuberlin.wiwiss.ng4j.swp.SWPAuthority;
 import de.fuberlin.wiwiss.ng4j.swp.util.PKCS12Utils;
+import de.fuberlin.wiwiss.ng4j.swp.util.SWPSignatureUtilities;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP;
+import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
 
 import junit.framework.TestCase;
 
@@ -382,32 +386,140 @@ public class SWPNamedGraphSetTest extends TestCase
 		return new SWPNamedGraphSetImpl();
 	}
 
+    /**
+     * Check that verifyAllSignatures adds the verifiedSignatures graph to the
+     * graph set and all signatures are valid.
+     * @throws Exception
+     */
+    public void testVerifyAllSignatures() throws Exception {
+        final Certificate[] chain = PKCS12Utils
+                .getCertChain(keystore, password);
+
+        final SWPAuthority auth = new SWPAuthorityImpl(Node
+                .createURI("http://zedlitz.de#jesper"));
+        auth.setEmail("mailto:jesper@zedlitz.de");
+        auth.setCertificate((X509Certificate) chain[0]);
+
+        set.assertWithSignature(auth, SWP.JjcRdfC14N_rsa_sha1,
+                SWP.JjcRdfC14N_sha1, null, keystore, password);
+
+        set.verifyAllSignatures();
+
+        final NamedGraph verifiedSignatures = set.getGraph(SWP_V.default_graph);
+        assertNotNull("verifiedSignatures graph added", verifiedSignatures);
+
+        assertTrue("every signature valid", SWPSignatureUtilities
+                .isEverySignatureValid(verifiedSignatures));
+    }
+
+    /**
+     * Checking a signature must also work after the graph as been serialized
+     * and reread.
+     * @throws Exception
+     */
+    public void testVerifyAllSignatures_Serialized() throws Exception {
+        final String serializedGraph;
+
+        {
+            final Certificate[] chain = PKCS12Utils.getCertChain(keystore,
+                    password);
+
+            final SWPAuthority auth = new SWPAuthorityImpl(Node
+                    .createURI("http://zedlitz.de#jesper"));
+            auth.setEmail("mailto:jesper@zedlitz.de");
+            auth.setCertificate((X509Certificate) chain[0]);
+
+            set.assertWithSignature(auth, SWP.JjcRdfC14N_rsa_sha1,
+                    SWP.JjcRdfC14N_sha1, null, keystore, password);
+            final StringWriter sw = new StringWriter();
+            set.write(sw, "TRIG", "");
+            serializedGraph = sw.toString();
+        }
+
+        final SWPNamedGraphSet newGraphSet = new SWPNamedGraphSetImpl();
+        newGraphSet.read(new StringReader(serializedGraph), "TRIG", "");
+
+        final SWPAuthority auth = new SWPAuthorityImpl(Node
+                .createURI("http://zedlitz.de#jesper"));
+        auth.setEmail("mailto:jesper@zedlitz.de");
+
+        newGraphSet.verifyAllSignatures();
+
+        final NamedGraph verifiedSignatures = newGraphSet.getGraph(SWP_V.default_graph);
+        assertTrue("every signature valid", SWPSignatureUtilities
+                .isEverySignatureValid(verifiedSignatures));   
+    }
+    
+    /**
+     * When a signed graph has been manipulated the "verifiedSignatures" must
+     * not contain valid signatures.
+     * 
+     * @throws Exception
+     */
+    public void testVerifyAllSignatures_SerializedManipulated()
+            throws Exception {
+        final String serializedGraph;
+
+        {
+            final Certificate[] chain = PKCS12Utils.getCertChain(keystore,
+                    password);
+
+            final SWPAuthority auth = new SWPAuthorityImpl(Node
+                    .createURI("http://zedlitz.de#jesper"));
+            auth.setEmail("mailto:jesper@zedlitz.de");
+            auth.setCertificate((X509Certificate) chain[0]);
+
+            set.assertWithSignature(auth, SWP.JjcRdfC14N_rsa_sha1,
+                    SWP.JjcRdfC14N_sha1, null, keystore, password);
+            final StringWriter sw = new StringWriter();
+            set.write(sw, "TRIG", "");
+            serializedGraph = sw.toString();
+        }
+
+        /* manipulate the serialized graph */
+        final String manipulatedGraph = serializedGraph.replaceAll(
+                "http://example.org/graph1", "http://example.org/graphA");
+
+        final SWPNamedGraphSet newGraphSet = new SWPNamedGraphSetImpl();
+        newGraphSet.read(new StringReader(manipulatedGraph), "TRIG", "");
+
+        final SWPAuthority auth = new SWPAuthorityImpl(Node
+                .createURI("http://zedlitz.de#jesper"));
+        auth.setEmail("mailto:jesper@zedlitz.de");
+
+        newGraphSet.verifyAllSignatures();
+
+        final NamedGraph verifiedSignatures = newGraphSet
+                .getGraph(SWP_V.default_graph);
+        assertFalse("manipulated graph", SWPSignatureUtilities
+                .isEverySignatureValid(verifiedSignatures));
+    }
+
 }
 
 /*
- *  (c)   Copyright 2004, 2005 Rowland Watkins (rowland@grid.cx) 
- *   	  All rights reserved.
- *
+ * (c) Copyright 2004, 2005 Rowland Watkins (rowland@grid.cx) All rights
+ * reserved.
+ * 
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
+ * modification, are permitted provided that the following conditions are met:
+ * 1. Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer. 2. Redistributions in
+ * binary form must reproduce the above copyright notice, this list of
+ * conditions and the following disclaimer in the documentation and/or other
+ * materials provided with the distribution. 3. The name of the author may not
+ * be used to endorse or promote products derived from this software without
+ * specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * 
  */
