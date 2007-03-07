@@ -32,6 +32,7 @@ import de.fuberlin.wiwiss.ng4j.swp.impl.SWPNamedGraphSetImpl;
 import de.fuberlin.wiwiss.ng4j.swp.util.PKCS12Utils;
 import de.fuberlin.wiwiss.ng4j.swp.util.SWPSignatureUtilities;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP;
+import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
 import junit.framework.TestCase;
 
 /**
@@ -368,6 +369,41 @@ public class SWPSignatureUtilitiesTest extends TestCase
 	{
 		return new SWPNamedGraphSetImpl();
 	}
+    
+    public void testIsEverySignatureValid_AllValid() {
+        final NamedGraph verifiedSignatures = this.set
+                .createGraph(SWP_V.default_graph);
+        verifiedSignatures.add(new Triple(Node.createURI(uri1),
+                SWP_V.successful, Node.createLiteral("true")));
+        verifiedSignatures.add(new Triple(Node.createURI(uri2),
+                SWP_V.successful, Node.createLiteral("true")));
+
+        assertTrue("signatures valid", SWPSignatureUtilities
+                .isEverySignatureValid(verifiedSignatures));
+    }
+    
+    public void testIsEverySignatureValid_InvalidGraph() {
+        final NamedGraph verifiedSignatures = this.set.createGraph(uri1);
+        try {
+            SWPSignatureUtilities.isEverySignatureValid(verifiedSignatures);
+            fail("graph is not a 'verifiedSignatures' graph");
+        } catch (IllegalArgumentException e) {
+            // ok
+        }
+    }
+
+    public void testIsEverySignatureValid_OneNotSuccessful() {
+        final NamedGraph verifiedSignatures = this.set
+                .createGraph(SWP_V.default_graph);
+        verifiedSignatures.add(new Triple(Node.createURI(uri1),
+                SWP_V.successful, Node.createLiteral("true")));
+        verifiedSignatures.add(new Triple(Node.createURI(uri2),
+                SWP_V.notSuccessful, Node.createLiteral("true")));
+
+        assertFalse("signatures invalid", SWPSignatureUtilities
+                .isEverySignatureValid(verifiedSignatures));
+    }
+
 }
 
 /*

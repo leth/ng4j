@@ -49,6 +49,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
+import de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.swp.c14n.RDFC14NImpl;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPAlgorithmNotSupportedException;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPCertificateException;
@@ -59,12 +60,13 @@ import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPNoSuchDigestMethodException;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPSignatureException;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPValidationException;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP;
+import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
 
 /**
  * 
  * Last commit info    :   $Author: zedlitz $
- * $Date: 2007/03/07 08:59:57 $
- * $Revision: 1.8 $
+ * $Date: 2007/03/07 09:44:19 $
+ * $Revision: 1.9 $
  * 
  * 
  * SWPSignatureUtilities
@@ -1247,14 +1249,42 @@ public class SWPSignatureUtilities
     }
     
     /**
-     * Verifies certification chain using "PKIX" algorithm, defined in RFC-3280. It is
-     * considered that the given certification chain start with the target certificate
-     * and finish with some root CA certificate. The certification chain is valid if no
-     * exception is thrown.
-     *
-     * @param aCertChain the certification chain to be verified.
-     * @param aTrustedCACertificates a list of most trusted root CA certificates.
-     * @throws CertPathValidatorException if the certification chain is invalid.
+     * Check if all signatures in a verifiedSignatures graph are avlid.
+     * 
+     * After invoking {@link SWPNamedGraphSet#verifyAllSignatures()} a new graph
+     * called <http://localhost/verifiedSignatures> will be added to the 
+     * graphset. This methods checks if all signatures in this graph are valid.
+     * 
+     * @param verifiedSignatures
+     */
+    public static boolean isEverySignatureValid(
+            final NamedGraph verifiedSignatures) {
+
+        if (!SWP_V.default_graph.equals(verifiedSignatures.getGraphName())) {
+            throw new IllegalArgumentException(
+                    "provided graph is not 'verifiedSignatures' graph");
+        }
+
+        final boolean containsNotSuccessful = verifiedSignatures.contains(
+                Node.ANY, SWP_V.notSuccessful, Node.createLiteral("true"));
+        final boolean containsSuccessfulFalse = verifiedSignatures.contains(
+                Node.ANY, SWP_V.successful, Node.createLiteral("false"));
+
+        return !(containsNotSuccessful || containsSuccessfulFalse);
+    }
+    
+    /**
+     * Verifies certification chain using "PKIX" algorithm, defined in RFC-3280.
+     * It is considered that the given certification chain start with the target
+     * certificate and finish with some root CA certificate. The certification
+     * chain is valid if no exception is thrown.
+     * 
+     * @param aCertChain
+     *            the certification chain to be verified.
+     * @param aTrustedCACertificates
+     *            a list of most trusted root CA certificates.
+     * @throws CertPathValidatorException
+     *             if the certification chain is invalid.
      */
 	/*
     public static void verifyCertificationChain( CertPath aCertChain,
