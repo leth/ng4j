@@ -19,6 +19,10 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.net.URI;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphImpl;
@@ -37,6 +41,7 @@ class MyHandler extends org.xml.sax.helpers.DefaultHandler
     public static String DATA_VIEW = "http://www.w3.org/2003/g/data-view";
 
     private URI base;
+    private boolean rootElem = true;
     private boolean inHead = false;
     private boolean prof = false;
     private ArrayList tr = new ArrayList(3);
@@ -56,7 +61,21 @@ class MyHandler extends org.xml.sax.helpers.DefaultHandler
 	throws SAXException
     {
 	// System.out.println("Uri="+uri+" localName="+localName+" qName="+qName);
-	if ("head".equals(localName)) {
+	if (rootElem) {
+	    /*
+	    for (int i=0; i<attributes.getLength(); ++i)
+		System.out.println("---V "+attributes.getURI(i)+" "+attributes.getLocalName(i));
+	    */
+	    String v = attributes.getValue(/*DATA_VIEW+"#",*/ "grddl:transformation");
+	    if (v!= null) {
+		// System.out.println("---V "+v);
+		String[] r = v.split("\\s");
+		for (int x=0; x<r.length; x++)
+		    this.tr.add(this.base.resolve(r[x]));
+	    }
+	    rootElem = false;
+	}
+	else if ("head".equals(localName)) {
 	    this.inHead = true;
 	    String v = attributes.getValue("profile");
 	    this.prof = v != null && v.indexOf(DATA_VIEW)!=-1;
@@ -128,17 +147,23 @@ public class Gleaner
 
 	try {
             this.h  = new MyHandler(this.u);
-
+	    /*
 	    javax.xml.parsers.SAXParserFactory f = 
 		javax.xml.parsers.SAXParserFactory.newInstance();
 	    f.setNamespaceAware(true);
             f.setValidating(false);
 	    javax.xml.parsers.SAXParser p = f.newSAXParser();
-	    
+	    */
+	    org.ccil.cowan.tagsoup.Parser p = new org.ccil.cowan.tagsoup.Parser();
+	    p.setFeature(org.ccil.cowan.tagsoup.Parser.namespacesFeature, true);
+	    p.setContentHandler(this.h);
+	    p.setProperty(org.ccil.cowan.tagsoup.Parser.schemaProperty, 
+			  new org.ccil.cowan.tagsoup.HTMLSchema());
 	    org.xml.sax.InputSource in = new org.xml.sax.InputSource(bais);
 	    
             //System.out.println("Starting SAX parsing...");
-	    p.parse(in, this.h);
+	    //p.parse(in, this.h);
+	    p.parse(in);
 	}
 	catch (DoneParsing dp) {
 	}
@@ -159,7 +184,7 @@ public class Gleaner
 	    Model m = ModelFactory.createDefaultModel();
 	    while(it.hasNext()) {
 		String stylesheet = it.next().toString();
-		//System.out.println("<!-- Transformation = "+stylesheet+" -->");
+		System.out.println("<!-- Transformation = "+stylesheet+" -->");
 		StreamSource stylesource = new StreamSource(stylesheet);
 		Transformer transformer = tFactory.newTransformer(stylesource);
 
@@ -209,5 +234,36 @@ public class Gleaner
            
 	}
 
+    }
+    public static void main(String args[]) {
+	if (args.length == 0) {
+	    System.out.println("Usage: Gleaner <URL>");
+	    return;
+	}
+	NamedGraphSet tempNgs = new NamedGraphSetImpl();
+	try {
+	    HttpURLConnection connection = (HttpURLConnection) new URL(args[0]).openConnection();
+	    
+	    connection.addRequestProperty(
+					       "Accept",
+					       "application/rdf+xml;q=1,"
+					       + "text/xml;q=0.6,text/rdf+n3;q=0.9,"
+					       + "application/octet-stream;q=0.5,"
+					       + "application/xml q=0.5,application/rss+xml;q=0.5,"
+					       + "text/plain; q=0.5,application/x-turtle;q=0.5,"
+					       + "application/x-trig;q=0.5,"
+					       + "application/xhtml+xml;q=0.5, "
+					       + "text/html;q=0.5"
+					       );
+
+	    Gleaner g = new Gleaner(connection.getURL().toString(),
+				    connection.getInputStream());
+	    g.glean(tempNgs);
+	    tempNgs.write(System.out, "N3", connection.getURL().toString());
+	    
+	} catch (Exception ex) {
+            ex.printStackTrace();
+	    
+	}
     }
 }

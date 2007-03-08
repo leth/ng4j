@@ -17,6 +17,10 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 import de.fuberlin.wiwiss.ng4j.semwebclient.Gleaner;
 
+import de.fuberlin.wiwiss.ng4j.impl.NamedGraphImpl;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Model;
+
 /**
  * The DereferencerThread executes a given DereferencingTask. It opens a
  * HttpURLConnection, creates an InputStream and tries to parse it. If the
@@ -219,9 +223,17 @@ public class DereferencerThread extends Thread {
 			lang = null;
 		if (lang.equals("html") || lang.equals("HTML")){
 		        if (this.enablegrddl) {
+			    com.hp.hpl.jena.grddl.GRDDLReader r = new com.hp.hpl.jena.grddl.GRDDLReader();
+			    /*
 			    Gleaner g = new Gleaner(this.connection.getURL().toString(),
 						    this.connection.getInputStream());
 			    g.glean(this.tempNgs);
+			    */
+			    Model m = ModelFactory.createDefaultModel();
+			    r.read(m, this.connection.getInputStream(), this.url.toString());
+			    this.tempNgs.addGraph( new NamedGraphImpl(this.url.toString(), 
+								      m.getGraph()) );
+
 			    if (this.tempNgs.countGraphs() > 0)
 				return new DereferencingResult(this.task,
 							       DereferencingResult.STATUS_OK, this.tempNgs, null);
