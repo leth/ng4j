@@ -1,4 +1,4 @@
-// $Id: NamedGraphImpl.java,v 1.2 2004/11/22 01:57:23 cyganiak Exp $
+// $Id: NamedGraphImpl.java,v 1.3 2007/03/08 23:33:58 sfakste Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import com.hp.hpl.jena.graph.BulkUpdateHandler;
@@ -92,6 +92,10 @@ public class NamedGraphImpl implements NamedGraph {
 	public void close() {
 		this.graph.close();
 	}
+        public boolean isClosed() {
+                return this.graph.isClosed();
+        }
+
 
 	public boolean contains(Node s, Node p, Node o) {
 		return this.graph.contains(s, p, o);
