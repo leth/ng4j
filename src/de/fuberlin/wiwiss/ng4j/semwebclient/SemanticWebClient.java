@@ -240,7 +240,8 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 			this.timeout = val;
 		}
 		else if (option.equals(CONFIG_ENABLEGRDDL)) {
-			this.enablegrddl = Boolean.parseBoolean(value);
+			this.enablegrddl = "true".equalsIgnoreCase(value)
+					|| "on".equalsIgnoreCase(value) || "1".equals(value);
 		}
 	}
 
