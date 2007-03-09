@@ -9,7 +9,7 @@
 	<classpathentry kind="lib" path="lib/log4j-1.2.12.jar"/>
 	<classpathentry kind="lib" path="lib/junit.jar"/>
 	<classpathentry kind="lib" path="lib/json.jar"/>
-	<classpathentry sourcepath="/Jena-2.4/src" kind="lib" path="lib/jena.jar"/>
+	<classpathentry kind="lib" path="lib/jena.jar" sourcepath="/Jena-2.4/src"/>
 	<classpathentry kind="lib" path="lib/iri.jar"/>
 	<classpathentry kind="lib" path="lib/icu4j_3_4.jar"/>
 	<classpathentry kind="lib" path="lib/concurrent.jar"/>
@@ -22,5 +22,10 @@
 	<classpathentry kind="lib" path="lib/bcprov-jdk14-127.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-oro-2.0.5.jar"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-java-3.2.0-alpha-bin.jar"/>
+	<classpathentry kind="lib" path="lib/tagsoup-1.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/nekohtml.jar"/>
+	<classpathentry kind="lib" path="lib/hsqldb-1.8.0.7.jar"/>
+	<classpathentry kind="lib" path="lib/grddl.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang-2.0.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
