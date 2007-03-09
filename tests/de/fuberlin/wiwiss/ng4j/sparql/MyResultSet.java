@@ -7,9 +7,10 @@ import java.util.List;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.core.Binding;
-import com.hp.hpl.jena.query.core.BindingMap;
 import com.hp.hpl.jena.query.core.ResultBinding;
+import com.hp.hpl.jena.query.core.Var;
+import com.hp.hpl.jena.query.engine.Binding;
+import com.hp.hpl.jena.query.engine.BindingMap;
 import com.hp.hpl.jena.rdf.model.Model;
 
 
@@ -27,7 +28,7 @@ public class MyResultSet implements ResultSet {
 	
 	public void addVar(String varName, Node node) {
 		if (node != null) {
-			this.currentBinding.add(varName, node);
+			this.currentBinding.add(Var.alloc(varName), node);
 		}
 		if (!this.resultVars.contains(varName)) {
 			this.resultVars.add(varName);

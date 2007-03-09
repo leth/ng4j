@@ -1,7 +1,7 @@
 /*
  * (c) Copyright 2001, 2002, 2003, Hewlett-Packard Development Company, LP
  * [See end of file]
- * $Id: QueryTestScripts.java,v 1.3 2004/12/17 01:44:30 cyganiak Exp $
+ * $Id: QueryTestScripts.java,v 1.4 2007/03/09 12:40:50 cyganiak Exp $
  */
 
 
@@ -25,6 +25,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.rdql.QueryException;
 import com.hp.hpl.jena.shared.JenaException;
+import com.hp.hpl.jena.util.FileManager;
 import com.hp.hpl.jena.util.FileUtils;
 import com.hp.hpl.jena.util.ModelLoader;
 import com.hp.hpl.jena.vocabulary.TestQuery;
@@ -41,7 +42,7 @@ import de.fuberlin.wiwiss.ng4j.triql.helpers.TestManifestList;
  *  adding new script files.  This class need not change.
  *
  * @author   Andy Seaborne
- * @version  $Id: QueryTestScripts.java,v 1.3 2004/12/17 01:44:30 cyganiak Exp $
+ * @version  $Id: QueryTestScripts.java,v 1.4 2007/03/09 12:40:50 cyganiak Exp $
  */
 
 
@@ -118,7 +119,7 @@ public class QueryTestScripts extends TestSuite
     public void addTests(Model model, String testsFile)
     {
         PrintWriter out = new PrintWriter(System.out);
-        Model tests = ModelLoader.loadModel(testsFile, "N3");
+        Model tests = FileManager.get().loadModel(testsFile, "N3");
         TestManifestList manifest = new TestManifestList(tests);
 
         TestManifestList.TestIterator iter = manifest.iterator();
