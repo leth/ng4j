@@ -170,7 +170,9 @@ public class DereferencerThread extends Thread {
 		this.tempNgs = new NamedGraphSetImpl();
 		try {
 			URLConnection con = this.url.openConnection();
-			con.setReadTimeout(60000);
+// TODO This works only with Java 5,
+// and Tobias said he's not even sure if it has any positive effect. [RC]
+//			con.setReadTimeout(60000);
 			this.connection = (HttpURLConnection) con;
 					this.connection.addRequestProperty(
 							"Accept",
