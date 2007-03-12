@@ -11,15 +11,13 @@ import java.util.Iterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.impl.RDFDefaultErrorHandler;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
-import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
-import de.fuberlin.wiwiss.ng4j.semwebclient.Gleaner;
-
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphImpl;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Model;
+import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
 /**
  * The DereferencerThread executes a given DereferencingTask. It opens a
