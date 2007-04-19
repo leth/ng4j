@@ -79,6 +79,7 @@ dereferencing HTTP URIs and by following <tt>rdfs:seeAlso</tt> links. The librar
   <li><a href="#examples">Example Queries </a></li>
   <li><a href="#command">Using the Library on the Command Line </a></li>
   <li><a href="#using">Using the Library in your Applications </a></li>
+  <li><a href="#grddl">GRDDL support</a></li>
   <li><a href="#download">Download</a></li>
   <li><a href="#support">Support and Feedback </a></li>
 </ol>
@@ -483,6 +484,10 @@ It is invoked using the <tt>semwebquery</tt> command, which is found in the <tt>
     <td>Loads a graph from the Web into the local cache before the query is executed. </td>
   </tr>
   <tr>
+    <td valign="top"><tt>-grddl</tt><br /></td>
+    <td>Enables GRDDL support; see <a href="#grddl">below</a>.</td>
+  </tr>
+  <tr>
     <td valign="top"><tt>-loadtrig &lt;Filename&gt; </tt><br /></td>
     <td>Loads a set of named graphs from a <a href="http://sites.wiwiss.fu-berlin.de/suhl/bizer/TriG/" target="_blank">TriG</a> file before the query is executed.</td>
   </tr>
@@ -619,6 +624,11 @@ semWeb.setConfig("maxsteps","3");</pre>
     <td>The maximal execution time for a query in milliseconds. A query will finish with the results found up to that point if the timeout is reached.</td>
     <td valign="top">10000</td>
   </tr>
+  <tr>
+    <td valign="top"><tt>enablegrddl</tt></td>
+    <td>Setting this to <tt>true</tt> enables GRDDL support.</td>
+    <td valign="top">false</td>
+  </tr>
 </table>
 <h3>5.4 Information Provenance </h3>
 <p>The Semantic Web Client Library provides applications with several methods  to access provenance information about retrieved information.</p>
@@ -638,15 +648,79 @@ semWeb.setConfig("maxsteps","3");</pre>
  of information. This allows applications to apply different<a href="http://sites.wiwiss.fu-berlin.de/suhl/bizer/pub/Bizer-TriQLP-Browser-SWPW.pdf" target="_blank"> trust policies</a> for deciding whether to accept or reject information from the Semantic Web. </p>
 <p><strong>Dereferenced URI Lists</strong></p>
 <p>After the retrieval process is finished, two lists containing all successfully and all unsuccessfully retrieved URIs can be accessed by calling the <tt>SemanticWebClient.successfullyDereferencedURIs</tt> and <tt>SemanticWebClient.unsuccessfullyDereferencedURIs</tt> methods. The methods return iterators over all successfully and unsuccessfully dereferenced URIs. </p>
-<h2>6. <a name="download" id="download"></a>Download</h2>
+
+
+<h2 id="grddl">6. GRDDL Support</h2>
+
+<p><a href="http://www.w3.org/TR/grddl/">GRDDL</a> is a technique for obtaining RDF data from XML 
+documents and in particular XHTML pages. This works by adding a link to an XSLT stylesheet to the
+XML document. The stylesheet transforms the document to RDF/XML. Here is an example taken from
+<a href="http://www.w3.org/People/Connolly/">Dan Connolly's home page</a>:</p>
+
+<pre>&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+  &lt;head profile="http://www.w3.org/2003/g/data-view
+                 http://purl.org/NET/erdf/profile 
+                 http://dig.csail.mit.edu/2007/id/doc
+                 http://www.w3.org/2006/03/hcard"&gt;
+    &lt;title&gt;Dan Connolly, W3C&lt;/title&gt;
+    ...
+    &lt;link rel="transformation"
+          href="http://www.w3.org/2002/12/cal/glean-hcal.xsl"/&gt;
+    &lt;link rel="transformation"
+          href="http://www.w3.org/2002/12/cal/myevents"/&gt;
+    ...</pre>
+
+<p>The important part is the GRDDL metadata profile
+(<tt>http://www.w3.org/2003/g/data-view</tt>) in the <tt>profile</tt>
+attribute of the <tt>head</tt> element. It tells us that GRDDL can be
+used to extract RDF from this page. The <tt>link</tt> element with
+<tt>rel="transformation"</tt> attributes point to the XSLT stylesheets
+that can be applied to get the RDF data.</p>
+
+<p>Another way to link to the XSLT stylesheets is by putting a <em>profile
+document</em> at the profile URL, and placing the links inside this
+document. More details on this can be found in the
+<a href="http://www.w3.org/TR/grddl-primer/">GRDDL Primer</a>.</p>
+
+The following query extracts
+information about the events that Dan Connolly will attend:</p>
+
+<pre>PREFIX v: &lt;http://www.w3.org/2002/12/cal/icaltzd#&gt;
+SELECT ?event ?prop ?value
+WHERE {
+   ?event v:attendee &lt;http://www.w3.org/People/Connolly/#me&gt; .
+   ?event ?prop ?value
+}</pre>
+
+To retrieve the results, issue this command, assuming the SPARQL
+query is saved in a file <tt>dc.sql</tt>:
+
+<pre>semwebquery -grddl -sparqlfile dc.sql</pre>
+
+<h3 id="grddl-api">6.1 Enabling GRDDL in the Java API</h3>
+
+<p>Enabling GRDDL support for your own applications that use the <tt>SemanticWebClient</tt> API:</p>
+
+<pre>SemanticWebClient swc = new SemanticWebClient();
+swc.setConfig(SemanticWebClient.CONFIG_ENABLEGRDDL, "true");</pre>
+
+<h3 id="grddl-performance">6.2 Performance Considerations</h3>
+
+<p>The GRDDL mechanism imposes heavy CPU utilization for applying the XSLT
+transformations and makes extensive use of the network bandwidth for
+retrieving transformation documents. These computer resource
+requirements are multiplied in some cases because of the recursive
+nature of the GRDDL algorithm. Therefore the GRDDL feature is disabled
+by default. It is also recommended to use a HTTP proxy in order to speed
+up the retrieval of popular transformations or profile documents.</p>
+
+
+<h2>7. <a name="download" id="download"></a>Download</h2>
 <p>The Semantic Web Client Library is part of the <a href="http://sites.wiwiss.fu-berlin.de/suhl/bizer/ng4j/" target="_blank"> NG4J - Named Graphs API for Jena</a> project and  can be downloaded from <a href="http://sourceforge.net/projects/ng4j/" target="_blank">Sourceforge NG4J</a>.</p>
-<p>The Semantic Web Client Library is 
+<p>The Semantic Web Client Library is licensed under the terms of the Berkeley Software Distribution (BSD) license. </p>
 
 
- licensed
-
- under the terms of the Berkeley Software Distribution (BSD) license. </p>
-<h2><a name="support" id="support"></a>7. Support and feedback</h2>
+<h2><a name="support" id="support"></a>8. Support and feedback</h2>
 <p>We are interested in hearing about your opinion and your 
 
 
@@ -659,7 +733,7 @@ semWeb.setConfig("maxsteps","3");</pre>
 <p>Good starting points for playing around with the library is interlinked data published by the Tabulator project (<a href="http://dig.csail.mit.edu/2005/ajar/ajaw/data">http://dig.csail.mit.edu/2005/ajar/ajaw/data</a>) and the D2R demo server running at <a href="http://www3.wiwiss.fu-berlin.de:2020/">http://www3.wiwiss.fu-berlin.de:2020/</a>. If you find other interesting chunks of interlinked data on the Semantic Web that can be queried using the library, please tell us. </p>
 <p><a href="http://sourceforge.net/projects/d2rq-map/"><img src="http://sourceforge.net/sflogo.php?group_id=111002&amp;type=5" alt="SourceForge Logo" /></a></p>
 <div id="footer">
-  <small>$Id: index.html,v 1.7 2006/10/09 16:32:51 cyganiak Exp $</small>
+  <small>$Id: index.html,v 1.8 2007/04/19 23:30:42 cyganiak Exp $</small>
 </div>
 </div>
 
