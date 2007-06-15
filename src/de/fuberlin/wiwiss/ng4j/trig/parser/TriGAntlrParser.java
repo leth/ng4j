@@ -1,4 +1,4 @@
-// $ANTLR 2.7.2: "trig.g" -> "TriGAntlrParser.java"$
+// $ANTLR 2.7.5 (20050128): "trig.g" -> "TriGAntlrParser.java"$
 
 package de.fuberlin.wiwiss.ng4j.trig.parser ;
 import de.fuberlin.wiwiss.ng4j.trig.AntlrUtils ;
@@ -398,24 +398,43 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		{
 			statement();
 			{
-			switch ( LA(1)) {
-			case SEP:
-			{
-				AST tmp8_AST = null;
-				tmp8_AST = astFactory.create(LT(1));
-				match(SEP);
-				statements();
-				break;
-			}
-			case RCURLY:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
+			_loop13:
+			do {
+				if ((LA(1)==SEP)) {
+					AST tmp8_AST = null;
+					tmp8_AST = astFactory.create(LT(1));
+					match(SEP);
+					{
+					switch ( LA(1)) {
+					case QNAME:
+					case KW_THIS:
+					case STRING:
+					case LBRACK:
+					case LPAREN:
+					case NUMBER:
+					case URIREF:
+					case UVAR:
+					{
+						statement();
+						break;
+					}
+					case SEP:
+					case RCURLY:
+					{
+						break;
+					}
+					default:
+					{
+						throw new NoViableAltException(LT(1), getFilename());
+					}
+					}
+					}
+				}
+				else {
+					break _loop13;
+				}
+				
+			} while (true);
 			}
 			break;
 		}
@@ -533,7 +552,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		n_AST = (AST)returnAST;
 		astFactory.addASTChild(currentAST, returnAST);
 		{
-		_loop23:
+		_loop25:
 		do {
 			switch ( LA(1)) {
 			case PATH:
@@ -568,7 +587,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 			}
 			default:
 			{
-				break _loop23;
+				break _loop25;
 			}
 			}
 		} while (true);
@@ -1229,10 +1248,10 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		AST literalModifier1_AST = null;
 		AST dt_AST = null;
 		
-		boolean synPredMatched39 = false;
+		boolean synPredMatched41 = false;
 		if (((LA(1)==AT_LANG))) {
-			int _m39 = mark();
-			synPredMatched39 = true;
+			int _m41 = mark();
+			synPredMatched41 = true;
 			inputState.guessing++;
 			try {
 				{
@@ -1240,12 +1259,12 @@ public TriGAntlrParser(ParserSharedInputState state) {
 				}
 			}
 			catch (RecognitionException pe) {
-				synPredMatched39 = false;
+				synPredMatched41 = false;
 			}
-			rewind(_m39);
+			rewind(_m41);
 			inputState.guessing--;
 		}
-		if ( synPredMatched39 ) {
+		if ( synPredMatched41 ) {
 			AST tmp29_AST = null;
 			tmp29_AST = astFactory.create(LT(1));
 			astFactory.addASTChild(currentAST, tmp29_AST);
@@ -1253,10 +1272,10 @@ public TriGAntlrParser(ParserSharedInputState state) {
 			literalModifier1_AST = (AST)currentAST.root;
 		}
 		else {
-			boolean synPredMatched41 = false;
+			boolean synPredMatched43 = false;
 			if (((LA(1)==DATATYPE))) {
-				int _m41 = mark();
-				synPredMatched41 = true;
+				int _m43 = mark();
+				synPredMatched43 = true;
 				inputState.guessing++;
 				try {
 					{
@@ -1264,12 +1283,12 @@ public TriGAntlrParser(ParserSharedInputState state) {
 					}
 				}
 				catch (RecognitionException pe) {
-					synPredMatched41 = false;
+					synPredMatched43 = false;
 				}
-				rewind(_m41);
+				rewind(_m43);
 				inputState.guessing--;
 			}
-			if ( synPredMatched41 ) {
+			if ( synPredMatched43 ) {
 				AST tmp30_AST = null;
 				tmp30_AST = astFactory.create(LT(1));
 				astFactory.addASTChild(currentAST, tmp30_AST);

@@ -1,4 +1,4 @@
-// $ANTLR 2.7.2: trig.g -> TriGAntlrParserTokenTypes.txt$
+// $ANTLR 2.7.5 (20050128): trig.g -> TriGAntlrParserTokenTypes.txt$
 TriGAntlrParser    // output token vocab name
 ANON=4
 FORMULA=5

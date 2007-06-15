@@ -184,9 +184,12 @@ graph[AST label]
 	;
 
 // List of statements, final SEP is optional. Possible empty
+// NOTE: This is broken because it allows SEP SEP without a statement in between,
+//       but I couldn't figure out how to forbid this without causing StackOverflow.
 statements!
-	: statement (SEP statements)?
-	| ;
+	: statement (SEP (statement)?)*
+	|
+	;
 
 // A statement is "item verb item." with various
 // syntactic sugar for multiple properties and objects.
