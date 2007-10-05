@@ -1,4 +1,4 @@
-// $Id: QuadDB.java,v 1.7 2006/08/21 20:20:50 cyganiak Exp $
+// $Id: QuadDB.java,v 1.8 2007/10/05 14:05:34 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -111,8 +111,10 @@ public class QuadDB {
 							this.next = makeQuad();
 						} else {
 							this.next = null;
+							cleanUp(results);
 						}
 					} catch (SQLException ex) {
+						cleanUp(results);
 						throw new JenaException(ex);
 					}
 					this.hasReadNext = true;
@@ -153,6 +155,7 @@ public class QuadDB {
 							Node.createURI(results.getString(3)),
 							object);
 				} catch (SQLException ex) {
+					cleanUp(results);
 					throw new JenaException(ex);
 				}
 			}
@@ -173,6 +176,8 @@ public class QuadDB {
 			return results.getInt(1);
 		} catch (SQLException ex) {
 			throw new JenaException(ex);
+		} finally {
+			cleanUp(results);
 		}
 	}
 	
@@ -201,6 +206,8 @@ public class QuadDB {
 			return results.getInt(1) > 0;
 		} catch (SQLException ex) {
 			throw new JenaException(ex);
+		} finally {
+			cleanUp(results);
 		}
 	}
 	
@@ -217,9 +224,10 @@ public class QuadDB {
 					try {
 						this.hasNext = results.next();
 						if (!this.hasNext) {
-							results.close();
+							cleanUp(results);
 						}
 					} catch (SQLException ex) {
+						cleanUp(results);
 						throw new JenaException(ex);
 					}
 					this.isOnNext = true;
@@ -235,6 +243,7 @@ public class QuadDB {
 				try {
 					return Node.createURI(results.getString(1));
 				} catch (SQLException ex) {
+					cleanUp(results);
 					throw new JenaException(ex);
 				}
 			}
@@ -253,9 +262,19 @@ public class QuadDB {
 			return results.getInt(1);
 		} catch (SQLException ex) {
 			throw new JenaException(ex);
+		} finally {
+			cleanUp(results);
 		}
 	}
 
+	private void cleanUp(ResultSet results) {
+		try {
+			results.getStatement().close();
+		} catch (SQLException ex) {
+			throw new JenaException("Cannot close result set", ex);
+		}
+	}
+	
 	public void createTables() {
 		switch(this.type){
 			case HSQL_TYPE:
@@ -324,7 +343,9 @@ public class QuadDB {
 	}
 
 	private void executeNoErrorHandling(String sql) throws SQLException {
-		this.connection.createStatement().execute(sql);		
+		Statement stmt = this.connection.createStatement();
+		stmt.execute(sql);
+		stmt.close();
 	}
 
 	private void execute(String sql) {
@@ -338,10 +359,18 @@ public class QuadDB {
 	}
 
 	private ResultSet executeQuery(String sql) {
+		Statement stmt = null;
 		try {
-			Statement stmt = this.connection.createStatement();
+			stmt = this.connection.createStatement();
 			return stmt.executeQuery(sql);
 		} catch (SQLException ex) {
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException ex2) {
+					throw new JenaException(ex);
+				}
+			}
 			throw new JenaException(ex);
 		}
 	}
