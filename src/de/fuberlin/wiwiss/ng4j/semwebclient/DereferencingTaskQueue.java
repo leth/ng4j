@@ -45,6 +45,22 @@ public class DereferencingTaskQueue extends Thread {
 		}
 	}
 
+	/**
+	 * Returns true if the queue is empty and none of the threads is busy.
+	 */
+	public boolean isIdle() {
+		if (! tasks.isEmpty()) {
+			return false;
+		}
+		Iterator it = this.threads.iterator();
+		while (it.hasNext()) {
+			if ( ((DereferencerThread) it.next()).hasTask() ) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public synchronized void close() {
 		Iterator it = this.threads.iterator();
 		while (it.hasNext()) {

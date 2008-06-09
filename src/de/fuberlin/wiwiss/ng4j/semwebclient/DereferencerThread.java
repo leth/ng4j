@@ -108,7 +108,7 @@ public class DereferencerThread extends Thread {
 	/**
 	 * @return Returns true if the DereferencerThread is busy false if not.
 	 */
-	private boolean hasTask() {
+	public boolean hasTask() {
 		return this.task != null;
 	}
 

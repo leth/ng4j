@@ -320,7 +320,13 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	public boolean isClosed() {
 		return this.isClosed;
 	}
-	
+
+	/**
+	 * Returns true if the Semantic Web client is not derefencing any URIs at the moment.
+	 */
+	public boolean isIdle() {
+		return getURIQueue().isIdle();
+	}
 
 	/* (non-Javadoc)
 	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#asJenaGraph(com.hp.hpl.jena.graph.Node)
