@@ -24,7 +24,8 @@ import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
  * HttpURLConnection, creates an InputStream and tries to parse it. If the
  * Thread is finished it delivers the retrieval result.
  * 
- * @author Tobias Gau�
+ * @author Tobias Gauß
+ * @author Olaf Hartig
  */
 public class DereferencerThread extends Thread {
 	private DereferencingTask task = null;
@@ -172,6 +173,7 @@ public class DereferencerThread extends Thread {
 // and Tobias said he's not even sure if it has any positive effect. [RC]
 //			con.setReadTimeout(60000);
 			this.connection = (HttpURLConnection) con;
+			this.connection.setInstanceFollowRedirects(false);
 					this.connection.addRequestProperty(
 							"Accept",
 							"application/rdf+xml;q=1,"
@@ -194,7 +196,11 @@ public class DereferencerThread extends Thread {
 				return createErrorResult(
 						DereferencingResult.STATUS_UNABLE_TO_CONNECT, null);
 			}
-			// TODO Http 303
+
+			if ( this.connection.getResponseCode() == 303 ) {
+				String redirectURI = this.connection.getHeaderField("Location");
+				return new DereferencingResult(this.task, DereferencingResult.STATUS_REDIRECTED, redirectURI);
+			}
 
 			String lang = setLang();
 			try {

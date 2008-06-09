@@ -35,6 +35,8 @@ public class CommandLineQuery {
 
 	private boolean outputFailedURIs = false;
 
+	private boolean outputRedirectedURIs = false;
+
 	private List graphsToAdd = new ArrayList();
 
 	private String writeGraphSetDestination = null;
@@ -198,6 +200,15 @@ public class CommandLineQuery {
 	}
 
 	/**
+	 * Output a mapping of all redirected URIs?
+	 * 
+	 * @param outputRedirectedURIs
+	 */
+	public void setOutputRedirectedURIs(boolean outputRedirectedURIs) {
+		this.outputRedirectedURIs = outputRedirectedURIs;
+	}
+
+	/**
 	 * Executes the query specified using the other options.
 	 * 
 	 * @throws Exception
@@ -301,6 +312,16 @@ public class CommandLineQuery {
 			while (it.hasNext()) {
 				String uri = (String) it.next();
 				System.out.println(uri);
+			}
+			System.out.println("--------------------------------");
+		}
+		if (this.outputRedirectedURIs) {
+			System.out.println("Redirected URIs: \n");
+			Iterator it = this.client.redirectedURIs().iterator();
+			while (it.hasNext()) {
+				String uri = (String) it.next();
+				String redirect = this.client.getRedirectURI(uri);
+				System.out.println( uri + " -> " + redirect );
 			}
 			System.out.println("--------------------------------");
 		}

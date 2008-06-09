@@ -18,7 +18,8 @@ import de.fuberlin.wiwiss.ng4j.Quad;
  * The FindQuery runs a find query against the Semantic Web. If there are
  * URIs that match the triple the FindQuery requests dereferencing.
  * 
- * @author Tobias Gauﬂ
+ * @author Tobias Gau√ü
+ * @author Olaf Hartig
  */
 public class FindQuery implements DereferencingListener {
 	private SemWebIterator iterator;
@@ -52,6 +53,9 @@ public class FindQuery implements DereferencingListener {
 				String uri = (String) it.next();
 				requestDereferencing(uri, result.getTask().getStep()+1);
 			}
+			
+		}else if(result.getResultCode()== DereferencingResult.STATUS_REDIRECTED){
+			requestDereferencing(result.getRedirectURI(), result.getTask().getStep()+1);
 			
 		}
 		uriProcessingFinished(result.getURI());

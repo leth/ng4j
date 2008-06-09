@@ -7,9 +7,11 @@ package de.fuberlin.wiwiss.ng4j.semwebclient;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -65,8 +67,8 @@ import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
  * 
  * @author Chris Bizer (chris@bizer.de)
  * @author Richard Cyganiak (richard@cyganiak.de)
- * @author Tobias Gauﬂ (tobias.gauss@web.de)
- 
+ * @author Tobias Gau√ü (tobias.gauss@web.de)
+ * @author Olaf Hartig (hartig@informatik.hu-berlin.de)
  */
 public class SemanticWebClient extends NamedGraphSetImpl {
 	public String CONFIG_MAXSTEPS = "maxsteps";
@@ -96,6 +98,8 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 
 	private List unretrievedURIs;
 
+	private Map redirectedURIs;
+
 	private boolean isClosed = false;
 	
 	private long timeout = TIMEOUT_DEFAULT;
@@ -115,6 +119,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 		this.createGraph("http://localhost/provenanceInformation");
 		this.retrievedUris = Collections.synchronizedList(new ArrayList());
 		this.unretrievedURIs = Collections.synchronizedList(new ArrayList());
+		this.redirectedURIs = Collections.synchronizedMap(new HashMap());
 	}
 
 	/**
@@ -278,6 +283,20 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 		return this.unretrievedURIs;
 	}
 
+	/**
+	 * Returns a set of all URIs that have been redirected.
+	 */
+	public Set redirectedURIs() {
+		return this.redirectedURIs.keySet();
+	}
+
+	/**
+	 * Returns the redirect URI for the given URI (if the given URI has been redirected).
+	 */
+	public String getRedirectURI( String uri ) {
+		return (String) this.redirectedURIs.get( uri );
+	}
+
 	/** 
 	 * Determines all retrieval threads. 
 	 * Has to be called to determine a Sementic Web Client.
@@ -324,7 +343,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	 */
 	public boolean requestDereferencing(String uri, int step,
 			final DereferencingListener listener) {
-		if (this.markedUris.contains(uri) || containsGraph(uri)) {
+		if (this.markedUris.contains(uri) || containsGraph(uri) || redirectedURIs.containsKey(uri)) {
 			// already retrieved or in queue, don't queue again
 			return false;
 		}
@@ -348,7 +367,10 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 					SemanticWebClient.this.retrievedUris.add(result.getURI());
 				} else {
 					// TODO: URIs get marked unretrievable when the worker thread gets interrupted 
-					SemanticWebClient.this.unretrievedURIs.add(result.getURI());
+					if ( result.getResultCode() == DereferencingResult.STATUS_REDIRECTED )
+						redirectedURIs.put(result.getURI(), result.getRedirectURI());
+					else
+						unretrievedURIs.add(result.getURI());
 				}
 				if (listener != null) {
 					listener.dereferenced(result);

@@ -8,8 +8,8 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
  * The dereferencing result contains informations about the
  * success or failure of a DereferencingTasks execution.
  * 
- * @author Tobias Gauﬂ
- * 
+ * @author Tobias Gau√ü
+ * @author Olaf Hartig
  */
 public class DereferencingResult {
 	public final static int STATUS_OK = 0;
@@ -17,12 +17,14 @@ public class DereferencingResult {
 	public final static int STATUS_MALFORMED_URL = -2;
 	public final static int STATUS_UNABLE_TO_CONNECT = -3;
 	public final static int STATUS_NEW_URIS_FOUND = -4;
+	public final static int STATUS_REDIRECTED = -5;
 
 	private DereferencingTask task;
 	private int resultCode;
 	private NamedGraphSet resultData;
 	private Exception resultException;
 	private List urilist = null;
+	private String redirectURI = null;
 
 	public DereferencingResult(DereferencingTask task, int resultCode, 
 			NamedGraphSet resultData, Exception resultException) {
@@ -37,6 +39,12 @@ public class DereferencingResult {
 		this.resultCode = resultCode;
 		this.urilist = urilist;
 		
+	}
+	
+	public DereferencingResult(DereferencingTask task, int resultCode, String redirectURI) {
+		this.task = task;
+		this.resultCode = resultCode;
+		this.redirectURI = redirectURI;
 	}
 
 	public DereferencingTask getTask() {
@@ -68,5 +76,9 @@ public class DereferencingResult {
 	
 	public List getUriList(){
 		return this.urilist;
+	}
+	
+	public String getRedirectURI() {
+		return this.redirectURI;
 	}
 }

@@ -25,7 +25,7 @@ import de.fuberlin.wiwiss.ng4j.semwebclient.CommandLineQuery;
  *       RDF/XML, N3, N-Triple, SPARQL XML results, SPARQL JSON results, CSV, ...
  * 
  * @author Richard Cyganiak (richard@cyganiak.de)
- * @version $Id: query.java,v 1.4 2007/02/26 23:53:39 sfakste Exp $
+ * @version $Id: query.java,v 1.5 2008/06/09 16:19:04 hartig Exp $
  */
 public class query {
 	private static boolean verbose = false;
@@ -44,6 +44,7 @@ public class query {
 		cmd.add(true, "savetrig");
 		cmd.add(false, "retrieveduris");
 		cmd.add(false, "faileduris");
+		cmd.add(false, "redirecteduris");
 		cmd.add(false, "verbose");
 		cmd.add(false, "grddl");
 		try {
@@ -124,6 +125,9 @@ public class query {
 		if (cmd.hasArg("faileduris")) {
 			client.setOutputFailedURIs(true);
 		}
+		if (cmd.hasArg("redirecteduris")) {
+			client.setOutputRedirectedURIs(true);
+		}
 		if (cmd.hasArg("verbose")) {
 			verbose = true;
 			Logger.getLogger("de.fuberlin.wiwiss.ng4j.semwebclient").setLevel(Level.ALL);
@@ -148,6 +152,7 @@ public class query {
 		System.out.println("    -savetrig <file>       Save loaded graphs to a TriG file after finishing");
 		System.out.println("    -retrieveduris         Output a list of all successfully retrieved URIs");
 		System.out.println("    -faileduris            Output a list of URIs that could not be retrieved");
+		System.out.println("    -redirecteduris        Output a mapping of URIs that have been redirected");
 		System.out.println("    -verbose               Show additional progress information");
 		System.out.println();
 	}
