@@ -47,7 +47,7 @@ abstract public class TaskExecutorBase extends Thread {
 	/**
 	 * Returns true if this thread is currently busy executing a task.
 	 */
-	final public boolean hasCurrentTask () {
+	final public boolean hasTask () {
 		return ( currentTask != null );
 	}
 

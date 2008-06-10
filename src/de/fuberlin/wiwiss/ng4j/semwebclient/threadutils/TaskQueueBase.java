@@ -113,7 +113,7 @@ abstract public class TaskQueueBase extends Thread {
 			Iterator it = busyThreads.iterator();
 			while ( it.hasNext() ) {
 				TaskExecutorBase t = (TaskExecutorBase) it.next();
-				if ( ! t.hasCurrentTask() )
+				if ( ! t.hasTask() )
 					tmp.add( t );
 			}
 			busyThreads.removeAll( tmp );
