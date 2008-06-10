@@ -18,6 +18,7 @@ import com.hp.hpl.jena.rdf.model.impl.RDFDefaultErrorHandler;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphImpl;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
+import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.TaskExecutorBase;
 
 /**
  * The DereferencerThread executes a given DereferencingTask. It opens a
@@ -27,12 +28,8 @@ import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
  * @author Tobias Gauß
  * @author Olaf Hartig
  */
-public class DereferencerThread extends Thread {
-	private DereferencingTask task = null;
-
+public class DereferencerThread extends TaskExecutorBase {
 	private HttpURLConnection connection;
-
-	private boolean stopped = false;
 
 	private NamedGraphSet tempNgs = null;
 	
@@ -49,40 +46,42 @@ public class DereferencerThread extends Thread {
 		setPriority(getPriority() - 1);
 	}
 
-	public void run() {
-		this.log.debug("Thread started.");
-		while (!this.stopped) {
-			if (hasTask()) {
-				DereferencingResult result = dereference();
-				deliver(result);
-				clearTask();
-			}
-			try {
-				synchronized (this) {
-					if (this.stopped) {
-						break;
-					}
-					wait();
-				}
-			} catch (InterruptedException ex) {
-				// Happens when the thread is stopped
-			}
-		}
-		this.log.debug("Thread stopped.");
+
+	// implementation of the TaskExecutorBase interface
+
+	public Class getTaskType () {
+		return DereferencingTask.class;
 	}
+
+
+	protected void executeTask ( Object task ) {
+		DereferencingResult result = executeTask( (DereferencingTask) task );
+
+		// deliver the result of the task to the listener
+		synchronized ( this ) {
+			if ( isStopped() )
+				return;
+
+			( (DereferencingTask) task ).getListener().dereferenced( result );
+		}
+	}
+
+
+	// methods kept for compatibility
 
 	/**
 	 * @return Returns true if the DereferencerThread is available for new
 	 *         tasks.
 	 */
 	public synchronized boolean isAvailable() {
-		return !hasTask() && !this.stopped;
+		return !hasTask() && !isStopped();
 	}
 
 	/**
 	 * Starts to execute the DereferencingTask task. Returns true if the
 	 * retrieval process is started false if the thread is unable to execute the
 	 * task.
+	 * @deprecated Please use {@link TaskExecutorBase#startTask} instead.
 	 * 
 	 * @param task
 	 *            The task to execute.
@@ -93,34 +92,12 @@ public class DereferencerThread extends Thread {
 		if (!isAvailable()) {
 			return false;
 		}
-		try {
-			this.url = new URL(task.getURI());
-			this.task = task;
-			this.notify();
-			return true;
-		} catch (MalformedURLException ex) {
-			deliver(createErrorResult(DereferencingResult.STATUS_MALFORMED_URL,
-					ex));
-			return true;
-		}
+		startTask( task );
+		return true;
 	}
 
-	/**
-	 * @return Returns true if the DereferencerThread is busy false if not.
-	 */
-	public boolean hasTask() {
-		return this.task != null;
-	}
 
-	/**
-	 * Clears the DereferencerThreads tasks.
-	 */
-	private void clearTask() {
-		this.url = null;
-		this.connection = null;
-		this.tempNgs = null;
-		this.task = null;
-	}
+	// helper methods
 
 	/**
 	 * Creates a new DereferencingResult which contains information about the
@@ -132,9 +109,9 @@ public class DereferencerThread extends Thread {
 	 *            the thrown exception
 	 * @return
 	 */
-	private DereferencingResult createErrorResult(int errorCode,
+	private DereferencingResult createErrorResult(DereferencingTask task, int errorCode,
 			Exception exception) {
-		return new DereferencingResult(this.task, errorCode, null, exception);
+		return new DereferencingResult(task, errorCode, null, exception);
 	}
 
 	/**
@@ -147,26 +124,19 @@ public class DereferencerThread extends Thread {
 	 *            the thrown exception
 	 * @return
 	 */
-	private DereferencingResult createNewUrisResult(int errorCode, ArrayList urilist) {
-		return new DereferencingResult(this.task, errorCode, urilist);
+	private DereferencingResult createNewUrisResult(DereferencingTask task, int errorCode, ArrayList urilist) {
+		return new DereferencingResult(task, errorCode, urilist);
 	}	
-	
-	
-	/**
-	 * Delivers the retrieval result.
-	 * 
-	 * @param result
-	 */
-	private synchronized void deliver(DereferencingResult result) {
-		if (this.stopped) {
-			return;
-		}
-		this.task.getListener().dereferenced(result);
-	}
 
-	private DereferencingResult dereference() {
+	private DereferencingResult executeTask(DereferencingTask task) {
 		DereferencingResult result = null;
 		this.tempNgs = new NamedGraphSetImpl();
+		try {
+			url = new URL(task.getURI());
+		} catch (MalformedURLException ex) {
+			return createErrorResult( task, DereferencingResult.STATUS_MALFORMED_URL, ex );
+		}
+
 		try {
 			URLConnection con = this.url.openConnection();
 // TODO This works only with Java 5,
@@ -194,26 +164,26 @@ public class DereferencerThread extends Thread {
 
 			if (type == null) {
 				return createErrorResult(
-						DereferencingResult.STATUS_UNABLE_TO_CONNECT, null);
+						task, DereferencingResult.STATUS_UNABLE_TO_CONNECT, null);
 			}
 
 			if ( this.connection.getResponseCode() == 303 ) {
 				String redirectURI = this.connection.getHeaderField("Location");
-				return new DereferencingResult(this.task, DereferencingResult.STATUS_REDIRECTED, redirectURI);
+				return new DereferencingResult(task, DereferencingResult.STATUS_REDIRECTED, redirectURI);
 			}
 
 			String lang = setLang();
 			try {
-				result = this.parseRdf(lang);
+				result = this.parseRdf(task, lang);
 			} catch (Exception ex) { // parse error
 				this.log.debug(ex.getMessage());
 				return createErrorResult(
-						DereferencingResult.STATUS_PARSING_FAILED, ex);
+						task, DereferencingResult.STATUS_PARSING_FAILED, ex);
 			}
 			// }
 		} catch (IOException e) {
 			this.log.debug(e.getMessage());
-			return createErrorResult(DereferencingResult.STATUS_PARSING_FAILED,
+			return createErrorResult(task, DereferencingResult.STATUS_PARSING_FAILED,
 					e);
 		}
 		//return new DereferencingResult(this.task,
@@ -224,7 +194,7 @@ public class DereferencerThread extends Thread {
 	/**
 	 * Parses an RDF String.
 	 */
-	private DereferencingResult parseRdf(String lang) throws Exception {
+	private DereferencingResult parseRdf(DereferencingTask task, String lang) throws Exception {
 		if (lang.equals("default"))
 			lang = null;
 		if (lang.equals("html") || lang.equals("HTML")){
@@ -241,7 +211,7 @@ public class DereferencerThread extends Thread {
 								      m.getGraph()) );
 
 			    if (this.tempNgs.countGraphs() > 0)
-				return new DereferencingResult(this.task,
+				return new DereferencingResult(task,
 							       DereferencingResult.STATUS_OK, this.tempNgs, null);
 			}
 			ArrayList l = HtmlLinkFetcher.fetchLinks(this.connection.getInputStream());
@@ -254,7 +224,7 @@ public class DereferencerThread extends Thread {
 			    newurl+=link;
 			    urilist.add(newurl);
 			}
-			return createNewUrisResult(DereferencingResult.STATUS_NEW_URIS_FOUND, urilist);
+			return createNewUrisResult(task, DereferencingResult.STATUS_NEW_URIS_FOUND, urilist);
 			
 		}
 			
@@ -262,7 +232,7 @@ public class DereferencerThread extends Thread {
 		LimitedInputStream lis = new LimitedInputStream(this.connection.getInputStream(),this.maxfilesize);
 		this.tempNgs.read(lis, lang, this.url
 				.toString());
-		return new DereferencingResult(this.task,
+		return new DereferencingResult(task,
 						DereferencingResult.STATUS_OK, this.tempNgs, null);
 	}
 
@@ -292,14 +262,9 @@ public class DereferencerThread extends Thread {
 		return type;
 	}
 
-	/**
-	 * Stops the UriConnector from retrieving the URI.
-	 */
-	public synchronized void stopThread() {
-		this.stopped = true;
-		this.interrupt();
-	}
-	
+
+	// accessor methods
+
 	public synchronized void setMaxfilesize(int size){
 		this.maxfilesize = size;
 	}

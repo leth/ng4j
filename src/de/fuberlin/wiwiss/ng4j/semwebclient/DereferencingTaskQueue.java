@@ -8,112 +8,40 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.TaskExecutorBase;
+import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.TaskQueueBase;
+
+
 /**
  * The DereferencingTaskQueue is a thread which observes the
  * DereferencerThreads. It starts all DereferencerThreads tries to 
  * assign new tasks to free DereferencerThreads and interrupts them
  * if the timeout is reached.
+ * 
+ * @author Tobias Gauﬂ
+ * @author Olaf Hartig
  */
-public class DereferencingTaskQueue extends Thread {
-	private int maxthreads;
-	private List threads = new ArrayList();
-	private boolean stopped = false;
-	private LinkedList tasks = new LinkedList();
+public class DereferencingTaskQueue extends TaskQueueBase {
 	private Log log = LogFactory.getLog(DereferencingTaskQueue.class);
 	private int maxfilesize;
         private boolean enablegrddl;
 
         public DereferencingTaskQueue(int maxThreads,int maxfilesize, boolean enablegrddl) {
-		this.maxthreads = maxThreads;
+		super( maxThreads );
 		this.maxfilesize = maxfilesize;
 		this.enablegrddl = enablegrddl;
-		setName("Queue");
+		setName("DereferencingTaskQueue");
 		start();
 	}
-	
-	public synchronized void addTask(DereferencingTask task) {
-		this.tasks.addLast(task);
-		this.log.debug("Enqueue: <" + task.getURI() + ">@" + task.getStep() + 
-				" (n = " + this.tasks.size() + ")");
-		this.notify();
+
+
+	// implementation of the TaskQueueBase interface
+
+	protected TaskExecutorBase createThread () {
+		DereferencerThread thread = new DereferencerThread();
+		thread.setMaxfilesize(this.maxfilesize);
+		thread.setEnableGrddl(this.enablegrddl);
+		return  thread;
 	}
 
-	public void run() {
-		initThreadPool(this.maxthreads);
-		while (!this.stopped) {
-			checkForTasksAndWait();
-		}
-	}
-
-	/**
-	 * Returns true if the queue is empty and none of the threads is busy.
-	 */
-	public boolean isIdle() {
-		if (! tasks.isEmpty()) {
-			return false;
-		}
-		Iterator it = this.threads.iterator();
-		while (it.hasNext()) {
-			if ( ((DereferencerThread) it.next()).hasTask() ) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	public synchronized void close() {
-		Iterator it = this.threads.iterator();
-		while (it.hasNext()) {
-			DereferencerThread thread = (DereferencerThread) it.next();
-			thread.stopThread();
-			thread.interrupt();
-			thread = null;
-		}
-		this.stopped = true;
-		notify();
-	}
-	
-	private void checkForTasksAndWait() {
-		while (!this.tasks.isEmpty()) {
-			DereferencingTask task = (DereferencingTask) this.tasks.getFirst();
-			if (tryAssignTask(task)) {
-				this.tasks.removeFirst();
-				this.log.debug("Dequeue: <" + task.getURI() + ">@" + task.getStep() + 
-						" (n = " + this.tasks.size() + ")");
-			} else {
-				break;
-			}
-		}
-		try {
-			// TODO Wake up when a worker thread is finished
-			synchronized (this) {
-				wait(100);
-			}
-		} catch (InterruptedException ex) {
-			// Don't know when this happens
-			throw new RuntimeException(ex);
-		}
-	}
-
-	private boolean tryAssignTask(DereferencingTask task) {
-		Iterator it = this.threads.iterator();
-		while (it.hasNext()) {
-			DereferencerThread thread = (DereferencerThread) it.next();
-			if (thread.startDereferencingIfAvailable(task)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private void initThreadPool(int numThreads) {
-		for (int i = 0; i < numThreads; i++) {
-			DereferencerThread thread = new DereferencerThread();
-			thread.setName("DerefThread"+i);
-			thread.setMaxfilesize(this.maxfilesize);
-			thread.setEnableGrddl(this.enablegrddl);
-			thread.start();
-			this.threads.add(thread);
-		}
-	}
 }
