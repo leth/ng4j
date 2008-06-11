@@ -1,5 +1,6 @@
 package de.fuberlin.wiwiss.ng4j.semwebclient.urisearch;
 
+import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.Task;
 import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.TaskExecutorBase;
 
 
@@ -22,7 +23,7 @@ public class URISearchThread extends TaskExecutorBase {
 	}
 
 
-	protected void executeTask ( Object task ) {
+	protected void executeTask ( Task task ) {
 		URISearchResult result = executeTask( (URISearchTask) task );
 
 		// deliver the result of the task to the listener

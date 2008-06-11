@@ -66,12 +66,12 @@ abstract public class TaskQueueBase extends Thread {
 	/**
 	 * Adds the given task to the queue.
 	 */
-	public synchronized void addTask ( Object task ) {
+	public synchronized void addTask ( Task task ) {
 		if ( closed )
 			throw new IllegalStateException( "This queue '" + getName() + "' (type: " + getClass().getName() + ") has been closed." );
 
 		tasks.offer ( task );
-		log.trace( "Enqueued task in queue '" + getName() + "' (type: " + getClass().getName() + ") - " + tasks.size() + " tasks in queue." );
+		log.trace( "Enqueued task '" + task.getIdentifier() + "' in queue '" + getName() + "' (type: " + getClass().getName() + ") - " + tasks.size() + " tasks in queue." );
 		notify();
 	}
 
@@ -101,11 +101,11 @@ abstract public class TaskQueueBase extends Thread {
 		while ( ! this.closed ) {
 			while ( ! this.tasks.isEmpty() && ! this.freeThreads.isEmpty() ) {
 				TaskExecutorBase thread = (TaskExecutorBase) freeThreads.remove();
-				Object task = (Object) this.tasks.remove();
+				Task task = (Task) this.tasks.remove();
 				thread.startTask( task );
 				busyThreads.add( thread );
 
-				log.trace( "Dequeued task in queue '" + getName() + "' (type: " + getClass().getName() + ") - still " + tasks.size() + " tasks in queue." );
+				log.trace( "Dequeued task '" + task.getIdentifier() + "' in queue '" + getName() + "' (type: " + getClass().getName() + ") - still " + tasks.size() + " tasks in queue." );
 			}
 
 			// move threads that finished their task to the pool of free threads

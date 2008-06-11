@@ -18,6 +18,7 @@ import com.hp.hpl.jena.rdf.model.impl.RDFDefaultErrorHandler;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphImpl;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
+import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.Task;
 import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.TaskExecutorBase;
 
 /**
@@ -54,7 +55,7 @@ public class DereferencerThread extends TaskExecutorBase {
 	}
 
 
-	protected void executeTask ( Object task ) {
+	protected void executeTask ( Task task ) {
 		DereferencingResult result = executeTask( (DereferencingTask) task );
 
 		// deliver the result of the task to the listener

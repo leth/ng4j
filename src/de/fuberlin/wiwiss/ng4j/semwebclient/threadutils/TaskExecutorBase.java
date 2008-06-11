@@ -14,7 +14,7 @@ abstract public class TaskExecutorBase extends Thread {
 	// members
 
 	private boolean stopped = false;
-	private Object currentTask;
+	private Task currentTask;
 
 	static private Log log = LogFactory.getLog( TaskExecutorBase.class );
 
@@ -39,7 +39,7 @@ abstract public class TaskExecutorBase extends Thread {
 	 * Note for implementations: if this thread has already been stopped (cf.
 	 * {@link #isStopped}) the execution must be stopped as quickly as possible.
 	 */
-	abstract protected void executeTask ( Object task );
+	abstract protected void executeTask ( Task task );
 
 
 	// accessor methods
@@ -64,7 +64,7 @@ abstract public class TaskExecutorBase extends Thread {
 	/**
 	 * Starts to execute the given task.
 	 */
-	final public synchronized void startTask ( Object task ) {
+	final public synchronized void startTask ( Task task ) {
 
 		if ( stopped )
 			throw new IllegalStateException( "This thread '" + getName() + "' (type: " + getClass().getName() + ") has been stopped." );
@@ -92,12 +92,12 @@ abstract public class TaskExecutorBase extends Thread {
 				try {
 					executeTask( currentTask );
 				} catch ( RuntimeException e ) {
-					log.error( "Executing the current task for thread '" + getName() + "' (type: " + getClass().getName() + ") caused an " + e.getClass().getName() + " (" + e.getMessage() + ")." );
+					log.error( "Executing the task '" + currentTask.getIdentifier() + "' for thread '" + getName() + "' (type: " + getClass().getName() + ") caused an " + e.getClass().getName() + " (" + e.getMessage() + ")." );
 				}
 
 				if ( log.isTraceEnabled() ) {
 					long execTimeDiff = System.currentTimeMillis() - startTime;
-					log.trace( "Executing the task for thread '" + getName() + "' (type: " + getClass().getName() + ") took " + String.valueOf(execTimeDiff) + " milliseconds." );
+					log.trace( "Executing the task '" + currentTask.getIdentifier() + "' for thread '" + getName() + "' (type: " + getClass().getName() + ") took " + String.valueOf(execTimeDiff) + " milliseconds." );
 				}
 
 				currentTask = null;

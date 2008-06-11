@@ -1,12 +1,14 @@
 package de.fuberlin.wiwiss.ng4j.semwebclient.urisearch;
 
+import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.Task;
+
 
 /**
  * A task to search for RDF documents that mention a specific URI.
  *
  * @author Olaf Hartig
  */
-public class URISearchTask {
+public class URISearchTask implements Task {
 
 	// members
 
@@ -24,6 +26,13 @@ public class URISearchTask {
 
 		this.uri = uri;
 		this.listener = listener;
+	}
+
+
+	// implementation of the Task interface
+
+	public String getIdentifier () {
+		return uri;
 	}
 
 
