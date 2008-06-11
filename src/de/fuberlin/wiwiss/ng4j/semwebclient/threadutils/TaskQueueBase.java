@@ -99,15 +99,6 @@ abstract public class TaskQueueBase extends Thread {
 
 		Set tmp = new HashSet ();
 		while ( ! this.closed ) {
-			while ( ! this.tasks.isEmpty() && ! this.freeThreads.isEmpty() ) {
-				TaskExecutorBase thread = (TaskExecutorBase) freeThreads.remove();
-				Task task = (Task) this.tasks.remove();
-				thread.startTask( task );
-				busyThreads.add( thread );
-
-				log.trace( "Dequeued task '" + task.getIdentifier() + "' in queue '" + getName() + "' (type: " + getClass().getName() + ") - still " + tasks.size() + " tasks in queue." );
-			}
-
 			// move threads that finished their task to the pool of free threads
 			tmp.clear();
 			Iterator it = busyThreads.iterator();
@@ -118,6 +109,16 @@ abstract public class TaskQueueBase extends Thread {
 			}
 			busyThreads.removeAll( tmp );
 			freeThreads.addAll( tmp );
+
+			// assign queued tasks to free threads
+			while ( ! this.tasks.isEmpty() && ! this.freeThreads.isEmpty() ) {
+				TaskExecutorBase thread = (TaskExecutorBase) freeThreads.remove();
+				Task task = (Task) this.tasks.remove();
+				thread.startTask( task );
+				busyThreads.add( thread );
+
+				log.trace( "Dequeued task '" + task.getIdentifier() + "' in queue '" + getName() + "' (type: " + getClass().getName() + ") - still " + tasks.size() + " tasks in queue." );
+			}
 
 			try {
 				synchronized ( this ) {
