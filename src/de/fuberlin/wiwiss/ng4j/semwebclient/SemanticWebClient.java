@@ -71,12 +71,12 @@ import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
  * @author Olaf Hartig (hartig@informatik.hu-berlin.de)
  */
 public class SemanticWebClient extends NamedGraphSetImpl {
-	public String CONFIG_MAXSTEPS = "maxsteps";
-	public String CONFIG_MAXTHREADS = "maxthreads";
-	public String CONFIG_TIMEOUT = "timeout";
-	public String CONFIG_MAXGRAPHS = "maxgraphs";
-	public String CONFIG_MAXFILESIZE = "maxfilesize";
-	public String CONFIG_ENABLEGRDDL = "enablegrddl";
+	public static final String CONFIG_MAXSTEPS = "maxsteps";
+	public static final String CONFIG_MAXTHREADS = "maxthreads";
+	public static final String CONFIG_TIMEOUT = "timeout";
+	public static final String CONFIG_MAXGRAPHS = "maxgraphs";
+	public static final String CONFIG_MAXFILESIZE = "maxfilesize";
+	public static final String CONFIG_ENABLEGRDDL = "enablegrddl";
 	
 	private static final int MAXSTEPS_DEFAULT = 3;
 
