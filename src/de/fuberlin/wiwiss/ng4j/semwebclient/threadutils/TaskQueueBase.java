@@ -166,7 +166,10 @@ abstract public class TaskQueueBase extends Thread {
 	private void initThreadPool () {
 		for ( int i = 0; i < maxThreads; i++ ) {
 			TaskExecutorBase t = createThread();
-			t.setPriority( getPriority() - 1 );
+
+			if ( getPriority() > Thread.MIN_PRIORITY )
+				t.setPriority( getPriority() - 1 );
+
 			t.start();
 			freeThreads.offer( t );
 		}
