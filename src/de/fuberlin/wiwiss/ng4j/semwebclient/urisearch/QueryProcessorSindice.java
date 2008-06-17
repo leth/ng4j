@@ -27,7 +27,7 @@ public class QueryProcessorSindice implements QueryProcessor {
 
 	// members
 
-	static final public int defaultMaxResultPortions = 200;
+	static final public int defaultMaxResultPortions = 100;
 	final protected int maxResultPortions;
 	final protected SingleQueryProcessor worker = new SingleQueryProcessor();
 
