@@ -224,11 +224,16 @@ public class DereferencerThread extends TaskExecutorBase {
 			Iterator iter = l.iterator();
 			ArrayList urilist = new ArrayList();
 			while (iter.hasNext()) {
-			    String link = (String) iter.next();
-			    int pos = this.url.toString().lastIndexOf("/");
-			    String newurl = this.url.toString().substring(0,pos+1);
-			    newurl+=link;
-			    urilist.add(newurl);
+				String link = (String) iter.next();
+				link = link.replace( "&amp;", "&" );
+				link = link.replace( "&gt;", ">" );
+				link = link.replace( "&lt;", "<" );
+				try {
+					URL newURL = new URL( url, link );
+					urilist.add( newURL.toString() );
+				} catch ( MalformedURLException e ) {
+					log.debug( "Creating a URL from the link <" + link + "> fetched for <" + url.toString() + "> caused an exception (" + e.getMessage() + ").", e );
+				}
 			}
 			return createNewUrisResult(task, DereferencingResult.STATUS_NEW_URIS_FOUND, urilist);
 			
