@@ -27,14 +27,18 @@ public class HtmlLinkFetcher {
 	    Pattern linkPattern = Pattern.compile ("<link[^>]*(rel=\"meta\"|rel=\"alternate\")[^>]*href=\"?[^(>| )]*\"?[^>]*(/>|>)", Pattern.CASE_INSENSITIVE);
 	    Pattern prePattern  = Pattern.compile ("href=\"?");
 	    Pattern postPattern = Pattern.compile ("( |\"|>)");
+	    Pattern typePattern = Pattern.compile (".*(type=\"application/rdf\\+xml\"|type=\"application/n3\"|type=\"text/rdf\\+n3\").*");
 	    Matcher linkMatcher = linkPattern.matcher (header);
 	    LinkedList linkLinkedList = new LinkedList ();
 	    while (linkMatcher.find ()) {
 		      linkLinkedList.addLast (linkMatcher.group ());
 		    }
 		    for (int i = 0; i < linkLinkedList.size (); i++) {
-		      CharSequence cs = prePattern.split ((CharSequence)linkLinkedList.get(i))[1];
-		      linkList.add(postPattern.split (cs)[0]);
+		      String linkElmt = (String) linkLinkedList.get(i);
+		      if ( typePattern.matcher(linkElmt).matches() ) {
+		        CharSequence cs = prePattern.split ((CharSequence)linkLinkedList.get(i))[1];
+		        linkList.add(postPattern.split (cs)[0]);
+		      }
 		    }
 		return linkList;
 	}
