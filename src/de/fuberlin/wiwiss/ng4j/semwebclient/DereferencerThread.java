@@ -139,13 +139,19 @@ public class DereferencerThread extends TaskExecutorBase {
 		}
 
 		try {
-			URLConnection con = this.url.openConnection();
+			URLConnection con = url.openConnection();
+
 // TODO This works only with Java 5,
 // and Tobias said he's not even sure if it has any positive effect. [RC]
 //			con.setReadTimeout(60000);
-			this.connection = (HttpURLConnection) con;
-			this.connection.setInstanceFollowRedirects(false);
-					this.connection.addRequestProperty(
+			connection = (HttpURLConnection) con;
+		} catch ( IOException e ) {
+			log.debug( e.getMessage() );
+			return createErrorResult( task, DereferencingResult.STATUS_UNABLE_TO_CONNECT, e );
+		}
+
+		connection.setInstanceFollowRedirects(false);
+		connection.addRequestProperty(
 							"Accept",
 							"application/rdf+xml;q=1,"
 							+ "text/xml;q=0.6,text/rdf+n3;q=0.9,"
@@ -157,13 +163,11 @@ public class DereferencerThread extends TaskExecutorBase {
 							+ "text/html;q=0.5"
 							);
 
-
+		try {
 			this.log.debug(this.connection.getResponseCode() + " " + this.url
 				       + " (" + this.connection.getContentType() + ")");
 
-			String type = this.connection.getContentType();
-
-			if (type == null) {
+			if ( connection.getContentType() == null ) {
 				return createErrorResult(
 						task, DereferencingResult.STATUS_UNABLE_TO_CONNECT, null);
 			}
@@ -189,7 +193,7 @@ public class DereferencerThread extends TaskExecutorBase {
 			// }
 		} catch (IOException e) {
 			this.log.debug(e.getMessage());
-			return createErrorResult(task, DereferencingResult.STATUS_PARSING_FAILED,
+			return createErrorResult(task, DereferencingResult.STATUS_UNABLE_TO_CONNECT,
 					e);
 		}
 		//return new DereferencingResult(this.task,
