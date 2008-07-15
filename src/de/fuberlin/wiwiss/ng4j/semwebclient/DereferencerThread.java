@@ -146,7 +146,7 @@ public class DereferencerThread extends TaskExecutorBase {
 //			con.setReadTimeout(60000);
 			connection = (HttpURLConnection) con;
 		} catch ( IOException e ) {
-			log.debug( e.getMessage() );
+			log.debug( "Creating a connection to <" + url.toString() + "> caused a " + e.getClass().getName() + ": " + e.getMessage(), e );
 			return createErrorResult( task, DereferencingResult.STATUS_UNABLE_TO_CONNECT, e );
 		}
 
@@ -164,12 +164,20 @@ public class DereferencerThread extends TaskExecutorBase {
 							);
 
 		try {
+			connection.connect();
+		} catch ( IOException e ) {
+			log.debug( "Connecting to <" + url.toString() + "> caused a " + e.getClass().getName() + ": " + e.getMessage(), e );
+			return createErrorResult( task, DereferencingResult.STATUS_UNABLE_TO_CONNECT, e );
+		}
+
+		try {
 			this.log.debug(this.connection.getResponseCode() + " " + this.url
 				       + " (" + this.connection.getContentType() + ")");
 
 			if ( connection.getContentType() == null ) {
-				return createErrorResult(
-						task, DereferencingResult.STATUS_UNABLE_TO_CONNECT, null);
+				return createErrorResult( task,
+				                          DereferencingResult.STATUS_UNABLE_TO_CONNECT,
+				                          new Exception("Unknown content type") );
 			}
 
 			if ( this.connection.getResponseCode() == 303 ) {
@@ -178,8 +186,9 @@ public class DereferencerThread extends TaskExecutorBase {
 			}
 
 			if ( this.connection.getResponseCode() != 200 ) {
-				return createErrorResult(
-						task, DereferencingResult.STATUS_UNABLE_TO_CONNECT, null);
+				return createErrorResult( task,
+				                          DereferencingResult.STATUS_UNABLE_TO_CONNECT,
+				                          new Exception("Unexpected response code ("+connection.getResponseCode()+")") );
 			}
 
 			String lang = setLang();
@@ -192,7 +201,7 @@ public class DereferencerThread extends TaskExecutorBase {
 			}
 			// }
 		} catch (IOException e) {
-			this.log.debug(e.getMessage());
+			log.debug( "Accessing the connection to <" + url.toString() + "> caused a " + e.getClass().getName() + ": " + e.getMessage(), e );
 			return createErrorResult(task, DereferencingResult.STATUS_UNABLE_TO_CONNECT,
 					e);
 		}
