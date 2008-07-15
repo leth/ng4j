@@ -18,6 +18,7 @@ public class DereferencingResult {
 	public final static int STATUS_UNABLE_TO_CONNECT = -3;
 	public final static int STATUS_NEW_URIS_FOUND = -4;
 	public final static int STATUS_REDIRECTED = -5;
+	public final static int STATUS_TIMEOUT = -6;
 
 	private DereferencingTask task;
 	private int resultCode;

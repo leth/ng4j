@@ -3,6 +3,7 @@ package de.fuberlin.wiwiss.ng4j.semwebclient;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -37,6 +38,9 @@ public class DereferencerThread extends TaskExecutorBase {
 	private int maxfilesize = -1;
 
         private boolean enablegrddl = false;
+
+	private int connectTimeout = 0;
+	private int readTimeout = 0;
 
 	private URL url;
 
@@ -144,6 +148,11 @@ public class DereferencerThread extends TaskExecutorBase {
 // TODO This works only with Java 5,
 // and Tobias said he's not even sure if it has any positive effect. [RC]
 //			con.setReadTimeout(60000);
+
+// It does (at least for me?) [Olaf]
+			con.setConnectTimeout( connectTimeout );
+			con.setReadTimeout( readTimeout );
+
 			connection = (HttpURLConnection) con;
 		} catch ( IOException e ) {
 			log.debug( "Creating a connection to <" + url.toString() + "> caused a " + e.getClass().getName() + ": " + e.getMessage(), e );
@@ -165,6 +174,9 @@ public class DereferencerThread extends TaskExecutorBase {
 
 		try {
 			connection.connect();
+		} catch ( SocketTimeoutException e ) {
+			log.debug( "Connecting to <" + url.toString() + "> caused a " + e.getClass().getName() + ": " + e.getMessage() );
+			return createErrorResult( task, DereferencingResult.STATUS_TIMEOUT, e );
 		} catch ( IOException e ) {
 			log.debug( "Connecting to <" + url.toString() + "> caused a " + e.getClass().getName() + ": " + e.getMessage(), e );
 			return createErrorResult( task, DereferencingResult.STATUS_UNABLE_TO_CONNECT, e );
@@ -200,6 +212,9 @@ public class DereferencerThread extends TaskExecutorBase {
 						task, DereferencingResult.STATUS_PARSING_FAILED, ex);
 			}
 			// }
+		} catch ( SocketTimeoutException e ) {
+			log.debug( "Accessing the connection to <" + url.toString() + "> caused a " + e.getClass().getName() + ": " + e.getMessage() );
+			return createErrorResult( task, DereferencingResult.STATUS_TIMEOUT, e );
 		} catch (IOException e) {
 			log.debug( "Accessing the connection to <" + url.toString() + "> caused a " + e.getClass().getName() + ": " + e.getMessage(), e );
 			return createErrorResult(task, DereferencingResult.STATUS_UNABLE_TO_CONNECT,
@@ -294,6 +309,12 @@ public class DereferencerThread extends TaskExecutorBase {
 	}
 	public synchronized void setEnableGrddl(boolean g){
 		this.enablegrddl = g;
+	}
+	public synchronized void setConnectTimeout(int t){
+		connectTimeout = t;
+	}
+	public synchronized void setReadTimeout(int t){
+		readTimeout = t;
 	}
 
 	/*

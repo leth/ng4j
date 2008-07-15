@@ -74,6 +74,8 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	public static final String CONFIG_MAXSTEPS = "maxsteps";
 	public static final String CONFIG_MAXTHREADS = "maxthreads";
 	public static final String CONFIG_TIMEOUT = "timeout";
+	public static final String CONFIG_DEREF_CONNECT_TIMEOUT = "derefconnecttimeout";
+	public static final String CONFIG_DEREF_READ_TIMEOUT = "derefreadtimeout";
 	public static final String CONFIG_MAXGRAPHS = "maxgraphs";
 	public static final String CONFIG_MAXFILESIZE = "maxfilesize";
 	public static final String CONFIG_ENABLEGRDDL = "enablegrddl";
@@ -83,6 +85,8 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	private static final int MAXTHREADS_DEFAULT = 10;
 
 	private static final long TIMEOUT_DEFAULT = 30000;
+	private static final int DEREF_CONNECT_TIMEOUT_DEFAULT = 0; // 0 means no timeout (i.e. infinity)
+	private static final int DEREF_READ_TIMEOUT_DEFAULT = 0;
 	
 	private static final int MAXFILESIZE_DEFAULT = 100000000;
 	
@@ -103,6 +107,8 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	private boolean isClosed = false;
 	
 	private long timeout = TIMEOUT_DEFAULT;
+	private int derefConnectTimeout = DEREF_CONNECT_TIMEOUT_DEFAULT;
+	private int derefReadTimeout = DEREF_READ_TIMEOUT_DEFAULT;
 	private int maxsteps = MAXSTEPS_DEFAULT;
 	private int maxthreads = MAXTHREADS_DEFAULT;
 	private int maxfilesize = MAXFILESIZE_DEFAULT;
@@ -244,6 +250,28 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 			}
 			this.timeout = val;
 		}
+		else if (option.equals(CONFIG_DEREF_CONNECT_TIMEOUT)) {
+			int val;
+			try {
+				val = Integer.parseInt(value);
+			} catch (NumberFormatException e) {
+				throw new IllegalArgumentException("value '" + value
+						+ "' for config " + CONFIG_DEREF_CONNECT_TIMEOUT
+						+ " is not numeric");
+			}
+			this.derefConnectTimeout = val;
+		}
+		else if (option.equals(CONFIG_DEREF_READ_TIMEOUT)) {
+			int val;
+			try {
+				val = Integer.parseInt(value);
+			} catch (NumberFormatException e) {
+				throw new IllegalArgumentException("value '" + value
+						+ "' for config " + CONFIG_DEREF_READ_TIMEOUT
+						+ " is not numeric");
+			}
+			this.derefReadTimeout = val;
+		}
 		else if (option.equals(CONFIG_ENABLEGRDDL)) {
 			this.enablegrddl = "true".equalsIgnoreCase(value)
 					|| "on".equalsIgnoreCase(value) || "1".equals(value);
@@ -261,6 +289,10 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 			value = String.valueOf(this.maxthreads);
 		else if (option.toLowerCase().equals(CONFIG_TIMEOUT))
 			value = String.valueOf(this.timeout);
+		else if (option.toLowerCase().equals(CONFIG_DEREF_CONNECT_TIMEOUT))
+			value = String.valueOf(this.derefConnectTimeout);
+		else if (option.toLowerCase().equals(CONFIG_DEREF_READ_TIMEOUT))
+			value = String.valueOf(this.derefReadTimeout);
 		else if (option.toLowerCase().equals(CONFIG_MAXFILESIZE))
 			value = String.valueOf(this.maxfilesize);
 		else if (option.toLowerCase().equals(CONFIG_ENABLEGRDDL))
@@ -406,7 +438,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 
 	private DereferencingTaskQueue getURIQueue() {
 		if (this.uriQueue == null) {
-		    this.uriQueue = new DereferencingTaskQueue(this.maxthreads,this.maxfilesize, this.enablegrddl);
+		    this.uriQueue = new DereferencingTaskQueue(this.maxthreads,this.maxfilesize, this.enablegrddl, this.derefConnectTimeout, this.derefReadTimeout);
 		}
 		return this.uriQueue;
 	}
