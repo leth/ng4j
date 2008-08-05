@@ -186,13 +186,8 @@ public class DereferencerThread extends TaskExecutorBase {
 			this.log.debug(this.connection.getResponseCode() + " " + this.url
 				       + " (" + this.connection.getContentType() + ")");
 
-			if ( connection.getContentType() == null ) {
-				return createErrorResult( task,
-				                          DereferencingResult.STATUS_UNABLE_TO_CONNECT,
-				                          new Exception("Unknown content type") );
-			}
-
-			if ( this.connection.getResponseCode() == 303 ) {
+			if (    (this.connection.getResponseCode() == 302)
+			     || (this.connection.getResponseCode() == 303) ) {
 				String redirectURI = this.connection.getHeaderField("Location");
 				return new DereferencingResult(task, DereferencingResult.STATUS_REDIRECTED, redirectURI);
 			}
@@ -201,6 +196,12 @@ public class DereferencerThread extends TaskExecutorBase {
 				return createErrorResult( task,
 				                          DereferencingResult.STATUS_UNABLE_TO_CONNECT,
 				                          new Exception("Unexpected response code ("+connection.getResponseCode()+")") );
+			}
+
+			if ( connection.getContentType() == null ) {
+				return createErrorResult( task,
+				                          DereferencingResult.STATUS_UNABLE_TO_CONNECT,
+				                          new Exception("Unknown content type") );
 			}
 
 			String lang = setLang();
