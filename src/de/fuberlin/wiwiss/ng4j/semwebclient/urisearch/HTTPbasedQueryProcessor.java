@@ -29,10 +29,10 @@ abstract public class HTTPbasedQueryProcessor implements QueryProcessor {
 	// implementation of the QueryProcessor interface
 
 	public Set process ( String uri ) throws QueryProcessingException {
-		log.trace( "prepare query URL for " + uri.toString() );
+		log.debug( "prepare query URL for " + uri.toString() );
 		URL queryURL = prepareQuery( uri );
 
-		log.trace( "execute search query (" + queryURL.toString() + ")"  );
+		log.debug( "execute search query (" + queryURL.toString() + ")"  );
 		Model resultModel;
 		try {
 			resultModel = executeQuery( queryURL );
@@ -40,7 +40,7 @@ abstract public class HTTPbasedQueryProcessor implements QueryProcessor {
 			throw new QueryProcessingException( this, uri, "Execution failed: " + e.getMessage(), e );
 		}
 
-		log.trace( "evaluate search result (" + queryURL.toString() + ")" );
+		log.debug( "evaluate search result (" + queryURL.toString() + ")" );
 
 		if ( resultModel == null )
 			return new HashSet ();
