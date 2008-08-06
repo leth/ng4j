@@ -81,12 +81,12 @@ abstract public class TaskExecutorBase extends Thread {
 
 	final public void run ()
 	{
-		log.trace( "Thread '" + getName() + "' (type: " + getClass().getName() + ") started." );
+		log.debug( "Thread '" + getName() + "' (type: " + getClass().getName() + ") started." );
 
 		while ( ! stopped ) {
 			if ( currentTask != null ) {
 				long startTime = 0;
-				if ( log.isTraceEnabled() )
+				if ( log.isDebugEnabled() )
 					startTime = System.currentTimeMillis();
 
 				try {
@@ -95,9 +95,9 @@ abstract public class TaskExecutorBase extends Thread {
 					log.error( "Executing the task '" + currentTask.getIdentifier() + "' for thread '" + getName() + "' (type: " + getClass().getName() + ") caused an " + e.getClass().getName() + " (" + e.getMessage() + ")." );
 				}
 
-				if ( log.isTraceEnabled() ) {
+				if ( log.isDebugEnabled() ) {
 					long execTimeDiff = System.currentTimeMillis() - startTime;
-					log.trace( "Executing the task '" + currentTask.getIdentifier() + "' for thread '" + getName() + "' (type: " + getClass().getName() + ") took " + String.valueOf(execTimeDiff) + " milliseconds." );
+					log.debug( "Executing the task '" + currentTask.getIdentifier() + "' for thread '" + getName() + "' (type: " + getClass().getName() + ") took " + String.valueOf(execTimeDiff) + " milliseconds." );
 				}
 
 				currentTask = null;
@@ -108,14 +108,14 @@ abstract public class TaskExecutorBase extends Thread {
 					if ( stopped )
 						break;
 
-					wait();
+					wait( 1000 );
 				}
 			} catch ( InterruptedException e ) {
 				// Do nothing here. An interruption happens when the thread is stopped.
 			}
 		}
 
-		log.trace( "Thread '" + getName() + "' (type: " + getClass().getName() + ") stopped." );
+		log.debug( "Thread '" + getName() + "' (type: " + getClass().getName() + ") stopped." );
 	}
 
 	/**
@@ -123,7 +123,7 @@ abstract public class TaskExecutorBase extends Thread {
 	 * Sets the stop status of this thread and interrupts the execution.
 	 */
 	final synchronized public void stopThread () {
-		log.trace( "Stopping thread '" + getName() + "' (type: " + getClass().getName() + ")." );
+		log.debug( "Stopping thread '" + getName() + "' (type: " + getClass().getName() + ")." );
 		stopped = true;
 		interrupt();
 	}

@@ -71,7 +71,7 @@ abstract public class TaskQueueBase extends Thread {
 			throw new IllegalStateException( "This queue '" + getName() + "' (type: " + getClass().getName() + ") has been closed." );
 
 		tasks.offer ( task );
-		log.trace( "Enqueued task '" + task.getIdentifier() + "' in queue '" + getName() + "' (type: " + getClass().getName() + ") - " + tasks.size() + " tasks in queue." );
+		log.debug( "Enqueued task '" + task.getIdentifier() + "' in queue '" + getName() + "' (type: " + getClass().getName() + ") - " + tasks.size() + " tasks in queue." );
 		notify();
 	}
 
@@ -93,7 +93,7 @@ abstract public class TaskQueueBase extends Thread {
 	// operations
 
 	public void run () {
-		log.trace( "Task queue '" + getName() + "' (type: " + getClass().getName() + ") started." );
+		log.debug( "Task queue '" + getName() + "' (type: " + getClass().getName() + ") started." );
 
 		initThreadPool();
 
@@ -117,11 +117,11 @@ abstract public class TaskQueueBase extends Thread {
 				thread.startTask( task );
 				busyThreads.add( thread );
 
-				log.trace( "Dequeued task '" + task.getIdentifier() + "' in queue '" + getName() + "' (type: " + getClass().getName() + ") - still " + tasks.size() + " tasks in queue." );
+				log.debug( "Dequeued task '" + task.getIdentifier() + "' in queue '" + getName() + "' (type: " + getClass().getName() + ") - still " + tasks.size() + " tasks in queue." );
 			}
 
-			if ( log.isTraceEnabled() && ! tasks.isEmpty() )
-				log.trace( "Not enough free threads to assign all open tasks in queue '" + getName() + "' (type: " + getClass().getName() + ")." );
+			if ( log.isDebugEnabled() && ! tasks.isEmpty() )
+				log.debug( "Not enough free threads to assign all open tasks in queue '" + getName() + "' (type: " + getClass().getName() + ")." );
 
 			try {
 				synchronized ( this ) {
@@ -137,7 +137,7 @@ abstract public class TaskQueueBase extends Thread {
 	 * Stops this queue and all threads in the pool.
 	 */
 	public synchronized void close () {
-		log.trace( "Closing task queue '" + getName() + "' (type: " + getClass().getName() + ")." );
+		log.debug( "Closing task queue '" + getName() + "' (type: " + getClass().getName() + ")." );
 
 		closed = true;
 
@@ -160,7 +160,7 @@ abstract public class TaskQueueBase extends Thread {
 
 		notify();
 
-		log.trace( "Task queue '" + getName() + "' (type: " + getClass().getName() + ") closed." );
+		log.debug( "Task queue '" + getName() + "' (type: " + getClass().getName() + ") closed." );
 	}
 
 
