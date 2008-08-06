@@ -377,6 +377,18 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	}
 
 	/**
+	 * Deletes all NamedGraphs from the set and clears the sets of successfully,
+	 * unsuccessfully, and redirected URIs.
+	 */
+	public synchronized void clear() {
+		super.clear();
+		markedUris.clear();
+		retrievedUris.clear();
+		unretrievedURIs.clear();
+		redirectedURIs.clear();
+	}
+
+	/**
 	 * Initiates a new retrieval process for a given uri.
 	 */
 	public boolean requestDereferencing(String uri, int step,
