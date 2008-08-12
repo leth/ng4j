@@ -14,11 +14,12 @@ public class URISearchTask implements Task {
 
 	final protected String uri;
 	final protected URISearchListener listener;
+	final protected int step;
 
 
 	// initialization
 
-	public URISearchTask ( String uri, URISearchListener listener ) {
+	public URISearchTask ( String uri, URISearchListener listener, int step ) {
 		if ( uri == null )
 			throw new IllegalArgumentException( "The given URI is undefined." );
 		if ( listener == null )
@@ -26,6 +27,7 @@ public class URISearchTask implements Task {
 
 		this.uri = uri;
 		this.listener = listener;
+		this.step = step;
 	}
 
 
@@ -44,6 +46,10 @@ public class URISearchTask implements Task {
 
 	public URISearchListener getListener () {
 		return this.listener;
+	}
+	
+	public int getStep () {
+		return step;
 	}
 
 }
