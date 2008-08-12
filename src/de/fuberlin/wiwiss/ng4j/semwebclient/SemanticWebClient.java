@@ -25,6 +25,11 @@ import com.hp.hpl.jena.graph.TripleMatch;
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
+import de.fuberlin.wiwiss.ng4j.semwebclient.urisearch.URISearchListener;
+import de.fuberlin.wiwiss.ng4j.semwebclient.urisearch.URISearchResult;
+import de.fuberlin.wiwiss.ng4j.semwebclient.urisearch.URISearchTask;
+import de.fuberlin.wiwiss.ng4j.semwebclient.urisearch.URISearchTaskQueue;
+
 /**
  * <p>
  * The SematicWebClient interface enables applications to access the Semantic
@@ -79,6 +84,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	public static final String CONFIG_MAXGRAPHS = "maxgraphs";
 	public static final String CONFIG_MAXFILESIZE = "maxfilesize";
 	public static final String CONFIG_ENABLEGRDDL = "enablegrddl";
+	public static final String CONFIG_ENABLE_URI_SEARCH = "enableurisearch"; // enables URI search during query execution
 	
 	private static final int MAXSTEPS_DEFAULT = 3;
 
@@ -91,6 +97,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	private static final int MAXFILESIZE_DEFAULT = 100000000;
 	
 	private static final boolean ENABLEGRDDL_DEFAULT = false;
+	private static final boolean ENABLE_URI_SEARCH_DEFAULT = false;
 	
 	//private static final long MAXGRAPHS_DEFAULT = 30000;
 
@@ -99,10 +106,14 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	private Set markedUris = new HashSet();
 
 	private DereferencingTaskQueue derefQueue = null;
+	private URISearchTaskQueue searchQueue = null;
 
 	private List unretrievedURIs;
 
 	private Map redirectedURIs;
+
+	protected Map successfullySearchedURIs;
+	protected Set unsuccessfullySearchedURIs;
 
 	private boolean isClosed = false;
 	
@@ -114,6 +125,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	private int maxfilesize = MAXFILESIZE_DEFAULT;
 	//private long maxgraphs = MAXGRAPHS_DEFAULT;
         private boolean enablegrddl = ENABLEGRDDL_DEFAULT;
+	private boolean enableURISearch = ENABLE_URI_SEARCH_DEFAULT;
 
 	private Log log = LogFactory.getLog(SemanticWebClient.class);
 
@@ -126,6 +138,8 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 		this.retrievedUris = Collections.synchronizedList(new ArrayList());
 		this.unretrievedURIs = Collections.synchronizedList(new ArrayList());
 		this.redirectedURIs = Collections.synchronizedMap(new HashMap());
+		this.successfullySearchedURIs = Collections.synchronizedMap(new HashMap());
+		this.unsuccessfullySearchedURIs = Collections.synchronizedSet(new HashSet());
 	}
 
 	/**
@@ -143,7 +157,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	* @return
 	*/
 	public SemWebIterator find(TripleMatch pattern) {
-		return new FindQuery(this, pattern.asTriple()).iterator();
+		return new FindQuery(this, pattern.asTriple(), enableURISearch).iterator();
 	}
 
 	/**
@@ -276,6 +290,10 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 			this.enablegrddl = "true".equalsIgnoreCase(value)
 					|| "on".equalsIgnoreCase(value) || "1".equals(value);
 		}
+		else if (option.equals(CONFIG_ENABLE_URI_SEARCH)) {
+			this.enableURISearch = "true".equalsIgnoreCase(value)
+					|| "on".equalsIgnoreCase(value) || "1".equals(value);
+		}
 	}
 
 	/**
@@ -297,6 +315,8 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 			value = String.valueOf(this.maxfilesize);
 		else if (option.toLowerCase().equals(CONFIG_ENABLEGRDDL))
 			value = String.valueOf(this.enablegrddl);
+		else if (option.toLowerCase().equals(CONFIG_ENABLE_URI_SEARCH))
+			value = String.valueOf(this.enableURISearch);
 
 		return value;
 	}
@@ -329,6 +349,28 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 		return (String) this.redirectedURIs.get( uri );
 	}
 
+	/**
+	 * Returns all URIs that have been searched successfully.
+	 */
+	public Set successfullySearchedURIs() {
+		return successfullySearchedURIs.keySet();
+	}
+
+	/**
+	 * Returns all URLs of documents that mention the given URI according to a
+	 * search.
+	 */
+	public Set getMentioningURLs( String uri ) {
+		return (Set) successfullySearchedURIs.get( uri );
+	}
+
+	/**
+	 * Returns all URIs that could not be searched for.
+	 */
+	public Set unsuccessfullySearchedURIs() {
+		return unsuccessfullySearchedURIs;
+	}
+
 	/** 
 	 * Determines all retrieval threads. 
 	 * Has to be called to determine a Sementic Web Client.
@@ -339,6 +381,9 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 		this.isClosed = true;
 		if (this.derefQueue != null) {
 			this.derefQueue.close();
+		}
+		if (searchQueue != null) {
+			searchQueue.close();
 		}
 		this.retrievedUris.clear();
 		this.markedUris.clear();
@@ -354,10 +399,18 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	}
 
 	/**
-	 * Returns true if the Semantic Web client is not derefencing any URIs at the moment.
+	 * Returns true if the Semantic Web client is not retrieving any URIs at the moment.
 	 */
-	public boolean isIdle() {
-		return getDerefQueue().isIdle();
+	public synchronized boolean isIdle() {
+		if ( (derefQueue != null) && ! derefQueue.isIdle() ) {
+			return false;
+		}
+
+		if ( (searchQueue != null) && ! searchQueue.isIdle() ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/* (non-Javadoc)
@@ -389,11 +442,40 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	}
 
 	/**
-	 * Initiates a new retrieval process for a given uri.
+	 * Initiates a new retrieval process that dereferences the given URI and
+	 * queries a search engine for the URI.
+	 * If the given URI is a hash-URI this method dereferences the URI without
+	 * the hash and the subsequent fragment. However, for the URI search the
+	 * whole URI is being used.
+	 */
+	public boolean requestDereferencingWithSearch(String uri, int step,
+			final DereferencingListener derefListener,
+			final URISearchListener searchListener) {
+		boolean derefStartResult = startDereferencing(uri, step, derefListener);
+		if ( derefStartResult ) {
+			startSearching(uri, searchListener, step);
+		}
+
+		return derefStartResult;
+	}
+
+	/**
+	 * Initiates a new retrieval process that dereferences the given URI.
+	 * If the given URI is a hash-URI this method dereferences the URI without
+	 * the hash and the subsequent fragment.
 	 */
 	public boolean requestDereferencing(String uri, int step,
 			final DereferencingListener listener) {
-		if (this.markedUris.contains(uri) || containsGraph(uri) || redirectedURIs.containsKey(uri)) {
+		return startDereferencing(uri, step, listener);
+	}
+
+	/**
+	 * Initiates dereferencing of the given URI.
+	 */
+	private boolean startDereferencing(String uri, int step,
+			final DereferencingListener listener) {
+		String derefURI = ( uri.contains("#") ) ? uri.substring( 0, uri.indexOf("#") ) : uri;
+		if (this.markedUris.contains(derefURI) || redirectedURIs.containsKey(derefURI) || containsGraph(derefURI)) {
 			// already retrieved or in queue, don't queue again
 			return false;
 		}
@@ -401,8 +483,8 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 			this.log.debug("Ignored (maxsteps reached): " + uri);
 			return false;
 		}
-		this.log.debug("Queued (" + step + " steps): " + uri);
-		this.markedUris.add(uri);
+		this.log.debug("Queued for dereferencing (" + step + " steps): " + derefURI);
+		this.markedUris.add(derefURI);
 		DereferencingListener myListener = new DereferencingListener() {
 			public void dereferenced(DereferencingResult result) {
 				if (isClosed()) {
@@ -427,8 +509,37 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 				}
 			}
 		};
-		getDerefQueue().addTask(new DereferencingTask(myListener, uri, step));
+		getDerefQueue().addTask(new DereferencingTask(myListener, derefURI, step));
 		return true;
+	}
+
+	/**
+	 * Initiates a search for the given URI.
+	 */
+	private void startSearching(String uri, final URISearchListener listener, int step) {
+		if ( step > this.maxsteps ) {
+			log.debug( "Ignored (maxsteps reached): " + uri );
+			return;
+		}
+
+		log.debug( "Queued for searching: " + uri );
+		URISearchListener myListener = new URISearchListener() {
+			public void uriSearchFinished(URISearchResult result) {
+				if (isClosed()) {
+					return;
+				}
+				if (result.isSuccess()) {
+					successfullySearchedURIs.put( result.getTask().getURI(), result.getMentioningDocs() );
+				} else {
+					log.debug( "Searching failed (" + result.getException().getMessage() + "): " + result.getTask().getURI(), result.getException() );
+					unsuccessfullySearchedURIs.add( result.getTask().getURI() );
+				}
+				if (listener != null) {
+					listener.uriSearchFinished(result);
+				}
+			}
+		};
+		getSearchQueue().addTask( new URISearchTask(uri,myListener, step) );
 	}
 	
 	/**
@@ -453,6 +564,14 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 		    this.derefQueue = new DereferencingTaskQueue(this.maxthreads,this.maxfilesize, this.enablegrddl, this.derefConnectTimeout, this.derefReadTimeout);
 		}
 		return this.derefQueue;
+	}
+
+	private URISearchTaskQueue getSearchQueue() {
+		if (searchQueue == null) {
+			searchQueue = new URISearchTaskQueue();
+			searchQueue.start();
+		}
+		return searchQueue;
 	}
 }
 

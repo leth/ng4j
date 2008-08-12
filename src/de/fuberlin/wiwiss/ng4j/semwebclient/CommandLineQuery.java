@@ -57,6 +57,8 @@ public class CommandLineQuery {
 
         private boolean enablegrddl = false;
 
+	private boolean enableURISearch = false;
+
 	public CommandLineQuery() {
 		this.client = new SemanticWebClient();
 	}
@@ -139,6 +141,16 @@ public class CommandLineQuery {
 	 */
 	public void setEnableGrddl(boolean enableGrddl) {
 		this.enablegrddl = enableGrddl;
+	}
+
+	/**
+	 * Enables URI search during query execution.
+	 * The default is false.
+	 * 
+	 * @param enableURISearch
+	 */
+	public void setEnableURISearch ( boolean enableURISearch ) {
+		this.enableURISearch = enableURISearch;
 	}
 
 	/**
@@ -381,6 +393,8 @@ public class CommandLineQuery {
 			this.client.setConfig("maxfilesize", Integer.toString(this.maxfilesize));
 		if (this.enablegrddl != false)
 		    this.client.setConfig("enablegrddl", Boolean.toString(this.enablegrddl));
+		if ( enableURISearch )
+			this.client.setConfig(SemanticWebClient.CONFIG_ENABLE_URI_SEARCH, Boolean.toString(enableURISearch));
 	}
 
 	private void executeWriteIntro() {

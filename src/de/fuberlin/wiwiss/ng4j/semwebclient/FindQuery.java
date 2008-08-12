@@ -14,23 +14,34 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.Quad;
 
+import de.fuberlin.wiwiss.ng4j.semwebclient.urisearch.URISearchListener;
+import de.fuberlin.wiwiss.ng4j.semwebclient.urisearch.URISearchResult;
+
 /**
  * The FindQuery runs a find query against the Semantic Web. If there are
- * URIs that match the triple the FindQuery requests dereferencing.
+ * URIs that match the triple the FindQuery requests dereferencing and
+ * optionally URI search.
  * 
  * @author Tobias Gauß
  * @author Olaf Hartig
  */
-public class FindQuery implements DereferencingListener {
+public class FindQuery implements DereferencingListener, URISearchListener {
 	private SemWebIterator iterator;
 	private SemanticWebClient client;
-	private List urisInProcessing = new LinkedList();
+	private boolean enableURISearch;
+	private List urisInDerefProcessing = new LinkedList();
+	private List urisInSearchProcessing = new LinkedList();
 	private TimeoutThread timeoutThread;
 	private boolean stopped;
 	private Log log = LogFactory.getLog(FindQuery.class);
 	
 	public FindQuery(SemanticWebClient client, Triple pattern) {
+		this( client, pattern, false );
+	}
+
+	public FindQuery(SemanticWebClient client, Triple pattern, boolean enableURISearch) {
 		this.client = client;
+		this.enableURISearch = enableURISearch;
 		this.iterator = new SemWebIterator(this, pattern);
 		this.timeoutThread = new TimeoutThread(this.iterator);
 		this.timeoutThread.setName("Timeout");
@@ -50,24 +61,47 @@ public class FindQuery implements DereferencingListener {
 		}else if(result.getResultCode()== DereferencingResult.STATUS_NEW_URIS_FOUND){
 			Iterator it = result.getUriList().iterator();
 			while (it.hasNext()) {
-				String uri = (String) it.next();
-				requestDereferencing(uri, result.getTask().getStep()+1);
+				requestDereferencing( (String) it.next(),
+				                      result.getTask().getStep() + 1,
+				                      false ); // no URI search
 			}
 			
 		}else if(result.getResultCode()== DereferencingResult.STATUS_REDIRECTED){
-			requestDereferencing(result.getRedirectURI(), result.getTask().getStep()+1);
+			requestDereferencing( result.getRedirectURI(),
+			                      result.getTask().getStep() + 1,
+			                      false ); // no URI search
 			
 		}
-		uriProcessingFinished(result.getURI());
+		uriDerefProcessingFinished(result.getURI());
 	}
 
-	private synchronized void uriProcessingFinished(String uri) {
-		this.urisInProcessing.remove(uri);
+	public void uriSearchFinished ( URISearchResult result ) {
+		if ( result.isSuccess() ) {
+			Iterator it = result.getMentioningDocs().iterator();
+			while ( it.hasNext() ) {
+				requestDereferencing( (String) it.next(),
+				                      result.getTask().getStep() + 1,
+				                      false ); // no URI search
+			}
+		}
+		uriSearchProcessingFinished( result.getTask().getURI() );
+	}
+
+	private synchronized void uriDerefProcessingFinished(String uri) {
+		urisInDerefProcessing.remove(uri);
 		checkIfProcessingFinished();
 	}
-	
+
+	private synchronized void uriSearchProcessingFinished(String uri) {
+		urisInSearchProcessing.remove(uri);
+		checkIfProcessingFinished();
+	}
+
 	private void checkIfProcessingFinished() {
-		if (!this.urisInProcessing.isEmpty()) {
+		if (!urisInDerefProcessing.isEmpty()) {
+			return;
+		}
+		if (!urisInSearchProcessing.isEmpty()) {
 			return;
 		}
 		this.iterator.noMoreGraphs();
@@ -95,7 +129,7 @@ public class FindQuery implements DereferencingListener {
 	
 	private void inspectNode(NamedGraphSet ngs, Node n, int step){
 		if (n.isURI()) {
-			requestDereferencing(n.getURI(), step + 1);
+			requestDereferencing(n.getURI(), step + 1, enableURISearch);
 		}
 		if (n.isURI() || n.isBlank()) {
 			checkSeeAlso(ngs, n, step);
@@ -142,13 +176,13 @@ public class FindQuery implements DereferencingListener {
 				Quad quad = (Quad) iter.next();
 				Node obj = quad.getObject();
 				if (obj.isURI()) {
-					requestDereferencing(obj.getURI(), step + 1);
+					requestDereferencing(obj.getURI(), step + 1, enableURISearch);
 				}
 			}
 		}
 	}
 
-	private void requestDereferencing(String uri, int step) {
+	private void requestDereferencing(String uri, int step, boolean enableURISearch) {
 		if (this.stopped) {
 			return;
 		}
@@ -156,13 +190,16 @@ public class FindQuery implements DereferencingListener {
 			// Don't try to reference mailto:, file: and other URI schemes
 			return;
 		}
-		if (uri.indexOf("#") >= 0) {
-			uri = uri.substring(0, uri.indexOf("#"));
-			// TODO: But we have to check for rdfs:seeAlso triples involving the original URI
-			// after retrieval has finished! This does not currently happen.
+		if ( enableURISearch ) {
+			if ( client.requestDereferencingWithSearch(uri, step, this, this) ) {
+				urisInDerefProcessing.add(uri);
+				urisInSearchProcessing.add(uri);
+			}
 		}
-		if (this.client.requestDereferencing(uri, step, this)) {
-			this.urisInProcessing.add(uri);
+		else {
+			if ( client.requestDereferencing(uri, step, this) ) {
+				urisInDerefProcessing.add(uri);
+			}
 		}
 	}
 	
