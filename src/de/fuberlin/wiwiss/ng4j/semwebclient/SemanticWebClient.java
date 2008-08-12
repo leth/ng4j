@@ -98,7 +98,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 
 	private Set markedUris = new HashSet();
 
-	private DereferencingTaskQueue uriQueue = null;
+	private DereferencingTaskQueue derefQueue = null;
 
 	private List unretrievedURIs;
 
@@ -337,8 +337,8 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 		// TODO Throw exception if find() and other methods are called after close()?
 		this.log.debug("Closing ...");
 		this.isClosed = true;
-		if (this.uriQueue != null) {
-			this.uriQueue.close();
+		if (this.derefQueue != null) {
+			this.derefQueue.close();
 		}
 		this.retrievedUris.clear();
 		this.markedUris.clear();
@@ -357,7 +357,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	 * Returns true if the Semantic Web client is not derefencing any URIs at the moment.
 	 */
 	public boolean isIdle() {
-		return getURIQueue().isIdle();
+		return getDerefQueue().isIdle();
 	}
 
 	/* (non-Javadoc)
@@ -427,7 +427,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 				}
 			}
 		};
-		getURIQueue().addTask(new DereferencingTask(myListener, uri, step));
+		getDerefQueue().addTask(new DereferencingTask(myListener, uri, step));
 		return true;
 	}
 	
@@ -448,11 +448,11 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 				.createLiteral(label)));
 	}
 
-	private DereferencingTaskQueue getURIQueue() {
-		if (this.uriQueue == null) {
-		    this.uriQueue = new DereferencingTaskQueue(this.maxthreads,this.maxfilesize, this.enablegrddl, this.derefConnectTimeout, this.derefReadTimeout);
+	private DereferencingTaskQueue getDerefQueue() {
+		if (this.derefQueue == null) {
+		    this.derefQueue = new DereferencingTaskQueue(this.maxthreads,this.maxfilesize, this.enablegrddl, this.derefConnectTimeout, this.derefReadTimeout);
 		}
-		return this.uriQueue;
+		return this.derefQueue;
 	}
 }
 
