@@ -70,6 +70,10 @@ public class DereferencingResult {
 		}
 		return this.resultException.getMessage();
 	}
+
+	public Exception getException() {
+		return resultException;
+	}
 	
 	public boolean isSuccess() {
 		return this.resultCode == DereferencingResult.STATUS_OK;
