@@ -108,7 +108,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	private DereferencingTaskQueue derefQueue = null;
 	private URISearchTaskQueue searchQueue = null;
 
-	private List unretrievedURIs;
+	private Map unretrievedURIs;
 
 	private Map redirectedURIs;
 
@@ -136,7 +136,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 		super();
 		this.createGraph("http://localhost/provenanceInformation");
 		this.retrievedUris = Collections.synchronizedList(new ArrayList());
-		this.unretrievedURIs = Collections.synchronizedList(new ArrayList());
+		this.unretrievedURIs = Collections.synchronizedMap(new HashMap());
 		this.redirectedURIs = Collections.synchronizedMap(new HashMap());
 		this.successfullySearchedURIs = Collections.synchronizedMap(new HashMap());
 		this.unsuccessfullySearchedURIs = Collections.synchronizedSet(new HashSet());
@@ -331,8 +331,16 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	/**
 	 * Returns an iterator over all URIs that couldn't be dereferenced.
 	 */
-	public List unsuccessfullyDereferencedURIs() {
-		return this.unretrievedURIs;
+	public Set unsuccessfullyDereferencedURIs() {
+		return this.unretrievedURIs.keySet();
+	}
+
+	/**
+	 * Returns the exception that caused the dereferencing of the given URI
+	 * to fail.
+	 */
+	public Exception getReasonForFailedDereferencing( String uri ) {
+		return (Exception) this.unretrievedURIs.get( uri );
 	}
 
 	/**
@@ -502,7 +510,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 					if ( result.getResultCode() == DereferencingResult.STATUS_REDIRECTED )
 						redirectedURIs.put(result.getURI(), result.getRedirectURI());
 					else
-						unretrievedURIs.add(result.getURI());
+						unretrievedURIs.put(result.getURI(), result.getException());
 				}
 				if (listener != null) {
 					listener.dereferenced(result);
