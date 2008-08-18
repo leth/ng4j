@@ -84,7 +84,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	public static final String CONFIG_MAXGRAPHS = "maxgraphs";
 	public static final String CONFIG_MAXFILESIZE = "maxfilesize";
 	public static final String CONFIG_ENABLEGRDDL = "enablegrddl";
-	public static final String CONFIG_ENABLE_URI_SEARCH = "enableurisearch"; // enables URI search during query execution
+	public static final String CONFIG_ENABLE_SINDICE = "enablesindicesearch"; // enables Sindice-based URI search during query execution
 	
 	private static final int MAXSTEPS_DEFAULT = 3;
 
@@ -97,7 +97,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	private static final int MAXFILESIZE_DEFAULT = 100000000;
 	
 	private static final boolean ENABLEGRDDL_DEFAULT = false;
-	private static final boolean ENABLE_URI_SEARCH_DEFAULT = false;
+	private static final boolean ENABLE_SINDICE_URI_SEARCH_DEFAULT = false;
 	
 	//private static final long MAXGRAPHS_DEFAULT = 30000;
 
@@ -125,7 +125,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	private int maxfilesize = MAXFILESIZE_DEFAULT;
 	//private long maxgraphs = MAXGRAPHS_DEFAULT;
         private boolean enablegrddl = ENABLEGRDDL_DEFAULT;
-	private boolean enableURISearch = ENABLE_URI_SEARCH_DEFAULT;
+	private boolean enableSindiceURISearch = ENABLE_SINDICE_URI_SEARCH_DEFAULT;
 
 	private Log log = LogFactory.getLog(SemanticWebClient.class);
 
@@ -157,7 +157,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	* @return
 	*/
 	public SemWebIterator find(TripleMatch pattern) {
-		return new FindQuery(this, pattern.asTriple(), enableURISearch).iterator();
+		return new FindQuery(this, pattern.asTriple(), enableSindiceURISearch).iterator();
 	}
 
 	/**
@@ -290,8 +290,8 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 			this.enablegrddl = "true".equalsIgnoreCase(value)
 					|| "on".equalsIgnoreCase(value) || "1".equals(value);
 		}
-		else if (option.equals(CONFIG_ENABLE_URI_SEARCH)) {
-			this.enableURISearch = "true".equalsIgnoreCase(value)
+		else if (option.equals(CONFIG_ENABLE_SINDICE)) {
+			this.enableSindiceURISearch = "true".equalsIgnoreCase(value)
 					|| "on".equalsIgnoreCase(value) || "1".equals(value);
 		}
 	}
@@ -315,8 +315,8 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 			value = String.valueOf(this.maxfilesize);
 		else if (option.toLowerCase().equals(CONFIG_ENABLEGRDDL))
 			value = String.valueOf(this.enablegrddl);
-		else if (option.toLowerCase().equals(CONFIG_ENABLE_URI_SEARCH))
-			value = String.valueOf(this.enableURISearch);
+		else if (option.toLowerCase().equals(CONFIG_ENABLE_SINDICE))
+			value = String.valueOf(this.enableSindiceURISearch);
 
 		return value;
 	}
@@ -451,7 +451,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 
 	/**
 	 * Initiates a new retrieval process that dereferences the given URI and
-	 * queries a search engine for the URI.
+	 * queries the Sindice search engine for the URI.
 	 * If the given URI is a hash-URI this method dereferences the URI without
 	 * the hash and the subsequent fragment. However, for the URI search the
 	 * whole URI is being used.
@@ -522,7 +522,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	}
 
 	/**
-	 * Initiates a search for the given URI.
+	 * Initiates a Sindice-based search for the given URI.
 	 */
 	private void startSearching(String uri, final URISearchListener listener, int step) {
 		if ( step > this.maxsteps ) {

@@ -57,7 +57,8 @@ public class CommandLineQuery {
 
         private boolean enablegrddl = false;
 
-	private boolean enableURISearch = false;
+	private boolean enableSindiceSearch = false;
+
 
 	public CommandLineQuery() {
 		this.client = new SemanticWebClient();
@@ -144,13 +145,13 @@ public class CommandLineQuery {
 	}
 
 	/**
-	 * Enables URI search during query execution.
+	 * Enables a Sindice-based URI search during query execution.
 	 * The default is false.
 	 * 
-	 * @param enableURISearch
+	 * @param enableSindiceSearch
 	 */
-	public void setEnableURISearch ( boolean enableURISearch ) {
-		this.enableURISearch = enableURISearch;
+	public void setEnableSindiceSearch ( boolean enableSindiceSearch ) {
+		this.enableSindiceSearch = enableSindiceSearch;
 	}
 
 	/**
@@ -393,8 +394,8 @@ public class CommandLineQuery {
 			this.client.setConfig("maxfilesize", Integer.toString(this.maxfilesize));
 		if (this.enablegrddl != false)
 		    this.client.setConfig("enablegrddl", Boolean.toString(this.enablegrddl));
-		if ( enableURISearch )
-			this.client.setConfig(SemanticWebClient.CONFIG_ENABLE_URI_SEARCH, Boolean.toString(enableURISearch));
+
+		client.setConfig( SemanticWebClient.CONFIG_ENABLE_SINDICE, Boolean.toString(enableSindiceSearch) );
 	}
 
 	private void executeWriteIntro() {

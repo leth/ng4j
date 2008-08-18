@@ -25,7 +25,7 @@ import de.fuberlin.wiwiss.ng4j.semwebclient.CommandLineQuery;
  *       RDF/XML, N3, N-Triple, SPARQL XML results, SPARQL JSON results, CSV, ...
  * 
  * @author Richard Cyganiak (richard@cyganiak.de)
- * @version $Id: query.java,v 1.6 2008/08/12 19:58:45 hartig Exp $
+ * @version $Id: query.java,v 1.7 2008/08/18 15:59:44 hartig Exp $
  */
 public class query {
 	private static boolean verbose = false;
@@ -47,7 +47,7 @@ public class query {
 		cmd.add(false, "redirecteduris");
 		cmd.add(false, "verbose");
 		cmd.add(false, "grddl");
-		cmd.add(false, "urisearch");
+		cmd.add(false, "sindice");
 		try {
 			cmd.process(args);
 			if (!cmd.hasArgs() || cmd.hasItems()) {
@@ -107,8 +107,8 @@ public class query {
 		if (cmd.hasArg("grddl")) {
 			client.setEnableGrddl(true);
 		}
-		if (cmd.hasArg("urisearch")) {
-			client.setEnableURISearch(true);
+		if (cmd.hasArg("sindice")) {
+			client.setEnableSindiceSearch(true);
 		}
 		if (cmd.hasArg("load")) {
 			Iterator it = cmd.getValues("load").iterator();
@@ -152,7 +152,7 @@ public class query {
 		System.out.println("    -timeout <seconds>     Set query timeout. Default: 60 seconds");
 		System.out.println("    -load <URL>            Load seed graph from the Web");
 		System.out.println("    -grddl                 Perform GRDDL transformations");
-		System.out.println("    -urisearch             Enables URI search during query execution");
+		System.out.println("    -sindice               Enables Sindice-based URI search during query execution");
 		System.out.println("    -loadtrig <file>       Load seed graphs from a TriG file before starting");
 		System.out.println("    -savetrig <file>       Save loaded graphs to a TriG file after finishing");
 		System.out.println("    -retrieveduris         Output a list of all successfully retrieved URIs");

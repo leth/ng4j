@@ -73,8 +73,9 @@ pre { speak-punctuation: code; }
 Semantic Web as a single RDF graph. The library enables applications to query this global  graph using SPARQL- and find(SPO) queries.   To answer queries,
 the library dynamically retrieves information from the Semantic Web by
 dereferencing HTTP URIs, by following <tt>rdfs:seeAlso</tt> links, and by
-querying a search engine. The library is written in Java and is based on the
-Jena framework.</p>
+querying the <a href="http://sindice.com" target="_blank">Sindice</a> search
+engine. The library is written in Java and is based on the Jena
+framework.</p>
 <h2>Contents</h2>
 <ol>
   <li><a href="#intro">Introduction</a></li>
@@ -83,7 +84,7 @@ Jena framework.</p>
   <li><a href="#command">Using the Library on the Command Line </a></li>
   <li><a href="#using">Using the Library in your Applications </a></li>
   <li><a href="#grddl">GRDDL support</a></li>
-  <li><a href="#urisearch">Search Engine Support</a></li>
+  <li><a href="#sindice">Sindice Search Engine Support</a></li>
   <li><a href="#download">Download</a></li>
   <li><a href="#support">Support and Feedback </a></li>
 </ol>
@@ -492,8 +493,8 @@ It is invoked using the <tt>semwebquery</tt> command, which is found in the <tt>
     <td>Enables GRDDL support; see <a href="#grddl">below</a>.</td>
   </tr>
   <tr>
-    <td valign="top"><tt>-urisearch</tt><br /></td>
-    <td>Enables URI search during query execution; see <a href="#urisearch">below</a>.</td>
+    <td valign="top"><tt>-sindice</tt><br /></td>
+    <td>Enables Sindice-based URI search during query execution; see <a href="#sindice">below</a>.</td>
   </tr>
   <tr>
     <td valign="top"><tt>-loadtrig &lt;Filename&gt; </tt><br /></td>
@@ -642,8 +643,8 @@ semWeb.setConfig("maxsteps","3");</pre>
     <td valign="top">false</td>
   </tr>
   <tr>
-    <td valign="top"><tt>enableurisearch</tt></td>
-    <td>Setting this to <tt>true</tt> enables URI search during query execution; see <a href="#urisearch">below</a>.</td>
+    <td valign="top"><tt>enablesindicesearch</tt></td>
+    <td>Setting this to <tt>true</tt> enables Sindice-based URI search during query execution; see <a href="#sindice">below</a>.</td>
     <td valign="top">false</td>
   </tr>
 </table>
@@ -731,16 +732,17 @@ nature of the GRDDL algorithm. Therefore the GRDDL feature is disabled
 by default. It is also recommended to use a HTTP proxy in order to speed
 up the retrieval of popular transformations or profile documents.</p>
 
-<h2 id="urisearch">7. Search Engine Support</h2>
+<h2 id="sindice">7. Sindice Search Engine Support</h2>
 
-<p>In addition to the dereferencing of URIs the library optionally queries a
-search engine to find further RDF documents that mention the URIs. These
-additional documents are stored in the local cache. Hence, enabling URI search
-during the query execution may yield more complete results. For instance, while
-the query for properties with range <tt>foaf:Person</tt> (i.e. the find(SPO)
-query <tt>"ANY @rdfs:range &lt;http://xmlns.com/foaf/0.1/Person&gt;"</tt>)
-finds one result without URI search the same query discovers six distinct
-results with URI search (tested on 2008/08/13).</p>
+<p>In addition to the dereferencing of URIs the library optionally queries the
+<a href="http://sindice.com" target="_blank">Sindice search engine</a> to find
+further RDF documents that mention the URIs. These additional documents are
+stored in the local cache. Hence, enabling Sindice-based URI search during the
+query execution may yield more complete results. For instance, while the query
+for properties with range <tt>foaf:Person</tt> (i.e. the find(SPO) query
+<tt>"ANY @rdfs:range &lt;http://xmlns.com/foaf/0.1/Person&gt;"</tt>) finds one
+result without URI search the same query discovers six distinct results with
+URI search (tested on 2008/08/13).</p>
 
 <p>However, use this option with care. Since enabling URI search may result in the
 addition of a large number of discovered graphs the consumed memory may grow
@@ -748,10 +750,6 @@ drastically. For instance, the library cached 42 graphs during the URI search
 enabled execution of the aforementioned query; for the the same query execution
 without URI search the library added only two graphs to the cache. Furthermore,
 searching for URIs increases the query execution time significantly.</p>
-
-<p>
-Currently, the library supports the
-<a href="http://sindice.com" target="_blank">Sindice search engine</a>.</p>
 
 
 <h2>8. <a name="download" id="download"></a>Download</h2>
@@ -772,7 +770,7 @@ Currently, the library supports the
 <p>Good starting points for playing around with the library is interlinked data published by the Tabulator project (<a href="http://dig.csail.mit.edu/2005/ajar/ajaw/data">http://dig.csail.mit.edu/2005/ajar/ajaw/data</a>) and the D2R demo server running at <a href="http://www3.wiwiss.fu-berlin.de:2020/">http://www3.wiwiss.fu-berlin.de:2020/</a>. If you find other interesting chunks of interlinked data on the Semantic Web that can be queried using the library, please tell us. </p>
 <p><a href="http://sourceforge.net/projects/d2rq-map/"><img src="http://sourceforge.net/sflogo.php?group_id=111002&amp;type=5" alt="SourceForge Logo" /></a></p>
 <div id="footer">
-  <small>$Id: index.html,v 1.9 2008/08/13 19:53:28 hartig Exp $</small>
+  <small>$Id: index.html,v 1.10 2008/08/18 15:59:42 hartig Exp $</small>
 </div>
 </div>
 
