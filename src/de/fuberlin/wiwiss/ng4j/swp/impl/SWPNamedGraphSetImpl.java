@@ -48,9 +48,9 @@ import de.fuberlin.wiwiss.ng4j.triql.TriQLQuery;
 
 /**
  * 
- * Last commit info    :   $Author: erw $
- * $Date: 2005/10/29 18:35:36 $
- * $Revision: 1.13 $
+ * Last commit info    :   $Author: cyganiak $
+ * $Date: 2008/08/19 12:12:45 $
+ * $Revision: 1.14 $
  * 
  * @author Chris Bizer.
  * @author Rowland Watkins.
@@ -746,7 +746,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     
     public ExtendedIterator getAllQuotedGraphs( SWPAuthority authority ) 
     {
-    	String warrantQuery = "SELECT * WHERE (?graph swp:assertedBy ?wg) (?graph swp:authority <"+authority.getID()+">) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
+    	String warrantQuery = "SELECT * WHERE (?graph swp:quotedBy ?wg) (?graph swp:authority <"+authority.getID()+">) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
         final Iterator witr = TriQLQuery.exec( this, warrantQuery );
 		Node warrant = null;
 		while ( witr.hasNext() )
@@ -754,7 +754,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 			Map results =  ( Map ) witr.next();
 			Node graphURI = ( Node ) results.get( QUERY_NODE_GRAPH );
 			if ( debug )
-				logger.debug( "Asserted Graph: " +graphURI );
+				logger.debug( "Quoted Graph: " +graphURI );
 			warrant = graphURI;
 			
 		}
