@@ -1,4 +1,4 @@
-﻿<!-- saved from url=(0022)http://internet.e-mail -->
+<!-- saved from url=(0022)http://internet.e-mail -->
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <?xml version="1.0" encoding="utf-8"?><HTML lang=en xml:lang="en" 
 xmlns="http://www.w3.org/1999/xhtml"><HEAD><TITLE>NG4J - Named Graphs API for Jena</TITLE>
@@ -185,7 +185,7 @@ P.footer {
     Richard Cyganiak, Freie Universität Berlin</p>
 </div>
 <DIV class=head> 
-  <H1 id=title>NG4J - Named Graphs API for Jena V0.5</H1>
+  <H1 id=title>NG4J - Named Graphs API for Jena</H1>
   <DIV class=nav>
 <P><STRONG>Nearby:</STRONG> <A 
 href="http://www.w3.org/2004/03/trix/" target="_blank">W3C Named Graphs Webite</A> 
@@ -208,6 +208,13 @@ href="http://www.w3.org/RDF/">RDF</A> | </P>
 
 <h3>News</h3>
 <ul>
+  <li>
+    <strong>29/08/2008: NG4J 0.7 released</strong>,
+    with support for <a href="http://sindice.com">Sindice</a> based URI search
+    in the <a href="semwebclient/">Semantic Web Client Library</a>, and various
+    bug fixes and cleaned up code. Lots of thanks to Jennifer P. Cormier and 
+    Olaf Hartig for their contributions to this release.
+  </li>
   <li><strong>19/04/2007: NG4J 0.6 released</strong>, with support for <a href="http://www.w3.org/TR/grddl/">GRDDL</a> and HTML <tt>&lt;link&gt;</tt> headers in the Semantic Web Client Library, and various bug fixes and cleaned up code. Lots of thanks to Stelios Sfakianakis and Jesper Zedlitz for their contributions to this release.</li>
   <li><strong>09/10/2006: NG4J 0.5 released.</strong> The new release adds SPARQL support, the <a href="semwebclient/">Semantic Web Client Library</a>, and support for the PostgreSQL and HSQLDB databases.</li>
   <li><strong>18/10/2005: New <A href="http://lists.sourceforge.net/lists/listinfo/ng4j-namedgraphs">ng4j-namedgraphs</A> mailing list.</strong> As the NG4J user community is growing and we are receiving an increasing number of interesting new ideas around the toolkit and Named Graphs in general, we have opened up a NG4J  mailing list which is also scoped to be a forum for general discussions around Named Graphs and related technologies.</li>
@@ -219,7 +226,7 @@ href="http://www.w3.org/RDF/">RDF</A> | </P>
 
 <h3>Features</h3>
 
-  <P>NG4J V0.5 extends Jena with:</P>
+  <P>NG4J extends Jena with:</P>
   </DIV>
 <ul>
   <li>Graph-centric and quad-centric methods for <strong>manipulating sets of Named Graphs</strong></li>
@@ -926,10 +933,12 @@ The SWP Framework relies heavily on the PKI (Public Key Infrastructure) to provi
 <h3 id="client">2.6 Semantic Web Client Library</h3>
 
 <p>NG4J's Semantic Web Client Library represents the complete Semantic Web
-as a single set of named graphs. When queried, the SemanticWebClient
+as a single set of named graphs. When queried, the <tt>SemanticWebClient</tt>
 dynamically retrieves information from the Semantic Web by dereferencing
-HTTP URIs and by following <tt>rdfs:seeAlso</tt> links. It is described
-in a separate document:
+HTTP URIs, by following <tt>rdfs:seeAlso</tt> links, and by
+querying the <a href="http://sindice.com" target="_blank">Sindice</a> search
+engine.
+It is described in a separate document:
 <a href="semwebclient/"><strong>Semantic Web Client Library</strong></a>.</p>
 
 <hr />
@@ -948,6 +957,16 @@ in a separate document:
       <TH> Version </TH>
       <TH> Comment </TH>
       <TH>Release Date</TH>
+    </TR>
+    <TR>
+      <TD align=middle>V0.7</TD>
+      <TD align=left>Support for URI based search with the <a href="http://sindice.com">Sindice search engine</a> and management of 303 redirects in the Semantic Web Client Library, bugfixes.</TD>
+      <TD align=middle valign="top">2008-08-29</TD>
+    </TR>
+    <TR>
+      <TD align=middle>V0.6</TD>
+      <TD align=left>Support for GRDDL in the Semantic Web Client Library, bugfixes.</TD>
+      <TD align=middle valign="top">2007-04-19</TD>
     </TR>
     <TR> 
       <TD align=middle>V0.5</TD>
@@ -986,12 +1005,14 @@ in a separate document:
   <li>Chris Bizer (<a href="mailto:chris@bizer.de">chris@bizer.de</a>, <a href="http://www.bizer.de" target="_blank">www.bizer.de</a>)</li>
   <li>Richard Cyganiak (<a href="mailto:richard@cyganiak.de">richard@cyganiak.de</a>, <a href="http://richard.cyganiak.de/" target="_blank">richard.cyganiak.de</a>)</li>
   <li>Tobias Gau&szlig; (<a href="mailto:tobias.gauss@web.de">tobias.gauss@web.de</a>)</li>
+  <li>Olaf Hartig (<a href="mailto:hartig[at]informatik.hu.berlin.de">hartig at informatik.hu.berlin.de</a>, <a href="http://www.informatik.hu-berlin.de/~hartig" target="_blank">www.informatik.hu-berlin.de/~hartig</a>)</li>
 </ul>
 <p>Lots of thanks to those who have contributed to the project:</p>
 <ul>
   <li>Rowland Watkins (erw01r at ecs.soton.ac.uk) for his work on the SWP API.</li>
   <li>Stelios Sfakianakis (ssfak at ics.forth.gr) for implementing the GRDDL support.</li>
   <li>Jesper Zedlitz (jesper at zedlitz.de) for his work on the unit tests and build system.</li>
+  <li>Jennifer P. Cormier (jennifer at atc-nycorp.com) for various bug fixes.</li>
 </ul>
 
 <HR title="Separator for header">
@@ -1002,7 +1023,7 @@ Please sent comments and bug reports to the NG4J-namedgraphs mailing list:</p>
 <p>The archives of the list are found at <a href="http://sourceforge.net/mailarchive/forum.php?forum=ng4j-namedgraphs">http://sourceforge.net/mailarchive/forum.php?forum=ng4j-namedgraphs </a><br />
   You can subscribe to the list at <a href="http://lists.sourceforge.net/lists/listinfo/ng4j-namedgraphs">http://lists.sourceforge.net/lists/listinfo/ng4j-namedgraphs</a>.</p>
 <HR title="Separator for header">
-<p>$Date: 2007/04/19 23:56:34 $<br />
-  $Id: index.html,v 1.21 2007/04/19 23:56:34 cyganiak Exp $</p>
+<p>$Date: 2008/08/20 11:33:42 $<br />
+  $Id: index.html,v 1.22 2008/08/20 11:33:42 hartig Exp $</p>
 </BODY>
 </HTML>
