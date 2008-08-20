@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2001, 2002, 2003, Hewlett-Packard Development Company, LP
+ * (c) Copyright 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Hewlett-Packard Development Company, LP
  * [See end of file]
  */
 
@@ -11,7 +11,7 @@ import antlr.collections.AST;
  * 
  * @author		Andy Seaborne
  * @author Richard Cyganiak (richard@cyganiak.de)
- * @version 	$Id: TriGParserEventHandler.java,v 1.2 2004/11/25 23:49:03 cyganiak Exp $
+ * @version 	$Id: TriGParserEventHandler.java,v 1.3 2008/08/20 20:16:39 hartig Exp $
  */
 public interface TriGParserEventHandler {
 	public void startDocument() ;
@@ -28,7 +28,7 @@ public interface TriGParserEventHandler {
 }
 
 /*
- *  (c) Copyright 2001, 2002, 2003 Hewlett-Packard Development Company, LP
+ *  (c) Copyright 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Hewlett-Packard Development Company, LP
  *  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

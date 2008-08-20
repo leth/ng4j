@@ -1,11 +1,11 @@
 /*
- * (c) Copyright 2001, 2002, 2003, Hewlett-Packard Development Company, LP
+ * (c) Copyright 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Hewlett-Packard Development Company, LP
  * [See end of file]
  */
 
 /**
  * @author   Andy Seaborne
- * @version  $Id: Settable.java,v 1.1 2004/12/17 01:44:30 cyganiak Exp $
+ * @version  $Id: Settable.java,v 1.2 2008/08/20 20:16:42 hartig Exp $
  */
 
 package de.fuberlin.wiwiss.ng4j.triql.legacy;
@@ -24,7 +24,7 @@ public interface Settable extends Value
 }
 
 /*
- *  (c) Copyright 2001, 2002, 2003 Hewlett-Packard Development Company, LP
+ *  (c) Copyright 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Hewlett-Packard Development Company, LP
  *  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

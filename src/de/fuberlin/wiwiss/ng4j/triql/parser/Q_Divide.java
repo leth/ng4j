@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2001, 2002, 2003, Hewlett-Packard Development Company, LP
+ * (c) Copyright 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Hewlett-Packard Development Company, LP
  * [See end of file]
  */
 
@@ -28,7 +28,7 @@ import de.fuberlin.wiwiss.ng4j.triql.legacy.WorkingVar;
 
 /** 
  * @author Automatically generated class: Operator: Divide
- * @version $Id: Q_Divide.java,v 1.2 2004/12/17 01:44:29 cyganiak Exp $
+ * @version $Id: Q_Divide.java,v 1.3 2008/08/20 20:16:53 hartig Exp $
  */
 
 public class Q_Divide extends SimpleNode implements Expr, ExprNumeric
@@ -106,7 +106,7 @@ public class Q_Divide extends SimpleNode implements Expr, ExprNumeric
 }
 
 /*
- *  (c) Copyright 2001, 2002, 2003, 2001, 2002, 2003 Hewlett-Packard Development Company, LP
+ * (c) Copyright 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Hewlett-Packard Development Company, LP
  *  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

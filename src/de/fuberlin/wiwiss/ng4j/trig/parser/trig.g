@@ -5,7 +5,7 @@
  */
 
 /* This is part of the Jena RDF Framework.
- * (c) Copyright 2002-2003, Hewlett-Packard Company, all rights reserved.
+ * (c) Copyright 2002-2008, Hewlett-Packard Company, all rights reserved.
  * [See end of file for details]
  */
 
@@ -689,7 +689,7 @@ HEX_DIGIT
 protected
 HEX4 : HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT ;
 /*
- *  (c) Copyright Hewlett-Packard Company 2002-2003
+ *  (c) Copyright Hewlett-Packard Company 2002-2008
  *  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
