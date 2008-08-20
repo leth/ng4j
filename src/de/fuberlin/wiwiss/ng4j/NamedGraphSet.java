@@ -1,4 +1,4 @@
-// $Id: NamedGraphSet.java,v 1.8 2005/06/21 09:28:44 cyganiak Exp $
+// $Id: NamedGraphSet.java,v 1.9 2008/08/20 11:04:43 hartig Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.io.InputStream;
@@ -343,7 +343,7 @@ public interface NamedGraphSet {
 }
 
 /*
- *  (c)   Copyright 2004 Christian Bizer (chris@bizer.de)
+ *  (c) Copyright 2004, 2005, 2006, 2007, 2008 Christian Bizer (chris@bizer.de)
  *   All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
