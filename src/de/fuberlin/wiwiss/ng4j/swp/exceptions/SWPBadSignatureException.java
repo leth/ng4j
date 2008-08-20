@@ -23,7 +23,7 @@ public class SWPBadSignatureException extends Exception
 }
 
 /*
- *  (c)   Copyright 2004, 2005 Rowland Watkins (rowland@grid.cx) 
+ *  (c)   Copyright 2004, 2005, 2006, 2007, 2008 Rowland Watkins (rowland@grid.cx) 
  *   	  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

@@ -48,9 +48,9 @@ import de.fuberlin.wiwiss.ng4j.triql.TriQLQuery;
 
 /**
  * 
- * Last commit info    :   $Author: cyganiak $
- * $Date: 2008/08/19 12:12:45 $
- * $Revision: 1.14 $
+ * Last commit info    :   $Author: hartig $
+ * $Date: 2008/08/20 20:16:24 $
+ * $Revision: 1.15 $
  * 
  * @author Chris Bizer.
  * @author Rowland Watkins.
@@ -965,7 +965,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 }
 
 /*
- *  (c)   Copyright 2004, 2005 Chris Bizer (chris@bizer.de) & Rowland Watkins (rowland@grid.cx) 
+ *  (c)   Copyright 2004, 2005, 2006, 2007, 2008 Chris Bizer (chris@bizer.de) & Rowland Watkins (rowland@grid.cx) 
  *   	  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
