@@ -30,7 +30,7 @@ abstract public class TaskQueueBase extends Thread {
 	protected Queue tasks = new LinkedList ();
 	private boolean closed = false;
 
-	static private Log log = LogFactory.getLog( TaskQueueBase.class );
+	private Log log = LogFactory.getLog( TaskQueueBase.class );
 
 
 	// initialization

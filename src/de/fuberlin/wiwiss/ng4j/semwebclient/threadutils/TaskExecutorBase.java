@@ -16,7 +16,7 @@ abstract public class TaskExecutorBase extends Thread {
 	private boolean stopped = false;
 	private Task currentTask;
 
-	static private Log log = LogFactory.getLog( TaskExecutorBase.class );
+	private Log log = LogFactory.getLog( TaskExecutorBase.class );
 
 
 	// initialization

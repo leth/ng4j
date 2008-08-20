@@ -23,7 +23,7 @@ import org.apache.commons.logging.LogFactory;
  */
 abstract public class HTTPbasedQueryProcessor implements QueryProcessor {
 
-	static private Log log = LogFactory.getLog( HTTPbasedQueryProcessor.class );
+	private Log log = LogFactory.getLog( HTTPbasedQueryProcessor.class );
 
 
 	// implementation of the QueryProcessor interface
