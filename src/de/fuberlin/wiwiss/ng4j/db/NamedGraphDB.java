@@ -1,4 +1,4 @@
-// $Id: NamedGraphDB.java,v 1.2 2004/12/17 01:49:50 cyganiak Exp $
+// $Id: NamedGraphDB.java,v 1.3 2008/08/20 11:04:48 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.util.Iterator;
@@ -64,7 +64,7 @@ public class NamedGraphDB extends GraphBase implements NamedGraph {
 }
 
 /*
- *  (c)   Copyright 2004 Christian Bizer (chris@bizer.de)
+ *  (c) Copyright 2004, 2005, 2006, 2007, 2008 Christian Bizer (chris@bizer.de)
  *   All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

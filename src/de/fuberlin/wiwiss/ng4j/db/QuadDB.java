@@ -1,4 +1,4 @@
-// $Id: QuadDB.java,v 1.8 2007/10/05 14:05:34 cyganiak Exp $
+// $Id: QuadDB.java,v 1.9 2008/08/20 11:04:49 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -583,7 +583,7 @@ public class QuadDB {
 }
 
 /*
- *  (c)   Copyright 2004 Christian Bizer (chris@bizer.de)
+ *  (c) Copyright 2004, 2005, 2006, 2007, 2008 Christian Bizer (chris@bizer.de)
  *   All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

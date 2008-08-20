@@ -1,4 +1,4 @@
-// $Id: TriQLQuery.java,v 1.6 2005/02/01 23:42:03 cyganiak Exp $
+// $Id: TriQLQuery.java,v 1.7 2008/08/20 11:05:00 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import java.io.File;
@@ -314,7 +314,7 @@ public class TriQLQuery {
 }
 
 /*
- *  (c)   Copyright 2004 Christian Bizer (chris@bizer.de)
+ *  (c) Copyright 2004, 2005, 2006, 2007, 2008 Christian Bizer (chris@bizer.de)
  *   All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

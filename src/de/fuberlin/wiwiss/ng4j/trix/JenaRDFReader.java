@@ -1,5 +1,5 @@
 /*
- * $Id: JenaRDFReader.java,v 1.3 2005/06/21 09:25:35 cyganiak Exp $
+ * $Id: JenaRDFReader.java,v 1.4 2008/08/20 11:05:00 hartig Exp $
  */
 package de.fuberlin.wiwiss.ng4j.trix;
 
@@ -164,7 +164,7 @@ public class JenaRDFReader implements RDFReader, ParserCallback {
 }
 
 /*
- *  (c)   Copyright 2004 Christian Bizer (chris@bizer.de)
+ *  (c) Copyright 2004, 2005, 2006, 2007, 2008 Christian Bizer (chris@bizer.de)
  *   All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

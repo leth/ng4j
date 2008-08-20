@@ -1,4 +1,4 @@
-// $Id: PrettyNamespacePrefixMaker.java,v 1.2 2004/12/17 10:23:15 cyganiak Exp $
+// $Id: PrettyNamespacePrefixMaker.java,v 1.3 2008/08/20 11:04:55 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import java.util.HashMap;
@@ -108,7 +108,7 @@ public class PrettyNamespacePrefixMaker {
 }
 
 /*
- *  (c)   Copyright 2004 Christian Bizer (chris@bizer.de)
+ *  (c) Copyright 2004, 2005, 2006, 2007, 2008 Christian Bizer (chris@bizer.de)
  *   All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

@@ -1,4 +1,4 @@
-// $Id: DirectoryWriter.java,v 1.1 2004/10/23 13:31:24 cyganiak Exp $
+// $Id: DirectoryWriter.java,v 1.2 2008/08/20 11:05:12 hartig Exp $
 
 package de.fuberlin.wiwiss.ng4j.util;
 
@@ -137,7 +137,7 @@ public class DirectoryWriter {
 }
 
 /*
- *  (c)   Copyright 2004 Christian Bizer (chris@bizer.de)
+ *  (c) Copyright 2004, 2005, 2006, 2007, 2008 Christian Bizer (chris@bizer.de)
  *   All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

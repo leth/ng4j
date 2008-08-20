@@ -584,7 +584,8 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 }
 
 /*
- * (c) Copyright 2006 Christian Bizer (chris@bizer.de) All rights reserved.
+ * (c) Copyright 2006, 2007, 2008 Christian Bizer (chris@bizer.de)
+ * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:

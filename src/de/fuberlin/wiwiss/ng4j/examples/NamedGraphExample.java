@@ -1,4 +1,4 @@
-// $Id: NamedGraphExample.java,v 1.5 2008/08/20 09:12:36 hartig Exp $
+// $Id: NamedGraphExample.java,v 1.6 2008/08/20 11:04:49 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.examples;
 
 import java.io.IOException;
@@ -127,7 +127,7 @@ public class NamedGraphExample {
 }
 
 /*
- *  (c)   Copyright 2004 Christian Bizer (chris@bizer.de)
+ *  (c) Copyright 2004, 2005, 2006, 2007, 2008 Christian Bizer (chris@bizer.de)
  *   All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

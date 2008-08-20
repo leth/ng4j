@@ -1,5 +1,5 @@
 /*
- * $Id: TriGWriter.java,v 1.5 2005/07/01 09:26:57 cyganiak Exp $
+ * $Id: TriGWriter.java,v 1.6 2008/08/20 11:04:57 hartig Exp $
  */
 package de.fuberlin.wiwiss.ng4j.trig;
 
@@ -232,7 +232,7 @@ public class TriGWriter implements NamedGraphSetWriter {
 }
 
 /*
- *  (c)   Copyright 2004 Christian Bizer (chris@bizer.de)
+ *  (c) Copyright 2004, 2005, 2006, 2007, 2008 Christian Bizer (chris@bizer.de)
  *   All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

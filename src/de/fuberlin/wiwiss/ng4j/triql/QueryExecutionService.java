@@ -1,4 +1,4 @@
-// $Id: QueryExecutionService.java,v 1.8 2005/10/11 20:56:16 cyganiak Exp $
+// $Id: QueryExecutionService.java,v 1.9 2008/08/20 11:04:58 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import java.net.MalformedURLException;
@@ -215,7 +215,7 @@ public class QueryExecutionService {
 }
 
 /*
- *  (c)   Copyright 2004 Christian Bizer (chris@bizer.de)
+ *  (c) Copyright 2004, 2005, 2006, 2007, 2008 Christian Bizer (chris@bizer.de)
  *   All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

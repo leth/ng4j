@@ -1,4 +1,4 @@
-// $Id: ResultBinding.java,v 1.3 2005/02/07 00:16:44 cyganiak Exp $
+// $Id: ResultBinding.java,v 1.4 2008/08/20 11:04:59 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import java.util.Collections;
@@ -70,7 +70,7 @@ public class ResultBinding {
 }
 
 /*
- *  (c)   Copyright 2004 Christian Bizer (chris@bizer.de)
+ *  (c) Copyright 2004, 2005, 2006, 2007, 2008 Christian Bizer (chris@bizer.de)
  *   All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

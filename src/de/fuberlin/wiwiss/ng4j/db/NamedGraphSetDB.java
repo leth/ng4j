@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetDB.java,v 1.4 2004/12/17 05:05:55 cyganiak Exp $
+// $Id: NamedGraphSetDB.java,v 1.5 2008/08/20 11:04:49 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -237,7 +237,7 @@ public class NamedGraphSetDB extends NamedGraphSetIO implements NamedGraphSet {
 }
 
 /*
- *  (c)   Copyright 2004 Christian Bizer (chris@bizer.de)
+ *  (c) Copyright 2004, 2005, 2006, 2007, 2008 Christian Bizer (chris@bizer.de)
  *   All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
