@@ -1,4 +1,4 @@
-// $Id: NamedGraphExample.java,v 1.4 2004/12/17 11:23:28 cyganiak Exp $
+// $Id: NamedGraphExample.java,v 1.5 2008/08/20 09:12:36 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.examples;
 
 import java.io.IOException;
@@ -8,8 +8,10 @@ import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.Statement;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
+import de.fuberlin.wiwiss.ng4j.NamedGraphModel;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.NamedGraphStatement;
 import de.fuberlin.wiwiss.ng4j.Quad;
@@ -71,7 +73,7 @@ public class NamedGraphExample {
 		////////////////////////////////////////////////
 
 		// Get a Jena Model view on the GraphSet
-		Model model = graphset.asJenaModel("http://example.org/defaultgraph");
+		NamedGraphModel model = graphset.asJenaModel("http://example.org/defaultgraph");
 
 		// Add provenance information about a graph
 		Resource informationAboutRichard = model.getResource("http://www.bizer.de/InformationAboutRichard");
@@ -81,8 +83,8 @@ public class NamedGraphExample {
 		// Get a Jena resource and statement
 		Resource richard = model.getResource("http://richard.cyganiak.de/foaf.rdf#RichardCyganiak");
 			
-		NamedGraphStatement mboxStmt = 
-			(NamedGraphStatement) richard.getProperty(model.getProperty("http://xmlns.com/foaf/0.1/mbox"));
+		NamedGraphStatement mboxStmt = getNamedGraphStatement(model, 
+				richard.getProperty(model.getProperty("http://xmlns.com/foaf/0.1/mbox")));
 
 		// Get an iterator over all graphs which contain the statement.
 		it = mboxStmt.listGraphNames();
@@ -101,6 +103,27 @@ public class NamedGraphExample {
 		// Serialize the model to System.out, using the TriG syntax
 		model.write(System.out, "TRIG", "http://richard.cyganiak.de/foaf.rdf");
 	}
+
+	/** Converts a generic Statement into a NamedGraphStatement.
+	 *
+	 * TODO: Consider moving this utility method to a different package, or at least
+	 *       a separate class within this package so it can be more easily used by
+	 *       other example code.
+	 *
+	 * @param stmt A Jena model statement.
+	 * @return the corresponding named graph statement. 
+	 */
+	public static NamedGraphStatement getNamedGraphStatement(NamedGraphModel model, Statement stmt) {
+		if (stmt instanceof NamedGraphStatement) {
+			return (NamedGraphStatement) stmt;
+		}
+
+		return new NamedGraphStatement( stmt.getSubject(),
+		                                stmt.getPredicate(),
+		                                stmt.getObject(),
+		                                model );
+	}
+
 }
 
 /*
