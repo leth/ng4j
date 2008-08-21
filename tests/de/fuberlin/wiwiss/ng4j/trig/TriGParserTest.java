@@ -1,4 +1,4 @@
-// $Id: TriGParserTest.java,v 1.9 2004/12/12 17:47:04 cyganiak Exp $
+// $Id: TriGParserTest.java,v 1.10 2008/08/21 16:36:06 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import java.io.Reader;
@@ -22,7 +22,7 @@ public class TriGParserTest extends TestCase {
 	private static final String EX = "http://example.com/ex#";
 	private static final String BASE = "http://example.com/base";
 	private static final String DEFAULT = "http://example.com/default";
-	private static final Node defaultNode = Node.createURI(DEFAULT);
+//	private static final Node defaultNode = Node.createURI(DEFAULT);
 	private static final Node aNode = Node.createURI(EX + "a");
 	private static final Node bNode = Node.createURI(EX + "b");
 	private static final Node cNode = Node.createURI(EX + "c");

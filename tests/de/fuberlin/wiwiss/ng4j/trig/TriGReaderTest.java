@@ -1,4 +1,4 @@
-// $Id: TriGReaderTest.java,v 1.5 2007/03/06 14:10:47 zedlitz Exp $
+// $Id: TriGReaderTest.java,v 1.6 2008/08/21 16:36:06 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import java.io.InputStream;
@@ -23,12 +23,12 @@ public class TriGReaderTest extends TestCase {
 	private static final String NS = "http://example.com/ns#";
 	private static final Node a = Node.createURI(NS + "a");
 	private static final Node b = Node.createURI(NS + "b");
-	private static final Node c = Node.createURI(NS + "c");
-	private static final Node d = Node.createURI(NS + "d");
+// 	private static final Node c = Node.createURI(NS + "c");
+// 	private static final Node d = Node.createURI(NS + "d");
 	private static final Node e = Node.createURI(BASE + "#e");
 	private static final Node graph1 = Node.createURI(NS + "graph1");
 	private static final Node graph2 = Node.createURI(NS + "graph2");
-	private static final Node defaultGraph = Node.createURI(DEFAULT);
+// 	private static final Node defaultGraph = Node.createURI(DEFAULT);
 
 	private NamedGraphSet ngs;
 

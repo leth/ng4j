@@ -1,4 +1,4 @@
-// $Id: TriGWriterTest.java,v 1.3 2005/07/01 09:27:06 cyganiak Exp $
+// $Id: TriGWriterTest.java,v 1.4 2008/08/21 16:36:06 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import java.io.StringWriter;
@@ -19,9 +19,6 @@ public class TriGWriterTest extends TestCase {
 	private final static String EX = "http://example.org/#";
 	private final static Node graph1 = Node.createURI(EX + "graph1");
 	private final static Node graph2 = Node.createURI(EX + "graph2");
-	private final static Node foo = Node.createURI(EX + "foo");
-	private final static Node bar = Node.createURI(EX + "bar");
-	private final static Node baz = Node.createURI(EX + "baz");
 	private NamedGraphSet set;
 	
 	public void setUp() {
