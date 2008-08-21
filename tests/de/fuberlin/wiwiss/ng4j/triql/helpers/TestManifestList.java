@@ -8,7 +8,7 @@ package de.fuberlin.wiwiss.ng4j.triql.helpers;
 
 import java.util.* ;
 import com.hp.hpl.jena.rdf.model.* ;
-import com.hp.hpl.jena.util.ModelLoader;
+import com.hp.hpl.jena.util.FileManager;
 import com.hp.hpl.jena.vocabulary.RDF ;
 import com.hp.hpl.jena.vocabulary.RDFS ;
 import com.hp.hpl.jena.vocabulary.TestManifest ;
@@ -25,7 +25,7 @@ import junit.framework.* ;
     then the order between the lists is not determined.  
   
     @author      Andy Seaborne
-    @version     $Id: TestManifestList.java,v 1.1 2004/12/17 01:44:30 cyganiak Exp $
+    @version     $Id: TestManifestList.java,v 1.2 2008/08/21 16:36:09 hartig Exp $
 */
 public class TestManifestList
 {
@@ -34,7 +34,7 @@ public class TestManifestList
     
     public TestManifestList(String filename)
     {
-        manifest = ModelLoader.loadModel(filename) ;
+        manifest = FileManager.get().loadModel(filename) ;
     }
     
     public TestManifestList(Model m)

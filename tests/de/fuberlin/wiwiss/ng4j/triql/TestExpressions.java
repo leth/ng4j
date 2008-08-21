@@ -170,13 +170,13 @@ public class TestExpressions extends TestSuite
         protected void runTest() throws Throwable
         {
             long initTime = 0;
-            long parseTime = 0;
-            long startTime = 0;
-            long stopTime = 0;
+//             long parseTime = 0;
+//             long startTime = 0;
+//             long stopTime = 0;
 
             ByteArrayInputStream in = new ByteArrayInputStream(s.getBytes()) ;
             TriQLParser parser = new TriQLParser(in) ;
-            startTime = System.currentTimeMillis();
+//             startTime = System.currentTimeMillis();
 
             //parser.CompilationUnit();
             //System.out.println("Input: "+s);
@@ -190,8 +190,8 @@ public class TestExpressions extends TestSuite
                 fail("Error thrown in parse: "+e) ;
             }
 
-            stopTime = System.currentTimeMillis();
-            parseTime = stopTime - startTime;
+//             stopTime = System.currentTimeMillis();
+//             parseTime = stopTime - startTime;
             //System.out.println("Time: "+parseTime+"ms") ;
 
             //parser.top().dump(" ");
@@ -231,13 +231,13 @@ public class TestExpressions extends TestSuite
         protected void runTest() throws Throwable
         {
             long initTime = 0;
-            long parseTime = 0;
-            long startTime = 0;
-            long stopTime = 0;
+//             long parseTime = 0;
+//             long startTime = 0;
+//             long stopTime = 0;
 
             ByteArrayInputStream in = new ByteArrayInputStream(s.getBytes()) ;
             TriQLParser parser = new TriQLParser(in) ;
-            startTime = System.currentTimeMillis();
+//             startTime = System.currentTimeMillis();
 
             try {
                 parser.Expression() ;
@@ -246,8 +246,8 @@ public class TestExpressions extends TestSuite
                 super.fail("Error throw in parse: "+s) ;
             }
 
-            stopTime = System.currentTimeMillis();
-            parseTime = stopTime - startTime;
+//             stopTime = System.currentTimeMillis();
+//             parseTime = stopTime - startTime;
             //System.out.println("Time: "+parseTime+"ms") ;
 
             parser.top().fixup(null) ;

@@ -25,7 +25,7 @@ import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
 /** Bunch of programmatic uses of query to complrment the script tests.
  * @author Andy Seaborne
- * @version $Id: QueryTestProgrammatic.java,v 1.2 2004/12/17 01:44:30 cyganiak Exp $
+ * @version $Id: QueryTestProgrammatic.java,v 1.3 2008/08/21 16:36:08 hartig Exp $
  */
 
 public class QueryTestProgrammatic extends TestSuite
@@ -47,7 +47,7 @@ public class QueryTestProgrammatic extends TestSuite
     	
         try {
             Model model1 = makeModel1() ;
-            Model model2 = makeModel2() ;
+//             Model model2 = makeModel2() ;
             //suite.addTest(new TestQuery("RDQL Query "));
             
             // Test templates
@@ -144,7 +144,7 @@ public class QueryTestProgrammatic extends TestSuite
                 model.add(model.createResource("http://never/r-"+i) ,
                           model.createProperty("http://never/p-"+j) ,
                           //"val-r-"+i+"-p-"+j) ;
-                          i+j) ;
+                          Integer.toString(i+j)) ;
             }
         }
 

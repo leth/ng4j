@@ -65,8 +65,8 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
 /**
  * 
  * Last commit info    :   $Author: hartig $
- * $Date: 2008/08/20 20:16:27 $
- * $Revision: 1.10 $
+ * $Date: 2008/08/21 16:36:13 $
+ * $Revision: 1.11 $
  * 
  * 
  * SWPSignatureUtilities
@@ -100,7 +100,7 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
 public class SWPSignatureUtilities 
 {
     private static final Logger logger = Logger.getLogger( SWPSignatureUtilities.class );
-    private static boolean debug = logger.isDebugEnabled();
+//    private static boolean debug = logger.isDebugEnabled();
     private static boolean info = logger.isInfoEnabled();
     private static final String ALG_ID_SIGNATURE_SHA1withRSA 	= "SHA1withRSA";
 	private static final String ALG_ID_SIGNATURE_SHA224withRSA 	= "SHA224withRSA";
@@ -111,9 +111,9 @@ public class SWPSignatureUtilities
     private static final String ALG_ID_SIGNATURE_SHA1withDSA 	= "SHA1withDSA";
     
     private static final String X509_CERTIFICATE_TYPE 			= "X.509";
-    private static final String SPKI_CERTIFICATE_TYPE			= "SPKI";
-    private static final String CERTIFICATION_CHAIN_ENCODING 	= "PkiPath";
-    private static final String CERT_CHAIN_VALIDATION_ALGORITHM = "PKIX";
+//    private static final String SPKI_CERTIFICATE_TYPE			= "SPKI";
+//    private static final String CERTIFICATION_CHAIN_ENCODING 	= "PkiPath";
+//    private static final String CERT_CHAIN_VALIDATION_ALGORITHM = "PKIX";
     
     private static SimpleUUIDGen uuidGen = new SimpleUUIDGen ();
     
@@ -756,7 +756,7 @@ public class SWPSignatureUtilities
 		
         try 
         {
-        	CertificateFactory cf = CertificateFactory.getInstance( "X.509" );
+        	CertificateFactory cf = CertificateFactory.getInstance( X509_CERTIFICATE_TYPE );
     		certificate = ( X509Certificate ) cf.generateCertificate( new ByteArrayInputStream( pem.getBytes() ) );
             BASE64Decoder decoder = new BASE64Decoder();
         	signature = decoder.decodeBuffer( signatureValue );

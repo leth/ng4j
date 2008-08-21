@@ -56,7 +56,7 @@ public class OpenPGPUtils
 	        {
 	            PGPPublicKeyRing    kRing = ( PGPPublicKeyRing )rIt.next();    
 	            Iterator                        kIt = kRing.getPublicKeys();
-	            boolean                        encryptionKeyFound = false;
+	            //boolean                        encryptionKeyFound = false;
 	            
 	            while ( key == null && kIt.hasNext() )
 	            {

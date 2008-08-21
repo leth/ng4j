@@ -49,8 +49,8 @@ import de.fuberlin.wiwiss.ng4j.triql.TriQLQuery;
 /**
  * 
  * Last commit info    :   $Author: hartig $
- * $Date: 2008/08/20 20:16:24 $
- * $Revision: 1.15 $
+ * $Date: 2008/08/21 16:36:12 $
+ * $Revision: 1.16 $
  * 
  * @author Chris Bizer.
  * @author Rowland Watkins.
@@ -65,12 +65,13 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 	 
 	 //Some constants so we don't make an strange typos in queries
 	 private static final String QUERY_NODE_GRAPH = "graph";
-	 private static final String QUERY_NODE_WARRANT = "warrant";
-	 private static final String QUERY_NODE_SIG = "signature";
-	 private static final String QUERY_NODE_CERT = "certificate";
-	 private static final String QUERY_NODE_SMETHOD = "smethod";
-	 private static final String QUERY_NODE_DIGEST = "digest";
-	 private static final String QUERY_NODE_DMETHOD = "dmethod";
+// TODO use or remove these other constants
+//	 private static final String QUERY_NODE_WARRANT = "warrant";
+//	 private static final String QUERY_NODE_SIG = "signature";
+//	 private static final String QUERY_NODE_CERT = "certificate";
+//	 private static final String QUERY_NODE_SMETHOD = "smethod";
+//	 private static final String QUERY_NODE_DIGEST = "digest";
+//	 private static final String QUERY_NODE_DMETHOD = "dmethod";
    
     public boolean swpAssert(SWPAuthority authority, ArrayList listOfAuthorityProperties) {
 		// Create a new warrant graph.
@@ -789,7 +790,6 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     	//Now, we can create a new verification graph to record
     	//results.
     	NamedGraph verificationGraph = this.createGraph( SWP_V.default_graph );
-    	String canonicalTripleList;
     	Iterator ngsIt = this.listGraphs();
     	
     	// For each NamedGraph in the NamedGraphSet, we will check for 

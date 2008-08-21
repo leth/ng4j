@@ -1,12 +1,7 @@
 package de.fuberlin.wiwiss.ng4j.semwebclient;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+//import org.apache.commons.logging.Log;
+//import org.apache.commons.logging.LogFactory;
 
 import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.TaskExecutorBase;
 import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.TaskQueueBase;
@@ -22,7 +17,7 @@ import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.TaskQueueBase;
  * @author Olaf Hartig
  */
 public class DereferencingTaskQueue extends TaskQueueBase {
-	private Log log = LogFactory.getLog(DereferencingTaskQueue.class);
+//	private Log log = LogFactory.getLog(DereferencingTaskQueue.class);
 	private int maxfilesize;
         private boolean enablegrddl;
 	private int connectTimeout = 0;

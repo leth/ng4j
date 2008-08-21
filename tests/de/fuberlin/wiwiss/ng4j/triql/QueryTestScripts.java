@@ -1,7 +1,7 @@
 /*
  * (c) Copyright 2001, 2002, 2003, Hewlett-Packard Development Company, LP
  * [See end of file]
- * $Id: QueryTestScripts.java,v 1.4 2007/03/09 12:40:50 cyganiak Exp $
+ * $Id: QueryTestScripts.java,v 1.5 2008/08/21 16:36:08 hartig Exp $
  */
 
 
@@ -42,7 +42,7 @@ import de.fuberlin.wiwiss.ng4j.triql.helpers.TestManifestList;
  *  adding new script files.  This class need not change.
  *
  * @author   Andy Seaborne
- * @version  $Id: QueryTestScripts.java,v 1.4 2007/03/09 12:40:50 cyganiak Exp $
+ * @version  $Id: QueryTestScripts.java,v 1.5 2008/08/21 16:36:08 hartig Exp $
  */
 
 
@@ -224,12 +224,10 @@ public class QueryTestScripts extends TestSuite
                         pw.println() ;
                     pw.flush() ;
                 }
-
-                long startTime = System.currentTimeMillis();
                 
                 try {
                     query = new TriQLQuery(queryString) ;
-                    query.setBaseURL(new File(this.directory).toURL());
+                    query.setBaseURL(new File(this.directory).toURI().toURL());
                 }
                 catch (QueryException qEx)
                 {
@@ -248,11 +246,11 @@ public class QueryTestScripts extends TestSuite
                 if ( model == null )
                 {
                     if ( dataFile != null && ! dataFile.equals("") ) {
-                        long startLoadTime = System.currentTimeMillis();
+//                         long startLoadTime = System.currentTimeMillis();
                         String df = convertFilename(dataFile, directory) ;
                         NamedGraphSet ngs = new NamedGraphSetImpl();
                         ngs.addGraph(new NamedGraphImpl("http://example.com/graph1",
-                        		ModelLoader.loadModel(df, null).getGraph()));
+                        FileManager.get().loadModel(df, null).getGraph()));
                         query.setSource(ngs) ;
                     }
                 } else
@@ -263,18 +261,15 @@ public class QueryTestScripts extends TestSuite
                     if ( data == null )
                         data = query.getSourceURL() ;
 
-                    long startLoadTime = System.currentTimeMillis();
+//                     long startLoadTime = System.currentTimeMillis();
                     NamedGraphSet ngs = new NamedGraphSetImpl();
                     ngs.addGraph(new NamedGraphImpl("http://example.com/graph1",
-                    		ModelLoader.loadModel(model, data, null).getGraph()));
+                    FileManager.get().readModel(model, data, null).getGraph()));
                     query.setSource(ngs) ;
                 }
 
                 // Do the query!
                 List results = query.getResultsAsList();
-
-                long finishTime = System.currentTimeMillis();
-                long totalTime = finishTime-startTime ;
 
                 boolean testingResults = ( resultsFile != null && !resultsFile.equals("") ) ;
 
@@ -291,7 +286,7 @@ public class QueryTestScripts extends TestSuite
                 if ( testingResults )
                 {
                 		List expectedResults = ResultDumpReader.readDump(
-                				ModelLoader.loadModel(
+                				FileManager.get().loadModel(
                 						convertFilename(resultsFile,directory))) ;
                     if ( ! equivalent(query, results, expectedResults) )
                     {

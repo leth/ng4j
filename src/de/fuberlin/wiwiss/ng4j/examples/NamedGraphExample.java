@@ -1,4 +1,4 @@
-// $Id: NamedGraphExample.java,v 1.6 2008/08/20 11:04:49 hartig Exp $
+// $Id: NamedGraphExample.java,v 1.7 2008/08/21 16:36:10 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.examples;
 
 import java.io.IOException;
@@ -6,7 +6,6 @@ import java.util.Iterator;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 

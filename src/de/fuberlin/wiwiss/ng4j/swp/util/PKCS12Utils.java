@@ -16,7 +16,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Enumeration;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPCertificateException;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPPKCS12Exception;
@@ -25,7 +25,7 @@ import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPSignatureException;
 
 public class PKCS12Utils {
 	private static final String KEY_STORE_TYPE_PKCS12 = "PKCS12";
-	static final Category log = Category.getInstance( PKCS12Utils.class );
+	static final Logger log = Logger.getLogger( PKCS12Utils.class );
 	/**
 	 * Loads and decrypt the PCKS12 file specified in the configuration properties.
 	 * 
@@ -50,7 +50,6 @@ public class PKCS12Utils {
 		}
 		catch ( NoSuchAlgorithmException nsaex )
 		{
-		    String message = "No such algorithm: "+nsaex.getMessage();
 			throw new SWPPKCS12Exception( "No such algorithm: "+nsaex.getMessage() );
 		}
 		catch ( CertificateException cex )

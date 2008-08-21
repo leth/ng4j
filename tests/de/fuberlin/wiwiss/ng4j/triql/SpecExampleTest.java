@@ -1,4 +1,4 @@
-// $Id: SpecExampleTest.java,v 1.3 2007/03/06 18:20:01 zedlitz Exp $
+// $Id: SpecExampleTest.java,v 1.4 2008/08/21 16:36:08 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
@@ -33,10 +33,10 @@ public class SpecExampleTest extends TriQLTest {
 		addQuad(g2, monica, ex("hasSkill"), ex("Programming"));
 		addQuad(g3, g1, swp("assertedBy"), w1);
 		addQuad(g3, w1, swp("authority"), chris);
-		addQuad(g3, w1, DC_11.date.getNode(), Node.createLiteral("2003-10-02", null, XSDDatatype.XSDdate));
+		addQuad(g3, w1, DC_11.date.asNode(), Node.createLiteral("2003-10-02", null, XSDDatatype.XSDdate));
 		addQuad(g3, g2, swp("quotedBy"), w2);
 		addQuad(g3, g3, swp("assertedBy"), w2);
-		addQuad(g3, w2, DC_11.date.getNode(), Node.createLiteral("2003-09-03", null, XSDDatatype.XSDdate));
+		addQuad(g3, w2, DC_11.date.asNode(), Node.createLiteral("2003-09-03", null, XSDDatatype.XSDdate));
 		addQuad(g3, w2, swp("authority"), chris);
 		addQuad(g3, chris, RDF.Nodes.type, ex("Person"));
 		addQuad(g3, chris, ex("email"), Node.createURI("mailto:chris@bizer.de"));		

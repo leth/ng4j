@@ -1,10 +1,8 @@
 package de.fuberlin.wiwiss.ng4j.semwebclient;
 
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
  
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -21,7 +19,6 @@ import java.util.Iterator;
 import java.net.URI;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;

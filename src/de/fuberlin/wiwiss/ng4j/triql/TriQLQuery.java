@@ -1,4 +1,4 @@
-// $Id: TriQLQuery.java,v 1.7 2008/08/20 11:05:00 hartig Exp $
+// $Id: TriQLQuery.java,v 1.8 2008/08/21 16:36:13 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import java.io.File;
@@ -306,7 +306,7 @@ public class TriQLQuery {
 	
 	private URL getDefaultBaseURL() {
 		try {
-			return new File(".").toURL();
+			return new File(".").toURI().toURL();
 		} catch (MalformedURLException ex) {
 			return null;
 		}

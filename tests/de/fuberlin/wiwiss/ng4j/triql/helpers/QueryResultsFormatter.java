@@ -37,7 +37,7 @@ import de.fuberlin.wiwiss.ng4j.triql.TriQLQuery;
  *  Don't keep QueryResultsFormatter's around unnecessarily!
  * 
  * @author   Andy Seaborne
- * @version  $Id: QueryResultsFormatter.java,v 1.1 2004/12/17 01:44:30 cyganiak Exp $
+ * @version  $Id: QueryResultsFormatter.java,v 1.2 2008/08/21 16:36:08 hartig Exp $
  */
 
 public class QueryResultsFormatter
@@ -150,7 +150,7 @@ public class QueryResultsFormatter
                 thisSolution.addProperty(ResultSet.binding, thisBinding) ;
             }
         }
-        results.addProperty(ResultSet.size, count) ;
+        results.addProperty(ResultSet.size, Integer.toString(count)) ;
         return results ;
     }
 

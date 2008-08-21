@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 
 import com.hp.hpl.jena.graph.Node;
@@ -34,14 +34,13 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 public class RDFC14NImpl  
 {
-		static final Category log = Category.getInstance( RDFC14NImpl.class );
+		static final Logger log = Logger.getLogger( RDFC14NImpl.class );
         public static final Node TILDE = Node.create( "~" );
         public static final Node C14N_TRUE = Node.create( "http://www-uk.hpl.hp.com/people/jjc/rdf/c14n#true" );
         public static final String C14N = "http://www-uk.hpl.hp.com/people/jjc/rdf/c14n#";
         public static final Node X = Node.create( "x" );        
         
         private Model model = ModelFactory.createDefaultModel();
-        private String base;
         private ArrayList canonical_string;
         
         /**
@@ -308,7 +307,7 @@ public class RDFC14NImpl
         				ht.put( t.objectID, X );// if  not assigned create a new triple                                                                        
         				Statement st = model.createStatement( model.createResource( t.objectID.getBlankNodeId() ),
         													model.createProperty( C14N, "true" ),
-															model.createLiteral( symCount ) );                                        
+															model.createLiteral( Integer.toString(symCount) ) );                                        
         				statementList.add( st );
         				t.objectID = Node.NULL;
         				symCount++;                                        
@@ -321,7 +320,7 @@ public class RDFC14NImpl
         				ht.put( t.subjectID, X );                                        
         				Statement st = model.createStatement( model.createResource( t.subjectID.getBlankNodeId() ),
         													model.createProperty( C14N, "true" ),
-															model.createLiteral(symCount));                                        
+															model.createLiteral( Integer.toString(symCount) ));                                        
         				statementList.add( st );                                        
         				t.subjectID = Node.NULL;
         				symCount++;                                        
