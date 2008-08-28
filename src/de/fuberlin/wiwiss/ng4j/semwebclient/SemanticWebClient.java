@@ -447,6 +447,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 		retrievedUris.clear();
 		unretrievedURIs.clear();
 		redirectedURIs.clear();
+		createGraph("http://localhost/provenanceInformation");
 	}
 
 	/**
