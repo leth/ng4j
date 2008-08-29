@@ -6,8 +6,11 @@ package de.fuberlin.wiwiss.ng4j.swp.impl;
 import java.io.IOException;
 import java.security.NoSuchProviderException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.axis.components.uuid.SimpleUUIDGen;
 import org.apache.log4j.Logger;
@@ -19,12 +22,15 @@ import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.mem.GraphMem;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.util.iterator.NiceIterator;
+import com.hp.hpl.jena.util.iterator.WrappedIterator;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
-
+import de.fuberlin.wiwiss.ng4j.swp.SWPAuthority;
 import de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraph;
+import de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraphSet;
+import de.fuberlin.wiwiss.ng4j.swp.SWPWarrant;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPAlgorithmNotSupportedException;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPBadDigestException;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPBadSignatureException;
@@ -33,10 +39,6 @@ import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPNoSuchAlgorithmException;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPNoSuchDigestMethodException;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPSignatureException;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPValidationException;
-import de.fuberlin.wiwiss.ng4j.swp.impl.SWPNamedGraphImpl;
-import de.fuberlin.wiwiss.ng4j.swp.SWPAuthority;
-import de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraphSet;
-import de.fuberlin.wiwiss.ng4j.swp.SWPWarrant;
 import de.fuberlin.wiwiss.ng4j.swp.util.FileUtils;
 import de.fuberlin.wiwiss.ng4j.swp.util.OpenPGPUtils;
 import de.fuberlin.wiwiss.ng4j.swp.util.PKCS12Utils;
@@ -48,9 +50,9 @@ import de.fuberlin.wiwiss.ng4j.triql.TriQLQuery;
 
 /**
  * 
- * Last commit info    :   $Author: hartig $
- * $Date: 2008/08/21 16:36:12 $
- * $Revision: 1.16 $
+ * Last commit info    :   $Author: cyganiak $
+ * $Date: 2008/08/29 09:46:36 $
+ * $Revision: 1.17 $
  * 
  * @author Chris Bizer.
  * @author Rowland Watkins.
@@ -65,8 +67,8 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 	 
 	 //Some constants so we don't make an strange typos in queries
 	 private static final String QUERY_NODE_GRAPH = "graph";
-// TODO use or remove these other constants
-//	 private static final String QUERY_NODE_WARRANT = "warrant";
+	 private static final String QUERY_NODE_WARRANT = "warrant";
+	// TODO use or remove these other constants
 //	 private static final String QUERY_NODE_SIG = "signature";
 //	 private static final String QUERY_NODE_CERT = "certificate";
 //	 private static final String QUERY_NODE_SMETHOD = "smethod";
@@ -684,7 +686,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     
     public ExtendedIterator getAllWarrants( SWPAuthority authority ) 
     {
-		String warrantQuery = "SELECT * WHERE ?warrant (?warrant swp:assertedBy ?warrant) (?graph swp:authority <"+authority.getID()+">) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
+		String warrantQuery = "SELECT * WHERE ?warrant (?warrant swp:assertedBy ?warrant) (?warrant swp:authority <"+authority.getID()+">) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
         final Iterator witr = TriQLQuery.exec( this, warrantQuery );
 		
         return new NiceIterator()
@@ -698,7 +700,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 			public Object next() 
 			{
 				Map results =  ( Map ) witr.next();
-				Node graphURI = ( Node ) results.get( QUERY_NODE_GRAPH );
+				Node graphURI = ( Node ) results.get( QUERY_NODE_WARRANT );
 				SWPWarrant warrant = new SWPWarrantImpl( SWPNamedGraphSetImpl.this.getGraph( graphURI ) ); 
 				return warrant;
 			}
@@ -708,77 +710,43 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     /* (non-Javadoc)
      * @see de.fuberlin.wiwiss.ng4j.swp.signature.SWPNamedGraphSet#getAllAssertedGraphs(de.fuberlin.wiwiss.ng4j.swp.signature.SWPAuthority)
      */
-    
     public ExtendedIterator getAllAssertedGraphs( SWPAuthority authority ) 
 	{
-		String warrantQuery = "SELECT * WHERE (?graph swp:assertedBy ?wg) (?graph swp:authority <"+authority.getID()+">) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
-        final Iterator witr = TriQLQuery.exec( this, warrantQuery );
-		Node warrant = null;
-		while ( witr.hasNext() )
-		{
-			Map results =  ( Map ) witr.next();
-			Node graphURI = ( Node ) results.get( QUERY_NODE_GRAPH );
-			warrant = graphURI;
-			
-		}
-		final Iterator qit = this.findQuads( Node.ANY, Node.ANY, SWP.assertedBy, warrant );
-		
-        return new NiceIterator()
-        {
-			
-			public boolean hasNext() 
-			{
-				return qit.hasNext();
-			}
-
-			public Object next() 
-			{
-				Quad quad = ( Quad ) qit.next();
-				NamedGraph graph = SWPNamedGraphSetImpl.this.getGraph( quad.getSubject() );
-
-				return graph;
-			}
-        };
+    	return getGraphsByQuery(
+    			"SELECT * WHERE (?graph swp:assertedBy ?wg) (?wg swp:authority <"+authority.getID()+">) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>", 
+    			"graph");
     }
 
     /* (non-Javadoc)
      * @see de.fuberlin.wiwiss.ng4j.swp.signature.SWPNamedGraphSet#getAllquotedGraphs(de.fuberlin.wiwiss.ng4j.swp.signature.SWPAuthority)
      */
-    
     public ExtendedIterator getAllQuotedGraphs( SWPAuthority authority ) 
-    {
-    	String warrantQuery = "SELECT * WHERE (?graph swp:quotedBy ?wg) (?graph swp:authority <"+authority.getID()+">) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
-        final Iterator witr = TriQLQuery.exec( this, warrantQuery );
-		Node warrant = null;
-		while ( witr.hasNext() )
-		{
-			Map results =  ( Map ) witr.next();
-			Node graphURI = ( Node ) results.get( QUERY_NODE_GRAPH );
-			if ( debug )
-				logger.debug( "Quoted Graph: " +graphURI );
-			warrant = graphURI;
-			
-		}
-		final Iterator qit = this.findQuads( Node.ANY, Node.ANY, SWP.quotedBy, warrant );
-		
-        return new NiceIterator()
-        {
-			
-			public boolean hasNext() 
-			{
-				return qit.hasNext();
-			}
-
-			public Object next() 
-			{
-				Quad quad = ( Quad ) qit.next();
-				NamedGraph graph = SWPNamedGraphSetImpl.this.getGraph( quad.getSubject() );
-
-				return graph;
-			}
-        };
+	{
+    	return getGraphsByQuery(
+    			"SELECT * WHERE (?graph swp:quotedBy ?wg) (?wg swp:authority <"+authority.getID()+">) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>", 
+    			"graph");
     }
 
+    private ExtendedIterator getGraphsByQuery(String query, String resultVariable) {
+    	Collection graphs = new ArrayList();
+    	Set names = new HashSet();
+        final Iterator witr = TriQLQuery.exec( this, query );
+        while ( witr.hasNext() ) {
+			Map results =  ( Map ) witr.next();
+			Node node = ( Node ) results.get(resultVariable);
+
+			// Make sure there are no duplicates
+			if (names.contains(node)) continue;
+			names.add(node);
+
+			NamedGraph graph = getGraph(node);
+			if (graph != null) {
+				graphs.add(graph);
+			}
+        }
+        return WrappedIterator.create(graphs.iterator());
+    }
+        
     public boolean verifyAllSignatures() 
     {
     	//First, let's remove any previous verification

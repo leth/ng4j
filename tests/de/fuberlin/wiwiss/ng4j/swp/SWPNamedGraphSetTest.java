@@ -1,4 +1,4 @@
-//$Id: SWPNamedGraphSetTest.java,v 1.10 2007/03/07 09:44:44 zedlitz Exp $
+//$Id: SWPNamedGraphSetTest.java,v 1.11 2008/08/29 09:46:35 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.swp;
 
 import java.io.StringReader;
@@ -41,9 +41,10 @@ public class SWPNamedGraphSetTest extends TestCase
 	protected final static Node baz = Node.createURI("http://example.org/#baz");
 	protected final static String keystore = "tests/test.p12";
 	protected final static String password = "dpuser";
-	
+
 	protected SWPNamedGraphSet set;
 	protected ArrayList list = new ArrayList();
+	protected SWPAuthority authority;
 	
 	/*
 	 * @see TestCase#setUp()
@@ -61,6 +62,7 @@ public class SWPNamedGraphSetTest extends TestCase
 		g4.add( new Triple( bar, foo, baz ) );
 		list.add( g3.getGraphName() );
 		list.add( g4.getGraphName() );
+		authority = getAuthority( keystore, password );
 	}
 
 	/*
@@ -71,6 +73,38 @@ public class SWPNamedGraphSetTest extends TestCase
 		this.set.close();
 	}
 
+	public void testNoAssertedGraphs() {
+		assertFalse(set.getAllAssertedGraphs(authority).hasNext());
+	}
+	
+	public void testNoQuotedGraphs() {
+		assertFalse(set.getAllQuotedGraphs(authority).hasNext());
+	}
+	
+	public void testGetAllAssertedGraphsReturnsNamedGraph() {
+		((SWPNamedGraph) set.getGraph(uri1)).swpAssert(authority);
+		Iterator it = set.getAllAssertedGraphs(authority);
+		assertTrue(it.hasNext());
+		assertSame(set.getGraph(uri1), it.next());
+	}
+	
+	public void testAssertedGraphIsNotQuoted() {
+		((SWPNamedGraph) set.getGraph(uri1)).swpAssert(authority);
+		assertFalse(set.getAllQuotedGraphs(authority).hasNext());
+	}
+	
+	public void testGetAllQuotedGraphsReturnsNamedGraph() {
+		((SWPNamedGraph) set.getGraph(uri1)).swpQuote(authority);
+		Iterator it = set.getAllQuotedGraphs(authority);
+		assertTrue(it.hasNext());
+		assertSame(set.getGraph(uri1), it.next());
+	}
+	
+	public void testQuotedGraphIsNotAsserted() {
+		((SWPNamedGraph) set.getGraph(uri1)).swpQuote(authority);
+		assertFalse(set.getAllAssertedGraphs(authority).hasNext());
+	}
+	
 	/*
 	 * Class under test for boolean swpAssert(SWPAuthority, ArrayList)
 	 */
@@ -78,15 +112,15 @@ public class SWPNamedGraphSetTest extends TestCase
 	throws SWPSignatureException, 
 	SWPCertificateException 
 	{
-		set.swpAssert( getAuthority( keystore, password ), null );  
+		set.swpAssert( authority, null );  
 		
-		Iterator it = set.getAllAssertedGraphs( getAuthority( keystore, password ) );
+		Iterator it = set.getAllAssertedGraphs( authority );
 		assertTrue( it.hasNext() );
 		
-		Iterator it1 = set.getAllQuotedGraphs( getAuthority( keystore, password ) );
+		Iterator it1 = set.getAllQuotedGraphs( authority );
 		assertFalse( it1.hasNext() );
 		
-		Iterator it2 = set.getAllWarrants( getAuthority( keystore, password ) );
+		Iterator it2 = set.getAllWarrants( authority );
 		assertTrue( it2.hasNext() );
 		while ( it2.hasNext() )
 		{
@@ -116,15 +150,15 @@ public class SWPNamedGraphSetTest extends TestCase
 	throws SWPSignatureException, 
 	SWPCertificateException 
 	{
-		set.swpAssert( getAuthority( keystore, password ) ); 
+		set.swpAssert( authority ); 
 		
-		Iterator it = set.getAllAssertedGraphs( getAuthority( keystore, password ) );
+		Iterator it = set.getAllAssertedGraphs( authority );
 		assertTrue( it.hasNext() );
 		
-		Iterator it1 = set.getAllQuotedGraphs( getAuthority( keystore, password ) );
+		Iterator it1 = set.getAllQuotedGraphs( authority );
 		assertFalse( it1.hasNext() );
 		
-		Iterator it2 = set.getAllWarrants( getAuthority( keystore, password ) );
+		Iterator it2 = set.getAllWarrants( authority );
 		assertTrue( it2.hasNext() );
 		while ( it2.hasNext() )
 		{
@@ -154,16 +188,16 @@ public class SWPNamedGraphSetTest extends TestCase
 	throws SWPSignatureException, 
 	SWPCertificateException 
 	{
-		set.swpQuote( getAuthority( keystore, password ), null ); 
+		set.swpQuote( authority, null ); 
 		
-		Iterator it = set.getAllQuotedGraphs( getAuthority( keystore, password ) );
+		Iterator it = set.getAllQuotedGraphs( authority );
 		assertTrue( it.hasNext() );
 		
 		//Don't forget the warrant graph asserts itself.
-		Iterator it1 = set.getAllAssertedGraphs( getAuthority( keystore, password ) );
+		Iterator it1 = set.getAllAssertedGraphs( authority );
 		assertTrue( it1.hasNext() );
 		
-		Iterator it2 = set.getAllWarrants( getAuthority( keystore, password ) );
+		Iterator it2 = set.getAllWarrants( authority );
 		assertTrue( it2.hasNext() );
 		while ( it2.hasNext() )
 		{
@@ -193,16 +227,16 @@ public class SWPNamedGraphSetTest extends TestCase
 	throws SWPSignatureException, 
 	SWPCertificateException 
 	{
-		set.swpQuote( getAuthority( keystore, password ) ); 
+		set.swpQuote( authority ); 
 		
-		Iterator it = set.getAllQuotedGraphs( getAuthority( keystore, password ) );
+		Iterator it = set.getAllQuotedGraphs( authority );
 		assertTrue( it.hasNext() );
 		
 		// Don't forget the warrant graph asserts itself.
-		Iterator it1 = set.getAllAssertedGraphs( getAuthority( keystore, password ) );
+		Iterator it1 = set.getAllAssertedGraphs( authority );
 		assertTrue( it1.hasNext() );
 		
-		Iterator it2 = set.getAllWarrants( getAuthority( keystore, password ) );
+		Iterator it2 = set.getAllWarrants( authority );
 		assertTrue( it2.hasNext() );
 		while ( it2.hasNext() )
 		{
@@ -233,7 +267,7 @@ public class SWPNamedGraphSetTest extends TestCase
 	SWPSignatureException, 
 	SWPCertificateException 
 	{
-		assertTrue( set.assertWithSignature( getAuthority( keystore, password ), 
+		assertTrue( set.assertWithSignature( authority, 
 				SWP.JjcRdfC14N_rsa_sha384, 
 				SWP.JjcRdfC14N_sha384, 
 				null, 
@@ -242,7 +276,7 @@ public class SWPNamedGraphSetTest extends TestCase
 		
 		assertTrue( set.verifyAllSignatures() );
 		
-		assertFalse( set.assertWithSignature( getAuthority( keystore, password ), 
+		assertFalse( set.assertWithSignature( authority, 
 				SWP.JjcRdfC14N_rsa_sha384, 
 				SWP.JjcRdfC14N_sha384, 
 				null, 
@@ -250,13 +284,13 @@ public class SWPNamedGraphSetTest extends TestCase
 				password ) );
 		
 		
-		Iterator it = set.getAllAssertedGraphs( getAuthority( keystore, password ) );
+		Iterator it = set.getAllAssertedGraphs( authority );
 		assertTrue( it.hasNext() );
 		
-		Iterator it1 = set.getAllQuotedGraphs( getAuthority( keystore, password ) );
+		Iterator it1 = set.getAllQuotedGraphs( authority );
 		assertFalse( it1.hasNext() );
 		
-		Iterator wit = set.getAllWarrants( getAuthority( keystore, password ) );
+		Iterator wit = set.getAllWarrants( authority );
 		assertTrue( wit.hasNext() );
 		while ( wit.hasNext() )
 		{
@@ -285,7 +319,7 @@ public class SWPNamedGraphSetTest extends TestCase
 	throws SWPBadSignatureException, 
 	SWPBadDigestException 
 	{
-		assertTrue( set.quoteWithSignature( getAuthority( keystore, password ), 
+		assertTrue( set.quoteWithSignature( authority, 
 				SWP.JjcRdfC14N_rsa_sha512, 
 				SWP.JjcRdfC14N_sha512, 
 				null, 
@@ -294,11 +328,11 @@ public class SWPNamedGraphSetTest extends TestCase
 		
 		assertTrue( set.verifyAllSignatures() );
 		
-		Iterator it = set.getAllQuotedGraphs( getAuthority( keystore, password ) );
+		Iterator it = set.getAllQuotedGraphs( authority );
 		assertTrue( it.hasNext() );
 		
 		//Never forget the warrant graph asserts itself!
-		Iterator it1 = set.getAllAssertedGraphs( getAuthority( keystore, password ) );
+		Iterator it1 = set.getAllAssertedGraphs( authority );
 		assertTrue( it1.hasNext() );
 	}
 
@@ -308,12 +342,12 @@ public class SWPNamedGraphSetTest extends TestCase
 	 */
 	public void testAssertGraphs() 
 	{
-		assertTrue( set.assertGraphs( list, getAuthority( keystore, password ), null ) );
+		assertTrue( set.assertGraphs( list, authority, null ) );
 	}
 
 	public void testQuoteGraphs() 
 	{
-		assertTrue( set.quoteGraphs( list, getAuthority( keystore, password ), null ) );
+		assertTrue( set.quoteGraphs( list, authority, null ) );
 	}
 
 	
@@ -330,20 +364,20 @@ public class SWPNamedGraphSetTest extends TestCase
 		list.add(uri4);
 		
 		set.assertGraphsWithSignature( list, 
-									getAuthority( keystore, password ), 
+									authority, 
 									SWP.JjcRdfC14N_rsa_sha256, 
 									SWP.JjcRdfC14N_sha384, 
 									null, 
 									keystore, 
 									password );
 		
-		Iterator it = set.getAllAssertedGraphs( getAuthority( keystore, password ) );
+		Iterator it = set.getAllAssertedGraphs( authority );
 		assertTrue( it.hasNext() );
 		
-		Iterator it1 = set.getAllQuotedGraphs( getAuthority( keystore, password ) );
+		Iterator it1 = set.getAllQuotedGraphs( authority );
 		assertFalse( it1.hasNext() );
 		
-		Iterator wit = set.getAllWarrants( getAuthority( keystore, password ) );
+		Iterator wit = set.getAllWarrants( authority );
 		assertTrue( wit.hasNext() );
 		while ( wit.hasNext() )
 		{
