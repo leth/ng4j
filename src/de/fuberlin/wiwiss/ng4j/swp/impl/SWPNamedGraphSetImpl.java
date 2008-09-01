@@ -51,8 +51,8 @@ import de.fuberlin.wiwiss.ng4j.triql.TriQLQuery;
 /**
  * 
  * Last commit info    :   $Author: cyganiak $
- * $Date: 2008/08/29 09:46:36 $
- * $Revision: 1.17 $
+ * $Date: 2008/09/01 22:30:57 $
+ * $Revision: 1.18 $
  * 
  * @author Chris Bizer.
  * @author Rowland Watkins.
@@ -736,12 +736,11 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 			Node node = ( Node ) results.get(resultVariable);
 
 			// Make sure there are no duplicates
-			if (names.contains(node)) continue;
-			names.add(node);
-
-			NamedGraph graph = getGraph(node);
-			if (graph != null) {
-				graphs.add(graph);
+			if (names.add(node)) {
+				NamedGraph graph = getGraph(node);
+				if (graph != null) {
+					graphs.add(graph);
+				}
 			}
         }
         return WrappedIterator.create(graphs.iterator());
