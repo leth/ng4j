@@ -1,4 +1,4 @@
-// $Id: DBConnectionHelper.java,v 1.3 2007/03/06 14:09:05 zedlitz Exp $
+// $Id: DBConnectionHelper.java,v 1.4 2008/09/03 16:37:28 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -12,11 +12,21 @@ import java.sql.SQLException;
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class DBConnectionHelper {
+	// For HSQLDB
 	private static String URL = "jdbc:hsqldb:mem:ng4j";
+	private static String DRIVER = "org.hsqldb.jdbcDriver";
+
+	// For Postgres
+	//private static String URL = "jdbc:postgresql:postgres:ng4j";
+	//private static String DRIVER = "org.postgresql.Driver";
+
+	// For MySQL
+	//private static String URL = "jdbc:mysql://localhost/ng4j";
+	//private static String DRIVER = "com.mysql.jdbc.Driver";
+
 	private static String USER = "sa";
 	private static String PW = "";
-	private static String DRIVER = "org.hsqldb.jdbcDriver";
-	
+
 	static NamedGraphSetDB createNamedGraphSetDB() {
 		return new NamedGraphSetDB(getConnection());
 	}

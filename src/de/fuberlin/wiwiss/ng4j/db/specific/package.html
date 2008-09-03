@@ -1,0 +1,20 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+  <head>
+    <title> </title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta http-equiv="content-language" content="en-us" />
+  </head>
+  <body>
+    <p>Support for different database engines.</p>
+    <p>The abstract class DbCompatibility defines methods which need to
+      be implemented for each database type and provides default implementations
+      for some of them, which should be overridden as necessary.  
+      Each of these methods are called from the QuadDB class in the 
+      parent package, de.fuberlin.wiwiss.ng4j.db.<p>
+    <p>To provide support for an additional database type it is necessary
+      to 1. create a new subclass of DbCompatibility, and 2. edit the QuadDB
+      class to check for the new database product name and set the database
+      type accordingly.<p> 
+  </body>
+</html>

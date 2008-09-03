@@ -1,4 +1,4 @@
-// $Id: QuadDB.java,v 1.9 2008/08/20 11:04:49 hartig Exp $
+// $Id: QuadDB.java,v 1.10 2008/09/03 16:37:29 cyganiak Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -18,6 +18,11 @@ import com.hp.hpl.jena.shared.JenaException;
 import com.hp.hpl.jena.util.iterator.NullIterator;
 
 import de.fuberlin.wiwiss.ng4j.Quad;
+import de.fuberlin.wiwiss.ng4j.db.specific.DbCompatibility;
+import de.fuberlin.wiwiss.ng4j.db.specific.HSQLCompatibility;
+import de.fuberlin.wiwiss.ng4j.db.specific.MySQLCompatibility;
+import de.fuberlin.wiwiss.ng4j.db.specific.OracleCompatibility;
+import de.fuberlin.wiwiss.ng4j.db.specific.PostgreSQLCompatibility;
 
 /**
  * <p>Database persistence for a set of Quads and a set of graph names, with a
@@ -31,8 +36,6 @@ import de.fuberlin.wiwiss.ng4j.Quad;
  * table. A table prefix can be supplied in order to support multiple QuadDBs
  * in a single database.</p>
  * 
- * TODO: Factor out DB-specific stuff, e.g. table creation.
- * 
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class QuadDB {
@@ -40,26 +43,28 @@ public class QuadDB {
 	private Pattern escapePattern = null;
 	private String escapeReplacement = null;
 	
-	private String tablePrefix;
-	private Connection connection;
-	private int type;
-
-	public static final int HSQL_TYPE = 0;
-	public static final int MYSQL_TYPE = 1;
-	public static final int POSTGRESQL_TYPE = 2;
+	private final String tablePrefix;
+	
+	private final String graphNamesTableName;
+	private final String quadsTableName;
+	
+	private DbCompatibility dbCompatibility;
 
 	public QuadDB(Connection connection, String tablePrefix) {
-		this.connection = connection;
-		this.setDBtype();
+		this.setDBtype(connection);
 		this.setEscapePattern();
 		this.tablePrefix = escape(tablePrefix);
+		this.graphNamesTableName = this.tablePrefix + "_graphs";
+		this.quadsTableName = this.tablePrefix + "_quads";
+		
+		dbCompatibility.initialize(tablePrefix, graphNamesTableName, quadsTableName);
 	}
 	
 	public void insert(Node g, Node s, Node p, Node o) {
 		if (find(g, s, p, o).hasNext()) {
 			return;
 		}
-		String sql = "INSERT INTO " + getQuadsTableName() +
+		String sql = "INSERT INTO " + quadsTableName +
 				" (graph, subject, predicate, object, literal, lang, datatype) VALUES (" +
 				"'" + escape(g.getURI()) + "', " +
 				"'" + escapeResource(s) + "', " +
@@ -68,13 +73,13 @@ public class QuadDB {
 				getLiteralColumn(o) + ", " +
 				getLangColumn(o) + ", " +
 				getDatatypeColumn(o) + ")";
-		execute(sql);
+		dbCompatibility.execute(sql);
 	}
 	
 	public void delete(Node g, Node s, Node p, Node o) {
-		String sql = "DELETE FROM " + getQuadsTableName() + " " +
+		String sql = "DELETE FROM " + quadsTableName + " " +
 				getWhereClause(g, s, p, o);
-		execute(sql);
+		dbCompatibility.execute(sql);
 	}
 	
 	public Iterator find(Node g, Node s, Node p, Node o) {
@@ -96,7 +101,7 @@ public class QuadDB {
 			return new NullIterator();
 		}
 		String sql = "SELECT graph, subject, predicate, object, literal, lang, datatype " +
-				"FROM " + getQuadsTableName() + " " +
+				"FROM " + quadsTableName + " " +
 				getWhereClause(g, s, p, o);
 		final ResultSet results = executeQuery(sql);
 		return new Iterator() {
@@ -169,7 +174,7 @@ public class QuadDB {
 	}
 	
 	public int count() {
-		String sql = "SELECT COUNT(*) FROM " + getQuadsTableName();
+		String sql = "SELECT COUNT(*) FROM " + quadsTableName;
 		ResultSet results = executeQuery(sql);
 		try {
 			results.next();
@@ -182,21 +187,21 @@ public class QuadDB {
 	}
 	
 	public void insertGraphName(Node graphName) {
-		String sql = "INSERT INTO " + getGraphNamesTableName() +
+		String sql = "INSERT INTO " + graphNamesTableName +
 				" VALUES ('" + escape(graphName.getURI()) + "')";
-		execute(sql);
+		dbCompatibility.execute(sql);
 	}
 	
 	public void deleteGraphName(Node graphName) {
-		String sql = "DELETE FROM " + getGraphNamesTableName();
+		String sql = "DELETE FROM " + graphNamesTableName;
 		if (!Node.ANY.equals(graphName)) {
 			sql += " WHERE name='" + escape(graphName.getURI()) + "'";
 		}
-		execute(sql);
+		dbCompatibility.execute(sql);
 	}
 	
 	public boolean containsGraphName(Node graphName) {
-		String sql = "SELECT COUNT(*) FROM " + getGraphNamesTableName();
+		String sql = "SELECT COUNT(*) FROM " + graphNamesTableName;
 		if (!Node.ANY.equals(graphName)) {
 			sql += " WHERE name='" + escape(graphName.getURI()) + "'";
 		}
@@ -212,7 +217,7 @@ public class QuadDB {
 	}
 	
 	public Iterator listGraphNames() {
-		String sql = "SELECT name FROM " + getGraphNamesTableName();
+		String sql = "SELECT name FROM " + graphNamesTableName;
 		final ResultSet results = executeQuery(sql);
 
 		return new Iterator() {
@@ -255,7 +260,7 @@ public class QuadDB {
 	}
 	
 	public int countGraphNames() {
-		String sql = "SELECT COUNT(*) FROM " + getGraphNamesTableName();
+		String sql = "SELECT COUNT(*) FROM " + graphNamesTableName;
 		ResultSet results = executeQuery(sql);
 		try {
 			results.next();
@@ -276,54 +281,20 @@ public class QuadDB {
 	}
 	
 	public void createTables() {
-		switch(this.type){
-			case HSQL_TYPE:
-				this.createTablesHSQLDB();
-				break;
-			case MYSQL_TYPE:
-				this.createTablesMySQL();
-				break;
-			case POSTGRESQL_TYPE:
-				this.createTablesPostgreSQL();
-				break;
-			default:
-				this.createTablesMySQL();
-				break;
-		}
+		dbCompatibility.createTables();
 	}
 	
 	public void deleteTables() {
-		execute("DROP TABLE " + getGraphNamesTableName());
-		execute("DROP TABLE " + getQuadsTableName());
+		dbCompatibility.execute("DROP TABLE " + graphNamesTableName);
+		dbCompatibility.execute("DROP TABLE " + quadsTableName);
 	}
 	
 	public boolean tablesExist() {
-		switch(this.type){
-			case HSQL_TYPE:
-				return this.tableExistHSQLDB();
-			case MYSQL_TYPE:
-				return this.tableExistMySQL();
-			case POSTGRESQL_TYPE:
-				return this.tableExistPostgreSQL();
-			default:
-				return this.tableExistMySQL();
-		}
+		return dbCompatibility.tablesExist();
 	}
 	
 	public void close() {
-		try {
-			this.connection.close();
-		} catch (SQLException ex) {
-			throw new JenaException(ex);
-		}
-	}
-	
-	private String getGraphNamesTableName() {
-		return this.tablePrefix + "_graphs";
-	}
-	
-	private String getQuadsTableName() {
-		return this.tablePrefix + "_quads";
+		dbCompatibility.close();
 	}
 
 	/**
@@ -342,26 +313,10 @@ public class QuadDB {
 		return "_:" + escape(resource.getBlankNodeId().toString());
 	}
 
-	private void executeNoErrorHandling(String sql) throws SQLException {
-		Statement stmt = this.connection.createStatement();
-		stmt.execute(sql);
-		stmt.close();
-	}
-
-	private void execute(String sql) {
-		try {
-			executeNoErrorHandling(sql);
-		} catch (SQLException ex) {
-			if (ex.getErrorCode() != 1062) {
-				throw new JenaException(ex);
-			}
-		}
-	}
-
 	private ResultSet executeQuery(String sql) {
 		Statement stmt = null;
 		try {
-			stmt = this.connection.createStatement();
+			stmt = dbCompatibility.getConnection().createStatement();
 			return stmt.executeQuery(sql);
 		} catch (SQLException ex) {
 			if (stmt != null) {
@@ -446,140 +401,31 @@ public class QuadDB {
 		return "WHERE " + result;
 	}
 	
-	private void setDBtype(){
+	private void setDBtype(Connection connection){
 		String name = null;
 		try {
-			name = this.connection.getMetaData().getDatabaseProductName();
+			name = connection.getMetaData().getDatabaseProductName();
 		} catch (Exception e){
 			throw new RuntimeException(e);
 		}
 		if (name.toLowerCase().indexOf("hsql")!= -1) {
-			this.type = HSQL_TYPE;
+			dbCompatibility = new HSQLCompatibility(connection);
 		} else if (name.toLowerCase().indexOf("mysql")!= -1) {
-			this.type = MYSQL_TYPE;
+			dbCompatibility = new MySQLCompatibility(connection);
 		} else if (name.toLowerCase().indexOf("postgresql") != -1) {
-			this.type = POSTGRESQL_TYPE;
+			dbCompatibility = new PostgreSQLCompatibility(connection);
+		} else if (name.toLowerCase().indexOf("oracle") != -1) {
+			dbCompatibility = new OracleCompatibility(connection);
 		} else {
-			this.type = -1;
+			throw new RuntimeException("Unrecognized database type: " + name);
 		}
 	}
 	
 	private void setEscapePattern(){
-		switch(this.type){
-			case HSQL_TYPE:
-				this.escapePattern     = Pattern.compile("([\\'])");
-				this.escapeReplacement = "$1$1";
-				break;
-			case MYSQL_TYPE:
-			case POSTGRESQL_TYPE:
-			default:
-				this.escapePattern     = Pattern.compile("([\\\\'])");
-				this.escapeReplacement = "\\\\$1";
-				break;
-		}
-	}
-	
-	private void createTablesHSQLDB(){
-		execute("CREATE TABLE " + getGraphNamesTableName() + " (name VARCHAR , PRIMARY KEY(name)) ");
-		try {
-			executeNoErrorHandling(
-					"CREATE TABLE " + getQuadsTableName() + " (" +
-					"graph VARCHAR NOT NULL," +
-					"subject VARCHAR NOT NULL," +
-					"predicate VARCHAR NOT NULL," +
-					"object VARCHAR," +
-					"literal LONGVARCHAR," +
-					"lang VARCHAR," +
-					"datatype VARCHAR )");
-		} catch (SQLException ex) {
-			execute("DROP TABLE " + getGraphNamesTableName());
-			throw new JenaException(ex);
-		}
-	}
-	
-	private void createTablesMySQL(){
-		execute("CREATE TABLE " + getGraphNamesTableName() + " (" +
-				"name varchar(160) NOT NULL default '', " +
-				"PRIMARY KEY  (`name`)) TYPE=MyISAM");
-		try {
-			executeNoErrorHandling(
-					"CREATE TABLE " + getQuadsTableName() + " (" +
-					"graph varchar(160) NOT NULL default ''," +
-					"subject varchar(160) NOT NULL default ''," +
-					"predicate varchar(160) NOT NULL default ''," +
-					"object varchar(160) default NULL," +
-					"literal text," +
-					"lang varchar(10) default NULL," +
-					"datatype varchar(160) default NULL," +
-					"KEY graph (`graph`)," +
-					"KEY subject (`subject`)," +
-					"KEY predicate (`predicate`)," +
-					"KEY object (`object`)" +
-					") TYPE=MyISAM;");
-		} catch (SQLException ex) {
-			execute("DROP TABLE " + getGraphNamesTableName());
-			throw new JenaException(ex);
-		}
+		this.escapePattern = dbCompatibility.getEscapePattern();
+		this.escapeReplacement = dbCompatibility.getEscapeReplacement();
 	}
 
-  private void createTablesPostgreSQL(){
-		execute("CREATE TABLE " + getGraphNamesTableName() + " (" +
-				"name text PRIMARY KEY default '')");
-		try {
-			executeNoErrorHandling(
-					"CREATE TABLE " + getQuadsTableName() + " (" +
-					"graph text NOT NULL default ''," +
-					"subject text NOT NULL default ''," +
-					"predicate text NOT NULL default ''," +
-					"object text default NULL," +
-					"literal text," +
-					"lang text default NULL," +
-					"datatype text default NULL)");
-		} catch (SQLException ex) {
-			execute("DROP TABLE " + getGraphNamesTableName());
-			throw new JenaException(ex);
-		}
-		execute("CREATE INDEX " + tablePrefix + "_graph_index ON " +
-				getQuadsTableName() + " (graph)");
-		execute("CREATE INDEX " + tablePrefix + "_subject_index ON " +
-				getQuadsTableName() + " (subject)");
-		execute("CREATE INDEX " + tablePrefix + "_predicate_index ON " +
-				getQuadsTableName() + " (predicate)");
-		execute("CREATE INDEX " + tablePrefix + "_object_index ON " +
-				getQuadsTableName() + " (object)");
-	}
-
-	private boolean tableExistHSQLDB(){
-		try {
-			ResultSet results = this.connection.getMetaData().getTables(
-					null, null, getGraphNamesTableName().toUpperCase(), null);
-			return results.next();
-		} catch (SQLException ex) {
-			throw new JenaException(ex);
-		}
-	}
-	
-	private boolean tableExistMySQL(){
-		try {
-			ResultSet results = this.connection.getMetaData().getTables(
-					null, null, getGraphNamesTableName(), null);
-			return results.next();
-		} catch (SQLException ex) {
-			throw new JenaException(ex);
-		}
-	}
-	
-	private boolean tableExistPostgreSQL(){
-		try {
-			ResultSet results = this.connection.getMetaData().getTables(
-					null, null, getGraphNamesTableName(), null);
-			return results.next();
-		} catch (SQLException ex) {
-			throw new JenaException(ex);
-		}
-	}
-	
-	
 }
 
 /*
