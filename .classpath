@@ -18,8 +18,8 @@
 	<classpathentry kind="lib" path="lib/antlr-2.7.5.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/axis.jar"/>
-	<classpathentry kind="lib" path="lib/bcpg-jdk14-127.jar"/>
-	<classpathentry kind="lib" path="lib/bcprov-jdk14-127.jar"/>
+	<classpathentry kind="lib" path="lib/bcpg-jdk15-138.jar"/>
+	<classpathentry kind="lib" path="lib/bcprov-jdk15-138.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-oro-2.0.5.jar"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-java-3.2.0-alpha-bin.jar"/>
 	<classpathentry kind="lib" path="lib/tagsoup-1.0.4.jar"/>
