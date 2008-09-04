@@ -1,0 +1,12 @@
+Known issues in the tests for v0.7
+----------------------------------
+The tests produce 5 known failures:
+
+1) test-5-02(de.fuberlin.wiwiss.ng4j.triql.QueryTestScripts$RDQLTest)junit.framework.AssertionFailedError: Results do not match
+2) test-6-02(de.fuberlin.wiwiss.ng4j.triql.QueryTestScripts$RDQLTest)junit.framework.AssertionFailedError: Results do not match
+3) test-B-19(de.fuberlin.wiwiss.ng4j.triql.QueryTestScripts$RDQLTest)junit.framework.AssertionFailedError: Results do not match
+4) testValidateSignatureNamedGraphNodeStringX509CertificateArrayList(de.fuberlin.wiwiss.ng4j.swp.util.SWPSignatureUtilitiesTest)junit.framework.AssertionFailedError
+5) testValidateSignatureNamedGraphNodeStringX509CertificateArrayListArrayList(de.fuberlin.wiwiss.ng4j.swp.util.SWPSignatureUtilitiesTest)junit.framework.AssertionFailedError
+
+Failures 1 to 3 occur in (at least) v0.6 too.
+Failure 4 and 5 occured after replacing expired test certificates by new certificates. The reason for the failures probably is an incompatibility between the new certificates and the certificates and signatures embedded in the file ./tests/de/fuberlin/wiwiss/ng4j/swp/util/SWPSignatureUtilitiesTest. We ignored these failures because the actual SWP code has not been changed for v0.7. However, if you are working on SWP, please update the tests.

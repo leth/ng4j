@@ -1,0 +1,1 @@
+If a new keystore needs to be created, then run the main() method in de.fuberlin.wiwiss.ng4j.swp.setup.CreateTestKeystore.
