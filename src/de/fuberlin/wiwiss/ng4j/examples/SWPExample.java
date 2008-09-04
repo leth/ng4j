@@ -1,4 +1,4 @@
-// $Id: SWPExample.java,v 1.7 2008/08/20 11:04:50 hartig Exp $
+// $Id: SWPExample.java,v 1.8 2008/09/04 07:37:47 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.examples;
 
 import java.security.cert.Certificate;
@@ -118,14 +118,14 @@ public class SWPExample {
         RowlandsPropertiestoBePublished.add(SWP.X509Certificate);
 		
 		//Add certificate from PKCS12 keystore
-		Certificate[] chain = PKCS12Utils.getCertChain( "tests/test.p12", "dpuser" );
+		Certificate[] chain = PKCS12Utils.getCertChain( "tests/ng4jtest.p12", "dpuser" );
 		rowland.setCertificate( (X509Certificate)chain[0] );
 
         graphset2.assertWithSignature(rowland,
                 SWP.JjcRdfC14N_rsa_sha512,
                 SWP.JjcRdfC14N_sha224,
                 RowlandsPropertiestoBePublished,
-                "tests/test.p12",
+                "tests/ng4jtest.p12",
                 "dpuser");
 
 		// Next step would be verification

@@ -35,164 +35,48 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
 import junit.framework.TestCase;
 
-/**
- * Tests the SWP signature utilities.
- * To create a new certificate chain (in case the old certificates have been
- * expired), i.e. a new ./tests/test.p12 file, you have to execute the
- * following four commands that use the CA.pl script provided with OpenSSL.
- * <ul>
- *   <li><tt>perl /etc/ssl/misc/CA.pl -newca</tt></li>
- *   <li><tt>perl /etc/ssl/misc/CA.pl -newreq</tt></li>
- *   <li><tt>perl /etc/ssl/misc/CA.pl -sign</tt></li>
- *   <li><tt>perl /etc/ssl/misc/CA.pl -pkcs12</tt></li>
- * </ul>
- * The fourth command creates newcert.p12 with which you can replace test.p12.
- * The following lines present a sample session executing the four commands.
- * <pre>
- *   <code>
- * $ perl /etc/ssl/misc/CA.pl -newca
- * CA certificate filename (or enter to create)
- *
- * Making CA certificate ...
- * Generating a 1024 bit RSA private key
- * .........++++++
- * .......++++++
- * writing new private key to './demoCA/private/cakey.pem'
- * Enter PEM pass phrase:
- * Verifying - Enter PEM pass phrase:
- * -----
- * You are about to be asked to enter information that will be incorporated
- * into your certificate request.
- * What you are about to enter is what is called a Distinguished Name or a DN.
- * There are quite a few fields but you can leave some blank
- * For some fields there will be a default value,
- * If you enter '.', the field will be left blank.
- * -----
- * Country Name (2 letter code) [AU]:DE
- * State or Province Name (full name) [Some-State]:SH
- * Locality Name (eg, city) []:
- * Organization Name (eg, company) [Internet Widgits Pty Ltd]:NG4J test
- * Organizational Unit Name (eg, section) []:
- * Common Name (eg, YOUR name) []:NG4J test CA
- * Email Address []:
- *
- * Please enter the following 'extra' attributes
- * to be sent with your certificate request
- * A challenge password []:
- * An optional company name []:
- * Using configuration from /etc/ssl/openssl.cnf
- * Enter pass phrase for ./demoCA/private/cakey.pem:
- * Check that the request matches the signature
- * Signature ok
- * Certificate Details:
- *         Serial Number:
- *             b0:c7:44:8e:06:b9:1b:75
- *         Validity
- *             Not Before: Aug 29 16:13:52 2008 GMT
- *             Not After : Aug 29 16:13:52 2011 GMT
- *         Subject:
- *             countryName               = DE
- *             stateOrProvinceName       = SH
- *             organizationName          = NG4J test
- *             commonName                = NG4J test CA
- *         X509v3 extensions:
- *             X509v3 Subject Key Identifier:
- *                 B6:22:EA:DD:72:DE:4B:01:65:0A:BB:8C:A1:0F:4D:B0:2E:A2:8B:1E
- *             X509v3 Authority Key Identifier:
- *                 keyid:B6:22:EA:DD:72:DE:4B:01:65:0A:BB:8C:A1:0F:4D:B0:2E:A2:8B:1E
- *                 DirName:/C=DE/ST=SH/O=NG4J test/CN=NG4J test CA
- *                 serial:B0:C7:44:8E:06:B9:1B:75
- *
- *             X509v3 Basic Constraints:
- *                 CA:TRUE
- * Certificate is to be certified until Aug 29 16:13:52 2011 GMT (1095 days)
- *
- * Write out database with 1 new entries
- * Data Base Updated
- *
- *
- * $ perl /etc/ssl/misc/CA.pl -newreq
- * Generating a 1024 bit RSA private key
- * ......++++++
- * .......................++++++
- * writing new private key to 'newkey.pem'
- * Enter PEM pass phrase:
- * Verifying - Enter PEM pass phrase:
- * -----
- * You are about to be asked to enter information that will be incorporated
- * into your certificate request.
- * What you are about to enter is what is called a Distinguished Name or a DN.
- * There are quite a few fields but you can leave some blank
- * For some fields there will be a default value,
- * If you enter '.', the field will be left blank.
- * -----
- * Country Name (2 letter code) [AU]:DE
- * State or Province Name (full name) [Some-State]:SH
- * Locality Name (eg, city) []:Kiel
- * Organization Name (eg, company) [Internet Widgits Pty Ltd]:NG4J test
- * Organizational Unit Name (eg, section) []:
- * Common Name (eg, YOUR name) []:NG4J test
- * Email Address []:
- *
- * Please enter the following 'extra' attributes
- * to be sent with your certificate request
- * A challenge password []:
- * An optional company name []:
- * Request is in newreq.pem, private key is in newkey.pem
- *
- *
- * $ perl /etc/ssl/misc/CA.pl -sign
- * Using configuration from /etc/ssl/openssl.cnf
- * Enter pass phrase for ./demoCA/private/cakey.pem:
- * Check that the request matches the signature
- * Signature ok
- * Certificate Details:
- *         Serial Number:
- *             b0:c7:44:8e:06:b9:1b:76
- *         Validity
- *             Not Before: Aug 29 16:15:58 2008 GMT
- *             Not After : Aug 29 16:15:58 2009 GMT
- *         Subject:
- *             countryName               = DE
- *             stateOrProvinceName       = SH
- *             localityName              = Kiel
- *             organizationName          = NG4J test
- *             commonName                = NG4J test
- *         X509v3 extensions:
- *             X509v3 Basic Constraints: CA:FALSE
- *             Netscape Comment: OpenSSL Generated Certificate
- *             X509v3 Subject Key Identifier: 96:3E:20:03:50:2A:63:F3:C6:56:68:48:21:70:D5:58:EF:61:84:DB
- *             X509v3 Authority Key Identifier: keyid:B6:22:EA:DD:72:DE:4B:01:65:0A:BB:8C:A1:0F:4D:B0:2E:A2:8B:1E
- *
- * Certificate is to be certified until Aug 29 16:15:58 2009 GMT (365 days)
- * Sign the certificate? [y/n]:y
- *
- * 1 out of 1 certificate requests certified, commit? [y/n]y
- * Write out database with 1 new entries
- * Data Base Updated
- * Signed certificate is in newcert.pem
- *
- *
- * $ perl /etc/ssl/misc/CA.pl -pkcs12
- * Enter pass phrase for newkey.pem:
- * Enter Export Password:
- * Verifying - Enter Export Password:
- * PKCS #12 file is in newcert.p12
- *   </code>
- * </pre>
- *
- * @author Rowland Watkins (rowland@grid.cx)
- *
+/** Tests the SWP signature utilities. <br>
  * 
+ * If a new keystore needs to be created, then run the main()
+ * in de.fuberlin.wiwiss.ng4j.swp.setup.CreateTestKeystore and
+ * update the "signature" and "badsignature" constants as
+ * described below.
+ * 
+ * @author Rowland Watkins (rowland@grid.cx)
  */
 public class SWPSignatureUtilitiesTest extends TestCase 
 {
+	
+	// The following two constants - signature and badsignature - 
+	// should be changed whenever a new keystore is created.
+	// The pattern for creating the badsignature is to insert
+	// "--wrong--" after the first 8 characters of the signature.
+	// The signature to use is the one for the client, not the CA - 
+	// that is the last signature created and printed by the logger
+	// when the CreateTestKeystore main() is run.
+// These are the old values (from 2007 that worked with that keystore)
+//    protected final String signature = "yqskH08WOauqwIiQXJVCBUCKqlqK1WdVAFoYA9e++uZK+sRJjTyaAz+HL5VBDUytNDQPsiknmlB6"
+//        + "c1gVwF6/iWRzUd/25Lnz3IiS//WTFmCaDpkjeInj15zEw/uvQxdC1NXmGQiJlddotpsVMoOi+6Oy"
+//        + "ae4N0WrP9yLP/nVvqEA=";
+//    protected final String badsignature = "yqskH08W--wrong--JVCBUCKqlqK1WdVAFoYA9e++uZK+sRJjTyaAz+HL5VBDUytNDQPsiknmlB6"
+//            + "c1gVwF6/iWRzUd/25Lnz3IiS//WTFmCaDpkjeInj15zEw/uvQxdC1NXmGQiJlddotpsVMoOi+6Oy"
+//            + "ae4N0WrP9yLP/nVvqEA=";
+	// These are the new values; unfortunately they do not work
+	// TODO Figure out how to change CreateTestKeystore and/or these values so that the tests work as they should
+	protected final static String signature = "Kzzo/VIg+hpZkJS628S8ut1IQZSYXvV/1WSXRHD9nRjfyzlqZKbTmClPZDG/+TfBfjDzC+L8S9gU"
+    	+ "l/Vmqq47QIafM/vIqALS5b0/1/xfIROqj594mxk/J25wy4GQmGIjnCv6NoNG/KJDO2WBklQFeU5h"
+    	+ "lz9UON1lcp/CzGdcJJs=";
+    protected final static String badsignature = "Kzzo/VIg--wrong--+hpZkJS628S8ut1IQZSYXvV/1WSXRHD9nRjfyzlqZKbTmClPZDG/+TfBfjDzC+L8S9gU"
+        + "l/Vmqq47QIafM/vIqALS5b0/1/xfIROqj594mxk/J25wy4GQmGIjnCv6NoNG/KJDO2WBklQFeU5h"
+        + "lz9UON1lcp/CzGdcJJs=";
+	
+    
 	protected final static String uri1 = "http://example.org/graph1";
 	protected final static String uri2 = "http://example.org/graph2";
 	protected final static Node foo = Node.createURI("http://example.org/#foo");
 	protected final static Node bar = Node.createURI("http://example.org/#bar");
 	protected final static Node baz = Node.createURI("http://example.org/#baz");
-	protected final static String keystore = "tests/test.p12";
+	protected final static String keystore = "tests/ng4jtest.p12";
 	protected final static String password = "dpuser";
 	
 	protected SWPNamedGraphSet set;
@@ -412,25 +296,17 @@ public class SWPSignatureUtilitiesTest extends TestCase
 	{
 		Certificate[] certs = PKCS12Utils.getCertChain( keystore, password );
 		
-		final String signature = "yqskH08WOauqwIiQXJVCBUCKqlqK1WdVAFoYA9e++uZK+sRJjTyaAz+HL5VBDUytNDQPsiknmlB6"
-                + "c1gVwF6/iWRzUd/25Lnz3IiS//WTFmCaDpkjeInj15zEw/uvQxdC1NXmGQiJlddotpsVMoOi+6Oy"
-                + "ae4N0WrP9yLP/nVvqEA=";
-
-        final String badsignature = "yqskH08W--wrong--JVCBUCKqlqK1WdVAFoYA9e++uZK+sRJjTyaAz+HL5VBDUytNDQPsiknmlB6"
-            + "c1gVwF6/iWRzUd/25Lnz3IiS//WTFmCaDpkjeInj15zEw/uvQxdC1NXmGQiJlddotpsVMoOi+6Oy"
-            + "ae4N0WrP9yLP/nVvqEA=";
-		
 		ArrayList list = new ArrayList();
 		list.add( certs[1]);
 
 		assertTrue( SWPSignatureUtilities.validateSignature( g1, 
-															SWP.JjcRdfC14N_rsa_sha224, 
+															SWP.JjcRdfC14N_rsa_sha224, //SWP.JjcRdfC14N_rsa_sha1, 
 															signature, 
 															(X509Certificate )certs[0], 
 															list ) );
 		
 		assertFalse( SWPSignatureUtilities.validateSignature( g1, 
-															SWP.JjcRdfC14N_rsa_sha224, 
+															SWP.JjcRdfC14N_rsa_sha224, //SWP.JjcRdfC14N_rsa_sha1, 
 															badsignature, 
 															(X509Certificate )certs[0], 
 															list ) );
@@ -448,26 +324,18 @@ public class SWPSignatureUtilitiesTest extends TestCase
 	{
 		Certificate[] certs = PKCS12Utils.getCertChain( keystore, password );
 		
-        final String signature = "yqskH08WOauqwIiQXJVCBUCKqlqK1WdVAFoYA9e++uZK+sRJjTyaAz+HL5VBDUytNDQPsiknmlB6"
-            + "c1gVwF6/iWRzUd/25Lnz3IiS//WTFmCaDpkjeInj15zEw/uvQxdC1NXmGQiJlddotpsVMoOi+6Oy"
-            + "ae4N0WrP9yLP/nVvqEA=";
-
-        final String badsignature = "yqskH08W--wrong--JVCBUCKqlqK1WdVAFoYA9e++uZK+sRJjTyaAz+HL5VBDUytNDQPsiknmlB6"
-                + "c1gVwF6/iWRzUd/25Lnz3IiS//WTFmCaDpkjeInj15zEw/uvQxdC1NXmGQiJlddotpsVMoOi+6Oy"
-                + "ae4N0WrP9yLP/nVvqEA=";
-		
 		ArrayList list = new ArrayList();
 		list.add( certs[1]);
 		
 		assertTrue( SWPSignatureUtilities.validateSignature( g1, 
-															SWP.JjcRdfC14N_rsa_sha224, 
+															SWP.JjcRdfC14N_rsa_sha224, //SWP.JjcRdfC14N_rsa_sha1, 
 															signature, 
 															(X509Certificate )certs[0], 
 															list, 
 															list ) );
 		
 		assertFalse( SWPSignatureUtilities.validateSignature( g1, 
-															SWP.JjcRdfC14N_rsa_sha224, 
+															SWP.JjcRdfC14N_rsa_sha224, //SWP.JjcRdfC14N_rsa_sha1, 
 															badsignature, 
 															(X509Certificate )certs[0], 
 															list, 

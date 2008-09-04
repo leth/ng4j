@@ -1,14 +1,11 @@
-// $Id: AllTests.java,v 1.1 2005/02/22 11:37:30 erw Exp $
+// $Id: AllTests.java,v 1.2 2008/09/04 07:37:54 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.swp.util;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Test suite for NamedGraphSetDB and its helper classes. Needs a MySQL database.
- * Connection data must be provided inside this file.
- *
- * TODO: Database access data shouldn't be here
+ * Test suite for SWP util classes.
  * 
  * @author Richard Cyganiak (richard@cyganiak.de)
  */

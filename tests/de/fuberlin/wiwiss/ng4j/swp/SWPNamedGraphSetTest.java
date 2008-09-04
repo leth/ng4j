@@ -1,4 +1,4 @@
-//$Id: SWPNamedGraphSetTest.java,v 1.11 2008/08/29 09:46:35 cyganiak Exp $
+//$Id: SWPNamedGraphSetTest.java,v 1.12 2008/09/04 07:37:53 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.swp;
 
 import java.io.StringReader;
@@ -39,7 +39,7 @@ public class SWPNamedGraphSetTest extends TestCase
 	protected final static Node foo = Node.createURI("http://example.org/#foo");
 	protected final static Node bar = Node.createURI("http://example.org/#bar");
 	protected final static Node baz = Node.createURI("http://example.org/#baz");
-	protected final static String keystore = "tests/test.p12";
+	protected final static String keystore = "tests/ng4jtest.p12";
 	protected final static String password = "dpuser";
 
 	protected SWPNamedGraphSet set;
