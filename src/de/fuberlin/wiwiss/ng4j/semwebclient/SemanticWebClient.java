@@ -4,6 +4,7 @@
  */
 package de.fuberlin.wiwiss.ng4j.semwebclient;
 
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -484,6 +485,12 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	private boolean startDereferencing(String uri, int step,
 			final DereferencingListener listener) {
 		String derefURI = ( uri.contains("#") ) ? uri.substring( 0, uri.indexOf("#") ) : uri;
+		if (    unretrievedURIs.containsKey(derefURI)
+		     && unretrievedURIs.get(derefURI) instanceof SocketTimeoutException ) {
+			log.debug("Retry derefencing of: " + derefURI );
+			unretrievedURIs.remove( derefURI );
+			markedUris.remove( derefURI );
+		}
 		if (this.markedUris.contains(derefURI) || redirectedURIs.containsKey(derefURI) || containsGraph(derefURI)) {
 			// already retrieved or in queue, don't queue again
 			return false;
