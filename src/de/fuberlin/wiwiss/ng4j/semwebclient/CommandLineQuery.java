@@ -10,8 +10,10 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.query.Query;
@@ -20,6 +22,7 @@ import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
+import com.hp.hpl.jena.query.util.Utils;
 
 public class CommandLineQuery {
 
@@ -58,6 +61,8 @@ public class CommandLineQuery {
         private boolean enablegrddl = false;
 
 	private boolean enableSindiceSearch = false;
+
+	private boolean verbose = false;
 
 
 	public CommandLineQuery() {
@@ -152,6 +157,16 @@ public class CommandLineQuery {
 	 */
 	public void setEnableSindiceSearch ( boolean enableSindiceSearch ) {
 		this.enableSindiceSearch = enableSindiceSearch;
+	}
+
+	/**
+	 * Enables verbose output.
+	 * The default is false.
+	 * 
+	 * @param verbose
+	 */
+	public void setVerbose ( boolean verbose ) {
+		this.verbose = verbose;
 	}
 
 	/**
@@ -309,9 +324,21 @@ public class CommandLineQuery {
 			System.out.println("--------------------------------");
 			System.out.println("Query Results :\n");
 			SemWebIterator iter = this.client.find(this.queryTriple);
-			while (iter.hasNext()) {
-				SemWebTriple triple = (SemWebTriple) iter.next();
-				System.out.println(triple.toString());
+			if ( verbose ) {
+				int i = 0;
+				while (iter.hasNext()) {
+					SemWebTriple triple = (SemWebTriple) iter.next();
+					System.out.println( triple.toString() +
+					                    " (result#: " + String.valueOf(++i) +
+					                    " succ.URIs: " + String.valueOf(client.successfullyDereferencedURIs().size()) +
+					                    " unsucc.URIs: " + String.valueOf(client.unsuccessfullyDereferencedURIs().size()) + ")" );
+				}
+			}
+			else  {
+				while (iter.hasNext()) {
+					SemWebTriple triple = (SemWebTriple) iter.next();
+					System.out.println(triple.toString());
+				}
 			}
 			System.out.println("--------------------------------");
 
@@ -340,11 +367,42 @@ public class CommandLineQuery {
 		}
 		if (this.outputFailedURIs) {
 			System.out.println("Unsuccessfully dereferenced URIs: \n");
+
+			Map reasons = new HashMap ();
+			int count = 0;
+
 			Iterator it = this.client.unsuccessfullyDereferencedURIs().iterator();
 			while (it.hasNext()) {
 				String uri = (String) it.next();
-				System.out.println(uri);
+				if ( verbose ) {
+					++count;
+					Exception reason = client.getReasonForFailedDereferencing( uri );
+					Class reasonType = reason.getClass();
+					if ( ! reasons.containsKey(reasonType) ) {
+						reasons.put( reasonType, Integer.valueOf(1) );
+					}
+					else {
+						int i = ((Integer) reasons.get(reasonType)).intValue() + 1;
+						reasons.put( reasonType, Integer.valueOf(i) );
+					}
+
+					System.out.println( uri + " (" + Utils.classShortName(reasonType) + ": " + reason.getMessage() + ")" );
+				}
+				else {
+					System.out.println(uri);
+				}
 			}
+
+			if ( verbose && (count > 0) ) {
+				System.out.println(" Reason statistics: " + String.valueOf(count) + " unsuccessfully dereferenced URIs");
+				Iterator itR = reasons.entrySet().iterator();
+				while ( itR.hasNext() ) {
+					Map.Entry r = (Map.Entry) itR.next();
+					int percent = ( ((Integer) r.getValue()).intValue() * 100 ) / count;
+					System.out.println(" - " + String.valueOf(percent) + "% " + Utils.classShortName((Class) r.getKey()) );
+				}
+			}
+
 			System.out.println("--------------------------------");
 		}
 	}

@@ -25,7 +25,7 @@ import de.fuberlin.wiwiss.ng4j.semwebclient.CommandLineQuery;
  *       RDF/XML, N3, N-Triple, SPARQL XML results, SPARQL JSON results, CSV, ...
  * 
  * @author Richard Cyganiak (richard@cyganiak.de)
- * @version $Id: query.java,v 1.7 2008/08/18 15:59:44 hartig Exp $
+ * @version $Id: query.java,v 1.8 2008/10/17 10:02:54 hartig Exp $
  */
 public class query {
 	private static boolean verbose = false;
@@ -134,6 +134,7 @@ public class query {
 		}
 		if (cmd.hasArg("verbose")) {
 			verbose = true;
+			client.setVerbose(true);
 			Logger.getLogger("de.fuberlin.wiwiss.ng4j.semwebclient").setLevel(Level.ALL);
 		}
 		return client;
