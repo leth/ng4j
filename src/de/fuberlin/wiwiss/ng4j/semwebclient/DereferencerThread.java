@@ -186,7 +186,8 @@ public class DereferencerThread extends TaskExecutorBase {
 			this.log.debug(this.connection.getResponseCode() + " " + this.url
 				       + " (" + this.connection.getContentType() + ")");
 
-			if (    (this.connection.getResponseCode() == 302)
+			if (    (this.connection.getResponseCode() == 301)
+			     || (this.connection.getResponseCode() == 302)
 			     || (this.connection.getResponseCode() == 303) ) {
 				String redirectURI = this.connection.getHeaderField("Location");
 				return new DereferencingResult(task, DereferencingResult.STATUS_REDIRECTED, redirectURI);
