@@ -13,8 +13,8 @@ public class HtmlLinkFetcher {
 	
 	public static ArrayList fetchLinks(InputStream stream){
 		BufferedReader bw = new BufferedReader(new InputStreamReader(stream));
-		String line;
-		String header = null;
+		String line = null;
+		String header = "";
 		ArrayList linkList = new ArrayList();
 		try {
 		while(((line = bw.readLine()).indexOf("</head>") == -1)|(line == null)){
@@ -23,7 +23,10 @@ public class HtmlLinkFetcher {
 		}catch(IOException e){
 			//System.out.println(e.getLocalizedMessage());
 		}
-		
+		if ( line != null ) {
+			header = header + line.substring( 0, line.indexOf("</head>") );
+		}
+
 	    Pattern linkPattern = Pattern.compile ("<link[^>]*(rel=\"meta\"|rel=\"alternate\")[^>]*href=\"?[^(>| )]*\"?[^>]*(/>|>)", Pattern.CASE_INSENSITIVE);
 	    Pattern prePattern  = Pattern.compile ("href=\"?");
 	    Pattern postPattern = Pattern.compile ("( |\"|>)");
