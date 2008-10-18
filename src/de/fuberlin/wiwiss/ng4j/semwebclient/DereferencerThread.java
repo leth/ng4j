@@ -180,6 +180,9 @@ public class DereferencerThread extends TaskExecutorBase {
 		} catch ( IOException e ) {
 			log.debug( "Connecting to <" + url.toString() + "> caused a " + e.getClass().getName() + ": " + e.getMessage(), e );
 			return createErrorResult( task, DereferencingResult.STATUS_UNABLE_TO_CONNECT, e );
+		} catch ( RuntimeException e ) {
+			log.debug( "Connecting to <" + url.toString() + "> caused a " + e.getClass().getName() + ": " + e.getMessage() );
+			return createErrorResult( task, DereferencingResult.STATUS_UNABLE_TO_CONNECT, e );
 		}
 
 		try {
