@@ -517,6 +517,8 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 					// TODO: URIs get marked unretrievable when the worker thread gets interrupted 
 					if ( result.getResultCode() == DereferencingResult.STATUS_REDIRECTED )
 						redirectedURIs.put(result.getURI(), result.getRedirectURI());
+					else if ( result.getResultCode() == DereferencingResult.STATUS_NEW_URIS_FOUND )
+						; // ignore GRDDLed documents so far - TODO: better management of results
 					else
 						unretrievedURIs.put(result.getURI(), result.getException());
 				}
