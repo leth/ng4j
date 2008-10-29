@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/swp/setup/CreateTestKeystore.java,v 1.1 2008/09/04 07:37:49 hartig Exp $
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/swp/setup/CreateTestKeystore.java,v 1.2 2008/10/29 18:36:46 hartig Exp $
 
 package de.fuberlin.wiwiss.ng4j.swp.setup;
 
@@ -63,9 +63,11 @@ import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.params.RSAPrivateCrtKeyParameters;
 import org.bouncycastle.jce.PrincipalUtil;
 import org.bouncycastle.jce.interfaces.PKCS12BagAttributeCarrier;
-import org.bouncycastle.jce.provider.JDKDigestSignature;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.provider.X509CertificateObject;
 import org.bouncycastle.x509.extension.SubjectKeyIdentifierStructure;
+
+import de.fuberlin.wiwiss.ng4j.swp.util.SWPSignatureUtilities;
 
 import sun.misc.BASE64Encoder;
 
@@ -376,7 +378,9 @@ public class CreateTestKeystore {
         
         //Signature sig = Signature.getInstance(sigOID.getId());
         //Signature sig = new JDKDigestSignature.SHA1WithRSAEncryption();
-        Signature sig = new JDKDigestSignature.SHA224WithRSAEncryption();
+        //Signature sig = new JDKDigestSignature.SHA224WithRSAEncryption();
+        Signature sig = Signature.getInstance(SWPSignatureUtilities.ALG_ID_SIGNATURE_SHA224withRSA,
+        		new BouncyCastleProvider() );
         sig.initSign(caPrivKey, srForClient);
         sig.update(bOutForClient.toByteArray());
         byte[] signatureForTests = sig.sign();
