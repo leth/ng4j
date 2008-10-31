@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -16,12 +17,14 @@ import java.util.List;
 import java.util.Map;
 
 import com.hp.hpl.jena.graph.Triple;
+import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
+import com.hp.hpl.jena.query.resultset.ResultSetFormat;
 import com.hp.hpl.jena.query.util.Utils;
 
 public class CommandLineQuery {
@@ -62,8 +65,9 @@ public class CommandLineQuery {
 
 	private boolean enableSindiceSearch = false;
 
-	private boolean verbose = false;
+	private ResultSetFormat resultFormat = null;
 
+	private boolean verbose = false;
 
 	public CommandLineQuery() {
 		this.client = new SemanticWebClient();
@@ -160,6 +164,40 @@ public class CommandLineQuery {
 	}
 
 	/**
+	 * Enables a Sindice-based URI search during query execution.
+	 * The default is false.
+	 * 
+	 * @param enableSindiceSearch
+	 */
+	public void setResultFormat ( String resFmtStr ) {
+		String resFmtStrUC = resFmtStr.toUpperCase();
+		if ( resFmtStrUC.equals("TXT") ) {
+			resultFormat = ResultSetFormat.syntaxText;
+		}
+		else if ( resFmtStrUC.equals("XML") ) {
+			resultFormat = ResultSetFormat.syntaxXML;
+		}
+		else if ( resFmtStrUC.equals("JSON") ) {
+			resultFormat = ResultSetFormat.syntaxJSON;
+		}
+		else if ( resFmtStrUC.equals("RDF/XML") ) {
+			resultFormat = ResultSetFormat.syntaxRDF_XML;
+		}
+		else if ( resFmtStrUC.equals("N-TRIPLE") ) {
+			resultFormat = ResultSetFormat.syntaxRDF_NT;
+		}
+		else if ( resFmtStrUC.equals("TURTLE") ) {
+			resultFormat = ResultSetFormat.syntaxRDF_TURTLE;
+		}
+		else if ( resFmtStrUC.equals("N3") ) {
+			resultFormat = ResultSetFormat.syntaxRDF_N3;
+		}
+		else {
+			throw new IllegalArgumentException( "Unsupported result format specified. For SELECT and ASK queries use TXT, XML, or JSON. For CONSTRUCT or DESCRIBE queries use RDF/XML, N-TRIPLE, TURTLE, or N3." );
+		}
+	}
+
+	/**
 	 * Enables verbose output.
 	 * The default is false.
 	 * 
@@ -245,7 +283,9 @@ public class CommandLineQuery {
 	public void run() throws Exception {
 		executeConfigure();
 		executeLoadNamendGraphSet();
-		executeWriteIntro();
+		if ( verbose ) {
+			executeWriteIntro();
+		}
 		executeAddGraphs();
 		executeSparqlFromFile();
 		executeSparqlQuery();
@@ -305,16 +345,64 @@ public class CommandLineQuery {
 
 	private void executeSparqlQuery() {
 		if (this.sparqlQuery != null) {
-			System.out.println("\nExecuting SPARQL query: \n");
-			System.out.println(this.sparqlQuery);
 			Query query;
 			query = QueryFactory.create(this.sparqlQuery);
+			if (    verbose
+			     && ( query.isSelectType() || query.isAskType() )
+			     && ( (resultFormat == null) || resultFormat.equals(ResultSetFormat.syntaxText) ) ) {
+				System.out.println("\nExecuting SPARQL query: \n");
+				System.out.println(this.sparqlQuery);
+			}
 			QueryExecution qe = QueryExecutionFactory.create(query, this.client
 					.asJenaModel("default"));
-			ResultSet results = qe.execSelect();
-			ResultSetFormatter.out(System.out, results, query);
+			OutputStream out = System.out;
+			if ( query.isSelectType() ) {
+				ResultSet results = qe.execSelect();
+				ResultSetFormat resFmt = ( resultFormat == null ) ? ResultSetFormat.syntaxText : resultFormat;
+				ResultSetFormatter.output( out, results, resFmt );
+			}
+			else if ( query.isAskType() ) {
+				boolean result = qe.execAsk();
+				if ( (resultFormat == null) || resultFormat.equals(ResultSetFormat.syntaxText) ) {
+					ResultSetFormatter.out( out, result );
+				}
+				else if ( resultFormat.equals(ResultSetFormat.syntaxJSON) ) {
+					ResultSetFormatter.outputAsJSON( out, result );
+				}
+				else if ( resultFormat.equals(ResultSetFormat.syntaxXML) ) {
+					ResultSetFormatter.outputAsXML( out, result );
+				}
+				else {
+					throw new IllegalArgumentException( "Unsupported result format specified. For ASK queries use TXT, XML, or JSON." );
+				}
+			}
+			else {
+				Model result;
+				if ( query.isDescribeType() ) {
+					result = qe.execDescribe();
+				}
+				else {
+					result = qe.execConstruct();
+				}
+				String lang;
+				if ( (resultFormat==null) || resultFormat.equals(ResultSetFormat.syntaxRDF_XML) ) {
+					lang = "RDF/XML-ABBREV";
+				}
+				else if ( resultFormat.equals(ResultSetFormat.syntaxRDF_NT) ) {
+					lang = "N-TRIPLE";
+				}
+				else if ( resultFormat.equals(ResultSetFormat.syntaxRDF_TURTLE) ) {
+					lang = "TURTLE";
+				}
+				else if ( resultFormat.equals(ResultSetFormat.syntaxRDF_N3) ) {
+					lang = "N3";
+				}
+				else {
+					throw new IllegalArgumentException( "Unsupported result format specified. For CONSTRUCT or DESCRIBE queries use RDF/XML, NTRIPLE, TURTLE, or N3." );
+				}
+				result.write( out, lang );
+			}
 		}
-
 	}
 
 	private void executeFindQuery() {
@@ -353,6 +441,9 @@ public class CommandLineQuery {
 				String uri = (String) it.next();
 				System.out.println(uri);
 			}
+			if ( verbose ) {
+				System.out.println( " Count: " + String.valueOf(client.successfullyDereferencedURIs().size()) );
+			}
 			System.out.println("--------------------------------");
 		}
 		if (this.outputRedirectedURIs) {
@@ -362,6 +453,9 @@ public class CommandLineQuery {
 				String uri = (String) it.next();
 				String redirect = this.client.getRedirectURI(uri);
 				System.out.println( uri + " -> " + redirect );
+			}
+			if ( verbose ) {
+				System.out.println( " Count: " + String.valueOf(client.redirectedURIs().size()) );
 			}
 			System.out.println("--------------------------------");
 		}
@@ -394,6 +488,7 @@ public class CommandLineQuery {
 			}
 
 			if ( verbose && (count > 0) ) {
+				System.out.println( " Count: " + String.valueOf(count) );
 				System.out.println(" Reason statistics: " + String.valueOf(count) + " unsuccessfully dereferenced URIs");
 				Iterator itR = reasons.entrySet().iterator();
 				while ( itR.hasNext() ) {

@@ -51,7 +51,7 @@ pre { speak-punctuation: code; }
 <body>
 
 <div id="logo">
-  <a href="http://www.fu-berlin.de/"><img src="fu-logo.gif" alt="Freie Universität Berlin Logo"></a>
+  <a href="http://www.fu-berlin.de/"><img src="fu-logo.gif" alt="Freie Universitï¿½t Berlin Logo"></a>
 </div>
 
 <div id="header">
@@ -98,7 +98,7 @@ space consisting of interlinked RDF data.</p>
 <p>This tendency is carried by the 
 
  
-  revival   of ideas around interlinking data on the Semantic Web: Current W3C efforts stress the fact that URI references should be dereference-able (<a href="http://www.w3.org/TR/swbp-vocab-pub/" target="_blank">W3C working draft on Best Practice Recipes for Publishing RDF Vocabularies</a>). There is a nice memo by Tim Berners-Lee about the role of links on the Semantic Web (<a href="http://www.w3.org/DesignIssues/LinkedData.html" target="_blank">Berners-Lee: Linked Data</a>). There are efforts around <a href="http://swoogle.umbc.edu/">Swoogle</a> to measure the size and characterize the content of the Semantic Web (<a href="http://ebiquity.umbc.edu/paper/html/id/316/Characterizing-the-Semantic-Web-on-the-Web" target="_blank">Ding, Finin: Characterizing the Semantic Web on the Web</a>). The <a href="http://www.w3.org/2005/ajar/About.html" target="_blank">Tabulator</a> browser lets surfers browse interlinked data on the Semantic Web (<a href="http://swui.semanticweb.org/swui06/papers/Berners-Lee/Berners-Lee.pdf">Berners-Lee et al: Tabulator: Exploring and Analyzing linked data on the Semantic Web</a>). Tools like <a href="http://sites.wiwiss.fu-berlin.de/suhl/bizer/d2r-server/">D2R Server</a> make it easy to publish existing data on on the Semantic Web (<a href="http://sites.wiwiss.fu-berlin.de/suhl/bizer/pub/Bizer-Cyganiak-D2R-Server-ISWC2006.pdf">Bizer, Cyganiak: D2R Server – Publishing Relational Databases on the Semantic Web</a>).</p>
+  revival   of ideas around interlinking data on the Semantic Web: Current W3C efforts stress the fact that URI references should be dereference-able (<a href="http://www.w3.org/TR/swbp-vocab-pub/" target="_blank">W3C working draft on Best Practice Recipes for Publishing RDF Vocabularies</a>). There is a nice memo by Tim Berners-Lee about the role of links on the Semantic Web (<a href="http://www.w3.org/DesignIssues/LinkedData.html" target="_blank">Berners-Lee: Linked Data</a>). There are efforts around <a href="http://swoogle.umbc.edu/">Swoogle</a> to measure the size and characterize the content of the Semantic Web (<a href="http://ebiquity.umbc.edu/paper/html/id/316/Characterizing-the-Semantic-Web-on-the-Web" target="_blank">Ding, Finin: Characterizing the Semantic Web on the Web</a>). The <a href="http://www.w3.org/2005/ajar/About.html" target="_blank">Tabulator</a> browser lets surfers browse interlinked data on the Semantic Web (<a href="http://swui.semanticweb.org/swui06/papers/Berners-Lee/Berners-Lee.pdf">Berners-Lee et al: Tabulator: Exploring and Analyzing linked data on the Semantic Web</a>). Tools like <a href="http://sites.wiwiss.fu-berlin.de/suhl/bizer/d2r-server/">D2R Server</a> make it easy to publish existing data on on the Semantic Web (<a href="http://sites.wiwiss.fu-berlin.de/suhl/bizer/pub/Bizer-Cyganiak-D2R-Server-ISWC2006.pdf">Bizer, Cyganiak: D2R Server ï¿½ Publishing Relational Databases on the Semantic Web</a>).</p>
 <p>All these efforts are based on the assumption that, for being part of the Semantic Web, data should ideally 
 
 
@@ -517,6 +517,15 @@ It is invoked using the <tt>semwebquery</tt> command, which is found in the <tt>
     <td>Outputs a list of all URIs that could not be retrieved. </td>
   </tr>
   <tr>
+    <td valign="top"><tt>-resultfmt</tt><br /></td>
+    <td>Specifies the output format for the result of a SPARQL query:
+      <ul>
+        <li>for SELECT and ASK queries use TXT, XML, or JSON (default: TXT)</li>
+        <li>for CONSTRUCT or DESCRIBE queries use RDF/XML, N-TRIPLE, TURTLE, or N3 (default: RDF/XML)</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
     <td valign="top"><tt>-verbose</tt><br /></td>
     <td>Shows additional information about the retrieval process. </td>
   </tr>
@@ -773,7 +782,7 @@ searching for URIs increases the query execution time significantly.</p>
 <p>Good starting points for playing around with the library is interlinked data published by the Tabulator project (<a href="http://dig.csail.mit.edu/2005/ajar/ajaw/data">http://dig.csail.mit.edu/2005/ajar/ajaw/data</a>) and the D2R demo server running at <a href="http://www3.wiwiss.fu-berlin.de:2020/">http://www3.wiwiss.fu-berlin.de:2020/</a>. If you find other interesting chunks of interlinked data on the Semantic Web that can be queried using the library, please tell us. </p>
 <p><a href="http://sourceforge.net/projects/d2rq-map/"><img src="http://sourceforge.net/sflogo.php?group_id=111002&amp;type=5" alt="SourceForge Logo" /></a></p>
 <div id="footer">
-  <small>$Id: index.html,v 1.11 2008/08/18 16:18:50 hartig Exp $</small>
+  <small>$Id: index.html,v 1.12 2008/10/31 17:18:46 hartig Exp $</small>
 </div>
 </div>
 

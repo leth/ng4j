@@ -25,7 +25,7 @@ import de.fuberlin.wiwiss.ng4j.semwebclient.CommandLineQuery;
  *       RDF/XML, N3, N-Triple, SPARQL XML results, SPARQL JSON results, CSV, ...
  * 
  * @author Richard Cyganiak (richard@cyganiak.de)
- * @version $Id: query.java,v 1.8 2008/10/17 10:02:54 hartig Exp $
+ * @version $Id: query.java,v 1.9 2008/10/31 17:18:45 hartig Exp $
  */
 public class query {
 	private static boolean verbose = false;
@@ -48,6 +48,7 @@ public class query {
 		cmd.add(false, "verbose");
 		cmd.add(false, "grddl");
 		cmd.add(false, "sindice");
+		cmd.add(true, "resultfmt");
 		try {
 			cmd.process(args);
 			if (!cmd.hasArgs() || cmd.hasItems()) {
@@ -132,6 +133,9 @@ public class query {
 		if (cmd.hasArg("redirecteduris")) {
 			client.setOutputRedirectedURIs(true);
 		}
+		if (cmd.hasArg("resultfmt")) {
+			client.setResultFormat( cmd.getValue("resultfmt") );
+		}
 		if (cmd.hasArg("verbose")) {
 			verbose = true;
 			client.setVerbose(true);
@@ -145,7 +149,7 @@ public class query {
 		System.out.println();
 		System.out.println("    -sparql <query>        Execute a SPARQL query");
 		System.out.println("    -sparqlfile <file>     Execute a SPARQL query loaded from a file");
-		System.out.println("    -find \"s p o\"        Execute a find query with an N-Triple style pattern;");
+		System.out.println("    -find \"s p o\"          Execute a find query with an N-Triple style pattern;");
 		System.out.println("                           use ANY as a wildcard");
 		System.out.println("    -maxsteps <steps>      Set maximal depth of link following. Default: 3");
 		System.out.println("    -maxfilesize <size>    Set maximal filesize in bytes of URIs to retrieve. Default: 100000000");
@@ -159,6 +163,11 @@ public class query {
 		System.out.println("    -retrieveduris         Output a list of all successfully retrieved URIs");
 		System.out.println("    -faileduris            Output a list of URIs that could not be retrieved");
 		System.out.println("    -redirecteduris        Output a mapping of URIs that have been redirected");
+		System.out.println("    -resultfmt <format>    Specifies the output format for the result of a SPARQL query:");
+		System.out.println("                           - for SELECT and ASK queries use TXT, XML, or JSON");
+		System.out.println("                             (default: TXT);");
+		System.out.println("                           - for CONSTRUCT or DESCRIBE queries use RDF/XML,");
+		System.out.println("                             N-TRIPLE, TURTLE, or N3 (default: RDF/XML)");
 		System.out.println("    -verbose               Show additional progress information");
 		System.out.println();
 	}
