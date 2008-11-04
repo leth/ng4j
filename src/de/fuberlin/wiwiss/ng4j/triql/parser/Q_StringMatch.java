@@ -14,9 +14,10 @@ import org.apache.oro.text.regex.PatternMatcher;
 import org.apache.oro.text.regex.Perl5Compiler;
 import org.apache.oro.text.regex.Perl5Matcher;
 
-import com.hp.hpl.jena.rdql.EvalFailureException;
-import com.hp.hpl.jena.rdql.Query;
-import com.hp.hpl.jena.rdql.QueryException;
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryException;
+import com.hp.hpl.jena.sparql.lang.rdql.RDQLEvalFailureException;
+import com.hp.hpl.jena.sparql.util.IndentedWriter;
 
 import de.fuberlin.wiwiss.ng4j.triql.ResultBinding;
 import de.fuberlin.wiwiss.ng4j.triql.legacy.QueryPrintUtils;
@@ -84,7 +85,7 @@ public class Q_StringMatch extends SimpleNode implements Expr, ExprBoolean
         left = (Expr)jjtGetChild(0) ;
         right = (Expr)jjtGetChild(1) ;    // Must be a pattern literal
         if ( ! ( right instanceof Q_PatternLiteral ) )
-            throw new EvalFailureException("Q_StringMatch: Pattern error") ;
+            throw new RDQLEvalFailureException("Q_StringMatch: Pattern error") ;
         
         regex = (Q_PatternLiteral)right ;
         
@@ -93,7 +94,7 @@ public class Q_StringMatch extends SimpleNode implements Expr, ExprBoolean
             pattern = compiler.compile(regex.patternString, regex.mask) ;
         } catch (MalformedPatternException pEx)
         {
-            throw new EvalFailureException("Q_StringMatch: Pattern exception: "+pEx) ;
+            throw new RDQLEvalFailureException("Q_StringMatch: Pattern exception: "+pEx) ;
         }
     }
     
@@ -116,6 +117,14 @@ public class Q_StringMatch extends SimpleNode implements Expr, ExprBoolean
     {
         return asInfixString() ;
     }
+
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.sparql.lang.rdql.PrintableRDQL#format(com.hp.hpl.jena.sparql.util.IndentedWriter)
+	 */
+	public void format(IndentedWriter arg0) {
+		// FIXME (Update to Jena 2.5.6) Implement inherited method: com.hp.hpl.jena.sparql.lang.rdql.PrintableRDQL#format
+		
+	}
 }
 /*
  * (c) Copyright 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Hewlett-Packard Development Company, LP

@@ -6,12 +6,12 @@
 /** 
  * Interface representing something that evaluates to true or false.
  * @author		Andy Seaborne
- * @version 	$Id: Constraint.java,v 1.2 2008/08/20 20:16:41 hartig Exp $
+ * @version 	$Id: Constraint.java,v 1.3 2008/11/04 13:00:22 hartig Exp $
  */
 
 package de.fuberlin.wiwiss.ng4j.triql.legacy;
 
-import com.hp.hpl.jena.rdql.Query;
+import com.hp.hpl.jena.query.Query;
 
 import de.fuberlin.wiwiss.ng4j.triql.ResultBinding;
 

@@ -11,7 +11,7 @@ import de.fuberlin.wiwiss.ng4j.triql.parser.Expr;
 
 /**
  * @author   Andy Seaborne
- * @version  $Id: QueryPrintUtils.java,v 1.2 2008/08/20 20:16:41 hartig Exp $
+ * @version  $Id: QueryPrintUtils.java,v 1.3 2008/11/04 13:00:22 hartig Exp $
  */
 
 public class QueryPrintUtils
@@ -73,9 +73,10 @@ public class QueryPrintUtils
     {
         indent(pw, level) ;
         pw.println("("+(printName?opName:symbol)) ;
-        left.print(pw, level+1);
-        if ( right != null )
-            right.print(pw, level+1);
+// FIXME (Update to Jena 2.5.6) Implement method print
+//        left.print(pw, level+1);
+//        if ( right != null )
+//            right.print(pw, level+1);
         indent(pw, level) ;
         pw.println(")") ;
     }

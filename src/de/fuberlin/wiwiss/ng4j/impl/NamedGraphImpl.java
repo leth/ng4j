@@ -1,7 +1,8 @@
-// $Id: NamedGraphImpl.java,v 1.4 2008/08/20 11:04:52 hartig Exp $
+// $Id: NamedGraphImpl.java,v 1.5 2008/11/04 13:00:21 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import com.hp.hpl.jena.graph.BulkUpdateHandler;
+import com.hp.hpl.jena.graph.GraphStatisticsHandler;
 
 import com.hp.hpl.jena.graph.Capabilities;
 
@@ -167,6 +168,13 @@ public class NamedGraphImpl implements NamedGraph {
 	
 	public String toString() {
 		return this.name + this.graph.toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.Graph#getStatisticsHandler()
+	 */
+	public GraphStatisticsHandler getStatisticsHandler() {
+		return graph.getStatisticsHandler();
 	}
 }
 

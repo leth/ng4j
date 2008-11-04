@@ -1,4 +1,4 @@
-// $Id: QueryExecutionService.java,v 1.9 2008/08/20 11:04:58 hartig Exp $
+// $Id: QueryExecutionService.java,v 1.10 2008/11/04 13:00:21 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import java.net.MalformedURLException;
@@ -13,7 +13,7 @@ import java.util.Map.Entry;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.impl.StatementImpl;
-import com.hp.hpl.jena.rdql.QueryException;
+import com.hp.hpl.jena.query.QueryException;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.Quad;

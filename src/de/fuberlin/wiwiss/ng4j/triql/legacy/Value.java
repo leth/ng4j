@@ -5,18 +5,18 @@
 
 /**
  * @author   Andy Seaborne
- * @version  $Id: Value.java,v 1.2 2008/08/20 20:16:43 hartig Exp $
+ * @version  $Id: Value.java,v 1.3 2008/11/04 13:00:22 hartig Exp $
  */
 
 
 package de.fuberlin.wiwiss.ng4j.triql.legacy;
 import com.hp.hpl.jena.rdf.model.Literal ;
 import com.hp.hpl.jena.rdf.model.Resource ;
-import com.hp.hpl.jena.rdql.Printable;
+import com.hp.hpl.jena.sparql.lang.rdql.PrintableRDQL;
 
 // There is a separate settable interface
 
-public interface Value extends Printable
+public interface Value extends PrintableRDQL
 {
     public boolean isNumber() ;
     public boolean isInt() ;

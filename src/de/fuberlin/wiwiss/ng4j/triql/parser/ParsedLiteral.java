@@ -11,12 +11,13 @@ import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdql.EvalFailureException;
-import com.hp.hpl.jena.rdql.Query;
-import com.hp.hpl.jena.rdql.QueryPrintUtils;
-import com.hp.hpl.jena.rdql.ValueException;
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.sparql.lang.rdql.RDQLEvalFailureException;
+import com.hp.hpl.jena.sparql.util.IndentedWriter;
 
 import de.fuberlin.wiwiss.ng4j.triql.ResultBinding;
+import de.fuberlin.wiwiss.ng4j.triql.fromARQ.RDQLEvalTypeException;
+import de.fuberlin.wiwiss.ng4j.triql.legacy.QueryPrintUtils;
 import de.fuberlin.wiwiss.ng4j.triql.legacy.Settable;
 import de.fuberlin.wiwiss.ng4j.triql.legacy.Value;
 
@@ -130,7 +131,7 @@ public class ParsedLiteral extends SimpleNode implements Value, Expr, Settable
     public Value eval(Query q, ResultBinding env)
     {
         if ( ! isSet )
-            throw new EvalFailureException("Literal value not set") ;
+            throw new RDQLEvalFailureException("Literal value not set") ;
 
          return this ;
     }
@@ -206,13 +207,13 @@ public class ParsedLiteral extends SimpleNode implements Value, Expr, Settable
 
     public long getInt()
     {
-        if ( ! isSet || ! isInt ) throw new ValueException("Not an int: "+this) ;
+        if ( ! isSet || ! isInt ) throw new RDQLEvalTypeException("Not an int: "+this) ;
         return valInt ;
     }
 
     public double getDouble()
     {
-        if ( ! isSet || ! ( isDouble || isInt ) ) throw new ValueException("Not a double: "+this) ;
+        if ( ! isSet || ! ( isDouble || isInt ) ) throw new RDQLEvalTypeException("Not a double: "+this) ;
         if ( isInt )
             return valInt ;
         return valDouble ;
@@ -220,31 +221,31 @@ public class ParsedLiteral extends SimpleNode implements Value, Expr, Settable
 
     public boolean getBoolean()
     {
-        if ( ! isSet || ! isBoolean ) throw new ValueException("Not a boolean: "+this) ;
+        if ( ! isSet || ! isBoolean ) throw new RDQLEvalTypeException("Not a boolean: "+this) ;
         return valBoolean ;
     }
 
     public String getString()
     {
-        if ( ! isSet || ! isString ) throw new ValueException("Not a string: "+this) ;
+        if ( ! isSet || ! isString ) throw new RDQLEvalTypeException("Not a string: "+this) ;
         return valString ;
     }
 
     public String getURI()
     {
-        if ( ! isSet || ! isURI ) throw new ValueException("Not a URI: "+this) ;
+        if ( ! isSet || ! isURI ) throw new RDQLEvalTypeException("Not a URI: "+this) ;
         return valURI ;
     }
 
     public Literal getRDFLiteral()
     {
-        if ( ! isSet || ! isRDFLiteral ) throw new ValueException("Not a Literal: "+this) ;
+        if ( ! isSet || ! isRDFLiteral ) throw new RDQLEvalTypeException("Not a Literal: "+this) ;
         return valRDFLiteral ;
     }
 
     public Resource getRDFResource()
     {
-        if ( ! isSet || ! isRDFResource ) throw new ValueException("Not a Resource: "+this) ;
+        if ( ! isSet || ! isRDFResource ) throw new RDQLEvalTypeException("Not a Resource: "+this) ;
         return valRDFResource ;
     }
 
@@ -342,6 +343,13 @@ public class ParsedLiteral extends SimpleNode implements Value, Expr, Settable
 	// Q_URI is not public.
 	public static Q_URI makeURI(String s) { return Q_URI.makeURI(s) ; }
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.sparql.lang.rdql.PrintableRDQL#format(com.hp.hpl.jena.sparql.util.IndentedWriter)
+	 */
+	public void format(IndentedWriter arg0) {
+		// FIXME (Update to Jena 2.5.6) Implement inherited method: com.hp.hpl.jena.sparql.lang.rdql.PrintableRDQL#format
+		
+	}
 }
 
 /*

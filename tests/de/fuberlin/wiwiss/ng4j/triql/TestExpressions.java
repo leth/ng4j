@@ -13,7 +13,7 @@ import java.io.ByteArrayInputStream;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import com.hp.hpl.jena.rdql.EvalFailureException;
+import com.hp.hpl.jena.sparql.lang.rdql.RDQLEvalFailureException;
 
 import de.fuberlin.wiwiss.ng4j.triql.legacy.Value;
 import de.fuberlin.wiwiss.ng4j.triql.parser.Expr;
@@ -169,7 +169,7 @@ public class TestExpressions extends TestSuite
 
         protected void runTest() throws Throwable
         {
-            long initTime = 0;
+//            long initTime = 0;
 //             long parseTime = 0;
 //             long startTime = 0;
 //             long stopTime = 0;
@@ -230,7 +230,7 @@ public class TestExpressions extends TestSuite
 
         protected void runTest() throws Throwable
         {
-            long initTime = 0;
+//            long initTime = 0;
 //             long parseTime = 0;
 //             long startTime = 0;
 //             long stopTime = 0;
@@ -263,7 +263,7 @@ public class TestExpressions extends TestSuite
             try {
                 v = n.eval(null, null) ;
                 result = v.getBoolean() ;
-            } catch (EvalFailureException evalEx)
+            } catch (RDQLEvalFailureException evalEx)
             {
                 if ( ! failureCorrect )
                     throw evalEx ;

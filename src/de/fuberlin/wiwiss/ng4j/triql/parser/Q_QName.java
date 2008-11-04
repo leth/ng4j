@@ -5,7 +5,7 @@
 
 
 package de.fuberlin.wiwiss.ng4j.triql.parser;
-import com.hp.hpl.jena.rdql.QueryException;
+import com.hp.hpl.jena.query.QueryException;
 import com.hp.hpl.jena.shared.PrefixMapping;
 
 public class Q_QName extends Q_URI

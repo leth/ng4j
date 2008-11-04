@@ -10,6 +10,7 @@ import java.util.Hashtable;
 import org.apache.log4j.Logger;
 
 import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.graph.test.NodeCreateUtils;
 
 
 /**
@@ -29,7 +30,7 @@ public class C14NTriple extends Object implements Comparable
 	public Node subjectID;
 	public Node objectID;
                 
-	public static final Node TILDE = Node.create( "~" );
+	public static final Node TILDE = NodeCreateUtils.create( "~" );
 	public final DecimalFormat sixDigitsFormat = new DecimalFormat( "000000" );
 	public boolean flag;
         
@@ -70,7 +71,7 @@ public class C14NTriple extends Object implements Comparable
 			else 
 			{
 				ht.put( st.objectID,
-						Node.create( "_:g"+sixDigitsFormat.format( symCount ) ) );
+						NodeCreateUtils.create( "_:g"+sixDigitsFormat.format( symCount ) ) );
 				this.object = ( Node ) ht.get( st.objectID );
 				this.objectID = st.objectID;
 				this.flag = true;
@@ -94,7 +95,7 @@ public class C14NTriple extends Object implements Comparable
         	else 
         	{//create and assign a new ID 
         		ht.put( st.subjectID,
-        				Node.create( "_:g"+sixDigitsFormat.format( symCount ) ) );
+        				NodeCreateUtils.create( "_:g"+sixDigitsFormat.format( symCount ) ) );
         		this.subject = ( Node ) ht.get( st.subjectID );
         		this.subjectID = st.subjectID;
         		this.flag = true;

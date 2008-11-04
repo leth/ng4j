@@ -5,8 +5,8 @@
 
 package de.fuberlin.wiwiss.ng4j.triql.parser;
 
-import com.hp.hpl.jena.rdql.EvalFailureException;
-import com.hp.hpl.jena.rdql.Query;
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.sparql.lang.rdql.RDQLEvalFailureException;
 
 import de.fuberlin.wiwiss.ng4j.triql.ResultBinding;
 import de.fuberlin.wiwiss.ng4j.triql.legacy.Constraint;
@@ -31,7 +31,7 @@ public class ConstraintExpr implements Constraint
         try {
             return expr.eval(q, env).getBoolean() ;
         }
-        catch (EvalFailureException e) //Includes EvalTypeException
+        catch (RDQLEvalFailureException e) //Includes EvalTypeException
         {
             // Check all exceptions possible.
             //expr = null ;

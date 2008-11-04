@@ -7,11 +7,11 @@ import java.util.List;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.core.ResultBinding;
-import com.hp.hpl.jena.query.core.Var;
-import com.hp.hpl.jena.query.engine.Binding;
-import com.hp.hpl.jena.query.engine.BindingMap;
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.sparql.core.ResultBinding;
+import com.hp.hpl.jena.sparql.core.Var;
+import com.hp.hpl.jena.sparql.engine.binding.Binding;
+import com.hp.hpl.jena.sparql.engine.binding.BindingMap;
 
 
 public class MyResultSet implements ResultSet {
@@ -48,7 +48,8 @@ public class MyResultSet implements ResultSet {
 	public Object next() {
 		ensureIteratorInitialized();
 		this.rowNumber++;
-		return new ResultBinding(this.model, (Binding) this.bindingIterator.next());
+		return new ResultBinding(this.model, 
+				(Binding) this.bindingIterator.next());
 	}
 
 	public QuerySolution nextSolution() {
@@ -81,5 +82,19 @@ public class MyResultSet implements ResultSet {
 
 	public boolean isDistinct() {
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.query.ResultSet#getResourceModel()
+	 */
+	public Model getResourceModel() {
+		return model;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.query.ResultSet#nextBinding()
+	 */
+	public Binding nextBinding() {
+		return (Binding) bindingIterator.next();
 	}
 }

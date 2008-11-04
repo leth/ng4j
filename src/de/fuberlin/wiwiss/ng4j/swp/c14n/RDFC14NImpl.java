@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
+import com.hp.hpl.jena.graph.test.NodeCreateUtils;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
@@ -35,10 +36,10 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 public class RDFC14NImpl  
 {
 		static final Logger log = Logger.getLogger( RDFC14NImpl.class );
-        public static final Node TILDE = Node.create( "~" );
-        public static final Node C14N_TRUE = Node.create( "http://www-uk.hpl.hp.com/people/jjc/rdf/c14n#true" );
+        public static final Node TILDE = NodeCreateUtils.create( "~" );
+        public static final Node C14N_TRUE = NodeCreateUtils.create( "http://www-uk.hpl.hp.com/people/jjc/rdf/c14n#true" );
         public static final String C14N = "http://www-uk.hpl.hp.com/people/jjc/rdf/c14n#";
-        public static final Node X = Node.create( "x" );        
+        public static final Node X = NodeCreateUtils.create( "x" );        
         
         private Model model = ModelFactory.createDefaultModel();
         private ArrayList canonical_string;

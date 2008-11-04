@@ -8,8 +8,9 @@ package de.fuberlin.wiwiss.ng4j.triql.parser;
 import java.io.PrintWriter;
 
 import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdql.Query;
-import com.hp.hpl.jena.rdql.QueryException;
+import com.hp.hpl.jena.sparql.util.IndentedWriter;
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryException;
 
 import de.fuberlin.wiwiss.ng4j.triql.ResultBinding;
 import de.fuberlin.wiwiss.ng4j.triql.legacy.QueryPrintUtils;
@@ -126,6 +127,14 @@ public class Q_StringEqual extends SimpleNode implements Expr, ExprBoolean
     {
         return asInfixString() ;
     }
+
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.sparql.lang.rdql.PrintableRDQL#format(com.hp.hpl.jena.sparql.util.IndentedWriter)
+	 */
+	public void format(IndentedWriter arg0) {
+		// FIXME (Update to Jena 2.5.6) Implement inherited method: com.hp.hpl.jena.sparql.lang.rdql.PrintableRDQL#format
+		
+	}
 }
 
 /*

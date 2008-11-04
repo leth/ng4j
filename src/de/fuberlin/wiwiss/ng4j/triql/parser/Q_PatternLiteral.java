@@ -9,8 +9,9 @@ import java.io.PrintWriter;
 
 import org.apache.oro.text.regex.Perl5Compiler;
 
-import com.hp.hpl.jena.rdql.Query;
-import com.hp.hpl.jena.rdql.QueryException;
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryException;
+import com.hp.hpl.jena.sparql.util.IndentedWriter;
 
 import de.fuberlin.wiwiss.ng4j.triql.ResultBinding;
 import de.fuberlin.wiwiss.ng4j.triql.legacy.Value;
@@ -108,6 +109,14 @@ public class Q_PatternLiteral extends SimpleNode implements Expr
     {
         return toString() ;
     }
+
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.sparql.lang.rdql.PrintableRDQL#format(com.hp.hpl.jena.sparql.util.IndentedWriter)
+	 */
+	public void format(IndentedWriter arg0) {
+		// FIXME (Update to Jena 2.5.6) Implement inherited method: com.hp.hpl.jena.sparql.lang.rdql.PrintableRDQL#format
+		
+	}
     
 }
 

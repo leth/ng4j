@@ -1,4 +1,4 @@
-// $Id: TriQLQuery.java,v 1.8 2008/08/21 16:36:13 hartig Exp $
+// $Id: TriQLQuery.java,v 1.9 2008/11/04 13:00:21 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import java.io.File;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.rdql.QueryException;
+import com.hp.hpl.jena.query.QueryException;
 import com.hp.hpl.jena.shared.PrefixMapping;
 import com.hp.hpl.jena.shared.impl.PrefixMappingImpl;
 

@@ -1,7 +1,7 @@
 /*
  * (c) Copyright 2001, 2002, 2003, Hewlett-Packard Development Company, LP
  * [See end of file]
- * $Id: QueryTestScripts.java,v 1.5 2008/08/21 16:36:08 hartig Exp $
+ * $Id: QueryTestScripts.java,v 1.6 2008/11/04 13:00:22 hartig Exp $
  */
 
 
@@ -23,16 +23,15 @@ import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
-import com.hp.hpl.jena.rdql.QueryException;
+import com.hp.hpl.jena.query.QueryException;
 import com.hp.hpl.jena.shared.JenaException;
 import com.hp.hpl.jena.util.FileManager;
 import com.hp.hpl.jena.util.FileUtils;
-import com.hp.hpl.jena.util.ModelLoader;
-import com.hp.hpl.jena.vocabulary.TestQuery;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphImpl;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
+import de.fuberlin.wiwiss.ng4j.legacy.TestQuery;
 import de.fuberlin.wiwiss.ng4j.triql.helpers.QueryResultsFormatter;
 import de.fuberlin.wiwiss.ng4j.triql.helpers.ResultDumpReader;
 import de.fuberlin.wiwiss.ng4j.triql.helpers.TestManifestList;
@@ -42,7 +41,7 @@ import de.fuberlin.wiwiss.ng4j.triql.helpers.TestManifestList;
  *  adding new script files.  This class need not change.
  *
  * @author   Andy Seaborne
- * @version  $Id: QueryTestScripts.java,v 1.5 2008/08/21 16:36:08 hartig Exp $
+ * @version  $Id: QueryTestScripts.java,v 1.6 2008/11/04 13:00:22 hartig Exp $
  */
 
 

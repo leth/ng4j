@@ -9,11 +9,12 @@ package de.fuberlin.wiwiss.ng4j.triql.parser;
 
 import java.io.PrintWriter;
 
-import com.hp.hpl.jena.rdql.EvalTypeException;
-import com.hp.hpl.jena.rdql.Query;
-import com.hp.hpl.jena.rdql.QueryException;
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryException;
+import com.hp.hpl.jena.sparql.util.IndentedWriter;
 
 import de.fuberlin.wiwiss.ng4j.triql.ResultBinding;
+import de.fuberlin.wiwiss.ng4j.triql.fromARQ.RDQLEvalTypeException;
 import de.fuberlin.wiwiss.ng4j.triql.legacy.QueryPrintUtils;
 import de.fuberlin.wiwiss.ng4j.triql.legacy.Settable;
 import de.fuberlin.wiwiss.ng4j.triql.legacy.Value;
@@ -46,7 +47,7 @@ public class Q_UnaryNot extends SimpleNode implements Expr, ExprBoolean {
     Value v = expr.eval(q, env) ;
 
     if ( ! v.isBoolean() )
-        throw new EvalTypeException("Q_UnaryNot: Wanted a number: got "+expr) ;
+        throw new RDQLEvalTypeException("Q_UnaryNot: Wanted a number: got "+expr) ;
 
     Settable result ;
 
@@ -70,6 +71,14 @@ public class Q_UnaryNot extends SimpleNode implements Expr, ExprBoolean {
     public void print(PrintWriter pw, int level) { QueryPrintUtils.print(pw, expr, null, printName, opSymbol, level) ; }
 
     public String toString() { return asInfixString() ; }
+
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.sparql.lang.rdql.PrintableRDQL#format(com.hp.hpl.jena.sparql.util.IndentedWriter)
+	 */
+	public void format(IndentedWriter arg0) {
+		// FIXME (Update to Jena 2.5.6) Implement inherited method: com.hp.hpl.jena.sparql.lang.rdql.PrintableRDQL#format
+		
+	}
 
 }
 

@@ -1,6 +1,8 @@
 package de.fuberlin.wiwiss.ng4j.sparql;
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
@@ -9,6 +11,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.impl.ModelCom;
 import com.hp.hpl.jena.shared.Lock;
 import com.hp.hpl.jena.shared.LockMutex;
+import com.hp.hpl.jena.sparql.core.DatasetGraph;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
@@ -16,7 +19,7 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 /**
  * Implementation of ARQ's Dataset interface on top of an NG4J NamedGraphSet
  */
-public class NamedGraphDataset implements Dataset {
+public class NamedGraphDataset implements Dataset, DatasetGraph {
 	private NamedGraphSet set;
 	private Graph defaultGraph;
 	private Lock lock;
@@ -84,5 +87,54 @@ public class NamedGraphDataset implements Dataset {
 			this.lock = new LockMutex();
 		}
 		return this.lock;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.query.Dataset#asDatasetGraph()
+	 */
+	public DatasetGraph asDatasetGraph() {
+		return this;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.sparql.core.DatasetGraph#containsGraph(com.hp.hpl.jena.graph.Node)
+	 */
+	public boolean containsGraph(Node graphNode) {
+		return set.containsGraph(graphNode);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.sparql.core.DatasetGraph#getDefaultGraph()
+	 */
+	public Graph getDefaultGraph() {
+		return defaultGraph;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.sparql.core.DatasetGraph#getGraph(com.hp.hpl.jena.graph.Node)
+	 */
+	public Graph getGraph(Node graphNode) {
+		return set.getGraph(graphNode);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.sparql.core.DatasetGraph#listGraphNodes()
+	 */
+	public Iterator listGraphNodes() {
+		Set graphNodes = new HashSet();
+		for ( Iterator it = set.listGraphs(); it.hasNext(); ) {
+			NamedGraph ng = (NamedGraph) it.next();
+			graphNodes.add(ng.getGraphName());
+		}
+		return graphNodes.iterator();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.sparql.core.DatasetGraph#size()
+	 */
+	public int size() {
+		long numGraphs = set.countGraphs();
+		int graphNum = (int) numGraphs;
+		return graphNum;
 	}
 }

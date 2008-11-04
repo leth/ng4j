@@ -7,11 +7,12 @@ package de.fuberlin.wiwiss.ng4j.triql.parser;
 
 import java.io.PrintWriter;
 
-import com.hp.hpl.jena.rdql.EvalTypeException;
-import com.hp.hpl.jena.rdql.Query;
-import com.hp.hpl.jena.rdql.QueryException;
+import com.hp.hpl.jena.sparql.util.IndentedWriter;
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryException;
 
 import de.fuberlin.wiwiss.ng4j.triql.ResultBinding;
+import de.fuberlin.wiwiss.ng4j.triql.fromARQ.RDQLEvalTypeException;
 import de.fuberlin.wiwiss.ng4j.triql.legacy.QueryPrintUtils;
 import de.fuberlin.wiwiss.ng4j.triql.legacy.Settable;
 import de.fuberlin.wiwiss.ng4j.triql.legacy.Value;
@@ -27,7 +28,7 @@ import de.fuberlin.wiwiss.ng4j.triql.legacy.WorkingVar;
 
 /** 
  * @author Automatically generated class: Operator: LessThanOrEqual
- * @version $Id: Q_LessThanOrEqual.java,v 1.3 2008/08/20 20:17:14 hartig Exp $
+ * @version $Id: Q_LessThanOrEqual.java,v 1.4 2008/11/04 13:00:22 hartig Exp $
  */
 
 public class Q_LessThanOrEqual extends SimpleNode implements Expr, ExprBoolean
@@ -48,9 +49,9 @@ public class Q_LessThanOrEqual extends SimpleNode implements Expr, ExprBoolean
         Value y = right.eval(q, env) ;
         
         if ( ! x.isNumber() )
-            throw new EvalTypeException("Q_LessThanOrEqual: Wanted a numeric: "+x) ;
+            throw new RDQLEvalTypeException("Q_LessThanOrEqual: Wanted a numeric: "+x) ;
         if ( ! y.isNumber() )
-            throw new EvalTypeException("Q_LessThanOrEqual: Wanted a numeric: "+y) ;
+            throw new RDQLEvalTypeException("Q_LessThanOrEqual: Wanted a numeric: "+y) ;
 
         Settable result ;
         if ( x instanceof Settable )
@@ -100,6 +101,14 @@ public class Q_LessThanOrEqual extends SimpleNode implements Expr, ExprBoolean
     {
         return asInfixString() ;
     }
+
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.sparql.lang.rdql.PrintableRDQL#format(com.hp.hpl.jena.sparql.util.IndentedWriter)
+	 */
+	public void format(IndentedWriter arg0) {
+		// FIXME (Update to Jena 2.5.6) Implement inherited method com.hp.hpl.jena.sparql.lang.rdql.PrintableRDQL#format
+		
+	}
 }
 
 /*
