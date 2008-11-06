@@ -1,4 +1,4 @@
-// $Id: TriQLQuery.java,v 1.9 2008/11/04 13:00:21 hartig Exp $
+// $Id: TriQLQuery.java,v 1.10 2008/11/06 07:08:31 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.triql;
 
 import java.io.File;
@@ -22,6 +22,8 @@ import de.fuberlin.wiwiss.ng4j.triql.parser.Q_Query;
 import de.fuberlin.wiwiss.ng4j.triql.parser.TriQLParser;
 
 /**
+ * @deprecated NG4J v0.8 is the last release that contains TriQL - please use SPARQL instead
+ *
  * <p>A <a href="http://www.wiwiss.fu-berlin.de/suhl/bizer/TriQL/">TriQL</a>
  * query. The data source can be a {@link NamedGraphSet}, or any RDF document
  * given in the query's FROM clause.</p>
