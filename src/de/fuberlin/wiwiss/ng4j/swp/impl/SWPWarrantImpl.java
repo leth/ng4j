@@ -11,65 +11,50 @@ import java.util.Map;
 
 import sun.misc.BASE64Decoder;
 
-import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.util.iterator.NiceIterator;
-
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
-import de.fuberlin.wiwiss.ng4j.sparql.NamedGraphDataset;
 import de.fuberlin.wiwiss.ng4j.swp.SWPAuthority;
 import de.fuberlin.wiwiss.ng4j.swp.SWPWarrant;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPCertificateException;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPNoSuchAlgorithmException;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPSignatureException;
 import de.fuberlin.wiwiss.ng4j.swp.util.SWPSignatureUtilities;
+import de.fuberlin.wiwiss.ng4j.triql.TriQLQuery;
 
 public class SWPWarrantImpl implements SWPWarrant
 {
 
 	private NamedGraph warrant;
 	private NamedGraphSet local = new NamedGraphSetImpl();
-	private NamedGraphDataset localDS;
 	
 	public SWPWarrantImpl( NamedGraph graph )
 	{
 		warrant = graph;
 		local.addGraph( warrant );
-		localDS = new NamedGraphDataset( local );
 	}
 	
 	public ExtendedIterator getGraphs() 
 	{
-		String warrantQuery = "PREFIX swp: <http://www.w3.org/2004/03/trix/swp-2/>" +
-		                      "SELECT * WHERE {" +
-		                      "   GRAPH ?warrant {" +
-		                      "      ?graph ?p ?warrant" +
-		                      "   }" +
-		                      " }";
-		QueryExecution qe = QueryExecutionFactory.create( warrantQuery, localDS );
-		final ResultSet results = qe.execSelect();
+		String warrantQuery = "SELECT * WHERE ?warrant (?graph ?p ?warrant) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
+        final Iterator itr = TriQLQuery.exec( local, warrantQuery );
 		
         return new NiceIterator()
         {
 			
 			public boolean hasNext() 
 			{
-				return results.hasNext();
+				return itr.hasNext();
 			}
 
 			public Object next() 
 			{
-				QuerySolution s = results.nextSolution();
-				Resource graphURI = s.getResource( "graph" );	
+				Map results =  ( Map ) itr.next();
+				Node graphURI = ( Node ) results.get( "graph" );	
 				return graphURI.getURI();
 			}
         };
@@ -77,27 +62,21 @@ public class SWPWarrantImpl implements SWPWarrant
 
 	public ExtendedIterator getAssertedGraphs() 
 	{
-		String warrantQuery = "PREFIX swp: <http://www.w3.org/2004/03/trix/swp-2/>" +
-		                      "SELECT * WHERE {" +
-		                      "   GRAPH ?warrant {" +
-		                      "      ?graph swp:assertedBy ?warrant" +
-		                      "   }" +
-		                      " }";
-		QueryExecution qe = QueryExecutionFactory.create( warrantQuery, localDS );
-		final ResultSet results = qe.execSelect();
+		String warrantQuery = "SELECT * WHERE ?warrant (?graph swp:assertedBy ?warrant) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
+        final Iterator itr = TriQLQuery.exec( local, warrantQuery );
 		
         return new NiceIterator()
         {
 			
 			public boolean hasNext() 
 			{
-				return results.hasNext();
+				return itr.hasNext();
 			}
 
 			public Object next() 
 			{
-				QuerySolution s = results.nextSolution();
-				Resource graphURI = s.getResource( "graph" );
+				Map results =  ( Map ) itr.next();
+				Node graphURI = ( Node ) results.get( "graph" );
 				return graphURI.getURI();
 			}
         };
@@ -105,27 +84,21 @@ public class SWPWarrantImpl implements SWPWarrant
 
 	public ExtendedIterator getQuotedGraphs() 
 	{
-		String warrantQuery = "PREFIX swp: <http://www.w3.org/2004/03/trix/swp-2/>" +
-		                      "SELECT * WHERE {" +
-		                      "   GRAPH ?warrant {" +
-		                      "      ?graph swp:quotedBy ?warrant" +
-		                      "   }" +
-		                      " }";
-		QueryExecution qe = QueryExecutionFactory.create( warrantQuery, localDS );
-		final ResultSet results = qe.execSelect();
+		String warrantQuery = "SELECT * WHERE ?warrant (?graph swp:quotedBy ?warrant) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
+        final Iterator itr = TriQLQuery.exec( local, warrantQuery );
 		
         return new NiceIterator()
         {
 			
 			public boolean hasNext() 
 			{
-				return results.hasNext();
+				return itr.hasNext();
 			}
 
 			public Object next() 
 			{
-				QuerySolution s = results.nextSolution();
-				Resource graphURI = s.getResource( "graph" );
+				Map results =  ( Map ) itr.next();
+				Node graphURI = ( Node ) results.get( "graph" );
 				return graphURI.getURI();
 			}
         };
@@ -134,26 +107,19 @@ public class SWPWarrantImpl implements SWPWarrant
 	public SWPAuthority getAuthority() throws SWPCertificateException 
 	{
 		SWPAuthority authority = new SWPAuthorityImpl();
-		String query = "PREFIX swp: <http://www.w3.org/2004/03/trix/swp-2/>" +
-		               "SELECT * WHERE {" +
-		               "   GRAPH <"+warrant.getGraphName().getURI()+"> {" +
-		               "      <"+warrant.getGraphName().getURI()+"> swp:authority ?authority ." +
-		               "      ?authority swp:X509Certificate ?certificate" +
-		               "   }" +
-		               " }";
-		QueryExecution qe = QueryExecutionFactory.create( query, localDS );
-		ResultSet results = qe.execSelect();
-		if ( results.hasNext() )
+		String query = "SELECT * WHERE <"+warrant.getGraphName().getURI()+"> (<"+warrant.getGraphName().getURI()+"> swp:authority ?authority . ?authority swp:X509Certificate ?certificate) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
+		Iterator itr = TriQLQuery.exec( local, query );
+		if ( itr.hasNext() )
 		{
 			
 			X509Certificate certificate = null;
-			QuerySolution s = results.nextSolution();
-			RDFNode auth = s.get( "authority" );
-			Literal cert = s.getLiteral( "certificate" );
+			Map results =  ( Map ) itr.next();
+			Node auth = ( Node ) results.get( "authority" );
+			Node cert = ( Node ) results.get( "certificate" );
 			String certs = "-----BEGIN CERTIFICATE-----\n" +
-							cert.getLexicalForm() + 
+							cert.getLiteral().getLexicalForm() + 
 							"\n-----END CERTIFICATE-----";
-			authority.setID( auth.asNode() );
+			authority.setID( auth );
 				
 			try 
 			{
@@ -177,24 +143,19 @@ public class SWPWarrantImpl implements SWPWarrant
 	{
 		Signature sig = null;
 		byte[] signature = null;
-		String query = "PREFIX swp: <http://www.w3.org/2004/03/trix/swp-2/>" +
-		               "SELECT * WHERE {" +
-		               "   <"+warrant.getGraphName().getURI()+"> swp:signature ?signature ." +
-		               "   <"+warrant.getGraphName().getURI()+"> swp:signatureMethod ?smethod" +
-		               " }";
-		QueryExecution qe = QueryExecutionFactory.create( query, localDS );
-		ResultSet results = qe.execSelect();
-		if ( results.hasNext() )
+		String query = "SELECT * WHERE (<"+warrant.getGraphName().getURI()+"> swp:signature ?signature) (<"+warrant.getGraphName().getURI()+"> swp:signatureMethod ?smethod) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
+		Iterator itr = TriQLQuery.exec( local, query );
+		if ( itr.hasNext() )
 		{
-			QuerySolution s = results.nextSolution();
-			Literal sigValue = s.getLiteral( "signature" );
-			RDFNode sigMethod = s.get( "smethod" );
+			Map results =  ( Map ) itr.next();
+			Node sigValue = ( Node ) results.get( "signature" );
+			Node sigMethod = ( Node ) results.get( "smethod" );
 			
         	try 
 			{
 				BASE64Decoder decoder = new BASE64Decoder();
-				signature = decoder.decodeBuffer( sigValue.getLexicalForm() );
-				sig = SWPSignatureUtilities.getSignatureAlgorithm( sigMethod.asNode() );
+				signature = decoder.decodeBuffer( sigValue.getLiteral().getLexicalForm() );
+				sig = SWPSignatureUtilities.getSignatureAlgorithm( sigMethod );
 			} 
 			catch ( IOException e ) 
 			{
@@ -214,21 +175,15 @@ public class SWPWarrantImpl implements SWPWarrant
 	public boolean isSigned() 
 	{
 		boolean result = false;
-		String query = "PREFIX swp: <http://www.w3.org/2004/03/trix/swp-2/>" +
-		               "SELECT * WHERE {" +
-		               "   <"+warrant.getGraphName().getURI()+"> swp:signature ?signature ;" +
-		               "                                         swp:authority ?authority ;" +
-		               "                                         swp:signatureMethod ?smethod ." +
-		               " }";
-		QueryExecution qe = QueryExecutionFactory.create( query, localDS );
-		ResultSet results = qe.execSelect();
-		if ( results.hasNext() )
+		String query = "SELECT * WHERE (<"+warrant.getGraphName().getURI()+"> swp:signature ?signature) (<"+warrant.getGraphName().getURI()+"> swp:authority ?authority) (<"+warrant.getGraphName().getURI()+"> swp:signatureMethod ?smethod) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
+		Iterator itr = TriQLQuery.exec( local, query );
+		if ( itr.hasNext() )
 		{
-			QuerySolution s = results.nextSolution();
-			boolean hasSigValue = s.contains( "signature" );
-			boolean hasSigMethod = s.contains( "smethod" );
-			boolean hasAuthority = s.contains( "authority" );
-			if ( hasSigValue & hasSigMethod & hasAuthority )
+			Map results =  ( Map ) itr.next();
+			Node sigValue = ( Node ) results.get( "signature" );
+			Node sigMethod = ( Node ) results.get( "smethod" );
+			Node authority = ( Node ) results.get( "authority" ); 
+			if ( ( sigValue != null ) & ( sigMethod != null ) & ( authority != null ) )
 				result = true;
 		}
 		return result;
