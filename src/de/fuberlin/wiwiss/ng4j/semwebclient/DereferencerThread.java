@@ -62,12 +62,15 @@ public class DereferencerThread extends TaskExecutorBase {
 	protected void executeTask ( Task task ) {
 		DereferencingResult result = executeTask( (DereferencingTask) task );
 
-		// deliver the result of the task to the listener
+		// deliver the result of the task to the listeners
 		synchronized ( this ) {
 			if ( isStopped() )
 				return;
 
-			( (DereferencingTask) task ).getListener().dereferenced( result );
+			Iterator listenerIter = ( (DereferencingTask) task ).getListeners();
+			while ( listenerIter.hasNext() ) {
+				( (DereferencingListener) listenerIter.next() ).dereferenced( result );
+			}
 		}
 	}
 

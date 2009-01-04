@@ -522,12 +522,17 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 					else
 						unretrievedURIs.put(result.getURI(), result.getException());
 				}
-				if (listener != null) {
-					listener.dereferenced(result);
-				}
 			}
 		};
-		getDerefQueue().addTask(new DereferencingTask(myListener, derefURI, step));
+
+		DereferencingTask task = new DereferencingTask( derefURI, step );
+
+		task.attachListener( myListener );
+		if ( listener != null ) {
+			task.attachListener( listener );
+		}
+
+		getDerefQueue().addTask( task );
 		return true;
 	}
 
