@@ -3,23 +3,25 @@
 */
 package de.fuberlin.wiwiss.ng4j.swp.impl;
 
-import java.io.IOException;
-import java.security.NoSuchProviderException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.axis.components.uuid.SimpleUUIDGen;
 import org.apache.log4j.Logger;
-import org.bouncycastle.openpgp.PGPException;
 
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.mem.GraphMem;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QuerySolution;
+import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.ResultSetFactory;
+import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.util.iterator.NiceIterator;
 import com.hp.hpl.jena.util.iterator.WrappedIterator;
@@ -27,68 +29,133 @@ import com.hp.hpl.jena.util.iterator.WrappedIterator;
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
+import de.fuberlin.wiwiss.ng4j.sparql.NamedGraphDataset;
 import de.fuberlin.wiwiss.ng4j.swp.SWPAuthority;
 import de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraph;
 import de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.swp.SWPWarrant;
-import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPAlgorithmNotSupportedException;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPBadDigestException;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPBadSignatureException;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPInvalidKeyException;
-import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPNoSuchAlgorithmException;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPNoSuchDigestMethodException;
-import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPSignatureException;
-import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPValidationException;
 import de.fuberlin.wiwiss.ng4j.swp.util.FileUtils;
 import de.fuberlin.wiwiss.ng4j.swp.util.OpenPGPUtils;
 import de.fuberlin.wiwiss.ng4j.swp.util.PKCS12Utils;
 import de.fuberlin.wiwiss.ng4j.swp.util.SWPSignatureUtilities;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
-import de.fuberlin.wiwiss.ng4j.triql.TriQLQuery;
 
 
 /**
  * 
  * Last commit info    :   $Author: hartig $
- * $Date: 2008/11/06 06:58:16 $
- * $Revision: 1.20 $
+ * $Date: 2009/01/16 18:29:26 $
+ * $Revision: 1.21 $
  * 
  * @author Chris Bizer.
  * @author Rowland Watkins.
  */
 public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedGraphSet
 {
-	 private static final Logger logger = Logger.getLogger( SWPNamedGraphSetImpl.class );
-	 private static boolean debug = logger.isDebugEnabled();
-	 //This means we no longer have to rely on a not-so-well known uuid impl.
-	 //Now dependent on Axis.
-	 private SimpleUUIDGen uuidGen = new SimpleUUIDGen ();
+	protected static final Logger logger = Logger.getLogger( SWPNamedGraphSetImpl.class );
+	protected static boolean debug = logger.isDebugEnabled();
+	//This means we no longer have to rely on a not-so-well known uuid impl.
+	//Now dependent on Axis.
+	protected SimpleUUIDGen uuidGen = new SimpleUUIDGen ();
+
+	protected NamedGraphDataset thisAsDS;
 	 
-	 //Some constants so we don't make an strange typos in queries
-	 private static final String QUERY_NODE_GRAPH = "graph";
-	 private static final String QUERY_NODE_WARRANT = "warrant";
+	//Some constants so we don't make an strange typos in queries
+//	 private static final String QUERY_NODE_GRAPH = "?graph";
+//	 private static final String QUERY_NODE_WARRANT = "?warrant";
 	// TODO use or remove these other constants
 //	 private static final String QUERY_NODE_SIG = "signature";
 //	 private static final String QUERY_NODE_CERT = "certificate";
 //	 private static final String QUERY_NODE_SMETHOD = "smethod";
 //	 private static final String QUERY_NODE_DIGEST = "digest";
 //	 private static final String QUERY_NODE_DMETHOD = "dmethod";
-   
-    public boolean swpAssert(SWPAuthority authority, ArrayList listOfAuthorityProperties) {
+	 
+	public static final String NL = System.getProperty("line.separator") ;
+
+	public SWPNamedGraphSetImpl ()
+	{
+		thisAsDS = new NamedGraphDataset( this );
+	}
+
+	protected boolean actOnGraphs( SWPAuthority authority,
+			ArrayList listOfAuthorityProperties,
+			Node property, // typically SWP.assertedBy or SWP.quotedBy
+			ArrayList listOfGraphNames, // the particular graphs to act on; use null if all graphs in the set should be acted on
+			Node digestMethod, // the method to use when creating the digest; use null if digest should not be included
+			ArrayList<Triple> additionalWarrantStatements // additional triples to add to the warrant; null for none
+			) {
+		
 		// Create a new warrant graph.
 		SWPNamedGraph warrantGraph = createNewWarrantGraph();
-		// Assert all graphs in the graphset. 
-        Iterator graphIterator = this.listGraphs();
-        while (graphIterator.hasNext()) {
-            NamedGraph currentGraph = (NamedGraph) graphIterator.next();
-            warrantGraph.add(new Triple(currentGraph.getGraphName(), SWP.assertedBy, warrantGraph.getGraphName()));
+		
+		// Assert or quote all graphs in the graphset or in the list provided. 
+		Iterator graphNameIterator;
+		if ( listOfGraphNames != null ) 
+		{
+			graphNameIterator = listOfGraphNames.iterator();
+		} else 
+		{
+			graphNameIterator = this.listGraphs();
+		}
+        while (graphNameIterator.hasNext()) {
+        	NamedGraph currentGraph = null;
+			Object next = graphNameIterator.next();
+			if ( next instanceof Node )
+			{
+				currentGraph = ( NamedGraph ) this.getGraph( ( Node ) next );
+			}
+			else if ( next instanceof String )
+			{
+				currentGraph = ( NamedGraph ) this.getGraph( ( String ) next );
+			}
+			else if ( next instanceof NamedGraph )
+			{
+				currentGraph = ( NamedGraph ) next;
+			}
+            warrantGraph.add(new Triple(currentGraph.getGraphName(), property, warrantGraph.getGraphName()));
+            
+            if ( digestMethod != null ) 
+            {
+    			// calculate and add the graph's digest to the warrant
+            	try 
+     			{
+     				String graphDigest = SWPSignatureUtilities.calculateDigest( currentGraph, digestMethod );
+     				warrantGraph.add( new Triple( currentGraph.getGraphName(), 
+     											SWP.digest, 
+     											Node.createLiteral( graphDigest, null, XSDDatatype.XSDbase64Binary ) ) );
+     				warrantGraph.add( new Triple( currentGraph.getGraphName(), SWP.digestMethod, digestMethod ) );
+     			} 
+     			catch ( SWPNoSuchDigestMethodException e ) 
+     			{
+     				logger.error( e.getMessage() );
+     				return false;
+     			}
+            }
         }
+        
         // Add a description of the authorty to the warrant graph
         authority.addDescriptionToGraph(warrantGraph, listOfAuthorityProperties);
+        
+        if ( additionalWarrantStatements != null ) {
+        	Iterator<Triple> additionalStmtsIterator = additionalWarrantStatements.iterator();
+        	while ( additionalStmtsIterator.hasNext() ) {
+        		Triple tripleToAdd = additionalStmtsIterator.next();
+        		warrantGraph.add(tripleToAdd);
+        	}
+        }
+        
 		// Add warrant graph to graphset
 		this.addGraph(warrantGraph);
         return true;
+	}
+
+    public boolean swpAssert(SWPAuthority authority, ArrayList listOfAuthorityProperties) {
+		return actOnGraphs(authority, listOfAuthorityProperties, SWP.assertedBy, null, null, null);
     }
 
     public boolean swpAssert(SWPAuthority authority) {
@@ -100,65 +167,20 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
      */
     public boolean swpQuote( SWPAuthority authority, ArrayList listOfAuthorityProperties ) 
 	{
-        // Create a new warrant graph.
-		SWPNamedGraph warrantGraph = createNewWarrantGraph();
-		// Assert all graph in the graphset.
-        Iterator graphIterator = this.listGraphs();
-        while ( graphIterator.hasNext() ) 
-		{
-            NamedGraph currentGraph = ( NamedGraph ) graphIterator.next();
-            warrantGraph.add( new Triple( currentGraph.getGraphName(), SWP.quotedBy, warrantGraph.getGraphName() ) );
-        }
-        // Add a description of the authorty to the warrant graph
-        authority.addDescriptionToGraph( warrantGraph, listOfAuthorityProperties );
-
-		// Add warrant graph to graphset
-		this.addGraph( warrantGraph );
-        return true;
+    	return actOnGraphs(authority, listOfAuthorityProperties, SWP.quotedBy, null, null, null);
     }
 
-   public boolean swpQuote( SWPAuthority authority ) 
-   {
+    public boolean swpQuote( SWPAuthority authority ) 
+    {
         return swpQuote( authority, new ArrayList() );
-   }
+    }
 
-   
     /* (non-Javadoc)
      * @see de.fuberlin.wiwiss.ng4j.swp.signature.SWPNamedGraphSet#assertGraphs(java.util.ArrayList, de.fuberlin.wiwiss.ng4j.swp.signature.SWPAuthority, java.util.ArrayList)
      */
     public boolean assertGraphs( ArrayList listOfGraphNames, SWPAuthority authority, ArrayList listOfAuthorityProperties ) 
 	{
-        // Create a new warrant graph.
-		SWPNamedGraph warrantGraph = createNewWarrantGraph();
-		// Assert all graph in the list.
-        Iterator graphNameIterator = listOfGraphNames.iterator();
-        while ( graphNameIterator.hasNext() ) 
-		{
-			NamedGraph currentGraph = null;
-			Object next = graphNameIterator.next();
-			if ( next instanceof Node )
-			{
-				currentGraph = ( NamedGraph ) this.getGraph( ( Node ) next );
-			}
-			else if ( next instanceof String )
-			{
-				currentGraph = ( NamedGraph ) this.getGraph( ( String ) next );
-			}
-			else if ( next instanceof NamedGraph )
-			{
-				currentGraph = ( NamedGraph ) next;
-			}
-			
-            warrantGraph.add( new Triple( currentGraph.getGraphName(), SWP.assertedBy, warrantGraph.getGraphName() ) );
-        }
-        // Add a description of the authorty to the warrant graph
-        
-        authority.addDescriptionToGraph( warrantGraph, listOfAuthorityProperties );
-		
-
-		// Add warrant graph to graphset
-		this.addGraph( warrantGraph );
-        return true;
+    	return actOnGraphs(authority, listOfAuthorityProperties, SWP.assertedBy, listOfGraphNames, null, null);
     }
 
     /* (non-Javadoc)
@@ -166,113 +188,157 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
      */
     public boolean quoteGraphs( ArrayList listOfGraphNames, SWPAuthority authority, ArrayList listOfAuthorityProperties ) 
     {
-        // Create a new warrant graph.
+    	return actOnGraphs(authority, listOfAuthorityProperties, SWP.quotedBy, listOfGraphNames, null, null);
+    }
+
+	protected boolean actOnGraphsAndIncludeSignature( SWPAuthority authority,
+			ArrayList listOfAuthorityProperties,
+			Node property, // typically SWP.assertedBy or SWP.quotedBy
+			ArrayList listOfGraphURIs, // the particular graphs to act on; use null if all graphs in the set should be acted on
+			Node digestMethod, // the method to use when creating the digest
+			Node signatureMethod,
+			String keystore,
+			String password,
+			ArrayList<Triple> additionalWarrantStatements // additional triples to add to the warrant; null for none
+			) throws SWPBadSignatureException
+	{
+		ArrayList<Node> graphsAsserted = new ArrayList<Node>();
+		ArrayList<Node> graphsIgnored = new ArrayList<Node>();
+		
+		// Create a new warrant graph.
 		SWPNamedGraph warrantGraph = createNewWarrantGraph();
-		// Assert all graph in the list.
-        Iterator graphNameIterator = listOfGraphNames.iterator();
-        while ( graphNameIterator.hasNext() ) 
-        {
-			NamedGraph currentGraph = null;
-			Object next = graphNameIterator.next();
-			if ( next instanceof Node )
+		
+		// Add authority properties supplied by user into warrantgraph.
+		authority.addDescriptionToGraph( warrantGraph, listOfAuthorityProperties );
+		
+		if ( additionalWarrantStatements != null ) {
+        	Iterator<Triple> additionalStmtsIterator = additionalWarrantStatements.iterator();
+        	while ( additionalStmtsIterator.hasNext() ) {
+        		Triple tripleToAdd = additionalStmtsIterator.next();
+        		warrantGraph.add(tripleToAdd);
+        	}
+        }
+		
+		// Assert all graphs in the graphset or all graphs in the list.
+		Iterator graphIterator;
+		if ( listOfGraphURIs != null )
+		{
+			graphIterator = listOfGraphURIs.iterator();
+		} 
+		else
+		{
+			graphIterator = this.listGraphs();
+			
+			// Query set to see if any previous warrants have been signed.
+			// Note that this query always uses swp:assertedBy (and never quotedBy) because warrants assert themselves.
+//			String warrantQuery = "SELECT * WHERE (?graph swp:assertedBy ?graph) (?graph swp:signature ?signature) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
+			String warrantQuery = "SELECT ?warrant" + NL
+				+ "WHERE { GRAPH ?warrant {" + NL
+				+ "?warrant <" + SWP.assertedBy + "> ?warrant ." + NL
+				+ "?warrant <" + SWP.signature + "> ?signature" + NL
+				+ " } }";
+			
+			QueryExecution qe = QueryExecutionFactory.create( warrantQuery, thisAsDS );
+			ResultSet results = ResultSetFactory.copyResults( qe.execSelect() );
+			if ( results.hasNext() )
 			{
-				currentGraph = ( NamedGraph ) this.getGraph( ( Node ) next );
+	            while ( results.hasNext() )
+	            {
+	            	QuerySolution sol = results.nextSolution();
+	            	Node graphNode = sol.get("?warrant").asNode();
+		            if ( debug )
+		            	logger.debug( graphNode );
+					
+					NamedGraph warrant = this.getGraph( graphNode );
+					// If we find a signed warrant graph, check that all graphs are asserted by it.
+					// TODO we probably want to make this more intelligent to handle graphs that
+					// have not already been asserted.
+					// An example of this is when a NamedGraphSet has been updated - we'll want
+					// to assert all new graphs. Current code does not really support this.
+					while ( graphIterator.hasNext() ) 
+				    {
+						NamedGraph currentGraph = ( NamedGraph ) graphIterator.next();
+						if ( warrant.contains( currentGraph.getGraphName(), property, graphNode ) )
+						{
+							logger.warn( "Warrant graph: "+currentGraph.getGraphName()+" already " + property + " and signed; skipping." );
+						}        
+					}  
+	            }
+	            return false;
 			}
-			else if ( next instanceof String )
+		}
+		
+		// if we don't find a signed warrant graph, just assert all graphs
+		// and sign the warrant.
+		while ( graphIterator.hasNext() ) 
+	    {
+			NamedGraph currentGraph = null;
+			Object next = graphIterator.next();
+			if ( next instanceof String )
 			{
-				currentGraph = ( NamedGraph ) this.getGraph( ( String ) next );
+				if ( this.containsGraph( (String)next ) )
+				{
+					currentGraph = ( NamedGraph ) this.getGraph( ( String ) next );
+				}
+				else
+				{
+					logger.warn("No such graph: " + next);
+					// skip
+					continue;
+				}
 			}
 			else if ( next instanceof NamedGraph )
 			{
 				currentGraph = ( NamedGraph ) next;
 			}
-            
-            warrantGraph.add( new Triple( currentGraph.getGraphName(), SWP.quotedBy, warrantGraph.getGraphName() ) );
-        }
-        // Add a description of the authorty to the warrant graph
-        
-		authority.addDescriptionToGraph( warrantGraph, listOfAuthorityProperties );
-		
-
-		// Add warrant graph to graphset
-		this.addGraph( warrantGraph );
-        return true;
-    }
-
-    /* (non-Javadoc)
-     * @see de.fuberlin.wiwiss.ng4j.swp.signature.SWPNamedGraphSet#assertWithSignature(de.fuberlin.wiwiss.ng4j.swp.signature.SWPAuthority, com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node, java.util.ArrayList)
-     */
-    public boolean assertWithSignature( SWPAuthority authority, 
-    									Node signatureMethod, 
-    									Node digestMethod, 
-    									ArrayList listOfAuthorityProperties, 
-    									String keystore,
-    									String password ) 
-	throws SWPBadSignatureException, SWPBadDigestException 
-    {		
-		//	Create a new warrant graph.
-		SWPNamedGraph warrantGraph = createNewWarrantGraph();
-		// Assert all graphs in the graphset.
-		boolean result = false;
-		
-		// Add authority properties supplied by user into warrantgraph.
-		authority.addDescriptionToGraph( warrantGraph, listOfAuthorityProperties );
-		
-		// Query set to see if any previous warrants have been signed.
-		Iterator graphIterator = this.listGraphs();
-		String warrantQuery = "SELECT * WHERE (?graph swp:assertedBy ?graph) (?graph swp:signature ?signature) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
-        Iterator witr = TriQLQuery.exec( this, warrantQuery );
-		if ( witr.hasNext() )
-		{
-            while ( witr.hasNext() )
-            {
-                Map results = ( Map ) witr.next();
-	            Node graph = ( Node ) results.get( QUERY_NODE_GRAPH );
-	            if ( debug )
-	            	logger.debug( graph );
-				
-				NamedGraph warrant = this.getGraph( graph );
-				// If we find a signed warrant graph, check that all graphs are asserted by it.
-				// TODO we probably want to make this more intelligent to handle graphs that
-				// have not already been asserted.
-				// An example of this is when a NamedGraphSet has been updated - we'll want
-				// to assert all new graphs. Current code does not really support this.
-				while ( graphIterator.hasNext() ) 
-			    {
-			        
-					NamedGraph currentGraph = ( NamedGraph ) graphIterator.next();
-					if ( warrant.contains( currentGraph.getGraphName(), SWP.assertedBy, graph ) )
-					{
-						logger.warn( "Warrant graph: "+currentGraph.getGraphName()+" already asserted and signed; skipping." );
-					}        
-				}  
-            }
-		}
-		// if we don't find a signed warrant graph, just assert all graphs
-		// and sign the warrant.
-		else if ( graphIterator.hasNext() )
-		{
-			while ( graphIterator.hasNext() ) 
-		    {
-				NamedGraph currentGraph = ( NamedGraph ) graphIterator.next();
-				try 
+			
+			if ( next instanceof String )
+			{
+				if ( currentGraph.contains( currentGraph.getGraphName(), property, Node.ANY ) )
 				{
-					String graphDigest = SWPSignatureUtilities.calculateDigest( currentGraph, digestMethod );
-					warrantGraph.add( new Triple( currentGraph.getGraphName(), SWP.assertedBy, warrantGraph.getGraphName() ) );
-					warrantGraph.add( new Triple( currentGraph.getGraphName(), 
-												SWP.digest, 
-												Node.createLiteral( graphDigest, null, XSDDatatype.XSDbase64Binary ) ) );
-					warrantGraph.add( new Triple( currentGraph.getGraphName(), SWP.digestMethod, digestMethod ) );
-				} 
-				catch ( SWPNoSuchDigestMethodException e ) 
+					logger.warn( "Graph: "+currentGraph.getGraphName()+" already " + property + "; skipping.");
+					graphsIgnored.add( currentGraph.getGraphName() );
+					continue;
+				}
+			}
+
+			graphsAsserted.add( currentGraph.getGraphName() );
+			
+			warrantGraph.add( new Triple( currentGraph.getGraphName(), property, warrantGraph.getGraphName() ) );
+			
+			// calculate and add the graph's digest to the warrant
+			try 
+			{
+				String graphDigest = SWPSignatureUtilities.calculateDigest( currentGraph, digestMethod );
+				warrantGraph.add( new Triple( currentGraph.getGraphName(), 
+											SWP.digest, 
+											Node.createLiteral( graphDigest, null, XSDDatatype.XSDbase64Binary ) ) );
+				warrantGraph.add( new Triple( currentGraph.getGraphName(), SWP.digestMethod, digestMethod ) );
+			} 
+			catch ( SWPNoSuchDigestMethodException e ) 
+			{
+				logger.error( e.getMessage() );
+				return false;
+			} 
+		}  
+		
+		Iterator<Node> git = graphsAsserted.iterator();
+		Iterator<Node> iit = graphsIgnored.iterator();
+		
+		if ( git.hasNext() )
+		{
+			if ( debug )
+			{
+				logger.debug( "Graphs to be " + property + ": " );
+			
+				while ( git.hasNext() )
 				{
-					logger.error( e.getMessage() );
-					return false;
-				} 
-			}  
+					logger.debug( git.next() );
+				}
+			}
 			
 			Object pkey = null;
-        	// Sign the warrant graph now.
+	    	// Sign the warrant graph now.
 			String warrantGraphSignature = null;
 			try 
 			{
@@ -284,7 +350,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 				{
 					pkey = OpenPGPUtils.decryptPGP( keystore, password );
 				}
-        	
+	    	
 				if ( pkey != null )
 				{
 					// remember to add everything that is required to the graph before signing
@@ -301,60 +367,47 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 				else throw new SWPInvalidKeyException( "Private key empty." );
 			
 			} 
-			catch ( SWPInvalidKeyException e ) 
+			catch ( Exception e ) 
 			{
 				//make the private key unusable
 				logger.error( e.getMessage() );
 				pkey = null;
 				return false;
 			}  
-			catch ( SWPSignatureException e ) 
-			{	
-				//make the private key unusable
-				logger.error( e.getMessage() );
-				pkey = null;
-				return false;
-			} 
-			catch ( SWPNoSuchAlgorithmException e ) 
-			{
-				//make the private key unusable
-				logger.error( e.getMessage() );
-				pkey = null;
-				return false;
-			} 
-			catch ( NoSuchProviderException e ) 
-			{
-				logger.error( e.getMessage() );
-				pkey = null;
-				return false;
-			} 
-			catch ( IOException e ) 
-			{
-				logger.error( e.getMessage() );
-				pkey = null;
-				return false;
-			} 
-			catch ( PGPException e ) 
-			{
-				logger.error( e.getMessage() );
-				pkey = null;
-				return false;
-			} 
-			catch ( SWPAlgorithmNotSupportedException e ) 
-			{
-				logger.error( e.getMessage() );
-				pkey = null;
-				return false;
-			}
-		
-        
+			
 			// Add warrant graph to graphset
 			this.addGraph( warrantGraph );
-			result = true;
+			return true;
+		}
+		else if( iit.hasNext() )
+		{
+			logger.warn( "Graphs already " + property + " and ignored: " );
+			if ( debug )
+			{
+				while ( iit.hasNext() )
+				{
+					logger.debug( iit.next() );
+				}
+			}
+			return false;
 		}
 		else
-			result = false;
-		return result;
+			return false;
+	}
+
+    /* (non-Javadoc)
+     * @see de.fuberlin.wiwiss.ng4j.swp.signature.SWPNamedGraphSet#assertWithSignature(de.fuberlin.wiwiss.ng4j.swp.signature.SWPAuthority, com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node, java.util.ArrayList)
+     */
+    public boolean assertWithSignature( SWPAuthority authority, 
+    									Node signatureMethod, 
+    									Node digestMethod, 
+    									ArrayList listOfAuthorityProperties, 
+    									String keystore,
+    									String password ) 
+	throws SWPBadSignatureException, SWPBadDigestException 
+    {
+    	return actOnGraphsAndIncludeSignature(authority, listOfAuthorityProperties, SWP.assertedBy, null, digestMethod,
+    			signatureMethod, keystore, password, null);
     }
 
     /* (non-Javadoc)
@@ -367,152 +420,8 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     									String keystore,
     									String password ) throws SWPBadSignatureException
     {
-		// Create a new warrant graph.
-		SWPNamedGraph warrantGraph = createNewWarrantGraph();
-		// Assert all graphs in the graphset.
-		boolean result = false;
-		
-		// Add authority properties supplied by user into warrantgraph.
-		authority.addDescriptionToGraph( warrantGraph, listOfAuthorityProperties );
-		
-		// Query set to see if any previous warrants have been signed.
-		Iterator graphIterator = this.listGraphs();
-		String warrantQuery = "SELECT * WHERE (?graph swp:assertedBy ?graph) (?graph swp:signature ?signature) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
-        Iterator witr = TriQLQuery.exec( this, warrantQuery );
-		if ( witr.hasNext() )
-		{
-            while ( witr.hasNext() )
-            {
-                Map results = ( Map ) witr.next();
-	            Node graph = ( Node ) results.get( QUERY_NODE_GRAPH );
-	            if ( debug )
-	            	logger.debug( graph );
-				
-				NamedGraph warrant = this.getGraph( graph );
-				// If we find a signed warrant graph, check that all graphs are asserted by it.
-				// TODO we probably want to make this more intelligent to handle graphs that
-				// have not already been asserted.
-				// An example of this is when a NamedGraphSet has been updated - we'll want
-				// to assert all new graphs. Current code does not really support this.
-				while ( graphIterator.hasNext() ) 
-			    {
-			        
-					NamedGraph currentGraph = ( NamedGraph ) graphIterator.next();
-					if ( warrant.contains( currentGraph.getGraphName(), SWP.quotedBy, graph ) )
-					{
-						logger.warn( "Warrant graph: "+currentGraph.getGraphName()+" already quoted and signed; skipping." );
-					}        
-				}  
-            }
-		}
-		// if we don't find a signed warrant graph, just assert all graphs
-		// and sign the warrant.
-		else if ( graphIterator.hasNext() )
-		{
-			while ( graphIterator.hasNext() ) 
-		    {
-				NamedGraph currentGraph = ( NamedGraph ) graphIterator.next();
-				try 
-				{
-					String graphDigest = SWPSignatureUtilities.calculateDigest( currentGraph, digestMethod );
-					warrantGraph.add( new Triple( currentGraph.getGraphName(), SWP.quotedBy, warrantGraph.getGraphName() ) );
-					warrantGraph.add( new Triple( currentGraph.getGraphName(), 
-												SWP.digest, 
-												Node.createLiteral( graphDigest, null, XSDDatatype.XSDbase64Binary ) ) );
-					warrantGraph.add( new Triple( currentGraph.getGraphName(), SWP.digestMethod, digestMethod ) );
-				} 
-				catch ( SWPNoSuchDigestMethodException e ) 
-				{
-					logger.error( e.getMessage() );
-					return false;
-				} 
-			}  
-			
-			Object pkey = null;
-        	// Sign the warrant graph now.
-			String warrantGraphSignature = null;
-			try 
-			{
-				if ( FileUtils.getExtension( keystore ).equals( "p12" ) )
-				{
-					pkey = PKCS12Utils.decryptPrivateKey( keystore, password );
-				}
-				else if ( FileUtils.getExtension( keystore ).equals( "asc" ) )
-				{
-					pkey = OpenPGPUtils.decryptPGP( keystore, password );
-				}
-        	
-				if ( pkey != null )
-				{
-					// remember to add everything that is required to the graph before signing
-					// and adding the signature, otherwise we can NEVER verify the signature.
-					warrantGraph.add( new Triple( warrantGraph.getGraphName(),
-												SWP.signatureMethod,
-												signatureMethod ) );
-					warrantGraphSignature = SWPSignatureUtilities.calculateSignature( warrantGraph, signatureMethod, pkey );
-				
-					warrantGraph.add( new Triple( warrantGraph.getGraphName(), 
-												SWP.signature, 
-												Node.createLiteral( warrantGraphSignature, null, XSDDatatype.XSDbase64Binary ) ) );
-				}
-				else throw new SWPInvalidKeyException( "Private key empty." );
-			
-			} 
-			catch ( SWPInvalidKeyException e ) 
-			{
-				//make the private key unusable
-				logger.error( e.getMessage() );
-				pkey = null;
-				return false;
-			}  
-			catch ( SWPSignatureException e ) 
-			{	
-				//make the private key unusable
-				logger.error( e.getMessage() );
-				pkey = null;
-				return false;
-			} 
-			catch ( SWPNoSuchAlgorithmException e ) 
-			{
-				//make the private key unusable
-				logger.error( e.getMessage() );
-				pkey = null;
-				return false;
-			} 
-			catch ( NoSuchProviderException e ) 
-			{
-				logger.error( e.getMessage() );
-				pkey = null;
-				return false;
-			} 
-			catch ( IOException e ) 
-			{
-				logger.error( e.getMessage() );
-				pkey = null;
-				return false;
-			} 
-			catch ( PGPException e ) 
-			{
-				logger.error( e.getMessage() );
-				pkey = null;
-				return false;
-			} 
-			catch ( SWPAlgorithmNotSupportedException e ) 
-			{
-				logger.error( e.getMessage() );
-				pkey = null;
-				return false;
-			}
-		
-        
-			// Add warrant graph to graphset
-			this.addGraph( warrantGraph );
-			result = true;
-		}
-		else
-			result = false;
-		return result;
-        
+    	return actOnGraphsAndIncludeSignature(authority, listOfAuthorityProperties, SWP.quotedBy, null, digestMethod,
+    			signatureMethod, keystore, password, null);
     }
 
     /* (non-Javadoc)
@@ -526,158 +435,8 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     										String keystore,
     										String password ) throws SWPBadSignatureException
     {
-		//		 Create a new warrant graph.
-		SWPNamedGraph warrantGraph = createNewWarrantGraph();
-		// Assert all graphs in the graphset.
-		
-		authority.addDescriptionToGraph( warrantGraph, listOfAuthorityProperties );
-		ArrayList graphsAsserted = new ArrayList();
-		ArrayList graphsIgnored = new ArrayList();
-		
-        Iterator graphIterator = listOfGraphURIs.iterator();
-        while ( graphIterator.hasNext() ) 
-        {
-			String graph = ( String )graphIterator.next();
-			if ( this.containsGraph( graph ) )
-			{
-				NamedGraph currentGraph = this.getGraph( graph );
-				if ( currentGraph.contains( currentGraph.getGraphName(), SWP.assertedBy, Node.ANY ) )
-				{
-					logger.warn( "Graph: "+currentGraph.getGraphName()+" already asserted; skipping.");
-					graphsIgnored.add( currentGraph.getGraphName() );
-					continue;
-				}
-				else
-				{
-					graphsAsserted.add( currentGraph.getGraphName() );
-					try 
-					{
-						String graphDigest = SWPSignatureUtilities.calculateDigest( currentGraph, digestMethod );
-						warrantGraph.add( new Triple( currentGraph.getGraphName(), SWP.assertedBy, warrantGraph.getGraphName() ) );
-						warrantGraph.add( new Triple( currentGraph.getGraphName(), 
-													SWP.digest, 
-													Node.createLiteral( graphDigest, null, XSDDatatype.XSDbase64Binary ) ) );
-						warrantGraph.add( new Triple( currentGraph.getGraphName(), SWP.digestMethod, digestMethod ) );
-					} 
-					catch ( SWPNoSuchDigestMethodException e ) 
-					{
-						logger.error( e.getMessage() );
-						return false;
-					} 
-				}
-			}
-			else
-				continue;
-                      
-        }  
-		
-		Iterator git = graphsAsserted.iterator();
-		Iterator iit = graphsIgnored.iterator();
-		if ( git.hasNext() )
-		{	
-			if ( debug )
-			{
-				logger.debug( "Graphs to be asserted: " );
-			
-				while ( git.hasNext() )
-				{
-					logger.debug( git.next() );
-				}
-			}
-			Object pkey = null;
-        	// Sign the warrant graph now.
-			String warrantGraphSignature = null;
-			try 
-			{
-				if ( FileUtils.getExtension( keystore ).equals( "p12" ) )
-				{
-					pkey = PKCS12Utils.decryptPrivateKey( keystore, password );
-				}
-				else if ( FileUtils.getExtension( keystore ).equals( "asc" ) )
-				{
-					pkey = OpenPGPUtils.decryptPGP( keystore, password );
-				}
-        	
-				if ( pkey != null )
-				{
-					warrantGraph.add( new Triple( warrantGraph.getGraphName(),
-												SWP.signatureMethod,
-												signatureMethod ) );
-					warrantGraphSignature = SWPSignatureUtilities.calculateSignature( warrantGraph, signatureMethod, pkey );
-				
-					warrantGraph.add( new Triple( warrantGraph.getGraphName(), 
-												SWP.signature, 
-												Node.createLiteral( warrantGraphSignature, null, XSDDatatype.XSDbase64Binary ) ) );
-				}
-				else throw new SWPInvalidKeyException( "Private key empty." );
-			
-			} 
-			catch ( SWPInvalidKeyException e ) 
-			{
-				//make the private key unusable
-				logger.error( e.getMessage() );
-				pkey = null;
-				return false;
-			}  
-			catch ( SWPSignatureException e ) 
-			{	
-				//make the private key unusable
-				logger.error( e.getMessage() );
-				pkey = null;
-				return false;
-			} 
-			catch ( SWPNoSuchAlgorithmException e ) 
-			{
-				//make the private key unusable
-				logger.error( e.getMessage() );
-				pkey = null;
-				return false;
-			} 
-			catch ( NoSuchProviderException e ) 
-			{
-				logger.error( e.getMessage() );
-				pkey = null;
-				return false;
-			} 
-			catch ( IOException e ) 
-			{
-				logger.error( e.getMessage() );
-				pkey = null;
-				return false;
-			} 
-			catch ( PGPException e ) 
-			{
-				logger.error( e.getMessage() );
-				pkey = null;
-				return false;
-			} 
-			catch ( SWPAlgorithmNotSupportedException e ) 
-			{
-				logger.error( e.getMessage() );
-				pkey = null;
-				return false;
-			}
-		
-			// Add warrant graph to graphset
-			this.addGraph( warrantGraph );
-			return true;
-		}
-		else if( iit.hasNext() )
-		{
-			
-			
-			logger.warn( "Graphs already asserted and ignored: " );
-			if ( debug )
-			{
-				while ( iit.hasNext() )
-				{
-					logger.debug( iit.next() );
-				}
-			}
-			return false;
-		}
-		else
-			return false;
+    	return actOnGraphsAndIncludeSignature(authority, listOfAuthorityProperties, SWP.assertedBy, listOfGraphURIs, digestMethod,
+    			signatureMethod, keystore, password, null);
     }
 
     /* (non-Javadoc)
@@ -686,21 +445,28 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     
     public ExtendedIterator getAllWarrants( SWPAuthority authority ) 
     {
-		String warrantQuery = "SELECT * WHERE ?warrant (?warrant swp:assertedBy ?warrant) (?warrant swp:authority <"+authority.getID()+">) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
-        final Iterator witr = TriQLQuery.exec( this, warrantQuery );
+//		String warrantQuery = "SELECT * WHERE ?warrant (?warrant swp:assertedBy ?warrant) (?warrant swp:authority <"+authority.getID()+">) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
+		String warrantQuery = "SELECT ?warrant" + NL
+			+ "WHERE { GRAPH ?warrant {" + NL
+			+ "?warrant <" + SWP.assertedBy + "> ?warrant ." + NL
+			+ "?warrant <" + SWP.authority + "> <" + authority.getID()+">" + NL
+			+ " } }";
+		
+		QueryExecution qe = QueryExecutionFactory.create( warrantQuery, thisAsDS );
+		final ResultSet results = ResultSetFactory.copyResults( qe.execSelect() );
 		
         return new NiceIterator()
         {
 			
 			public boolean hasNext() 
 			{
-				return witr.hasNext();
+				return results.hasNext();
 			}
 
 			public Object next() 
 			{
-				Map results =  ( Map ) witr.next();
-				Node graphURI = ( Node ) results.get( QUERY_NODE_WARRANT );
+				QuerySolution s = results.nextSolution();
+				Node graphURI = s.get( "?warrant" ).asNode();
 				SWPWarrant warrant = new SWPWarrantImpl( SWPNamedGraphSetImpl.this.getGraph( graphURI ) ); 
 				return warrant;
 			}
@@ -712,9 +478,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
      */
     public ExtendedIterator getAllAssertedGraphs( SWPAuthority authority ) 
 	{
-    	return getGraphsByQuery(
-    			"SELECT * WHERE (?graph swp:assertedBy ?wg) (?wg swp:authority <"+authority.getID()+">) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>", 
-    			"graph");
+    	return this.getGraphsWithProperty(authority, SWP.assertedBy);
     }
 
     /* (non-Javadoc)
@@ -722,18 +486,29 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
      */
     public ExtendedIterator getAllQuotedGraphs( SWPAuthority authority ) 
 	{
-    	return getGraphsByQuery(
-    			"SELECT * WHERE (?graph swp:quotedBy ?wg) (?wg swp:authority <"+authority.getID()+">) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>", 
-    			"graph");
+    	return this.getGraphsWithProperty(authority, SWP.quotedBy);
     }
 
-    private ExtendedIterator getGraphsByQuery(String query, String resultVariable) {
-    	Collection graphs = new ArrayList();
-    	Set names = new HashSet();
-        final Iterator witr = TriQLQuery.exec( this, query );
-        while ( witr.hasNext() ) {
-			Map results =  ( Map ) witr.next();
-			Node node = ( Node ) results.get(resultVariable);
+    protected ExtendedIterator getGraphsWithProperty( SWPAuthority authority, Node property ) {
+    	String queryString = "SELECT ?graph" + NL
+			+ "WHERE { GRAPH ?warrant {" + NL
+			+ "?graph <" + property.getURI() + "> ?warrant ." + NL
+			+ "?warrant <" + SWP.authority + "> <" + authority.getID()+">" + NL
+			+ " } }";
+    	
+    	return getGraphsByQuery(queryString, "?graph");
+//    			"SELECT * WHERE (?graph <" + property.getURI() + "> ?wg) (?wg <http://www.w3.org/2004/03/trix/swp-2/authority> <"+authority.getID()+">)", 
+//    			"graph");
+    }
+
+    protected ExtendedIterator getGraphsByQuery(String query, String resultVariable) {
+    	Collection<NamedGraph> graphs = new ArrayList<NamedGraph>();
+    	Set<Node> names = new HashSet<Node>();
+    	QueryExecution qe = QueryExecutionFactory.create( query, thisAsDS );
+        ResultSet results = ResultSetFactory.copyResults( qe.execSelect() );
+        while ( results.hasNext() ) {
+        	QuerySolution solution = results.nextSolution();
+        	Node node = solution.get(resultVariable).asNode();
 
 			// Make sure there are no duplicates
 			if (names.add(node)) {
@@ -773,17 +548,27 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     		if ( it.hasNext() )
     		{	
     			quad = ( Quad )it.next();
-    			String warrantQuery = "SELECT * WHERE <"+ng.getGraphName().toString()+"> (<"+ng.getGraphName().toString()+"> swp:signature ?signature . <"+ng.getGraphName().toString()+"> swp:signatureMethod ?smethod . <"+ng.getGraphName().toString()+"> swp:authority ?authority . ?authority swp:X509Certificate ?certificate) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
-	            Iterator witr = TriQLQuery.exec( this, warrantQuery );
-				if ( witr.hasNext() )
+    			String ngName = ng.getGraphName().toString();
+//    			String warrantQuery = "SELECT * WHERE <"+ng.getGraphName().toString()+"> (<"+ng.getGraphName().toString()+"> swp:signature ?signature . <"+ng.getGraphName().toString()+"> swp:signatureMethod ?smethod . <"+ng.getGraphName().toString()+"> swp:authority ?authority . ?authority swp:X509Certificate ?certificate) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
+	            String warrantQuery = "SELECT ?signature ?smethod ?certificate" + NL
+	            	+ "WHERE { GRAPH <" + ngName + "> { " + NL
+	            	+ "<" + ngName + "> <" + SWP.signature + "> ?signature ." + NL
+	            	+ "<" + ngName + "> <" + SWP.signatureMethod + "> ?smethod ." + NL
+	            	+ "<" + ngName + "> <" + SWP.authority + "> ?authority ." + NL
+	            	+ "?authority <" + SWP.X509Certificate + "> ?certificate" + NL
+	            	+ " } }";
+	            QueryExecution qe = QueryExecutionFactory.create( warrantQuery, thisAsDS );
+				ResultSet results = ResultSetFactory.copyResults( qe.execSelect() );
+				if ( results.hasNext() )
 				{
-	                while ( witr.hasNext() )
+	                while ( results.hasNext() )
 	                {
-	                    Map result = ( Map ) witr.next();
-        	            Node cert = ( Node ) result.get( "certificate" );
-        	            Node signature = ( Node ) result.get( "signature" );
-						Node signatureMethod = ( Node ) result.get( "smethod" );
-        	            String certificate = cert.getLiteral().getLexicalForm();
+	                	QuerySolution solution = results.nextSolution();
+        	            Literal cert = solution.getLiteral( "?certificate" );
+        	            Literal signature = solution.getLiteral( "?signature" );
+        	            Node signatureMethod = solution.get( "?smethod" ).asNode();
+        	            
+        	            String certificate = cert.getLexicalForm();
         	            String certs = "-----BEGIN CERTIFICATE-----\n" +
         	            					certificate + "\n-----END CERTIFICATE-----";
         	            // If the certificate and signature are not null, we can use these
@@ -796,12 +581,12 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
         	                try 
         	                {
         	                	Iterator exit = ng.find( ng.getGraphName(), SWP.signature, Node.ANY );
-        	                	ArrayList li = new ArrayList();
+        	                	ArrayList<Triple> li = new ArrayList<Triple>();
         	                	while ( exit.hasNext() )
         	                	{
         	                		li.add( ( Triple )exit.next() );
         	                	}
-        	                	for ( Iterator i = li.iterator(); i.hasNext(); )
+        	                	for ( Iterator<Triple> i = li.iterator(); i.hasNext(); )
         	                	{
         	                		ng.delete( ( Triple )i.next() );
         	                	}
@@ -811,98 +596,104 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
         	                	// string representations.
         	                	// After this, we then add to our verification graph the results of
         	                	// this process.
-        	                    if ( SWPSignatureUtilities.validateSignature( ng, signatureMethod, signature.getLiteral().getLexicalForm(), certs ) )
+        	                    if ( SWPSignatureUtilities.validateSignature( ng, signatureMethod, signature.getLexicalForm(), certs ) )
         	                    {
-        	                    	logger.info( "Warrant graph " + ng.getGraphName().toString() + " successfully verified." );
-									verificationGraph.add( new Triple( ng.getGraphName(), SWP_V.successful, Node.createLiteral( "true" ) ) );
+        	                    	// The warrant graph's signature check succeeded
+        	                    	recordWarrantGraphSignatureCheckResult( verificationGraph, ng, true);
 									
-									String asserteddigestQuery = "SELECT * WHERE (?graph swp:assertedBy <"+ng.getGraphName().toString()+"> . ?graph swp:digest ?digest . ?graph swp:digestMethod ?dmethod) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
-						            Iterator ditr = TriQLQuery.exec( this, asserteddigestQuery );
-									String quoteddigestQuery = "SELECT * WHERE (?graph swp:quotedBy <"+ng.getGraphName().toString()+"> . ?graph swp:digest ?digest . ?graph swp:digestMethod ?dmethod) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
-									Iterator qitr = TriQLQuery.exec( this, quoteddigestQuery );
-									if ( ditr.hasNext() )
+//									String asserteddigestQuery = "SELECT * WHERE (?graph swp:assertedBy <"+ng.getGraphName().toString()+"> . ?graph swp:digest ?digest . ?graph swp:digestMethod ?dmethod) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
+									String asserteddigestQuery = "SELECT ?graph ?digest ?dmethod" + NL
+						            + "WHERE { GRAPH <" + ngName + "> { " + NL
+						            	+ "?graph <" + SWP.assertedBy + "> <" + ngName + "> ." + NL
+						            	+ "?graph <" + SWP.digest + "> ?digest ." + NL
+						            	+ "?graph <" + SWP.digestMethod + "> ?dmethod" + NL
+						            	+ " } }";
+									QueryExecution dQE = QueryExecutionFactory.create( asserteddigestQuery, thisAsDS );
+									ResultSet dResults = ResultSetFactory.copyResults( dQE.execSelect() );
+									
+//									String quoteddigestQuery = "SELECT * WHERE (?graph swp:quotedBy <"+ng.getGraphName().toString()+"> . ?graph swp:digest ?digest . ?graph swp:digestMethod ?dmethod) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
+									String quoteddigestQuery = "SELECT ?graph ?digest ?dmethod" + NL
+						            	+ "WHERE { GRAPH <" + ngName + "> { " + NL
+						            	+ "?graph <" + SWP.quotedBy + "> <" + ngName + "> ." + NL
+						            	+ "?graph <" + SWP.digest + "> ?digest ." + NL
+						            	+ "?graph <" + SWP.digestMethod + "> ?dmethod" + NL
+						           		+ " } }";
+									QueryExecution qQE = QueryExecutionFactory.create( quoteddigestQuery, thisAsDS );
+									ResultSet qResults = ResultSetFactory.copyResults( qQE.execSelect() );
+									
+									if ( dResults.hasNext() )
 									{
-										while ( ditr.hasNext() )
+										while ( dResults.hasNext() )
 										{
-											Map dresult = ( Map ) ditr.next();
-											Node graph = ( Node ) dresult.get( QUERY_NODE_GRAPH );
-											Node digest = ( Node ) dresult.get( "digest" );
-					        	        	Node digestMethod = (Node) dresult.get( "dmethod" );
-										
+											QuerySolution dS = dResults.nextSolution();
+											Node graph = dS.get( "?graph" ).asNode();
+											Literal digest = dS.getLiteral( "?digest" );
+					        	        	Node digestMethod = dS.get( "?dmethod" ).asNode();
+											
 											String digest1 = SWPSignatureUtilities.calculateDigest( this.getGraph( graph ), digestMethod );
-											if ( digest1.equals( digest.getLiteral().getLexicalForm() ) )
+											if ( digest1.equals( digest.getLexicalForm() ) )
 											{
-												verificationGraph.add( new Triple( graph, SWP_V.successful, Node.createLiteral( "true" ) ) );
+												// The graph's digest check succeeded
+												recordDigestCheckResult( verificationGraph, ng, graph, true);
 											}
-											else verificationGraph.add( new Triple( graph, SWP_V.notSuccessful, Node.createLiteral( "true" ) ) );
+											else
+											{
+												// The graph's digest check failed
+												recordDigestCheckResult( verificationGraph, ng, graph, false);
+											}
 										}
 									}
-									else if ( qitr.hasNext() )
+									else if ( qResults.hasNext() )
 									{
-										while ( qitr.hasNext() )
+										while ( qResults.hasNext() )
 										{
-											Map dresult = ( Map ) qitr.next();
-											Node graph = ( Node ) dresult.get( QUERY_NODE_GRAPH );
-											Node digest = ( Node ) dresult.get( "digest" );
-					        	        	Node digestMethod = (Node) dresult.get( "dmethod" );
+											QuerySolution qS = qResults.nextSolution();
+											Node graph = qS.get( "?graph" ).asNode();
+											Literal digest = qS.getLiteral( "?digest" );
+					        	        	Node digestMethod = qS.get( "?dmethod" ).asNode();
 										
 											String digest1 = SWPSignatureUtilities.calculateDigest( this.getGraph( graph ), digestMethod );
-											if ( digest1.equals( digest.getLiteral().getLexicalForm() ) )
+											if ( digest1.equals( digest.getLexicalForm() ) )
 											{
-												verificationGraph.add( new Triple( graph, SWP_V.successful, Node.createLiteral( "true" ) ) );
+												// The graph's digest check succeeded
+												recordDigestCheckResult( verificationGraph, ng, graph, true);
 											}
-											else verificationGraph.add( new Triple( graph, SWP_V.notSuccessful, Node.createLiteral( "true" ) ) );
+											else 
+											{
+												// The graph's digest check failed
+												recordDigestCheckResult( verificationGraph, ng, graph, false);
+											}
 										}
 									}
         	                    }
         	                    else
         	                    {
-									logger.error( "Warrant graph " + ng.getGraphName().toString() + " verification failure!" );
-        	                    	verificationGraph.add( new Triple( ng.getGraphName(), SWP_V.notSuccessful, Node.createLiteral( "true" ) ) );
-        	                    }
+        	                    	// The warrant graph's signature check failed
+        	                    	recordWarrantGraphSignatureCheckResult( verificationGraph, ng, false);
+								}
         	                    
-        	                    for ( Iterator i = li.iterator(); i.hasNext(); )
+        	                    for ( Iterator<Triple> i = li.iterator(); i.hasNext(); )
         	                    {
         	                    	ng.add( ( Triple )i.next() );
         	                    }
         	                }
-        	                catch ( SWPInvalidKeyException e ) 
+        	                catch ( Exception e ) 
         	                {
-								logger.error( e.getMessage() );
-								return false;
-							} 
-        	                catch ( SWPSignatureException e ) 
-        	                {
-        	                	logger.error( e.getMessage() );
-								return false;
-							}  
-        	                catch ( SWPNoSuchAlgorithmException e ) 
-        	                {
-        	                	logger.error( e.getMessage() );
-								return false;
-							} 
-        	                catch ( SWPValidationException e ) 
-        	                {
-        	                	logger.error( e.getMessage() );
-								return false;
-							} 
-							catch ( SWPNoSuchDigestMethodException e ) 
-							{ 
 								logger.error( e.getMessage() );
 								return false;
 							}
         	            }
         	            else
 						{
-							logger.error( "Warrant graph " + ng.getGraphName().toString() + " verification failure!" );
-	                    	verificationGraph.add( new Triple( ng.getGraphName(), SWP_V.notSuccessful, Node.createLiteral( "true" ) ) );
+        	            	// The warrant graph's certificate or signature is empty
+        	            	recordMissingCertificateOrSignature( verificationGraph, ng );
 						}
 	                }
     			}	
 				else
 				{
-					logger.error( "Warrant graph " + ng.getGraphName().toString() + " verification failure!" );
-                	verificationGraph.add( new Triple( ng.getGraphName(), SWP_V.notSuccessful, Node.createLiteral( "true" ) ) );
+					// The warrant graph is incomplete
+					recordIncompleteWarrantGraph( verificationGraph, ng );
 				}
     		}
     		else
@@ -910,6 +701,42 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     			
     	}		
 		return true;
+    }
+
+    protected void recordWarrantGraphSignatureCheckResult( NamedGraph verificationGraph, 
+    		NamedGraph warrantGraph, boolean succeeded ) {
+    	
+    	if ( succeeded ) {
+    		logger.info( "Warrant graph " + warrantGraph.getGraphName().toString() + " successfully verified." );
+        	verificationGraph.add( new Triple( warrantGraph.getGraphName(), SWP_V.successful, Node.createLiteral( "true" ) ) );
+    	} else {
+    		logger.error( "Warrant graph " + warrantGraph.getGraphName().toString() + " verification failure!" );
+        	verificationGraph.add( new Triple( warrantGraph.getGraphName(), SWP_V.notSuccessful, Node.createLiteral( "true" ) ) );
+    	}
+    }
+
+    protected void recordDigestCheckResult( NamedGraph verificationGraph,
+    		NamedGraph warrantGraph, Node graphChecked, boolean succeeded ) {
+    	
+    	if ( succeeded ) {
+    		verificationGraph.add( new Triple( graphChecked, SWP_V.successful, Node.createLiteral( "true" ) ) );
+    	} else {
+    		verificationGraph.add( new Triple( graphChecked, SWP_V.notSuccessful, Node.createLiteral( "true" ) ) );
+    	}
+    }
+
+    protected void recordMissingCertificateOrSignature( NamedGraph verificationGraph,
+    		NamedGraph warrantGraph ) {
+    	
+    	logger.error( "Warrant graph " + warrantGraph.getGraphName().toString() + " verification failure!" );
+    	verificationGraph.add( new Triple( warrantGraph.getGraphName(), SWP_V.notSuccessful, Node.createLiteral( "true" ) ) );
+    }
+
+    protected void recordIncompleteWarrantGraph( NamedGraph verificationGraph,
+    		NamedGraph warrantGraph ) {
+    	
+		logger.error( "Warrant graph " + warrantGraph.getGraphName().toString() + " verification failure!" );
+    	verificationGraph.add( new Triple( warrantGraph.getGraphName(), SWP_V.notSuccessful, Node.createLiteral( "true" ) ) );
     }
 
 	protected NamedGraph createNamedGraphInstance( Node graphName ) 
@@ -923,10 +750,14 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 
     protected SWPNamedGraph createNewWarrantGraph() 
     {
-		Node warrantGraphName = Node.createURI( "urn:uuid:" + uuidGen.nextUUID() );
+		Node warrantGraphName = Node.createURI( getNewWarrantGraphName(uuidGen.nextUUID()) );
 		SWPNamedGraph warrantGraph = new SWPNamedGraphImpl( warrantGraphName, new GraphMem() );
 		warrantGraph.add( new Triple( warrantGraphName, SWP.assertedBy, warrantGraphName ) );
         return warrantGraph;
+    }
+
+    protected String getNewWarrantGraphName(String uuid) {
+    	return "urn:uuid:" + uuid;
     }
 
 }

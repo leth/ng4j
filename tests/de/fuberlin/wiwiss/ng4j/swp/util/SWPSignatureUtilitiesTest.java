@@ -311,36 +311,41 @@ public class SWPSignatureUtilitiesTest extends TestCase
 															(X509Certificate )certs[0], 
 															list ) );
 	}
-	/*
-	 * Class under test for boolean validateSignature(NamedGraph, Node, String, X509Certificate, ArrayList, ArrayList)
-	 */
-	
-	public void testValidateSignatureNamedGraphNodeStringX509CertificateArrayListArrayList() 
-	throws SWPInvalidKeyException, 
-	SWPSignatureException, 
-	SWPCertificateException, 
-	SWPNoSuchAlgorithmException, 
-	SWPValidationException 
-	{
-		Certificate[] certs = PKCS12Utils.getCertChain( keystore, password );
-		
-		ArrayList list = new ArrayList();
-		list.add( certs[1]);
-		
-		assertTrue( SWPSignatureUtilities.validateSignature( g1, 
-															SWP.JjcRdfC14N_rsa_sha224, //SWP.JjcRdfC14N_rsa_sha1, 
-															signature, 
-															(X509Certificate )certs[0], 
-															list, 
-															list ) );
-		
-		assertFalse( SWPSignatureUtilities.validateSignature( g1, 
-															SWP.JjcRdfC14N_rsa_sha224, //SWP.JjcRdfC14N_rsa_sha1, 
-															badsignature, 
-															(X509Certificate )certs[0], 
-															list, 
-															list ) );
-	}
+
+// Commented the following test because the tested method has been commented.
+// See the corresponding source file
+//    src/de/fuberlin/wiwiss/ng4j/swp/util/SWPSignatureUtilities.java
+// for the reason.
+//                       01/10/09 Olaf
+// 	/*
+// 	 * Class under test for boolean validateSignature(NamedGraph, Node, String, X509Certificate, ArrayList, ArrayList)
+// 	 */
+// 	public void testValidateSignatureNamedGraphNodeStringX509CertificateArrayListArrayList() 
+// 	throws SWPInvalidKeyException, 
+// 	SWPSignatureException, 
+// 	SWPCertificateException, 
+// 	SWPNoSuchAlgorithmException, 
+// 	SWPValidationException 
+// 	{
+// 		Certificate[] certs = PKCS12Utils.getCertChain( keystore, password );
+// 		
+// 		ArrayList list = new ArrayList();
+// 		list.add( certs[1]);
+// 		
+// 		assertTrue( SWPSignatureUtilities.validateSignature( g1, 
+// 															SWP.JjcRdfC14N_rsa_sha224, //SWP.JjcRdfC14N_rsa_sha1, 
+// 															signature, 
+// 															(X509Certificate )certs[0], 
+// 															list, 
+// 															list ) );
+// 		
+// 		assertFalse( SWPSignatureUtilities.validateSignature( g1, 
+// 															SWP.JjcRdfC14N_rsa_sha224, //SWP.JjcRdfC14N_rsa_sha1, 
+// 															badsignature, 
+// 															(X509Certificate )certs[0], 
+// 															list, 
+// 															list ) );
+// 	}
 	
 	
 	public void testVerifyCertificateX509CertificateArrayList() 

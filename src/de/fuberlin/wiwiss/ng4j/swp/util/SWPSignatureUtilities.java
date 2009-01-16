@@ -35,8 +35,7 @@ import org.bouncycastle.crypto.digests.SHA224Digest;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.digests.SHA384Digest;
 import org.bouncycastle.crypto.digests.SHA512Digest;
-import org.bouncycastle.jce.provider.BouncyCastleProvider; 
-import org.bouncycastle.jce.provider.JDKDigestSignature;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPPrivateKey;
 import org.bouncycastle.util.encoders.Hex;
 
@@ -65,8 +64,8 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
 /**
  * 
  * Last commit info    :   $Author: hartig $
- * $Date: 2008/10/29 18:36:46 $
- * $Revision: 1.12 $
+ * $Date: 2009/01/16 18:29:26 $
+ * $Revision: 1.13 $
  * 
  * 
  * SWPSignatureUtilities
@@ -188,18 +187,9 @@ public class SWPSignatureUtilities
     	return result.toString();
     }
     
-    /**
-     * 
-     * @param graph
-     * @param digestMethod
-     * @return digest
-     * @throws SWPNoSuchDigestMethodException
-     */
-    public static String calculateDigest( NamedGraph graph, Node digestMethod )
-    throws SWPNoSuchDigestMethodException
-    {
-        String data = getCanonicalGraph( graph );
-        Security.addProvider( new BouncyCastleProvider() );
+    protected static String calculateDigest( String dataInCanonicalForm, Node digestMethod )
+    throws SWPNoSuchDigestMethodException {
+    	Security.addProvider( new BouncyCastleProvider() );
 		Digest digest;
 	
         byte[] res = null;
@@ -231,13 +221,27 @@ public class SWPSignatureUtilities
         }
         
 		byte[]  resBuf = new byte[ digest.getDigestSize() ];
-        digest.update( data.getBytes(), 0, data.getBytes().length );
+        digest.update( dataInCanonicalForm.getBytes(), 0, dataInCanonicalForm.getBytes().length );
         digest.doFinal( resBuf, 0 );
     
         res = Hex.encode( resBuf );
 		
         BASE64Encoder encoder = new BASE64Encoder();
         return encoder.encode( res );
+    }
+    
+    /**
+     * 
+     * @param graph
+     * @param digestMethod
+     * @return digest
+     * @throws SWPNoSuchDigestMethodException
+     */
+    public static String calculateDigest( NamedGraph graph, Node digestMethod )
+    throws SWPNoSuchDigestMethodException
+    {
+        String data = getCanonicalGraph( graph );
+        return calculateDigest( data, digestMethod );
     }
     
     /**
@@ -251,62 +255,7 @@ public class SWPSignatureUtilities
     throws SWPNoSuchDigestMethodException
     {
     	String data = getCanonicalGraphSet( set );
-        Security.addProvider( new BouncyCastleProvider() );
-	
-        byte[] res = null;
-        if ( digestMethod.equals( SWP.JjcRdfC14N_sha1 ) )
-        {
-            Digest  digest = new SHA1Digest();
-            byte[]  resBuf = new byte[ digest.getDigestSize() ];
-            digest.update( data.getBytes(), 0, data.getBytes().length );
-            digest.doFinal( resBuf, 0 );
-	    
-            res = Hex.encode( resBuf );
-        }
-        else if ( digestMethod.equals( SWP.JjcRdfC14N_sha224 ) )
-		{
-			 Digest  digest = new SHA224Digest();
-	         byte[]  resBuf = new byte[ digest.getDigestSize() ];
-	         digest.update( data.getBytes(), 0, data.getBytes().length );
-	         digest.doFinal( resBuf, 0 );
-		    
-	         res = Hex.encode( resBuf );
-		}
-		else if ( digestMethod.equals( SWP.JjcRdfC14N_sha256 ) )
-		{
-			 Digest  digest = new SHA256Digest();
-	         byte[]  resBuf = new byte[ digest.getDigestSize() ];
-	         digest.update( data.getBytes(), 0, data.getBytes().length );
-			 digest.doFinal( resBuf, 0 );
-		    
-	         res = Hex.encode( resBuf );
-		}
-		else if ( digestMethod.equals( SWP.JjcRdfC14N_sha384 ) )
-		{
-			 Digest  digest = new SHA384Digest();
-	         byte[]  resBuf = new byte[ digest.getDigestSize() ];
-	         digest.update( data.getBytes(), 0, data.getBytes().length );
-			 digest.doFinal( resBuf, 0 );
-		    
-	         res = Hex.encode( resBuf );
-		}
-		else if ( digestMethod.equals( SWP.JjcRdfC14N_sha512 ) )
-		{
-			 Digest  digest = new SHA512Digest();
-	         byte[]  resBuf = new byte[ digest.getDigestSize() ];
-	         digest.update( data.getBytes(), 0, data.getBytes().length );
-	         digest.doFinal( resBuf, 0 );
-		    
-	         res = Hex.encode( resBuf );
-		}
-        else
-        {
-            throw new SWPNoSuchDigestMethodException( "The digest method: "+digestMethod +
-            		" does not exist." );
-        }
-        
-        BASE64Encoder encoder = new BASE64Encoder();
-        return encoder.encode( res );
+        return calculateDigest( data, digestMethod );
     }
 
     /** Retrieve a Signature object of the given type using BouncyCastle.
@@ -315,14 +264,115 @@ public class SWPSignatureUtilities
     public static Signature getSignature( String type, Node signatureMethod )
     throws SWPNoSuchAlgorithmException {
 
+    	Signature sig;
     	try {
-    		return Signature.getInstance(type,
+    		sig = Signature.getInstance(type,
     				new BouncyCastleProvider() );
     	} catch ( NoSuchAlgorithmException e ) {
-    		logger.fatal( ALG_ID_SIGNATURE_SHA1withDSA +" not found! " +e.getMessage() );
+    		logger.fatal( type +" not found! " +e.getMessage() );
     		throw new SWPNoSuchAlgorithmException( "The signature" +
     				"method: "+signatureMethod.toString()+" does not exist.", e ); 
     	}
+    	if ( info )
+			logger.info( "Using algorithm: "+type );
+    	return sig;
+    }
+    
+    public static Signature determineSignature( Node signatureMethod, 
+            									Object key ) 
+    throws SWPNoSuchAlgorithmException, 
+    SWPAlgorithmNotSupportedException {
+    	/**
+         * Let's figure out which signature algorithm we're 
+         * using.
+         */
+        Signature sig = null;
+            
+		if ( key instanceof RSAPrivateKey  )
+		{
+			if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha1 ) ) 
+	        {
+				sig = getSignature(ALG_ID_SIGNATURE_SHA1withRSA, signatureMethod);
+	        }
+			else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha224 ) ) 
+	        {
+				sig = getSignature(ALG_ID_SIGNATURE_SHA224withRSA, signatureMethod);
+	        }
+			else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha256 ) ) 
+	        {
+				sig = getSignature(ALG_ID_SIGNATURE_SHA256withRSA, signatureMethod);
+	        }
+			else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha384 ) ) 
+	        {
+				sig = getSignature(ALG_ID_SIGNATURE_SHA384withRSA, signatureMethod);
+	        }
+			else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha512 ) ) 
+	        {
+				sig = getSignature(ALG_ID_SIGNATURE_SHA512withRSA, signatureMethod);
+	        }
+	        else if ( signatureMethod.equals( SWP.JjcRdfC14N_dsa_sha1 ) ) 
+	        {
+				throw new SWPAlgorithmNotSupportedException( "RSA private key detected. DSA encyption is not supported." );
+	        }
+	        else 
+	        {
+	            throw new SWPNoSuchAlgorithmException( "The signature" +
+	            		"method: "+signatureMethod+" does not exist." );
+	        }
+		}
+		else if ( key instanceof PGPPrivateKey )
+		{
+			if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha1 ) ) 
+	        {
+				sig = getSignature(ALG_ID_SIGNATURE_SHA1withRSA, signatureMethod);
+	        }
+			else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha224 ) ) 
+	        {
+				sig = getSignature(ALG_ID_SIGNATURE_SHA224withRSA, signatureMethod);
+	        }
+			else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha256 ) ) 
+	        {
+				sig = getSignature(ALG_ID_SIGNATURE_SHA256withRSA, signatureMethod);
+	        }
+			else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha384 ) ) 
+	        {
+				sig = getSignature(ALG_ID_SIGNATURE_SHA384withRSA, signatureMethod);
+	        }
+			else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha512 ) ) 
+	        {
+				sig = getSignature(ALG_ID_SIGNATURE_SHA512withRSA, signatureMethod);
+	        }
+	        else if ( signatureMethod.equals( SWP.JjcRdfC14N_dsa_sha1 ) ) 
+	        {
+				throw new SWPAlgorithmNotSupportedException( "RSA private key detected. PGP DSA encryption is not supported." );
+	        }
+	        else 
+	        {
+	            throw new SWPNoSuchAlgorithmException( "The signature" +
+	            		"method: "+signatureMethod+" does not exist." );
+	        }
+		}
+		else if ( key instanceof DSAPrivateKey )
+		{
+			if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha1 ) ||
+					signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha224 ) ||
+					signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha256 ) || 
+					signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha384 ) || 
+					signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha512 )	) 
+	        {
+				throw new SWPAlgorithmNotSupportedException( "DSA private key detected. RSA is not supported." );
+	        }
+			else if ( signatureMethod.equals( SWP.JjcRdfC14N_dsa_sha1 ) ) 
+	        {
+	        	sig = getSignature(ALG_ID_SIGNATURE_SHA1withDSA, signatureMethod);
+	        }
+	        else 
+	        {
+	            throw new SWPNoSuchAlgorithmException( "The signature" +
+	            		"method: "+signatureMethod+" does not exist." );
+	        }
+		}
+		return sig;
     }
     
     /**
@@ -348,143 +398,11 @@ public class SWPSignatureUtilities
         String canonicalGraph = getCanonicalGraph( graph );
 		
         String signature = null;
-        /**
-         * Let's figure out which signature algorithm we're 
-         * using.
-         */
-        Signature sig = null;
-            
-		if ( key instanceof RSAPrivateKey  )
-		{
-			if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha1 ) ) 
-	        {
-				sig = getSignature(ALG_ID_SIGNATURE_SHA1withRSA, signatureMethod);
-				if ( info )
-					logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA1withRSA );
-	        }
-			else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha224 ) ) 
-	        {
-				sig = getSignature(ALG_ID_SIGNATURE_SHA224withRSA, signatureMethod);
-				if ( info )
-					logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA224withRSA );
-	        }
-			else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha256 ) ) 
-	        {
-				sig = getSignature(ALG_ID_SIGNATURE_SHA256withRSA, signatureMethod);
-				if ( info )
-					logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA256withRSA );
-	        }
-			else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha384 ) ) 
-	        {
-				sig = getSignature(ALG_ID_SIGNATURE_SHA384withRSA, signatureMethod);
-				if ( info )
-					logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA384withRSA );
-	        }
-			else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha512 ) ) 
-	        {
-				sig = getSignature(ALG_ID_SIGNATURE_SHA512withRSA, signatureMethod);
-				if ( info )
-					logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA512withRSA );
-	        }
-	        else if ( signatureMethod.equals( SWP.JjcRdfC14N_dsa_sha1 ) ) 
-	        {
-				throw new SWPAlgorithmNotSupportedException( "RSA private key detected. DSA encyption is not supported." );
-	        }
-	        else 
-	        {
-	            throw new SWPNoSuchAlgorithmException( "The signature" +
-	            		"method: "+signatureMethod+" does not exist." );
-	        }
-		}
-		else if ( key instanceof PGPPrivateKey )
-		{
-			if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha1 ) ) 
-	        {
-				sig = getSignature(ALG_ID_SIGNATURE_SHA1withRSA, signatureMethod);
-				if ( info )
-					logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA1withRSA );
-	        }
-			else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha224 ) ) 
-	        {
-				sig = getSignature(ALG_ID_SIGNATURE_SHA224withRSA, signatureMethod);
-				if ( info )
-					logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA224withRSA );
-	        }
-			else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha256 ) ) 
-	        {
-				sig = getSignature(ALG_ID_SIGNATURE_SHA256withRSA, signatureMethod);
-				if ( info )
-					logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA256withRSA );
-	        }
-			else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha384 ) ) 
-	        {
-				sig = getSignature(ALG_ID_SIGNATURE_SHA384withRSA, signatureMethod);
-				if ( info )
-					logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA384withRSA );
-	        }
-			else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha512 ) ) 
-	        {
-				sig = getSignature(ALG_ID_SIGNATURE_SHA512withRSA, signatureMethod);
-				if ( info )
-					logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA512withRSA );
-	        }
-	        else if ( signatureMethod.equals( SWP.JjcRdfC14N_dsa_sha1 ) ) 
-	        {
-				throw new SWPAlgorithmNotSupportedException( "RSA private key detected. PGP DSA encryption is not supported." );
-	        }
-	        else 
-	        {
-	            throw new SWPNoSuchAlgorithmException( "The signature" +
-	            		"method: "+signatureMethod+" does not exist." );
-	        }
-		}
-		else if ( key instanceof DSAPrivateKey )
-		{
-			if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha1 ) ) 
-	        {
-				throw new SWPAlgorithmNotSupportedException( "DSA private key detected. RSA is not supported." );
-	        }
-			else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha224 ) ) 
-	        {
-				throw new SWPAlgorithmNotSupportedException( "DSA private key detected. RSA is not supported." );
-	        }
-			else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha256 ) ) 
-	        {
-				throw new SWPAlgorithmNotSupportedException( "DSA private key detected. RSA is not supported." );
-	        }
-			else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha384 ) ) 
-	        {
-				throw new SWPAlgorithmNotSupportedException( "DSA private key detected. RSA is not supported." );
-	        }
-			else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha512 ) ) 
-	        {
-				throw new SWPAlgorithmNotSupportedException( "DSA private key detected. RSA is not supported." );
-	        }
-	        else if ( signatureMethod.equals( SWP.JjcRdfC14N_dsa_sha1 ) ) 
-	        {
-				try 
-				{
-					sig = Signature.getInstance( ALG_ID_SIGNATURE_SHA1withDSA, new BouncyCastleProvider() );
-				}
-				catch ( NoSuchAlgorithmException e )
-		    	{
-		    		logger.fatal( ALG_ID_SIGNATURE_SHA1withDSA +" not found! " +e.getMessage() );
-		    		throw new SWPNoSuchAlgorithmException( "The signature" +
-		    				"method: "+signatureMethod+" does not exist.", e ); 
-		    	}
-				if ( info )
-					logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA1withDSA );
-	        }
-	        else 
-	        {
-	            throw new SWPNoSuchAlgorithmException( "The signature" +
-	            		"method: "+signatureMethod+" does not exist." );
-	        }
-		}
+        
+        Signature sig = determineSignature(signatureMethod, key);
         
         try 
         {
-			
 			if ( key instanceof PrivateKey )
 			{
 				sig.initSign( ( PrivateKey )key );
@@ -548,62 +466,9 @@ public class SWPSignatureUtilities
     {
     	String canonicalGraph = getCanonicalGraphSet( set );
     	String signature = null;
-    	/**
-    	 * Let's figure out which signature algorithm we're 
-    	 * using.
-    	 */
-    	Signature sig = null;
-    	
-    	if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha1 ) ) 
-    	{
-			sig = getSignature(ALG_ID_SIGNATURE_SHA1withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA1withRSA );
-    	}
-    	else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha224 ) ) 
-    	{
-			sig = getSignature(ALG_ID_SIGNATURE_SHA224withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA224withRSA );
-    	}
-    	else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha256 ) ) 
-    	{
-			sig = getSignature(ALG_ID_SIGNATURE_SHA256withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA256withRSA );
-    	}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha384 ) ) 
-    	{
-			sig = getSignature(ALG_ID_SIGNATURE_SHA384withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA384withRSA );
-    	}
-    	else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha512 ) ) 
-    	{
-			sig = getSignature(ALG_ID_SIGNATURE_SHA512withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA512withRSA );
-    	}
-    	else if ( signatureMethod.equals( SWP.JjcRdfC14N_dsa_sha1 ) ) 
-    	{
-			try 
-			{
-				sig = Signature.getInstance( ALG_ID_SIGNATURE_SHA1withDSA, new BouncyCastleProvider() );
-			}
-			catch ( NoSuchAlgorithmException e )
-	    	{
-	    		logger.fatal( ALG_ID_SIGNATURE_SHA1withDSA +" not found! " +e.getMessage() );
-	    		throw new SWPNoSuchAlgorithmException( "The signature" +
-	    				"method: "+signatureMethod+" does not exist.", e ); 
-	    	}
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA1withDSA );
-    	}
-    	else 
-    	{
-    		throw new SWPNoSuchAlgorithmException( "The signature" +
-    				"method: "+signatureMethod+" does not exist.");
-    	}
+
+    	// Get the signature algorithm
+    	Signature sig = getSignatureAlgorithm(signatureMethod);
 
     	try 
     	{
@@ -638,51 +503,34 @@ public class SWPSignatureUtilities
     public static Signature getSignatureAlgorithm( Node signatureMethod ) 
 	throws SWPNoSuchAlgorithmException
 	{
-		Signature sig = null;
+    	/**
+    	 * Figure out which signature algorithm we're 
+    	 * using.
+    	 */
+    	Signature sig = null;
 		if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha1 ) ) 
     	{
 			sig = getSignature(ALG_ID_SIGNATURE_SHA1withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA1withRSA );
     	}
     	else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha224 ) ) 
     	{
 			sig = getSignature(ALG_ID_SIGNATURE_SHA224withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA224withRSA );
     	}
     	else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha256 ) ) 
     	{
 			sig = getSignature(ALG_ID_SIGNATURE_SHA256withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA256withRSA );
     	}
 		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha384 ) ) 
     	{
 			sig = getSignature(ALG_ID_SIGNATURE_SHA384withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA384withRSA );
     	}
     	else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha512 ) ) 
     	{
 			sig = getSignature(ALG_ID_SIGNATURE_SHA512withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA512withRSA );
     	}
     	else if ( signatureMethod.equals( SWP.JjcRdfC14N_dsa_sha1 ) ) 
     	{
-			try 
-			{
-				sig = Signature.getInstance( ALG_ID_SIGNATURE_SHA1withDSA, new BouncyCastleProvider() );
-			}
-			catch ( NoSuchAlgorithmException e )
-	    	{
-	    		logger.fatal( ALG_ID_SIGNATURE_SHA1withDSA +" not found! " +e.getMessage() );
-	    		throw new SWPNoSuchAlgorithmException( "The signature" +
-	    				"method: "+signatureMethod+" does not exist.", e ); 
-	    	}
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA1withDSA );
+    		sig = getSignature(ALG_ID_SIGNATURE_SHA1withDSA, signatureMethod);
     	}
     	else 
     	{
@@ -704,6 +552,7 @@ public class SWPSignatureUtilities
      * @throws SWPValidationException
      * @throws SWPInvalidKeyException
      * @throws SWPSignatureException
+     * @throws CertificateException 
      */
     public static boolean validateSignature( NamedGraph graph, 
             						  Node signatureMethod, 
@@ -712,105 +561,14 @@ public class SWPSignatureUtilities
     throws SWPNoSuchAlgorithmException,
     SWPValidationException, 
     SWPInvalidKeyException, 
-    SWPSignatureException
+    SWPSignatureException, 
+    CertificateException
     {
-        String canonicalGraph = getCanonicalGraph( graph );
-        X509Certificate certificate;
-		
-        Signature sig = null;
-        byte[] signature = null;
-        
-		if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha1 ) ) 
-		{
-			sig = getSignature(ALG_ID_SIGNATURE_SHA1withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA1withRSA );
-		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha224 ) ) 
-		{
-			sig = getSignature(ALG_ID_SIGNATURE_SHA224withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA224withRSA );
-		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha256 ) ) 
-    	{
-			sig = getSignature(ALG_ID_SIGNATURE_SHA256withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA256withRSA );
-		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha384 ) ) 
-    	{
-			sig = getSignature(ALG_ID_SIGNATURE_SHA384withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA384withRSA );
-		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha512 ) ) 
-		{
-			sig = getSignature(ALG_ID_SIGNATURE_SHA512withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA512withRSA );
-		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_dsa_sha1 ) ) 
-		{
-			try 
-			{
-				sig = Signature.getInstance( ALG_ID_SIGNATURE_SHA1withDSA, new BouncyCastleProvider() );
-			}
-			catch ( NoSuchAlgorithmException e )
-	    	{
-	    		logger.fatal( ALG_ID_SIGNATURE_SHA1withDSA +" not found! " +e.getMessage() );
-	    		throw new SWPNoSuchAlgorithmException( "The signature" +
-	    				"method: "+signatureMethod+" does not exist.", e ); 
-	    	}
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA1withDSA );
-		}
-		else 
-		{
-			throw new SWPNoSuchAlgorithmException( "The signature" +
-					"method: "+signatureMethod+" does not exist." );
-		}
-		
-        try 
-        {
-        	CertificateFactory cf = CertificateFactory.getInstance( X509_CERTIFICATE_TYPE );
-    		certificate = ( X509Certificate ) cf.generateCertificate( new ByteArrayInputStream( pem.getBytes() ) );
-            BASE64Decoder decoder = new BASE64Decoder();
-        	signature = decoder.decodeBuffer( signatureValue );
-        	sig.initVerify( certificate.getPublicKey() );
-        	sig.update( canonicalGraph.getBytes( "UTF-8" ) );
-        } 
-        catch ( IOException e1 ) 
-        {	
-            logger.fatal( "Unable to access signature: " +e1.getMessage() );
-            throw new SWPValidationException( "I/O error: Unable to access " +
-            		"signature value.", e1 );
-        }
-        catch ( InvalidKeyException e2 ) 
-        {
-			logger.fatal( "Public key supplied is invalid. "+ e2.getMessage() );
-            throw new SWPInvalidKeyException( "Public key supplied is invalid." );
-        }
-    	catch ( SignatureException e3 ) 
-    	{
-			logger.fatal( "Error updating input data. "+ e3.getMessage() );
-            throw new SWPSignatureException( "Error updating input data." );
-        } 
-    	catch ( CertificateException e ) 
-        {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-        
-    	try 
-    	{
-            return sig.verify( signature );
-        } 
-    	catch ( SignatureException e4 ) 
-    	{
-			logger.error( "Error verifying signature. "+e4.getMessage() );
-            throw new SWPSignatureException( "Error verifying signature." );
-        }
+    	X509Certificate certificate;
+    	CertificateFactory cf = CertificateFactory.getInstance( X509_CERTIFICATE_TYPE );
+		certificate = ( X509Certificate ) cf.generateCertificate( new ByteArrayInputStream( pem.getBytes() ) );
+    	
+    	return validateSignature( graph, signatureMethod, signatureValue, certificate);
     }
     
     /**
@@ -838,59 +596,8 @@ public class SWPSignatureUtilities
 	{
     	String canonicalGraph = getCanonicalGraph( graph );
     	
-    	Signature sig = null;
+    	Signature sig = getSignatureAlgorithm(signatureMethod);
     	byte[] signature = null;
-		        
-		if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha1 ) ) 
-		{
-			sig = getSignature(ALG_ID_SIGNATURE_SHA1withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA1withRSA );
-		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha224 ) ) 
-		{
-			sig = getSignature(ALG_ID_SIGNATURE_SHA224withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA224withRSA );
-		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha256 ) ) 
-    	{
-			sig = getSignature(ALG_ID_SIGNATURE_SHA256withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA256withRSA );
-		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha384 ) ) 
-    	{
-			sig = getSignature(ALG_ID_SIGNATURE_SHA384withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA384withRSA );
-		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha512 ) ) 
-		{
-			sig = getSignature(ALG_ID_SIGNATURE_SHA512withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA512withRSA );
-		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_dsa_sha1 ) ) 
-		{
-			try 
-			{
-				sig = Signature.getInstance( ALG_ID_SIGNATURE_SHA1withDSA, new BouncyCastleProvider() );
-			}
-			catch ( NoSuchAlgorithmException e )
-	    	{
-	    		logger.fatal( ALG_ID_SIGNATURE_SHA1withDSA +" not found! " +e.getMessage() );
-	    		throw new SWPNoSuchAlgorithmException( "The signature" +
-	    				"method: "+signatureMethod+" does not exist.", e ); 
-	    	}
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA1withDSA );
-		}
-		else 
-		{
-			throw new SWPNoSuchAlgorithmException( "The signature" +
-					"method: "+signatureMethod+" does not exist." );
-		}
 		
     	try 
     	{
@@ -947,20 +654,19 @@ public class SWPSignatureUtilities
      * @throws SWPValidationException
      * @throws SWPInvalidKeyException
      * @throws SWPSignatureException
+     * @throws SWPCertificateException 
      */
     public static boolean validateSignature( NamedGraph graph, 
             						  Node signatureMethod, 
             						  String signatureValue,
             						  X509Certificate certificate, 
-            						  ArrayList trustedCertificates ) 
+            						  ArrayList<X509Certificate> trustedCertificates ) 
     throws SWPNoSuchAlgorithmException,
     SWPValidationException, 
     SWPInvalidKeyException, 
-    SWPSignatureException
+    SWPSignatureException, 
+    SWPCertificateException
     {
-        String canonicalGraph = getCanonicalGraph( graph );
-        boolean result = false;
-        
         try 
         {
             verifyCertificate( certificate, trustedCertificates );
@@ -981,236 +687,102 @@ public class SWPSignatureUtilities
             throw new SWPValidationException( "Certificate not signed by some trusted certificates.", e );
         }
         
-        Signature sig;
-        byte[] signature;
-        
-		if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha1 ) ) 
-		{
-			sig = getSignature(ALG_ID_SIGNATURE_SHA1withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA1withRSA );
-		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha224 ) ) 
-		{
-			sig = getSignature(ALG_ID_SIGNATURE_SHA224withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA224withRSA );
-		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha256 ) ) 
-    	{
-			sig = getSignature(ALG_ID_SIGNATURE_SHA256withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA256withRSA );
-		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha384 ) ) 
-    	{
-			sig = getSignature(ALG_ID_SIGNATURE_SHA384withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA384withRSA );
-		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha512 ) ) 
-		{
-			sig = getSignature(ALG_ID_SIGNATURE_SHA512withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA512withRSA );
-		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_dsa_sha1 ) ) 
-		{
-			try 
-			{
-				sig = Signature.getInstance( ALG_ID_SIGNATURE_SHA1withDSA, new BouncyCastleProvider() );
-			}
-			catch ( NoSuchAlgorithmException e )
-	    	{
-	    		logger.fatal( ALG_ID_SIGNATURE_SHA1withDSA +" not found! " +e.getMessage() );
-	    		throw new SWPNoSuchAlgorithmException( "The signature" +
-	    				"method: "+signatureMethod+" does not exist.", e ); 
-	    	}
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA1withDSA );
-		}
-		else 
-		{
-			throw new SWPNoSuchAlgorithmException( "The signature" +
-					"method: "+signatureMethod+" does not exist." );
-		}
-		
-        try 
-        {
-            BASE64Decoder decoder = new BASE64Decoder();
-        	signature = decoder.decodeBuffer( signatureValue );
-        	sig.initVerify( certificate.getPublicKey() );
-        	sig.update( canonicalGraph.getBytes( "UTF-8" ) );
-        } 
-        catch ( IOException e1 ) 
-        {
-            logger.fatal( "Unable to access signature: " +e1.getMessage() );
-            throw new SWPValidationException( "I/O error: Unable to access " +
-                    "signature value.", e1 );
-        }
-        catch ( InvalidKeyException e2 ) 
-        {
-            logger.fatal( "Public key supplied is invalid. "+ e2.getMessage() );
-            throw new SWPInvalidKeyException( "Public key supplied is invalid." );
-        }
-    	catch ( SignatureException e3 ) 
-    	{
-            logger.fatal( "Error updating input data. "+ e3.getMessage() );
-            throw new SWPSignatureException( "Error updating input data." );
-        } 
-        
-    	try 
-    	{
-            result = sig.verify( signature );
-        } 
-    	catch ( SignatureException e4 ) 
-    	{
-            logger.fatal("Error verifying signature. "+e4.getMessage() );
-            throw new SWPSignatureException( "Error verifying signature." );
-        }
-        
-        return result;
+        return validateSignature( graph, signatureMethod, signatureValue, certificate);
     }
 
-    /**
-     * 
-     * @param graph
-     * @param signatureMethod
-     * @param signatureValue
-     * @param certificate
-     * @param trustedCertificates
-     * @param otherCertificates
-     * @return boolean
-     * @throws SWPNoSuchAlgorithmException
-     * @throws SWPValidationException
-     * @throws SWPInvalidKeyException
-     * @throws SWPSignatureException
-     */
-    public static boolean validateSignature( NamedGraph graph, 
-            						  Node signatureMethod, 
-            						  String signatureValue,
-            						  X509Certificate certificate, 
-            						  ArrayList trustedCertificates, 
-            						  ArrayList otherCertificates )
-    throws SWPNoSuchAlgorithmException,
-    SWPValidationException, 
-    SWPInvalidKeyException, 
-    SWPSignatureException
-    
-    {
-        String canonicalGraph = getCanonicalGraph( graph );
-        boolean result = false;
-		
-        try 
-        {
-            verifyCertificate( certificate, trustedCertificates );
-        }
-        catch ( CertificateExpiredException e ) 
-        {
-            logger.warn( "Certificate has expired." );
-            throw new SWPValidationException( "Certificate has expired.", e );
-        }
-        catch ( CertificateNotYetValidException e ) 
-        {
-            logger.warn( "Certificate not yet valid." );
-            throw new SWPValidationException( "Certificate not yet valid.", e );
-        }
-        catch ( GeneralSecurityException e ) 
-        {
-            logger.warn( "Certificate not signed by some trusted certificates." );
-            throw new SWPValidationException( "Certificate not signed by some trusted certificates.", e );
-        }
-        
-        Signature sig;
-        byte[] signature;
-        
-		if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha1 ) ) 
-		{
-			sig = getSignature(ALG_ID_SIGNATURE_SHA1withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA1withRSA );
-		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha224 ) ) 
-		{
-			sig = getSignature(ALG_ID_SIGNATURE_SHA224withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA224withRSA );
-		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha256 ) ) 
-    	{
-			sig = getSignature(ALG_ID_SIGNATURE_SHA256withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA256withRSA );
-		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha384 ) ) 
-    	{
-			sig = getSignature(ALG_ID_SIGNATURE_SHA384withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA384withRSA );
-		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha512 ) ) 
-		{
-			sig = getSignature(ALG_ID_SIGNATURE_SHA512withRSA, signatureMethod);
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA512withRSA );
-		}
-		else if ( signatureMethod.equals( SWP.JjcRdfC14N_rsa_sha1 ) ) 
-		{
-			try 
-			{
-				sig = Signature.getInstance( ALG_ID_SIGNATURE_SHA1withDSA, new BouncyCastleProvider() );
-			}
-			catch ( NoSuchAlgorithmException e )
-	    	{
-	    		logger.fatal( ALG_ID_SIGNATURE_SHA1withDSA +" not found! " +e.getMessage() );
-	    		throw new SWPNoSuchAlgorithmException( "The signature" +
-	    				"method: "+signatureMethod+" does not exist.", e ); 
-	    	}
-			if ( info )
-				logger.info( "Using algorithm: "+ALG_ID_SIGNATURE_SHA1withDSA );
-		}
-		else 
-		{
-			throw new SWPNoSuchAlgorithmException( "The signature" +
-					"method: "+signatureMethod+" does not exist." );
-		}
-		
-        try 
-        {
-            BASE64Decoder decoder = new BASE64Decoder();
-        	signature = decoder.decodeBuffer( signatureValue );
-        	sig.initVerify( certificate.getPublicKey() );
-        	sig.update( canonicalGraph.getBytes( "UTF-8" ) );
-        } 
-        catch ( IOException e1 ) 
-        {
-            logger.fatal( "Unable to access signature: " +e1.getMessage() );
-            throw new SWPValidationException( "I/O error: Unable to access " +
-                    "signature value.", e1 );
-        }
-        catch ( InvalidKeyException e2 ) 
-        {
-            logger.fatal( "Public key supplied is invalid. "+ e2.getMessage() );
-            throw new SWPInvalidKeyException( "Public key supplied is invalid." );
-        }
-    	catch ( SignatureException e3 ) 
-    	{
-            logger.fatal( "Error updating input data. "+ e3.getMessage() );
-            throw new SWPSignatureException( "Error updating input data." );
-        } 
-        
-    	try 
-    	{
-            result = sig.verify( signature );
-        } 
-    	catch ( SignatureException e4 ) 
-    	{
-            logger.fatal("Error verifying signature. "+e4.getMessage() );
-            throw new SWPSignatureException( "Error verifying signature." );
-        }
-        
-        return result;
-    }
+// This method's implementation is identical to the prior for validateSignature.
+// The otherCertificates parameter is never used.
+// Commenting out because it is never used and should not be used if it does not
+// incorporate the otherCertificates parameter.
+// TODO remove this method or use the otherCertificates parameter however it was intended.
+//    /**
+//     * 
+//     * @param graph
+//     * @param signatureMethod
+//     * @param signatureValue
+//     * @param certificate
+//     * @param trustedCertificates
+//     * @param otherCertificates
+//     * @return boolean
+//     * @throws SWPNoSuchAlgorithmException
+//     * @throws SWPValidationException
+//     * @throws SWPInvalidKeyException
+//     * @throws SWPSignatureException
+//     */
+//    public static boolean validateSignature( NamedGraph graph, 
+//            						  Node signatureMethod, 
+//            						  String signatureValue,
+//            						  X509Certificate certificate, 
+//            						  ArrayList trustedCertificates, 
+//            						  ArrayList otherCertificates )
+//    throws SWPNoSuchAlgorithmException,
+//    SWPValidationException, 
+//    SWPInvalidKeyException, 
+//    SWPSignatureException
+//    
+//    {
+//        String canonicalGraph = getCanonicalGraph( graph );
+//        boolean result = false;
+//		
+//        try 
+//        {
+//            verifyCertificate( certificate, trustedCertificates );
+//        }
+//        catch ( CertificateExpiredException e ) 
+//        {
+//            logger.warn( "Certificate has expired." );
+//            throw new SWPValidationException( "Certificate has expired.", e );
+//        }
+//        catch ( CertificateNotYetValidException e ) 
+//        {
+//            logger.warn( "Certificate not yet valid." );
+//            throw new SWPValidationException( "Certificate not yet valid.", e );
+//        }
+//        catch ( GeneralSecurityException e ) 
+//        {
+//            logger.warn( "Certificate not signed by some trusted certificates." );
+//            throw new SWPValidationException( "Certificate not signed by some trusted certificates.", e );
+//        }
+//        
+//        Signature sig = getSignatureAlgorithm(signatureMethod);
+//        byte[] signature;
+//        
+//        try 
+//        {
+//          BASE64Decoder decoder = new BASE64Decoder();
+//        	signature = decoder.decodeBuffer( signatureValue );
+//        	sig.initVerify( certificate.getPublicKey() );
+//        	sig.update( canonicalGraph.getBytes( "UTF-8" ) );
+//        } 
+//        catch ( IOException e1 ) 
+//        {
+//            logger.fatal( "Unable to access signature: " +e1.getMessage() );
+//            throw new SWPValidationException( "I/O error: Unable to access " +
+//                    "signature value.", e1 );
+//        }
+//        catch ( InvalidKeyException e2 ) 
+//        {
+//            logger.fatal( "Public key supplied is invalid. "+ e2.getMessage() );
+//            throw new SWPInvalidKeyException( "Public key supplied is invalid." );
+//        }
+//    	catch ( SignatureException e3 ) 
+//    	{
+//            logger.fatal( "Error updating input data. "+ e3.getMessage() );
+//            throw new SWPSignatureException( "Error updating input data." );
+//        } 
+//        
+//    	try 
+//    	{
+//            result = sig.verify( signature );
+//        } 
+//    	catch ( SignatureException e4 ) 
+//    	{
+//            logger.fatal("Error verifying signature. "+e4.getMessage() );
+//            throw new SWPSignatureException( "Error verifying signature." );
+//        }
+//        
+//        return result;
+//    }
 
     /**
      * Verifies a certificate. Checks its validity period and tries to find a trusted
@@ -1228,7 +800,7 @@ public class SWPSignatureUtilities
      * validated using the given set of trusted certificates.
      */
     public static void verifyCertificate( X509Certificate aCertificate,
-        ArrayList aTrustedCertificates )
+        ArrayList<X509Certificate> aTrustedCertificates )
     throws GeneralSecurityException,
     CertificateExpiredException,
     CertificateNotYetValidException
@@ -1239,7 +811,7 @@ public class SWPSignatureUtilities
         aCertificate.checkValidity();
 
         // Check if the certificate is signed by some of the given trusted certificates
-        Iterator itr = aTrustedCertificates.iterator();
+        Iterator<X509Certificate> itr = aTrustedCertificates.iterator();
         if ( itr.hasNext() )
         {
             while ( itr.hasNext() )
@@ -1266,7 +838,7 @@ public class SWPSignatureUtilities
     }
     
     /**
-     * Check if all signatures in a verifiedSignatures graph are avlid.
+     * Check if all signatures in a verifiedSignatures graph are valid.
      * 
      * After invoking {@link SWPNamedGraphSet#verifyAllSignatures()} a new graph
      * called <http://localhost/verifiedSignatures> will be added to the 
