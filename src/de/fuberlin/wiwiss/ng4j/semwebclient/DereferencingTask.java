@@ -14,7 +14,7 @@ import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.Task;
  * @author Olaf Hartig
  */
 public class DereferencingTask implements Task {
-	private List listeners = new Vector ();
+	private List<DereferencingListener> listeners = new Vector<DereferencingListener> ();
 	private String uri;
 	private int step;
 	
@@ -44,7 +44,7 @@ public class DereferencingTask implements Task {
 	 * Returns true if the given listeners is already attached to this task.
 	 */
 	synchronized public boolean isAttached ( DereferencingListener listener ) {
-		Iterator it = listeners.iterator();
+		Iterator<DereferencingListener> it = listeners.iterator();
 		while ( it.hasNext() ) {
 			if ( listener.equals(it.next()) ) {
 				return true;
@@ -68,13 +68,13 @@ public class DereferencingTask implements Task {
 	 * Returns an iterator over all listeners attached to this task.
 	 */
 	public void notifyListeners ( DereferencingResult result ) {
-		Vector tmp = new Vector();
+		Vector<DereferencingListener> tmp = new Vector<DereferencingListener> ();
 		synchronized ( listeners ) {
 			tmp.addAll( listeners );
 		}
-		Iterator it = tmp.iterator();
+		Iterator<DereferencingListener> it = tmp.iterator();
 		while ( it.hasNext() ) {
-			( (DereferencingListener) it.next() ).dereferenced( result );
+			it.next().dereferenced( result );
 		}
 		tmp.clear();
 	}

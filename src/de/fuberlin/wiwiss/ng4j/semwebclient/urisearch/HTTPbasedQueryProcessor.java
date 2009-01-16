@@ -28,7 +28,7 @@ abstract public class HTTPbasedQueryProcessor implements QueryProcessor {
 
 	// implementation of the QueryProcessor interface
 
-	public Set process ( String uri ) throws QueryProcessingException {
+	public Set<String> process ( String uri ) throws QueryProcessingException {
 		log.debug( "prepare query URL for " + uri.toString() );
 		URL queryURL = prepareQuery( uri );
 
@@ -43,7 +43,7 @@ abstract public class HTTPbasedQueryProcessor implements QueryProcessor {
 		log.debug( "evaluate search result (" + queryURL.toString() + ")" );
 
 		if ( resultModel == null )
-			return new HashSet ();
+			return new HashSet<String> ();
 
 		try {
 			return evaluateResult( resultModel );
@@ -64,7 +64,7 @@ abstract public class HTTPbasedQueryProcessor implements QueryProcessor {
 	 * Evaluates the search result (expressed in the given RDF document) to
 	 * extract the requested RDF documents (resp. their URLs).
 	 */
-	abstract protected Set evaluateResult( Model queryResult ) throws QueryExecutionException;
+	abstract protected Set<String> evaluateResult( Model queryResult ) throws QueryExecutionException;
 
 
 	// operations

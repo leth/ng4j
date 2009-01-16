@@ -29,8 +29,8 @@ public class FindQuery implements DereferencingListener, URISearchListener {
 	private SemWebIterator iterator;
 	private SemanticWebClient client;
 	private boolean enableURISearch;
-	private List urisInDerefProcessing = new LinkedList();
-	private List urisInSearchProcessing = new LinkedList();
+	private List<String> urisInDerefProcessing = new LinkedList<String>();
+	private List<String> urisInSearchProcessing = new LinkedList<String>();
 	private TimeoutThread timeoutThread;
 	private boolean stopped;
 	private Log log = LogFactory.getLog(FindQuery.class);
@@ -59,9 +59,9 @@ public class FindQuery implements DereferencingListener, URISearchListener {
 			inspectNgs(result.getResultData(), this.iterator.getTriple(), result.getTask().getStep());
 			this.iterator.queueNamedGraphs(result.getResultData().listGraphs());
 		}else if(result.getResultCode()== DereferencingResult.STATUS_NEW_URIS_FOUND){
-			Iterator it = result.getUriList().iterator();
+			Iterator<String> it = result.getUriList().iterator();
 			while (it.hasNext()) {
-				requestDereferencing( (String) it.next(),
+				requestDereferencing( it.next(),
 				                      result.getTask().getStep() + 1,
 				                      false ); // no URI search
 			}
@@ -77,9 +77,9 @@ public class FindQuery implements DereferencingListener, URISearchListener {
 
 	public void uriSearchFinished ( URISearchResult result ) {
 		if ( result.isSuccess() ) {
-			Iterator it = result.getMentioningDocs().iterator();
+			Iterator<String> it = result.getMentioningDocs().iterator();
 			while ( it.hasNext() ) {
-				requestDereferencing( (String) it.next(),
+				requestDereferencing( it.next(),
 				                      result.getTask().getStep() + 1,
 				                      false ); // no URI search
 			}

@@ -102,19 +102,19 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	
 	//private static final long MAXGRAPHS_DEFAULT = 30000;
 
-	private List retrievedUris;
+	private List<String> retrievedUris;
 
-	private Set markedUris = new HashSet();
+	private Set<String> markedUris = new HashSet<String>();
 
 	private DereferencingTaskQueue derefQueue = null;
 	private URISearchTaskQueue searchQueue = null;
 
-	private Map unretrievedURIs;
+	private Map<String,Exception> unretrievedURIs;
 
-	private Map redirectedURIs;
+	private Map<String,String> redirectedURIs;
 
-	protected Map successfullySearchedURIs;
-	protected Set unsuccessfullySearchedURIs;
+	protected Map<String,Set<String>> successfullySearchedURIs;
+	protected Set<String> unsuccessfullySearchedURIs;
 
 	private boolean isClosed = false;
 	
@@ -136,11 +136,11 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	public SemanticWebClient() {
 		super();
 		this.createGraph("http://localhost/provenanceInformation");
-		this.retrievedUris = Collections.synchronizedList(new ArrayList());
-		this.unretrievedURIs = Collections.synchronizedMap(new HashMap());
-		this.redirectedURIs = Collections.synchronizedMap(new HashMap());
-		this.successfullySearchedURIs = Collections.synchronizedMap(new HashMap());
-		this.unsuccessfullySearchedURIs = Collections.synchronizedSet(new HashSet());
+		this.retrievedUris = Collections.synchronizedList(new ArrayList<String>());
+		this.unretrievedURIs = Collections.synchronizedMap(new HashMap<String,Exception>());
+		this.redirectedURIs = Collections.synchronizedMap(new HashMap<String,String>());
+		this.successfullySearchedURIs = Collections.synchronizedMap(new HashMap<String,Set<String>>());
+		this.unsuccessfullySearchedURIs = Collections.synchronizedSet(new HashSet<String>());
 	}
 
 	/**
@@ -325,14 +325,14 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	/**
 	 * Returns an iterator over all successfully dereferenced URIs.
 	 */
-	public List successfullyDereferencedURIs() {
+	public List<String> successfullyDereferencedURIs() {
 		return this.retrievedUris;
 	}
 
 	/**
 	 * Returns an iterator over all URIs that couldn't be dereferenced.
 	 */
-	public Set unsuccessfullyDereferencedURIs() {
+	public Set<String> unsuccessfullyDereferencedURIs() {
 		return this.unretrievedURIs.keySet();
 	}
 
@@ -341,13 +341,13 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	 * to fail.
 	 */
 	public Exception getReasonForFailedDereferencing( String uri ) {
-		return (Exception) this.unretrievedURIs.get( uri );
+		return this.unretrievedURIs.get( uri );
 	}
 
 	/**
 	 * Returns a set of all URIs that have been redirected.
 	 */
-	public Set redirectedURIs() {
+	public Set<String> redirectedURIs() {
 		return this.redirectedURIs.keySet();
 	}
 
@@ -355,13 +355,13 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	 * Returns the redirect URI for the given URI (if the given URI has been redirected).
 	 */
 	public String getRedirectURI( String uri ) {
-		return (String) this.redirectedURIs.get( uri );
+		return this.redirectedURIs.get( uri );
 	}
 
 	/**
 	 * Returns all URIs that have been searched successfully.
 	 */
-	public Set successfullySearchedURIs() {
+	public Set<String> successfullySearchedURIs() {
 		return successfullySearchedURIs.keySet();
 	}
 
@@ -369,14 +369,14 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 	 * Returns all URLs of documents that mention the given URI according to a
 	 * search.
 	 */
-	public Set getMentioningURLs( String uri ) {
-		return (Set) successfullySearchedURIs.get( uri );
+	public Set<String> getMentioningURLs( String uri ) {
+		return successfullySearchedURIs.get( uri );
 	}
 
 	/**
 	 * Returns all URIs that could not be searched for.
 	 */
-	public Set unsuccessfullySearchedURIs() {
+	public Set<String> unsuccessfullySearchedURIs() {
 		return unsuccessfullySearchedURIs;
 	}
 
@@ -505,10 +505,8 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 			DereferencingTask existingTask = getDerefQueue().getTask( derefURI );
 			if ( ! existingTask.isAttached(listener) ) {
 				existingTask.attachListener( listener );
-System.out.println(" attached to " + derefURI + " " + ((FindQuery)listener).iterator().getTriple().toString() );
 				return true;
 			} else {
-System.out.println(" NOT attached to " + derefURI + " " + ((FindQuery)listener).iterator().getTriple().toString() );
 				return false;
 			}
 		}

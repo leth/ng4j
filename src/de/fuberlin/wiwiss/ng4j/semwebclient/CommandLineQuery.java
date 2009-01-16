@@ -43,7 +43,7 @@ public class CommandLineQuery {
 
 	private boolean outputRedirectedURIs = false;
 
-	private List graphsToAdd = new ArrayList();
+	private List<String> graphsToAdd = new ArrayList<String> ();
 
 	private String writeGraphSetDestination = null;
 
@@ -297,7 +297,7 @@ public class CommandLineQuery {
 
 	private void executeAddGraphs() throws MalformedURLException, IOException {
 		// TODO same code as in dereferencing thread (accept) ?
-		Iterator it = this.graphsToAdd.iterator();
+		Iterator<String> it = this.graphsToAdd.iterator();
 		while (it.hasNext()) {
 			String graphuri = (String) it.next();
 			URL url = null;
@@ -436,9 +436,9 @@ public class CommandLineQuery {
 	private void executeOutput() {
 		if (this.outputRetrievedURIs) {
 			System.out.println("Successfully dereferenced URIs: \n");
-			Iterator it = this.client.successfullyDereferencedURIs().iterator();
+			Iterator<String> it = this.client.successfullyDereferencedURIs().iterator();
 			while (it.hasNext()) {
-				String uri = (String) it.next();
+				String uri = it.next();
 				System.out.println(uri);
 			}
 			if ( verbose ) {
@@ -448,9 +448,9 @@ public class CommandLineQuery {
 		}
 		if (this.outputRedirectedURIs) {
 			System.out.println("Redirected URIs: \n");
-			Iterator it = this.client.redirectedURIs().iterator();
+			Iterator<String> it = this.client.redirectedURIs().iterator();
 			while (it.hasNext()) {
-				String uri = (String) it.next();
+				String uri = it.next();
 				String redirect = this.client.getRedirectURI(uri);
 				System.out.println( uri + " -> " + redirect );
 			}
@@ -462,12 +462,12 @@ public class CommandLineQuery {
 		if (this.outputFailedURIs) {
 			System.out.println("Unsuccessfully dereferenced URIs: \n");
 
-			Map reasons = new HashMap ();
+			Map<Class,Integer> reasons = new HashMap<Class,Integer> ();
 			int count = 0;
 
-			Iterator it = this.client.unsuccessfullyDereferencedURIs().iterator();
+			Iterator<String> it = this.client.unsuccessfullyDereferencedURIs().iterator();
 			while (it.hasNext()) {
-				String uri = (String) it.next();
+				String uri = it.next();
 				if ( verbose ) {
 					++count;
 					Exception reason = client.getReasonForFailedDereferencing( uri );
@@ -490,11 +490,11 @@ public class CommandLineQuery {
 			if ( verbose && (count > 0) ) {
 				System.out.println( " Count: " + String.valueOf(count) );
 				System.out.println(" Reason statistics: " + String.valueOf(count) + " unsuccessfully dereferenced URIs");
-				Iterator itR = reasons.entrySet().iterator();
+				Iterator<Map.Entry<Class,Integer>> itR = reasons.entrySet().iterator();
 				while ( itR.hasNext() ) {
-					Map.Entry r = (Map.Entry) itR.next();
-					int percent = ( ((Integer) r.getValue()).intValue() * 100 ) / count;
-					System.out.println(" - " + String.valueOf(percent) + "% " + Utils.classShortName((Class) r.getKey()) );
+					Map.Entry<Class,Integer> r = itR.next();
+					int percent = ( r.getValue().intValue() * 100 ) / count;
+					System.out.println(" - " + String.valueOf(percent) + "% " + Utils.classShortName(r.getKey()) );
 				}
 			}
 

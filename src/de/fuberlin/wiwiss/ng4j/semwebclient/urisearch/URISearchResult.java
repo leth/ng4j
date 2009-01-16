@@ -13,7 +13,7 @@ public class URISearchResult {
 	// members
 
 	protected URISearchTask task;
-	protected Set mentioningDocs;
+	protected Set<String> mentioningDocs;
 	protected QueryProcessingException exception;
 
 
@@ -26,7 +26,7 @@ public class URISearchResult {
 	 * @param mentioningDocs a set of URLs (strings) for RDF documents that
 	 *                       mention the URI from the search task
 	 */
-	public URISearchResult ( URISearchTask task, Set mentioningDocs ) {
+	public URISearchResult ( URISearchTask task, Set<String> mentioningDocs ) {
 		this.task = task;
 		this.mentioningDocs = mentioningDocs;
 		this.exception = null;
@@ -65,7 +65,7 @@ public class URISearchResult {
 	 * Returns a set of URLs (strings) for RDF documents that mention the URI
 	 * from the search task.
 	 */
-	public Set getMentioningDocs () {
+	public Set<String> getMentioningDocs () {
 		return mentioningDocs;
 	}
 

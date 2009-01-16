@@ -41,11 +41,11 @@ class MyHandler extends org.xml.sax.helpers.DefaultHandler
     private boolean rootElem = true;
     private boolean inHead = false;
     private boolean prof = false;
-    private ArrayList tr = new ArrayList(3);
-    ArrayList ls = new ArrayList(3);
+    private ArrayList<URI> tr = new ArrayList<URI>(3);
+    ArrayList<String> ls = new ArrayList<String>(3);
 
-    public List transformations() { return this.tr; }
-    public ArrayList links() { return this.ls; }
+    public List<URI> transformations() { return this.tr; }
+    public ArrayList<String> links() { return this.ls; }
 
     public MyHandler(String b) throws java.net.URISyntaxException
     {

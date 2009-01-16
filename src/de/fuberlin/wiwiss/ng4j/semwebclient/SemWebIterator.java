@@ -19,15 +19,15 @@ import de.fuberlin.wiwiss.ng4j.NamedGraph;
  * retrieved. If the retrieval is finished and there are no more matching
  * triples the hasNext() method returns false.
  * 
- * @author Tobias Gauß
+ * @author Tobias Gauï¿½
  * 
  */
-public class SemWebIterator implements Iterator {
-	private LinkedList graphQueue = new LinkedList();
+public class SemWebIterator implements Iterator<SemWebTriple> {
+	private LinkedList<NamedGraph> graphQueue = new LinkedList<NamedGraph>();
 	private Iterator currentIterator = null;
 	private Node currentGraphName = null;
 	private Triple pattern;
-	private Triple nextTriple = null;
+	private SemWebTriple nextTriple = null;
 	private boolean noMoreGraphs = false;
 	private FindQuery findQuery;
 	private Log log = LogFactory.getLog(SemWebIterator.class);
@@ -37,9 +37,9 @@ public class SemWebIterator implements Iterator {
 		this.pattern = pattern;
 	}
 
-	public synchronized void queueNamedGraphs(Iterator graphs) {
+	public synchronized void queueNamedGraphs(Iterator<NamedGraph> graphs) {
 		while (graphs.hasNext()) {
-			NamedGraph graph = (NamedGraph) graphs.next();
+			NamedGraph graph = graphs.next();
 			this.graphQueue.addLast(graph);
 			this.log.debug("Queue result graph: <" + graph.getGraphName() + "> (" + graph.size() + " triples)");
 		}
@@ -61,7 +61,7 @@ public class SemWebIterator implements Iterator {
 		return this.nextTriple != null;
 	}
 	
-	private synchronized Triple tryFetchNextTriple() {		
+	private synchronized SemWebTriple tryFetchNextTriple() {
 		while (true) {
 			if (this.currentIterator != null && this.currentIterator.hasNext()) {
 				return createSemWebTriple((Triple) this.currentIterator.next());
@@ -92,11 +92,11 @@ public class SemWebIterator implements Iterator {
 	/* (non-Javadoc)
 	 * @see java.util.Iterator#next()
 	 */
-	public Object next() {
+	public SemWebTriple next() {
 		if (!this.hasNext()) {
 			throw new NoSuchElementException();
 		}
-		Triple result = this.nextTriple;
+		SemWebTriple result = this.nextTriple;
 		this.nextTriple = null;
 		return result;
 	}

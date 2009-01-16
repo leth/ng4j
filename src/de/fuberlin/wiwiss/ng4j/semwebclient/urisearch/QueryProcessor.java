@@ -20,7 +20,7 @@ public interface QueryProcessor
 	 * @return the query result which is a set of URLs (strings) that refer to
 	 *         RDF documents which mention the given URI
 	 */
-	public Set process ( String uri ) throws QueryProcessingException;
+	public Set<String> process ( String uri ) throws QueryProcessingException;
 
 }
 

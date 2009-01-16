@@ -44,11 +44,11 @@ public class QueryProcessorSindice implements QueryProcessor {
 
 	// implementation of the QueryProcessor interface
 
-	public Set process ( String uri ) throws QueryProcessingException {
-		Set result = new HashSet ();
+	public Set<String> process ( String uri ) throws QueryProcessingException {
+		Set<String> result = new HashSet<String> ();
 
 		int curResultPortionNo = 1;
-		Set curResultPortion;
+		Set<String> curResultPortion;
 		do {
 			worker.setCurPortionNo( curResultPortionNo );
 			curResultPortion = worker.process( uri );
@@ -93,8 +93,8 @@ public class QueryProcessorSindice implements QueryProcessor {
 			}
 		}
 
-		final protected Set evaluateResult( Model queryResult ) throws QueryExecutionException {
-			Set result = new HashSet ();
+		final protected Set<String> evaluateResult( Model queryResult ) throws QueryExecutionException {
+			Set<String> result = new HashSet<String> ();
 
 			StmtIterator it = queryResult.listStatements( null, RDFS.seeAlso, (RDFNode) null );
 			while ( it.hasNext() ) {

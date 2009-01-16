@@ -28,7 +28,7 @@ public class DereferencingTaskQueue extends TaskQueueBase
         private boolean enablegrddl;
 	private int connectTimeout = 0;
 	private int readTimeout = 0;
-	private Map currentTasks = new HashMap (); // maps task IDs to tasks
+	private Map<String,DereferencingTask> currentTasks = new HashMap<String,DereferencingTask> (); // maps task IDs to tasks
 
 
 	/**
@@ -61,9 +61,9 @@ public class DereferencingTaskQueue extends TaskQueueBase
 		return  thread;
 	}
 
-	//@Override
+	@Override
 	public synchronized void addTask ( Task task ) {
-		currentTasks.put( task.getIdentifier(), task );
+		currentTasks.put( task.getIdentifier(), (DereferencingTask) task );
 		super.addTask( task );
 	}
 
@@ -81,7 +81,7 @@ public class DereferencingTaskQueue extends TaskQueueBase
 	 * Returns the task identified by the given ID (if any).
 	 */
 	public synchronized DereferencingTask getTask ( String identifier ) {
-		return (DereferencingTask) currentTasks.get( identifier );
+		return currentTasks.get( identifier );
 	}
 
 }

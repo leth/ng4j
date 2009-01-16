@@ -24,7 +24,7 @@ public class DereferencingResult {
 	private int resultCode;
 	private NamedGraphSet resultData;
 	private Exception resultException;
-	private List urilist = null;
+	private List<String> urilist = null;
 	private String redirectURI = null;
 
 	public DereferencingResult(DereferencingTask task, int resultCode, 
@@ -35,7 +35,7 @@ public class DereferencingResult {
 		this.resultException = resultException;
 	}
 	
-	public DereferencingResult(DereferencingTask task, int resultCode, List urilist) {
+	public DereferencingResult(DereferencingTask task, int resultCode, List<String> urilist) {
 		this.task = task;
 		this.resultCode = resultCode;
 		this.urilist = urilist;
@@ -79,7 +79,7 @@ public class DereferencingResult {
 		return this.resultCode == DereferencingResult.STATUS_OK;
 	}
 	
-	public List getUriList(){
+	public List<String> getUriList(){
 		return this.urilist;
 	}
 	

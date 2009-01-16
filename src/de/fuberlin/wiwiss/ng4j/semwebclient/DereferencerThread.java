@@ -129,7 +129,7 @@ public class DereferencerThread extends TaskExecutorBase {
 	 *            the thrown exception
 	 * @return
 	 */
-	private DereferencingResult createNewUrisResult(DereferencingTask task, int errorCode, ArrayList urilist) {
+	private DereferencingResult createNewUrisResult(DereferencingTask task, int errorCode, ArrayList<String> urilist) {
 		return new DereferencingResult(task, errorCode, urilist);
 	}	
 
@@ -253,11 +253,11 @@ public class DereferencerThread extends TaskExecutorBase {
 				return new DereferencingResult(task,
 							       DereferencingResult.STATUS_OK, this.tempNgs, null);
 			}
-			ArrayList l = HtmlLinkFetcher.fetchLinks(this.connection.getInputStream());
-			Iterator iter = l.iterator();
-			ArrayList urilist = new ArrayList();
+			ArrayList<String> l = HtmlLinkFetcher.fetchLinks(this.connection.getInputStream());
+			Iterator<String> iter = l.iterator();
+			ArrayList<String> urilist = new ArrayList<String>();
 			while (iter.hasNext()) {
-				String link = (String) iter.next();
+				String link = iter.next();
 				link = link.replace( "&amp;", "&" );
 				link = link.replace( "&gt;", ">" );
 				link = link.replace( "&lt;", "<" );

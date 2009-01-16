@@ -11,11 +11,11 @@ import java.util.regex.Pattern;
 
 public class HtmlLinkFetcher {
 	
-	public static ArrayList fetchLinks(InputStream stream){
+	public static ArrayList<String> fetchLinks(InputStream stream){
 		BufferedReader bw = new BufferedReader(new InputStreamReader(stream));
 		String line = null;
 		String header = "";
-		ArrayList linkList = new ArrayList();
+		ArrayList<String> linkList = new ArrayList<String>();
 		try {
 		while(((line = bw.readLine()).indexOf("</head>") == -1)|(line == null)){
 			header = header + line;
@@ -32,12 +32,12 @@ public class HtmlLinkFetcher {
 	    Pattern postPattern = Pattern.compile ("( |\"|>)");
 	    Pattern typePattern = Pattern.compile (".*(type=\"application/rdf\\+xml\"|type=\"application/n3\"|type=\"text/rdf\\+n3\").*");
 	    Matcher linkMatcher = linkPattern.matcher (header);
-	    LinkedList linkLinkedList = new LinkedList ();
+	    LinkedList<String> linkLinkedList = new LinkedList<String> ();
 	    while (linkMatcher.find ()) {
 		      linkLinkedList.addLast (linkMatcher.group ());
 		    }
 		    for (int i = 0; i < linkLinkedList.size (); i++) {
-		      String linkElmt = (String) linkLinkedList.get(i);
+		      String linkElmt = linkLinkedList.get(i);
 		      if ( typePattern.matcher(linkElmt).matches() ) {
 		        CharSequence cs = prePattern.split ((CharSequence)linkLinkedList.get(i))[1];
 		        linkList.add(postPattern.split (cs)[0]);

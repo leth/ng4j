@@ -8,7 +8,7 @@ import com.hp.hpl.jena.graph.Triple;
  * A Thread which starts a retrieval process and reports every found triple to a
  * listener.
  * 
- * @author Tobias Gauß
+ * @author Tobias Gauï¿½
  */
 public class TripleFinder extends Thread {
 	private Triple triple;
@@ -39,10 +39,9 @@ public class TripleFinder extends Thread {
 	}
 
 	public void run() {
-		Iterator it = new FindQuery(this.client, this.triple).iterator();
+		SemWebIterator it = new FindQuery(this.client, this.triple).iterator();
 		while (it.hasNext()) {
-			SemWebTriple triple = (SemWebTriple) it.next();
-			listener.tripleFound(triple);
+			listener.tripleFound( it.next() );
 		}
 		this.listener.findFinished();
 	}

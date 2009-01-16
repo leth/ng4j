@@ -25,9 +25,9 @@ abstract public class TaskQueueBase extends Thread {
 
 	static final public int MAXTHREADS_DEFAULT = 10;
 	final protected int maxThreads;
-	final protected Queue freeThreads = new LinkedList ();
-	final protected Set busyThreads = new HashSet ();
-	protected Queue tasks = new LinkedList ();
+	final protected Queue<TaskExecutorBase> freeThreads = new LinkedList<TaskExecutorBase> ();
+	final protected Set<TaskExecutorBase> busyThreads = new HashSet<TaskExecutorBase> ();
+	protected Queue<Task> tasks = new LinkedList<Task> ();
 	private boolean closed = false;
 
 	private Log log = LogFactory.getLog( TaskQueueBase.class );
@@ -97,13 +97,13 @@ abstract public class TaskQueueBase extends Thread {
 
 		initThreadPool();
 
-		Set tmp = new HashSet ();
+		Set<TaskExecutorBase> tmp = new HashSet<TaskExecutorBase> ();
 		while ( ! closed ) {
 			// move threads that finished their task to the pool of free threads
 			tmp.clear();
-			Iterator it = busyThreads.iterator();
+			Iterator<TaskExecutorBase> it = busyThreads.iterator();
 			while ( it.hasNext() ) {
-				TaskExecutorBase t = (TaskExecutorBase) it.next();
+				TaskExecutorBase t = it.next();
 				if ( ! t.hasTask() )
 					tmp.add( t );
 			}
@@ -112,8 +112,8 @@ abstract public class TaskQueueBase extends Thread {
 
 			// assign queued tasks to free threads
 			while ( ! tasks.isEmpty() && ! freeThreads.isEmpty() ) {
-				TaskExecutorBase thread = (TaskExecutorBase) freeThreads.remove();
-				Task task = (Task) tasks.remove();
+				TaskExecutorBase thread = freeThreads.remove();
+				Task task = tasks.remove();
 				thread.startTask( task );
 				busyThreads.add( thread );
 
@@ -142,14 +142,14 @@ abstract public class TaskQueueBase extends Thread {
 		closed = true;
 
 		while ( ! freeThreads.isEmpty() ) {
-			TaskExecutorBase t = (TaskExecutorBase) freeThreads.remove();
+			TaskExecutorBase t = freeThreads.remove();
 			t.stopThread();
 			t.interrupt();
 		}
 
-		Iterator it = busyThreads.iterator();
+		Iterator<TaskExecutorBase> it = busyThreads.iterator();
 		while ( it.hasNext() ) {
-			TaskExecutorBase t = (TaskExecutorBase) it.next();
+			TaskExecutorBase t = it.next();
 			t.stopThread();
 			t.interrupt();
 		}
