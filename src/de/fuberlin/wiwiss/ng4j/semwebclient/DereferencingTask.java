@@ -36,15 +36,21 @@ public class DereferencingTask implements Task {
 	/**
 	 * Appends the given listener to the list of listeners attached to this task.
 	 */
-	public void attachListener ( DereferencingListener listener ) {
+	synchronized public void attachListener ( DereferencingListener listener ) {
 		listeners.add( listener );
 	}
 
 	/**
-	 * Returns an iterator over all listeners attached to this task.
+	 * Returns true if the given listeners is already attached to this task.
 	 */
-	public Iterator getListeners () {
-		return listeners.iterator();
+	synchronized public boolean isAttached ( DereferencingListener listener ) {
+		Iterator it = listeners.iterator();
+		while ( it.hasNext() ) {
+			if ( listener.equals(it.next()) ) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public int getStep(){
@@ -54,4 +60,23 @@ public class DereferencingTask implements Task {
 	public String getURI(){
 		return this.uri;
 	}
+
+
+	// operations
+
+	/**
+	 * Returns an iterator over all listeners attached to this task.
+	 */
+	public void notifyListeners ( DereferencingResult result ) {
+		Vector tmp = new Vector();
+		synchronized ( listeners ) {
+			tmp.addAll( listeners );
+		}
+		Iterator it = tmp.iterator();
+		while ( it.hasNext() ) {
+			( (DereferencingListener) it.next() ).dereferenced( result );
+		}
+		tmp.clear();
+	}
+
 }

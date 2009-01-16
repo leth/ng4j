@@ -1,8 +1,12 @@
 package de.fuberlin.wiwiss.ng4j.semwebclient;
 
+import java.util.HashMap;
+import java.util.Map;
+
 //import org.apache.commons.logging.Log;
 //import org.apache.commons.logging.LogFactory;
 
+import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.Task;
 import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.TaskExecutorBase;
 import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.TaskQueueBase;
 
@@ -16,12 +20,16 @@ import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.TaskQueueBase;
  * @author Tobias Gauß
  * @author Olaf Hartig
  */
-public class DereferencingTaskQueue extends TaskQueueBase {
+public class DereferencingTaskQueue extends TaskQueueBase
+                                    implements DereferencingListener
+{
 //	private Log log = LogFactory.getLog(DereferencingTaskQueue.class);
 	private int maxfilesize;
         private boolean enablegrddl;
 	private int connectTimeout = 0;
 	private int readTimeout = 0;
+	private Map currentTasks = new HashMap (); // maps task IDs to tasks
+
 
 	/**
 	 * Old constructor.
@@ -51,6 +59,29 @@ public class DereferencingTaskQueue extends TaskQueueBase {
 		thread.setConnectTimeout(this.connectTimeout);
 		thread.setReadTimeout(this.readTimeout);
 		return  thread;
+	}
+
+	//@Override
+	public synchronized void addTask ( Task task ) {
+		currentTasks.put( task.getIdentifier(), task );
+		super.addTask( task );
+	}
+
+
+	// implementation of the DereferencingListener interface
+
+	public synchronized void dereferenced ( DereferencingResult result ) {
+		currentTasks.remove( result.getTask().getIdentifier() );
+	}
+
+
+	// accessors
+
+	/**
+	 * Returns the task identified by the given ID (if any).
+	 */
+	public synchronized DereferencingTask getTask ( String identifier ) {
+		return (DereferencingTask) currentTasks.get( identifier );
 	}
 
 }

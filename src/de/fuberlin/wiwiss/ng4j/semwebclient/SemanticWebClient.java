@@ -491,9 +491,26 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 			unretrievedURIs.remove( derefURI );
 			markedUris.remove( derefURI );
 		}
-		if (this.markedUris.contains(derefURI) || redirectedURIs.containsKey(derefURI) || containsGraph(derefURI)) {
-			// already retrieved or in queue, don't queue again
+		if (redirectedURIs.containsKey(derefURI) || retrievedUris.contains(derefURI)) {
+			// already retrieved, don't queue again
 			return false;
+		}
+		if (markedUris.contains(derefURI) && unretrievedURIs.containsKey(derefURI)) {
+			// unretrievable, don't queue again
+			return false;
+		}
+		if (markedUris.contains(derefURI)) {
+			// already in queue but not retrieved yet
+			// attach the given listener to the corresponding dereferencing task
+			DereferencingTask existingTask = getDerefQueue().getTask( derefURI );
+			if ( ! existingTask.isAttached(listener) ) {
+				existingTask.attachListener( listener );
+System.out.println(" attached to " + derefURI + " " + ((FindQuery)listener).iterator().getTriple().toString() );
+				return true;
+			} else {
+System.out.println(" NOT attached to " + derefURI + " " + ((FindQuery)listener).iterator().getTriple().toString() );
+				return false;
+			}
 		}
 		if (step > this.maxsteps) {
 			this.log.debug("Ignored (maxsteps reached): " + uri);
@@ -518,7 +535,9 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 					if ( result.getResultCode() == DereferencingResult.STATUS_REDIRECTED )
 						redirectedURIs.put(result.getURI(), result.getRedirectURI());
 					else if ( result.getResultCode() == DereferencingResult.STATUS_NEW_URIS_FOUND )
-						; // ignore GRDDLed documents so far - TODO: better management of results
+						// ignore GRDDLed documents so far - TODO: better management of results
+						// However, the HTML doc. represented by the URI has been retrieved successfully
+						retrievedUris.add( result.getURI() );
 					else
 						unretrievedURIs.put(result.getURI(), result.getException());
 				}

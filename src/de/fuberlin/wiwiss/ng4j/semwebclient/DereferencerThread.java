@@ -67,10 +67,7 @@ public class DereferencerThread extends TaskExecutorBase {
 			if ( isStopped() )
 				return;
 
-			Iterator listenerIter = ( (DereferencingTask) task ).getListeners();
-			while ( listenerIter.hasNext() ) {
-				( (DereferencingListener) listenerIter.next() ).dereferenced( result );
-			}
+			( (DereferencingTask) task ).notifyListeners( result );
 		}
 	}
 
