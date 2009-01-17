@@ -1,0 +1,9 @@
+
+01/16/09 (Olaf)
+Applied Jennifer's patch: 2496503 "Refactor SWP code and remove deprecated TriQL"
+
+01/15/09 (Olaf)
+Bug fix in the SemWebClLib: Multiple deref listeners can be attached to a single deref task. Due to this change, multiple find queries may benefit from the graph retrieved for the task.
+
+Release 0.8
+-----------
