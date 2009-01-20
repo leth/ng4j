@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/DbCompatibility.java,v 1.1 2008/09/03 16:37:27 cyganiak Exp $
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/DbCompatibility.java,v 1.2 2009/01/20 16:14:35 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db.specific;
 
 import java.sql.Connection;
@@ -121,8 +121,25 @@ public abstract class DbCompatibility {
 	 */
 	protected void executeNoErrorHandling(String sql) throws SQLException {
 		Statement stmt = this.connection.createStatement();
+		setSchema(stmt);
 		stmt.execute(sql);
 		stmt.close();
+	}
+
+	/** NOTE: subclasses should override if appropriate. <p>
+	 * The default implementation does nothing.<p>
+	 * 
+	 * Set the schema, or do any other necessary processing
+	 * prior to continued execution. <p>
+	 * 
+	 * If this method is used for a more general purpose
+	 * than setting the schema
+	 * then it can be renamed appropriately.
+	 * 
+	 * @param stmt The statement being used to execute SQL commands.
+	 * @throws SQLException
+	 */
+	public void setSchema(Statement stmt) throws SQLException {
 	}
 
 	/** Executes the given SQL command.
