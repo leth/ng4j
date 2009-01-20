@@ -1,4 +1,4 @@
-// $Id: QuadDB.java,v 1.10 2008/09/03 16:37:29 cyganiak Exp $
+// $Id: QuadDB.java,v 1.11 2009/01/20 16:39:40 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -19,6 +19,7 @@ import com.hp.hpl.jena.util.iterator.NullIterator;
 
 import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.db.specific.DbCompatibility;
+import de.fuberlin.wiwiss.ng4j.db.specific.DerbyCompatibility;
 import de.fuberlin.wiwiss.ng4j.db.specific.HSQLCompatibility;
 import de.fuberlin.wiwiss.ng4j.db.specific.MySQLCompatibility;
 import de.fuberlin.wiwiss.ng4j.db.specific.OracleCompatibility;
@@ -60,49 +61,49 @@ public class QuadDB {
 		dbCompatibility.initialize(tablePrefix, graphNamesTableName, quadsTableName);
 	}
 	
-	public void insert(Node g, Node s, Node p, Node o) {
-		if (find(g, s, p, o).hasNext()) {
+	public void insert(Node graph, Node subject, Node predicate, Node object) {
+		if (find(graph, subject, predicate, object).hasNext()) {
 			return;
 		}
 		String sql = "INSERT INTO " + quadsTableName +
 				" (graph, subject, predicate, object, literal, lang, datatype) VALUES (" +
-				"'" + escape(g.getURI()) + "', " +
-				"'" + escapeResource(s) + "', " +
-				"'" + escape(p.getURI()) + "', " +
-				getObjectColumn(o) + ", " +
-				getLiteralColumn(o) + ", " +
-				getLangColumn(o) + ", " +
-				getDatatypeColumn(o) + ")";
+				"'" + escape(graph.getURI()) + "', " +
+				"'" + escapeResource(subject) + "', " +
+				"'" + escape(predicate.getURI()) + "', " +
+				getObjectColumn(object) + ", " +
+				getLiteralColumn(object) + ", " +
+				getLangColumn(object) + ", " +
+				getDatatypeColumn(object) + ")";
 		dbCompatibility.execute(sql);
 	}
 	
-	public void delete(Node g, Node s, Node p, Node o) {
+	public void delete(Node graph, Node subject, Node predicate, Node object) {
 		String sql = "DELETE FROM " + quadsTableName + " " +
-				getWhereClause(g, s, p, o);
+				getWhereClause(graph, subject, predicate, object);
 		dbCompatibility.execute(sql);
 	}
 	
-	public Iterator find(Node g, Node s, Node p, Node o) {
-		if (g == null) {
-			g = Node.ANY;
+	public Iterator find(Node graph, Node subject, Node predicate, Node object) {
+		if (graph == null) {
+			graph = Node.ANY;
 		}
-		if (s == null) {
-			s = Node.ANY;
+		if (subject == null) {
+			subject = Node.ANY;
 		}
-		if (p == null) {
-			p = Node.ANY;
+		if (predicate == null) {
+			predicate = Node.ANY;
 		}
-		if (o == null) {
-			o = Node.ANY;
+		if (object == null) {
+			object = Node.ANY;
 		}
-		if ((!g.isURI() && !g.equals(Node.ANY))
-				|| (!s.isURI() && !s.isBlank() && !s.equals(Node.ANY))
-				|| (!p.isURI() && !p.equals(Node.ANY))) {
+		if ((!graph.isURI() && !graph.equals(Node.ANY))
+				|| (!subject.isURI() && !subject.isBlank() && !subject.equals(Node.ANY))
+				|| (!predicate.isURI() && !predicate.equals(Node.ANY))) {
 			return new NullIterator();
 		}
 		String sql = "SELECT graph, subject, predicate, object, literal, lang, datatype " +
 				"FROM " + quadsTableName + " " +
-				getWhereClause(g, s, p, o);
+				getWhereClause(graph, subject, predicate, object);
 		final ResultSet results = executeQuery(sql);
 		return new Iterator() {
 			private boolean hasReadNext = false;
@@ -317,6 +318,7 @@ public class QuadDB {
 		Statement stmt = null;
 		try {
 			stmt = dbCompatibility.getConnection().createStatement();
+			dbCompatibility.setSchema(stmt);
 			return stmt.executeQuery(sql);
 		} catch (SQLException ex) {
 			if (stmt != null) {
@@ -330,60 +332,60 @@ public class QuadDB {
 		}
 	}
 	
-	private String getObjectColumn(Node o) {
-		if (o.isLiteral()) {
+	private String getObjectColumn(Node object) {
+		if (object.isLiteral()) {
 			return "NULL";
 		}
-		return "'" + escapeResource(o) + "'";
+		return "'" + escapeResource(object) + "'";
 	}
 	
-	private String getLiteralColumn(Node o) {
-		if (!o.isLiteral()) {
+	private String getLiteralColumn(Node object) {
+		if (!object.isLiteral()) {
 			return "NULL";
 		}
-		return "'" + escape(o.getLiteral().getLexicalForm()) + "'";
+		return "'" + escape(object.getLiteral().getLexicalForm()) + "'";
 	}
 	
-	private String getLangColumn(Node o) {
-		if (!o.isLiteral() || o.getLiteral().language() == null || "".equals(o.getLiteral().language())) {
+	private String getLangColumn(Node object) {
+		if (!object.isLiteral() || object.getLiteral().language() == null || "".equals(object.getLiteral().language())) {
 			return "NULL";
 		}
-		return "'" + escape(o.getLiteral().language()) + "'";
+		return "'" + escape(object.getLiteral().language()) + "'";
 	}
 	
-	private String getDatatypeColumn(Node o) {
-		if (!o.isLiteral() || o.getLiteral().getDatatypeURI() == null) {
+	private String getDatatypeColumn(Node object) {
+		if (!object.isLiteral() || object.getLiteral().getDatatypeURI() == null) {
 			return "NULL";
 		}
-		return "'" + escape(o.getLiteral().getDatatypeURI()) + "'";
+		return "'" + escape(object.getLiteral().getDatatypeURI()) + "'";
 	}
 
-	private String getWhereClause(Node g, Node s, Node p, Node o) {
+	private String getWhereClause(Node graph, Node subject, Node predicate, Node object) {
 		List clauses = new ArrayList();
-		if (!Node.ANY.equals(g)) {
-			clauses.add("graph='" + escape(g.getURI()) + "'");
+		if (!Node.ANY.equals(graph)) {
+			clauses.add("graph='" + escape(graph.getURI()) + "'");
 		}
-		if (!Node.ANY.equals(s)) {
-			clauses.add("subject='" + escapeResource(s) + "'");
+		if (!Node.ANY.equals(subject)) {
+			clauses.add("subject='" + escapeResource(subject) + "'");
 		}
-		if (!Node.ANY.equals(p)) {
-			clauses.add("predicate='" + escape(p.getURI()) + "'");
+		if (!Node.ANY.equals(predicate)) {
+			clauses.add("predicate='" + escape(predicate.getURI()) + "'");
 		}
-		if (!Node.ANY.equals(o)) {
-			if (o.isLiteral()) {
-				clauses.add("literal='" + escape(o.getLiteral().getLexicalForm()) + "'");
-				if (o.getLiteral().language() == null || "".equals(o.getLiteral().language())) {
+		if (!Node.ANY.equals(object)) {
+			if (object.isLiteral()) {
+				clauses.add("literal='" + escape(object.getLiteral().getLexicalForm()) + "'");
+				if (object.getLiteral().language() == null || "".equals(object.getLiteral().language())) {
 					clauses.add("lang IS NULL");
 				} else {
-					clauses.add("lang='" + escape(o.getLiteral().language()) + "'");
+					clauses.add("lang='" + escape(object.getLiteral().language()) + "'");
 				}
-				if (o.getLiteral().getDatatypeURI() == null) {
+				if (object.getLiteral().getDatatypeURI() == null) {
 					clauses.add("datatype IS NULL");
 				} else {
-					clauses.add("datatype='" + escape(o.getLiteral().getDatatypeURI()) + "'");
+					clauses.add("datatype='" + escape(object.getLiteral().getDatatypeURI()) + "'");
 				}
 			} else {
-				clauses.add("object='" + escapeResource(o) + "'");
+				clauses.add("object='" + escapeResource(object) + "'");
 			}
 		}
 		if (clauses.isEmpty()) {
@@ -416,6 +418,8 @@ public class QuadDB {
 			dbCompatibility = new PostgreSQLCompatibility(connection);
 		} else if (name.toLowerCase().indexOf("oracle") != -1) {
 			dbCompatibility = new OracleCompatibility(connection);
+		} else if (name.toLowerCase().indexOf("derby") != -1) {
+			dbCompatibility = new DerbyCompatibility(connection);
 		} else {
 			throw new RuntimeException("Unrecognized database type: " + name);
 		}
