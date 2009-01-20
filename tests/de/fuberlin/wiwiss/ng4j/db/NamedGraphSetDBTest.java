@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetDBTest.java,v 1.1 2004/12/12 17:30:29 cyganiak Exp $
+// $Id: NamedGraphSetDBTest.java,v 1.2 2009/01/20 22:04:31 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.util.ArrayList;
@@ -6,13 +6,16 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.hp.hpl.jena.mem.GraphMem;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.ResultSetFactory;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSetTest;
 import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphImpl;
-import de.fuberlin.wiwiss.ng4j.triql.TriQLQuery;
 
 /**
  * Tests {@link NamedGraphSetDB} by reusing the common NamedGraphSetTest
@@ -22,6 +25,8 @@ import de.fuberlin.wiwiss.ng4j.triql.TriQLQuery;
  */
 public class NamedGraphSetDBTest extends NamedGraphSetTest {
 
+	public static final String NL = System.getProperty("line.separator") ;
+	
 	public NamedGraphSet createNamedGraphSet() throws Exception {
 		return DBConnectionHelper.createNamedGraphSetDB();
 	}
@@ -57,23 +62,29 @@ public class NamedGraphSetDBTest extends NamedGraphSetTest {
 	}
 	
 	public void testTriQL() {
-		List l = new ArrayList();
+		// REVISIT this test tests SPARQL now rather than TriQL.  Should rename test.
+		List<Quad> l = new ArrayList<Quad>();
 		l.add(new Quad(node1, foo, bar, baz));
 		l.add(new Quad(node1, foo, foo, foo));
 		l.add(new Quad(node2, foo, foo, foo));
-		Iterator it = l.iterator();
+		Iterator<Quad> it = l.iterator();
 		while (it.hasNext()) {
-			Quad q = (Quad) it.next();
+			Quad q = it.next();
 			this.set.addQuad(q);
 		}
-		it = TriQLQuery.exec(this.set, "SELECT * WHERE ?graph (?s ?p ?o)");
+		String queryString = "SELECT ?graph ?subject ?predicate ?object" + NL
+			+ "WHERE { GRAPH ?graph {" + NL
+			+ "?subject ?predicate ?object" + NL
+			+ " } }";
+		QueryExecution qe = QueryExecutionFactory.create( queryString, localDS );
+		ResultSet results = ResultSetFactory.copyResults( qe.execSelect() );
 		List actual = new ArrayList();
-		assertTrue(it.hasNext());
-		actual.add(it.next());
-		assertTrue(it.hasNext());
-		actual.add(it.next());
-		assertTrue(it.hasNext());
-		actual.add(it.next());
-		assertFalse(it.hasNext());
+		assertTrue(results.hasNext());
+		actual.add(results.next());
+		assertTrue(results.hasNext());
+		actual.add(results.next());
+		assertTrue(results.hasNext());
+		actual.add(results.next());
+		assertFalse(results.hasNext());
 	}
 }

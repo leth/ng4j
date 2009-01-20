@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetTest.java,v 1.6 2004/12/17 05:05:54 cyganiak Exp $
+// $Id: NamedGraphSetTest.java,v 1.7 2009/01/20 22:04:31 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.util.ArrayList;
@@ -15,6 +15,7 @@ import com.hp.hpl.jena.mem.GraphMem;
 
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphImpl;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
+import de.fuberlin.wiwiss.ng4j.sparql.NamedGraphDataset;
 
 /**
  * Abstract test cases for {@link NamedGraphSet}. Implementations can
@@ -33,9 +34,11 @@ public class NamedGraphSetTest extends TestCase {
 	protected final static Node variableA = Node.createVariable("a");
 
 	protected NamedGraphSet set;
+	protected NamedGraphDataset localDS;
 
 	public void setUp() throws Exception {
 		this.set = createNamedGraphSet();
+		this.localDS = new NamedGraphDataset( set );
 	}
 	
 	/**
@@ -197,7 +200,7 @@ public class NamedGraphSetTest extends TestCase {
 		this.set.createGraph(uri1);
 		assertTrue(this.set.listGraphs().hasNext());
 		assertEquals(node1, ((NamedGraph) this.set.listGraphs().next()).getGraphName());
-		Collection graphs = new ArrayList();
+		Collection<Node> graphs = new ArrayList<Node>();
 		this.set.createGraph(uri2);
 		Iterator it = this.set.listGraphs();
 		assertTrue(it.hasNext());
