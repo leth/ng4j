@@ -1,3 +1,4 @@
+//$Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/swp/impl/SWPWarrantImpl.java,v 1.7 2009/01/21 01:32:57 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.swp.impl;
 
 import java.io.ByteArrayInputStream;
@@ -74,9 +75,9 @@ public class SWPWarrantImpl implements SWPWarrant
 	{
 		//String warrantQuery = "SELECT * WHERE ?warrant (?graph ?p ?warrant) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
 		String warrantQuery = "SELECT ?graph" + NL
-		+ "WHERE { GRAPH ?warrant {" + NL
-		+ "?grap ?p ?warrant" + NL
-		+ " } }";
+			+ "WHERE { GRAPH ?warrant {" + NL
+			+ "?graph ?p ?warrant" + NL
+			+ " } }";
 		QueryExecution qe = QueryExecutionFactory.create( warrantQuery, localDS );
 		ResultSet results = ResultSetFactory.copyResults( qe.execSelect() );
         return new NiceGraphIterator(results);
@@ -87,7 +88,7 @@ public class SWPWarrantImpl implements SWPWarrant
 		//String warrantQuery = "SELECT * WHERE ?warrant (?graph swp:assertedBy ?warrant) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
         String warrantQuery = "SELECT ?graph" + NL
 			+ "WHERE { GRAPH ?warrant {" + NL
-			+ "?grap <" + SWP.assertedBy + "> ?warrant" + NL
+			+ "?graph <" + SWP.assertedBy + "> ?warrant" + NL
 			+ " } }";
 		QueryExecution qe = QueryExecutionFactory.create( warrantQuery, localDS );
 		ResultSet results = ResultSetFactory.copyResults( qe.execSelect() );
@@ -99,7 +100,7 @@ public class SWPWarrantImpl implements SWPWarrant
 		//String warrantQuery = "SELECT * WHERE ?warrant (?graph swp:quotedBy ?warrant) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
 		String warrantQuery = "SELECT ?graph" + NL
 			+ "WHERE { GRAPH ?warrant {" + NL
-			+ "?grap <" + SWP.quotedBy + "> ?warrant" + NL
+			+ "?graph <" + SWP.quotedBy + "> ?warrant" + NL
 			+ " } }";
 		QueryExecution qe = QueryExecutionFactory.create( warrantQuery, localDS );
 		ResultSet results = ResultSetFactory.copyResults( qe.execSelect() );
