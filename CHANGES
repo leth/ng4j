@@ -1,4 +1,7 @@
 
+01/21/09 (Olaf)
+Removed TriQL
+
 01/19/09 (Jennifer)
 Add support for Apache Derby database.
 Change Eclipse compiler settings for project to require Java 1.5 instead of 1.4.

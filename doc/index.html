@@ -196,8 +196,6 @@ href="http://jena.sourceforge.net/" target="_blank">Jena - Semantic Web toolkit<
 href="http://swdev.nokia.com/trix/TriX.html" target="_blank">TriX</A> | <A 
 href="http://www.wiwiss.fu-berlin.de/suhl/bizer/TriG/" target="_blank">TriG</A> 
       | <A 
-href="http://www.wiwiss.fu-berlin.de/suhl/bizer/TriQL/" target="_blank">TriQL</A> 
-      | <A 
 href="http://www.w3.org/2001/sw/interest/"></A><A 
 href="http://www.w3.org/2001/sw/interest/">Semantic Web Interest Group</A> | <A 
 href="http://www.w3.org/RDF/">RDF</A> | </P>
@@ -251,7 +249,7 @@ href="http://www.w3.org/RDF/">RDF</A> | </P>
   <li><strong>Semantic Web Client Library</strong> which represents the complete Semantic Web as a single RDF graph</li>
   <li>Viewing graphsets as Jena models and Jena graphs</li>
   <li>Provenance-enabled Jena statements</li>
-  <li>Querying of Named Graphs with the <strong>SPARQL</strong> and <strong>TriQL</strong> query languages</li>
+  <li>Querying of Named Graphs with the <strong>SPARQL</strong> query language</li>
   <li>Integrated parser and serializer for the <strong>TriG</strong> and <strong>TriX</strong> syntaxes including TriX syntactic extensions</li>
   <li>API support for the Semantic Web Publishing <strong>(SWP)</strong> vocabulary</li>
   <li>Creation and verification of <strong>graph signatures</strong> using X.509 certificates</li>
@@ -276,7 +274,6 @@ href="#example">Usage Examples</A> </DIV>
     <ol>
       <li><a href="#operations">Operations on GraphSet and Model Level</a></li>
       <li><A href="#SPARQL">Querying Named Graphs with SPARQL</A></li>
-      <li><A href="#TriQL">Querying Named Graphs with TriQL</A></li>
       <li><A href="#Persistence">Using Database Persistence</A></li>
       <li><A href="#SWP">Semantic Web Publishing (SWP) API and Digital Signatures</A></li>
       <li><A href="#client">Semantic Web Client Library</A></li>
@@ -348,8 +345,8 @@ href="#example">Usage Examples</A> </DIV>
 <h3><A id=ng4j-intro name=ng4j-intro></A>1.2 NG4J - Named Graph API for Jena</h3>
 <P>The Named Graphs API for Jena (NG4J) is an extension to the Jena Semantic Web 
   toolkit for parsing, manipulating and serializing sets of Named Graphs. NG4J 
-  is an exerimental implementation of the new syntaxes (TriX, TriG) and query 
-  language (TriQL) developed within the Semantic Web Interest Group. Its purpose 
+  is an exerimental implementation of the new syntaxes (TriX, TriG)
+  developed within the Semantic Web Interest Group. Its purpose 
   is to have something for playing around with the new technologies. </P>
 <P><strong>Jena and the Model and Graph layers</strong></P>
 <P>Jena is a two-layered framework. Developers usually work with the Model
@@ -659,79 +656,7 @@ while (results.hasNext()) {
 
 
 <p>&nbsp;</p>
-<h3><A id=TriQL name=TriQL>2.3 Querying Named Graphs with TriQL</A></h3>
-
-<p><a href="http://www.wiwiss.fu-berlin.de/suhl/bizer/TriQL/">TriQL</a> is a query 
-  language for querying sets of named graphs. The basic idea of TriQL is using 
-  graph patterns. A graph pattern consists of an optional graph name and a set 
-  of triple patterns. </p>
-<p>TriQL is an extension of the <a href="http://www.w3.org/Submission/2004/SUBM-RDQL-20040109/">RDQL</a> 
-  query language. An RDQL tutorial is available in the <a href="http://www.hpl.hp.com/semweb/doc/tutorial/RDQL/">Jena 
-  documentation</a>. Here is a typical RDQL query:</p>
-
-<DIV class="trigInner">
-  <pre>SELECT ?name, ?email
-WHERE (?me foaf:mbox &lt;mailto:me@example.org&gt;)
-      (?person foaf:knows ?me)
-      (?person foaf:name ?name)
-      (?person foaf:mbox ?email)
-USING foaf FOR http://xmlns.com/foaf/0.1/</pre>
-</DIV>
-<p>This query returns the names and email addresses of all persons who are said to know the person with email address me@example.org.</p>
-<p>TriQL adds two features to RDQL:</p>
-
-<p><strong>1. Combining triple patterns into graph patterns</strong></p>
-<DIV class="trigInner">
-  <pre>SELECT ?name, ?email
-WHERE (?me foaf:mbox &lt;mailto:me@example.org&gt;)
-      (?person foaf:knows ?me)
-      <strong>(?person foaf:name ?name .
-       ?person foaf:mbox ?email)</strong>
-USING foaf FOR http://xmlns.com/foaf/0.1/</pre>
-</DIV>
-<p>The last two triple patterns have been combined into a graph pattern. Now, 
-  a result will only be returned if both the name and the email address occur 
-  in the <u>same</u> named graph.</p>
-
-<p><strong>2. Graph Name Restrictions</strong></p>
-<DIV class="trigInner">
-  <pre>SELECT ?graph
-WHERE  (?me foaf:mbox &lt;mailto:me@example.org&gt;)
-<strong>?graph (?person foaf:knows ?me .
-        ?graph foaf:maker ?person)</strong>
-USING foaf FOR http://xmlns.com/foaf/0.1/</pre>
-</DIV>
-<p>Now the names of the graphs containing the foaf:knows relationships are captured 
-  into the ?graph variable and will be returned as query result. Additionally, 
-  we only take into account those persons who have created a graph (foaf:maker). 
-  Meaning that we get only the persons who personally claim to know me@example.org, 
-  and not those where a third party makes that claim.</p>
-<p>The example shows that graph names can be returned as query results and that 
-  restrictions on the graph name can be formulated in other triple patterns. A 
-  graph pattern can contain variables, URIs or QNames at the graph name position.</p>
-
-<p>More example queries are found in the <a href="http://www.wiwiss.fu-berlin.de/suhl/bizer/TriQL/">TriQL 
-  specification</a>.</p>
-
-<p>Here's the code for running a TriQL query against a NamedGraphSet:</p>
-
-<DIV class="trigInner">
-  <pre>NamedGraphSet set = ...
-Iterator it = TriQLQuery.exec(set, "SELECT * WHERE ?graph (?s ?p ?o)");
-while (it.hasNext()) {
-    Map oneResult = (Map) it.next();
-    Node graph = (Node) oneResult.get("graph");
-    Node s = (Node) oneResult.get("s");
-    Node p = (Node) oneResult.get("p");
-    Node o = (Node) oneResult.get("o");
-    System.out.println(graph + " { " + s + " " + p + " " + o + " . }");
-}</pre>
-</DIV>
-<p>This will run a query and print the results.</p>
-<p>Alternatively, you can create a new TriQLQuery instance and set various parameters 
-  before executing the query. <a href="javadoc/de/fuberlin/wiwiss/ng4j/triql/TriQLQuery.html">See JavaDoc for details.</a></p>
-<p>&nbsp;</p>
-<h3><A id=Persistence name=Persistence>2.4 Using Database Persistence</A></h3>
+<h3><A id=Persistence name=Persistence>2.3 Using Database Persistence</A></h3>
 <p>NamedGraphSets can be stored in a relational database. As of NG4J v0.7,
    HSQLDB, MySQL, Oracle, and PostgreSQL are supported. To create a persistent
    NamedGraphSet, you have to set up a java.sql database connection and create
@@ -758,7 +683,7 @@ NamedGraphSetDB.delete(connection, "myapp");</pre>
 </DIV>
 <p>&nbsp;</p>
 
-<h3 id="SWP">2.5 Semantic Web Publishing (SWP) API and Digital Signatures</h3>
+<h3 id="SWP">2.4 Semantic Web Publishing (SWP) API and Digital Signatures</h3>
 <p><strong>Working with Digital Signatures and Named Graphs</strong></p>
 
 <p>The Semantic Web Publishing Vocabulary (SWP) is used for publishing Named Graphs on the Web. It allows authorities to indicate whether they assert or quote a graph and to sign graphs using digital signatures. More information about the SWP vocabulary is available on the <a href="http://www.wiwiss.fu-berlin.de/suhl/bizer/TriQLP/">TriQL.P Trust Architecture</a> page.</p>
@@ -948,7 +873,7 @@ The SWP Framework relies heavily on the PKI (Public Key Infrastructure) to provi
 
 <p>&nbsp;</p>
 
-<h3 id="client">2.6 Semantic Web Client Library</h3>
+<h3 id="client">2.5 Semantic Web Client Library</h3>
 
 <p>NG4J's Semantic Web Client Library represents the complete Semantic Web
 as a single set of named graphs. When queried, the <tt>SemanticWebClient</tt>
@@ -1046,7 +971,7 @@ Please sent comments and bug reports to the NG4J-namedgraphs mailing list:</p>
 <p>The archives of the list are found at <a href="http://sourceforge.net/mailarchive/forum.php?forum=ng4j-namedgraphs">http://sourceforge.net/mailarchive/forum.php?forum=ng4j-namedgraphs </a><br />
   You can subscribe to the list at <a href="http://lists.sourceforge.net/lists/listinfo/ng4j-namedgraphs">http://lists.sourceforge.net/lists/listinfo/ng4j-namedgraphs</a>.</p>
 <HR title="Separator for header">
-<p>$Date: 2008/11/15 19:03:00 $<br />
-  $Id: index.html,v 1.30 2008/11/15 19:03:00 hartig Exp $</p>
+<p>$Date: 2009/01/21 16:19:04 $<br />
+  $Id: index.html,v 1.31 2009/01/21 16:19:04 hartig Exp $</p>
 </BODY>
 </HTML>
