@@ -86,7 +86,7 @@ public interface SWPAuthority {
      */
 	public ExtendedIterator getProperty(Node predicate);
 
-    public boolean addDescriptionToGraph( NamedGraph graph, ArrayList listOfAuthorityProperties );
+    public boolean addDescriptionToGraph( NamedGraph graph, ArrayList<Node> listOfAuthorityProperties );
 
 	/**
      * 

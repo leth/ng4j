@@ -55,7 +55,7 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * @param listOfAuthorityProperties
      * @return boolean
      */
-    public boolean swpAssert( SWPAuthority authority, ArrayList listOfAuthorityProperties );
+    public boolean swpAssert( SWPAuthority authority, ArrayList<Node> listOfAuthorityProperties );
 
     public boolean swpAssert( SWPAuthority authority );
     
@@ -89,7 +89,7 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * @param authority
      * @return
      */
-    public boolean swpQuote( SWPAuthority authority, ArrayList listOfAuthorityProperties );
+    public boolean swpQuote( SWPAuthority authority, ArrayList<Node> listOfAuthorityProperties );
 
 	public boolean swpQuote( SWPAuthority authority );
    
@@ -128,7 +128,7 @@ public interface SWPNamedGraphSet extends NamedGraphSet
     public boolean assertWithSignature( SWPAuthority authority, 
     									Node signatureMethod, 
     									Node digestMethod, 
-    									ArrayList listOfAuthorityProperties, 
+    									ArrayList<Node> listOfAuthorityProperties, 
     									String keystore, 
     									String password ) 
     throws SWPBadSignatureException,
@@ -169,7 +169,7 @@ public interface SWPNamedGraphSet extends NamedGraphSet
     public boolean quoteWithSignature( SWPAuthority authority, 
     									Node signatureMethod, 
     									Node digestMethod, 
-    									ArrayList listOfAuthorityProperties, 
+    									ArrayList<Node> listOfAuthorityProperties, 
     									String keystore,
     									String password ) 
     throws SWPBadSignatureException,
@@ -188,9 +188,9 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * @return
      */
 	
-    public boolean assertGraphs( ArrayList listOfGraphNames, SWPAuthority authority, ArrayList listOfAuthorityProperties );
+    public boolean assertGraphs( ArrayList<Node> listOfGraphNames, SWPAuthority authority, ArrayList<Node> listOfAuthorityProperties );
 
-    public boolean quoteGraphs( ArrayList listOfGraphNames, SWPAuthority authority, ArrayList listOfAuthorityProperties );
+    public boolean quoteGraphs( ArrayList<Node> listOfGraphNames, SWPAuthority authority, ArrayList<Node> listOfAuthorityProperties );
     
     /**
      * 
@@ -208,7 +208,7 @@ public interface SWPNamedGraphSet extends NamedGraphSet
     										SWPAuthority authority, 
     										Node signatureMethod, 
     										Node digestMethod, 
-    										ArrayList listOfAuthorityProperties, 
+    										ArrayList<Node> listOfAuthorityProperties, 
     										String keystore,
     										String password ) 
     throws SWPBadSignatureException, 

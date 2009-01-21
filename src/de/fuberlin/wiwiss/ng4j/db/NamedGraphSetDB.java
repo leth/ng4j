@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetDB.java,v 1.5 2008/08/20 11:04:49 hartig Exp $
+// $Id: NamedGraphSetDB.java,v 1.6 2009/01/21 18:10:53 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -80,6 +80,9 @@ public class NamedGraphSetDB extends NamedGraphSetIO implements NamedGraphSet {
 		db.close();
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#addGraph(de.fuberlin.wiwiss.ng4j.NamedGraph)
+	 */
 	public void addGraph(NamedGraph graph) {
 		createGraph(graph.getGraphName());
 		Iterator it = graph.find(Node.ANY, Node.ANY, Node.ANY);
@@ -89,6 +92,9 @@ public class NamedGraphSetDB extends NamedGraphSetIO implements NamedGraphSet {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#removeGraph(com.hp.hpl.jena.graph.Node)
+	 */
 	public void removeGraph(Node graphName) {
 		if (!graphName.isURI() && !Node.ANY.equals(graphName)) {
 			return;
@@ -97,10 +103,16 @@ public class NamedGraphSetDB extends NamedGraphSetIO implements NamedGraphSet {
 		this.db.deleteGraphName(graphName);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#removeGraph(java.lang.String)
+	 */
 	public void removeGraph(String graphNameURI) {
 		removeGraph(Node.createURI(graphNameURI));
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#containsGraph(com.hp.hpl.jena.graph.Node)
+	 */
 	public boolean containsGraph(Node graphName) {
 		if (!graphName.isURI() && !Node.ANY.equals(graphName)) {
 			return false;
@@ -108,10 +120,16 @@ public class NamedGraphSetDB extends NamedGraphSetIO implements NamedGraphSet {
 		return this.db.containsGraphName(graphName);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#containsGraph(java.lang.String)
+	 */
 	public boolean containsGraph(String graphNameURI) {
 		return this.db.containsGraphName(Node.createURI(graphNameURI));
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#getGraph(com.hp.hpl.jena.graph.Node)
+	 */
 	public NamedGraph getGraph(Node graphName) {
 		if (!this.db.containsGraphName(graphName)) {
 			return null;
@@ -119,10 +137,16 @@ public class NamedGraphSetDB extends NamedGraphSetIO implements NamedGraphSet {
 		return new NamedGraphDB(this.db, graphName);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#getGraph(java.lang.String)
+	 */
 	public NamedGraph getGraph(String graphNameURI) {
 		return getGraph(Node.createURI(graphNameURI));
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#createGraph(com.hp.hpl.jena.graph.Node)
+	 */
 	public NamedGraph createGraph(Node graphName) {
 		if (this.db.containsGraphName(graphName)) {
 			this.db.delete(graphName, Node.ANY, Node.ANY, Node.ANY);
@@ -132,12 +156,18 @@ public class NamedGraphSetDB extends NamedGraphSetIO implements NamedGraphSet {
 		return getGraph(graphName);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#createGraph(java.lang.String)
+	 */
 	public NamedGraph createGraph(String graphNameURI) {
 		return createGraph(Node.createURI(graphNameURI));
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#listGraphs()
+	 */
 	public Iterator listGraphs() {
-		final Iterator graphNames = this.db.listGraphNames();
+		final Iterator<Node> graphNames = this.db.listGraphNames();
 		return new Iterator() {
 			private Node current = null;
 			public boolean hasNext() {
@@ -157,19 +187,31 @@ public class NamedGraphSetDB extends NamedGraphSetIO implements NamedGraphSet {
 		};
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#countGraphs()
+	 */
 	public long countGraphs() {
 		return this.db.countGraphNames();
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#isEmpty()
+	 */
 	public boolean isEmpty() {
 		return this.db.countGraphNames() == 0;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#clear()
+	 */
 	public void clear() {
 		this.db.delete(Node.ANY, Node.ANY, Node.ANY, Node.ANY);
 		this.db.deleteGraphName(Node.ANY);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#addQuad(de.fuberlin.wiwiss.ng4j.Quad)
+	 */
 	public void addQuad(Quad quad) {
 		if (!this.db.containsGraphName(quad.getGraphName())) {
 			this.db.insertGraphName(quad.getGraphName());
@@ -177,6 +219,9 @@ public class NamedGraphSetDB extends NamedGraphSetIO implements NamedGraphSet {
 		this.db.insert(quad.getGraphName(), quad.getSubject(), quad.getPredicate(), quad.getObject());
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#containsQuad(de.fuberlin.wiwiss.ng4j.Quad)
+	 */
 	public boolean containsQuad(Quad pattern) {
 		if (!pattern.getGraphName().isURI() && !Node.ANY.equals(pattern.getGraphName())) {
 			return false;
@@ -193,24 +238,39 @@ public class NamedGraphSetDB extends NamedGraphSetIO implements NamedGraphSet {
 		return this.db.find(pattern.getGraphName(), pattern.getSubject(), pattern.getPredicate(), pattern.getObject()).hasNext();
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#removeQuad(de.fuberlin.wiwiss.ng4j.Quad)
+	 */
 	public void removeQuad(Quad pattern) {
 		this.db.delete(pattern.getGraphName(), pattern.getSubject(), pattern.getPredicate(), pattern.getObject());
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#countQuads()
+	 */
 	public int countQuads() {
 		return this.db.count();
 	}
 
-	public Iterator findQuads(Quad pattern) {
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#findQuads(de.fuberlin.wiwiss.ng4j.Quad)
+	 */
+	public Iterator<Quad> findQuads(Quad pattern) {
 		return findQuads(pattern.getGraphName(), pattern.getSubject(),
 				pattern.getPredicate(), pattern.getObject());
 	}
 
-	public Iterator findQuads(Node graphName, Node subject, Node predicate,
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#findQuads(com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node)
+	 */
+	public Iterator<Quad> findQuads(Node graphName, Node subject, Node predicate,
 			Node object) {
 		return this.db.find(graphName, subject, predicate, object);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#asJenaGraph(com.hp.hpl.jena.graph.Node)
+	 */
 	public Graph asJenaGraph(final Node defaultGraphForAdding) {
 		if (defaultGraphForAdding != null && !containsGraph(defaultGraphForAdding)) {
 			createGraph(defaultGraphForAdding);
@@ -223,10 +283,16 @@ public class NamedGraphSetDB extends NamedGraphSetIO implements NamedGraphSet {
 		};
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#asJenaModel(java.lang.String)
+	 */
 	public NamedGraphModel asJenaModel(String defaultGraphForAdding) {
 		return new NamedGraphModel(this, defaultGraphForAdding);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#close()
+	 */
 	public void close() {
 		this.db.close();
 	}

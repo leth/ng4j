@@ -210,7 +210,7 @@ public class SWPAuthorityImpl implements SWPAuthority
 	 *  
      * 
      */
-	public boolean addDescriptionToGraph( NamedGraph graph, ArrayList listOfAuthorityProperties ) 
+	public boolean addDescriptionToGraph( NamedGraph graph, ArrayList<Node> listOfAuthorityProperties ) 
 	{
 		// Add swp:authority
 		graph.add( new Triple( graph.getGraphName(), SWP.authority, this.getID() ) );
@@ -227,20 +227,20 @@ public class SWPAuthorityImpl implements SWPAuthority
 		if ( listOfAuthorityProperties != null)
 		{
 			// Add authority description
-			if ( listOfAuthorityProperties.contains( ( Object ) FOAF.mbox.asNode() ) ) 
+			if ( listOfAuthorityProperties.contains( FOAF.mbox.asNode() ) ) 
 			{
 				graph.add(new Triple( this.getID(), FOAF.mbox.asNode(), Node.createURI( "mailto:" + this.getEmail() ) ) );
 			}
 
 			//Node rdfsLabel = Node.createURI("http://www.w3.org/2000/01/rdf-schema#label");
 			//Not fatal, so won't throw exception if missing
-			if ( listOfAuthorityProperties.contains( ( Object ) RDFS.label.asNode() ) ) 
+			if ( listOfAuthorityProperties.contains( RDFS.label.asNode() ) ) 
 			{
 				graph.add( new Triple( this.getID(), RDFS.label.asNode(), Node.createLiteral( this.getLabel(), null, null ) ) );
 			}
 
         
-			if ( listOfAuthorityProperties.contains( ( Object ) SWP.RSAKey ) ) 
+			if ( listOfAuthorityProperties.contains( SWP.RSAKey ) ) 
         	{
 				// We need code for publishing information about a RSA key here, using the SWP-2 and the XML-Sig vocabulary
 				graph.add( new Triple( this.getID(), 
@@ -250,7 +250,7 @@ public class SWPAuthorityImpl implements SWPAuthority
         													XSDDatatype.XSDbase64Binary) ) );
         	}
 
-			if ( listOfAuthorityProperties.contains( ( Object ) SWP.X509Certificate ) ) 
+			if ( listOfAuthorityProperties.contains( SWP.X509Certificate ) ) 
 			{
 				// We need code for publishing information about a X509 certificate here, using the SWP-2 and the XML-Sig vocabulary
         		try {

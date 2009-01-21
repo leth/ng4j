@@ -16,10 +16,10 @@ import com.hp.hpl.jena.sparql.engine.binding.BindingMap;
 
 public class MyResultSet implements ResultSet {
 	private Model model;
-	private List resultVars = new ArrayList();
-	private List bindings = new ArrayList();
+	private List<String> resultVars = new ArrayList<String>();
+	private List<Binding> bindings = new ArrayList<Binding>();
 	private Binding currentBinding = new BindingMap();
-	private Iterator bindingIterator = null;
+	private Iterator<Binding> bindingIterator = null;
 	private int rowNumber = 0;
 	
 	public MyResultSet(Model model) {
@@ -60,7 +60,7 @@ public class MyResultSet implements ResultSet {
 		return this.rowNumber;
 	}
 
-	public List getResultVars() {
+	public List<String> getResultVars() {
 		return this.resultVars;
 	}
 

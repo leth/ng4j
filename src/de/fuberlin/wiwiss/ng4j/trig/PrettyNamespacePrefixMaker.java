@@ -1,4 +1,4 @@
-// $Id: PrettyNamespacePrefixMaker.java,v 1.3 2008/08/20 11:04:55 hartig Exp $
+// $Id: PrettyNamespacePrefixMaker.java,v 1.4 2009/01/21 18:10:53 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import java.util.HashMap;
@@ -16,8 +16,8 @@ import com.hp.hpl.jena.graph.Triple;
  */
 public class PrettyNamespacePrefixMaker {
 	private Graph graph;
-	private Map defaultNamespaces = new HashMap();
-	private Map foundNamespaces = new HashMap();
+	private Map<String,String> defaultNamespaces = new HashMap<String,String>();
+	private Map<String,String> foundNamespaces = new HashMap<String,String>();
 	private int namespaceCount = 0;
 	private boolean hasAnalyzed = false;
 
@@ -54,7 +54,7 @@ public class PrettyNamespacePrefixMaker {
 	 * Returns the finished prefix map. Keys are string prefixes, values are
 	 * string URIs.
 	 */
-	public Map getPrefixMap() {
+	public Map<String,String> getPrefixMap() {
 		if (!this.hasAnalyzed) {
 			analyzeGraph();
 		}

@@ -1,5 +1,5 @@
 /*
- * $Id: SAXHandler.java,v 1.2 2008/08/20 11:05:04 hartig Exp $
+ * $Id: SAXHandler.java,v 1.3 2009/01/21 18:10:53 jenpc Exp $
  */
 package de.fuberlin.wiwiss.ng4j.trix;
 
@@ -27,7 +27,7 @@ public class SAXHandler extends DefaultHandler {
 	private final ParserCallback callback;
 	private final URI baseURI;
 	private int state = STATE_GRAPH_START;
-	private List graphNameURIs;
+	private List<String> graphNameURIs;
 	private StringBuffer currentContent;
 	private String lang;
 	private String datatypeURI;
@@ -48,7 +48,7 @@ public class SAXHandler extends DefaultHandler {
 	public void startElement(String namespaceURI, String localName, String qName,
 			Attributes atts) throws SAXException {
 		if ("graph".equals(localName)) {
-			this.graphNameURIs = new ArrayList(1);
+			this.graphNameURIs = new ArrayList<String>(1);
 			this.state = STATE_GRAPH_START;
 		} else if ("triple".equals(localName)) {
 			if (this.state == STATE_GRAPH_START) {

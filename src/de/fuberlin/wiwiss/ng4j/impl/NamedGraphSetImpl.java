@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetImpl.java,v 1.10 2008/08/20 11:04:53 hartig Exp $
+// $Id: NamedGraphSetImpl.java,v 1.11 2009/01/21 18:10:53 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ import de.fuberlin.wiwiss.ng4j.Quad;
  */
 public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet {
 	/** Map from names (Node) to NamedGraphs */
-	private Map namesToGraphsMap = new HashMap();
+	private Map<Node,NamedGraph> namesToGraphsMap = new HashMap<Node,NamedGraph>();
 	
 	/**
 	 * List of all NamedGraphs that backs the UnionGraphs handed
@@ -45,8 +45,11 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 	 * with namesToGraphsMap.values(), but it's a List, not a
 	 * Collection. This whole graphs List affair is probably rather slow.
 	 */
-	private List graphs = new ArrayList();
+	private List<NamedGraph> graphs = new ArrayList<NamedGraph>();
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#addGraph(de.fuberlin.wiwiss.ng4j.NamedGraph)
+	 */
 	public void addGraph(NamedGraph graph) {
 		this.graphs.remove(this.namesToGraphsMap.get(graph.getGraphName()));
 		if (!this.graphs.contains(graph)) {
@@ -55,6 +58,9 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 		this.namesToGraphsMap.put(graph.getGraphName(), graph);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#containsGraph(com.hp.hpl.jena.graph.Node)
+	 */
 	public boolean containsGraph(Node graphName) {
 		if (Node.ANY.equals(graphName)) {
 			return !isEmpty();
@@ -62,41 +68,68 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 		return this.namesToGraphsMap.containsKey(graphName);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#containsGraph(java.lang.String)
+	 */
 	public boolean containsGraph(String graphNameURI) {
 		return this.namesToGraphsMap.containsKey(
 				Node.createURI(graphNameURI));
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#countGraphs()
+	 */
 	public long countGraphs() {
 		return this.namesToGraphsMap.size();
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#createGraph(com.hp.hpl.jena.graph.Node)
+	 */
 	public NamedGraph createGraph(Node graphName) {
 		NamedGraph newGraph = createNamedGraphInstance(graphName);
 		addGraph(newGraph);
 		return newGraph;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#createGraph(java.lang.String)
+	 */
 	public NamedGraph createGraph(String graphNameURI) {
 		return createGraph(Node.createURI(graphNameURI));
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#getGraph(com.hp.hpl.jena.graph.Node)
+	 */
 	public NamedGraph getGraph(Node graphName) {
 		return (NamedGraph) this.namesToGraphsMap.get(graphName);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#getGraph(java.lang.String)
+	 */
 	public NamedGraph getGraph(String graphNameURI) {
 		return getGraph(Node.createURI(graphNameURI));
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#isEmpty()
+	 */
 	public boolean isEmpty() {
 		return this.namesToGraphsMap.isEmpty();
 	}
 
-	public Iterator listGraphs() {
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#listGraphs()
+	 */
+	public Iterator<NamedGraph> listGraphs() {
 		return this.namesToGraphsMap.values().iterator();
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#removeGraph(com.hp.hpl.jena.graph.Node)
+	 */
 	public void removeGraph(Node graphName) {
 		if (Node.ANY.equals(graphName)) {
 			this.namesToGraphsMap.clear();
@@ -107,14 +140,23 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#removeGraph(java.lang.String)
+	 */
 	public void removeGraph(String graphNameURI) {
 		removeGraph(Node.createURI(graphNameURI));
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#clear()
+	 */
 	public void clear() {
 		this.namesToGraphsMap.clear();
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#addQuad(de.fuberlin.wiwiss.ng4j.Quad)
+	 */
 	public void addQuad(Quad quad) {
 		if (!quad.isConcrete()) {
 			throw new IllegalArgumentException("Cannot add quads with wildcards");
@@ -126,6 +168,9 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#containsQuad(de.fuberlin.wiwiss.ng4j.Quad)
+	 */
 	public boolean containsQuad(Quad pattern) {
 		if (!Node.ANY.equals(pattern.getGraphName())) {
 			if (!containsGraph(pattern.getGraphName())) {
@@ -133,9 +178,9 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 			}
 			return getGraph(pattern.getGraphName()).contains(pattern.getTriple());
 		}
-		Iterator it = listGraphs();
+		Iterator<NamedGraph> it = listGraphs();
 		while (it.hasNext()) {
-			NamedGraph graph = (NamedGraph) it.next();
+			NamedGraph graph = it.next();
 			if (graph.contains(pattern.getTriple())) {
 				return true;
 			}
@@ -143,21 +188,30 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#countQuads()
+	 */
 	public int countQuads() {
 		int sum = 0;
-		Iterator it = listGraphs();
+		Iterator<NamedGraph> it = listGraphs();
 		while (it.hasNext()) {
-			NamedGraph graph = (NamedGraph) it.next();
+			NamedGraph graph = it.next();
 			sum += graph.size();
 		}
 		return sum;
 	}
 
-	public Iterator findQuads(Node graphName, Node subject,
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#findQuads(com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node)
+	 */
+	public Iterator<Quad> findQuads(Node graphName, Node subject,
 			Node predicate, Node object) {
 		return findQuads(new Quad(graphName, subject, predicate, object));
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#findQuads(de.fuberlin.wiwiss.ng4j.Quad)
+	 */
 	public Iterator findQuads(Quad pattern) {
 		if (!containsGraph(pattern.getGraphName())) {
 			return new NullIterator();
@@ -170,21 +224,27 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 				pattern.getTriple());
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#removeQuad(de.fuberlin.wiwiss.ng4j.Quad)
+	 */
 	public void removeQuad(Quad pattern) {
-		Iterator it = findQuads(pattern);
+		Iterator<Quad> it = findQuads(pattern);
 		// Read the entire iterator into a collection first to avoid
 		// ConcurrentModificationException
-		Collection quadsToDelete = new ArrayList();
+		Collection<Quad> quadsToDelete = new ArrayList<Quad>();
 		while (it.hasNext()) {
 			quadsToDelete.add(it.next());
 		}
 		it = quadsToDelete.iterator();
 		while (it.hasNext()) {
-			Quad quad = (Quad) it.next();
+			Quad quad = it.next();
 			getGraph(quad.getGraphName()).delete(quad.getTriple());
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#asJenaGraph(com.hp.hpl.jena.graph.Node)
+	 */
 	public Graph asJenaGraph(Node defaultGraphForAdding) {
 		if (defaultGraphForAdding != null && !containsGraph(defaultGraphForAdding)) {
 			createGraph(defaultGraphForAdding);
@@ -196,12 +256,18 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 		return unionGraph;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#asJenaModel(java.lang.String)
+	 */
 	public NamedGraphModel asJenaModel(String defaultGraphForAdding) {
 		return new NamedGraphModel(this, defaultGraphForAdding);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#close()
+	 */
 	public void close() {
-		Iterator it = listGraphs();
+		Iterator<NamedGraph> it = listGraphs();
 		while (it.hasNext()) {
 			NamedGraph graph = (NamedGraph) it.next();
 			graph.close();
@@ -258,6 +324,8 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 		/**
 		 * MultiUnion deletes from the baseGraph only; we want to
 		 * delete from all member graphs
+		 * 
+		 * @see com.hp.hpl.jena.graph.compose.MultiUnion#performDelete(com.hp.hpl.jena.graph.Triple)
 		 */
 		public void performDelete(Triple t) {
 			Iterator it = this.m_subGraphs.iterator();
@@ -272,7 +340,9 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 		 * uses only the base graph's update handler.</p>
 		 * 
 		 * TODO: Add a test!
-		 */
+		 * 
+         * @see com.hp.hpl.jena.graph.compose.Polyadic#getBulkUpdateHandler()
+         */
         public BulkUpdateHandler getBulkUpdateHandler() {
             if (this.bulkHandler == null)
                 this.bulkHandler = new SimpleBulkUpdateHandler(this);
@@ -281,26 +351,35 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 	}
 
 	private class FindQuadsIterator extends NiceIterator {
-	    private Iterator graphIt;
+	    private Iterator<NamedGraph> graphIt;
 	    private Iterator currentIt;
 	    private Triple findMe;
 	    private Node currentGraphName;
+	    
 	    FindQuadsIterator(Triple findMe) {
 	        this.findMe = findMe;
 	        this.graphIt = listGraphs();
 	        this.currentIt = new NullIterator();
 	    }
+
+	    /* (non-Javadoc)
+	     * @see com.hp.hpl.jena.util.iterator.NiceIterator#hasNext()
+	     */
 	    public boolean hasNext() {
 	        while (!this.currentIt.hasNext()) {
 	            if (!this.graphIt.hasNext()) {
 	                return false;
 	            }
-	            NamedGraph graph = (NamedGraph) this.graphIt.next();
+	            NamedGraph graph = this.graphIt.next();
 	            this.currentGraphName = graph.getGraphName();
 	            this.currentIt = graph.find(this.findMe);
 	        }
 	        return true;
 	    }
+
+	    /* (non-Javadoc)
+	     * @see com.hp.hpl.jena.util.iterator.NiceIterator#next()
+	     */
 	    public Object next() {
 	        if (!hasNext()) {
 	            throw new NoSuchElementException();
@@ -308,6 +387,10 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 	        Triple found = (Triple) this.currentIt.next();
 	        return new Quad(this.currentGraphName, found);
 	    }
+
+	    /* (non-Javadoc)
+	     * @see com.hp.hpl.jena.util.iterator.NiceIterator#remove()
+	     */
 	    public void remove() {
 	        this.currentIt.remove();
 	    }

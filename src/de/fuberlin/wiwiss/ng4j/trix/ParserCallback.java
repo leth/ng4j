@@ -1,5 +1,5 @@
 /*
- * $Id: ParserCallback.java,v 1.2 2008/08/20 11:05:03 hartig Exp $
+ * $Id: ParserCallback.java,v 1.3 2009/01/21 18:10:53 jenpc Exp $
  */
 package de.fuberlin.wiwiss.ng4j.trix;
 
@@ -33,7 +33,7 @@ public interface ParserCallback {
 	 * Called at the beginning of each trix:graph element.
 	 * @param uris zero or more names of the graph, as strings
 	 */
-	public void startGraph(List uris);
+	public void startGraph(List<String> uris);
 
 	/**
 	 * Called at the end of each trix:graph element

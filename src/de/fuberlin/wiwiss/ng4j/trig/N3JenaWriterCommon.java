@@ -22,7 +22,7 @@ import java.text.* ;
 /** Common framework for implementing N3 writers.
  *
  * @author		Andy Seaborne
- * @version 	$Id: N3JenaWriterCommon.java,v 1.3 2008/08/20 20:16:35 hartig Exp $
+ * @version 	$Id: N3JenaWriterCommon.java,v 1.4 2009/01/21 18:10:53 jenpc Exp $
  */
 
 public class N3JenaWriterCommon implements RDFWriter
@@ -36,7 +36,7 @@ public class N3JenaWriterCommon implements RDFWriter
     
     // The simple N3 writer does nothing during preparation.
     
-    Map writerPropertyMap = null ;
+    Map<String,Object> writerPropertyMap = null ;
 
     final boolean doAbbreviatedBaseURIref = false; 
     boolean alwaysAllocateBNodeLabel = false ;
@@ -46,12 +46,12 @@ public class N3JenaWriterCommon implements RDFWriter
 
 	static final String NS_W3_log = "http://www.w3.org/2000/10/swap/log#" ;
 
-	Map prefixMap 	   	= new HashMap() ;	// Prefixes to actually use
-	Map	bNodesMap       = null ;		    // BNodes seen.
+	Map<String,String> 		prefixMap 	   	= new HashMap<String,String>() ;	// Prefixes to actually use
+	Map<Resource,String>	bNodesMap       = null ;		    // BNodes seen.
     int bNodeCounter    = 0 ;
 
     // Specific properties that have a short form.
-	static Map wellKnownPropsMap = new HashMap() ;
+	static Map<String,String> wellKnownPropsMap = new HashMap<String,String>() ;
 	static {
 		wellKnownPropsMap.put(NS_W3_log+"implies",		"=>" ) ;
 		wellKnownPropsMap.put(OWL.sameAs.getURI(),	    "="  ) ;
@@ -112,7 +112,7 @@ public class N3JenaWriterCommon implements RDFWriter
         // Store absolute name of property 
         propName = absolutePropName(propName) ;
         if ( writerPropertyMap == null )
-            writerPropertyMap = new HashMap() ;
+            writerPropertyMap = new HashMap<String,Object>() ;
         Object oldValue = writerPropertyMap.get(propName);
         writerPropertyMap.put(propName, propValue);
         return oldValue;
@@ -201,7 +201,7 @@ public class N3JenaWriterCommon implements RDFWriter
     {
         prefixMap = baseModel.getNsPrefixMap() ;
         Model model = ModelFactory.withHiddenStatements( baseModel );
-        bNodesMap = new HashMap() ;
+        bNodesMap = new HashMap<Resource,String>() ;
 
         // If no base defined for the model, but one given to writer,
         // then use this.
@@ -210,9 +210,9 @@ public class N3JenaWriterCommon implements RDFWriter
         if ( base2 == null && baseURIrefHash != null )
             prefixMap.put("", baseURIrefHash) ;
 
-        for ( Iterator iter = prefixMap.keySet().iterator() ; iter.hasNext() ; )
+        for ( Iterator<String> iter = prefixMap.keySet().iterator() ; iter.hasNext() ; )
         {
-            String prefix = (String)iter.next() ;
+            String prefix = iter.next() ;
             if ( prefix.indexOf('.') != -1 )
                 iter.remove() ;
         }
@@ -326,9 +326,9 @@ public class N3JenaWriterCommon implements RDFWriter
     
     protected void writePrefixes(Model model)
     {
-        for (Iterator pIter = prefixMap.keySet().iterator(); pIter.hasNext();)
+        for (Iterator<String> pIter = prefixMap.keySet().iterator(); pIter.hasNext();)
         {
-            String p = (String) pIter.next();
+            String p = pIter.next();
             String u = (String) prefixMap.get(p);
 
             // Special cases: N3 handling of base names.
@@ -430,7 +430,7 @@ public class N3JenaWriterCommon implements RDFWriter
     protected ClosableIterator preparePropertiesForSubject(Resource r)
     {
         // Properties to do.
-        Set properties = new HashSet() ;
+        Set<Property> properties = new HashSet<Property>() ;
 
         StmtIterator sIter = r.listProperties();
         for ( ; sIter.hasNext() ; )
@@ -572,9 +572,9 @@ public class N3JenaWriterCommon implements RDFWriter
         // 
         // Also: could just assume that the split is on / or #
         // Means we need to find a prefix just once. 
-		for ( Iterator pIter = prefixMap.keySet().iterator() ; pIter.hasNext() ; )
+		for ( Iterator<String> pIter = prefixMap.keySet().iterator() ; pIter.hasNext() ; )
 		{
-			String p = (String)pIter.next() ;
+			String p = pIter.next() ;
 			String u = (String)prefixMap.get(p) ;
 			if ( uriStr.startsWith(u) )
 				if ( matchURI.length() < u.length() )
@@ -751,9 +751,9 @@ public class N3JenaWriterCommon implements RDFWriter
 	}
 
 
-    protected Iterator rdfListIterator(Resource r)
+    protected Iterator<RDFNode> rdfListIterator(Resource r)
 	{
-		List list = new ArrayList() ;
+		List<RDFNode> list = new ArrayList<RDFNode>() ;
 
 		for ( ; ! r.equals(RDF.nil); )
 		{

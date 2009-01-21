@@ -59,7 +59,7 @@ public class C14NTriple extends Object implements Comparable
         }
     }
 	
-	public C14NTriple( C14NTriple st, Hashtable ht, int symCount )
+	public C14NTriple( C14NTriple st, Hashtable<Node,Node> ht, int symCount )
 	{
 		if( st.object.equals( TILDE ) )
 		{
@@ -72,7 +72,7 @@ public class C14NTriple extends Object implements Comparable
 			{
 				ht.put( st.objectID,
 						NodeCreateUtils.create( "_:g"+sixDigitsFormat.format( symCount ) ) );
-				this.object = ( Node ) ht.get( st.objectID );
+				this.object = ht.get( st.objectID );
 				this.objectID = st.objectID;
 				this.flag = true;
 			}
@@ -96,7 +96,7 @@ public class C14NTriple extends Object implements Comparable
         	{//create and assign a new ID 
         		ht.put( st.subjectID,
         				NodeCreateUtils.create( "_:g"+sixDigitsFormat.format( symCount ) ) );
-        		this.subject = ( Node ) ht.get( st.subjectID );
+        		this.subject = ht.get( st.subjectID );
         		this.subjectID = st.subjectID;
         		this.flag = true;
             }
@@ -113,12 +113,12 @@ public class C14NTriple extends Object implements Comparable
      * @param ht hashtable of Node object
      * @return true if the value is set with the value in the hashtable
      */
-	public boolean setTildeObject( Hashtable ht )
+	public boolean setTildeObject( Hashtable<Node,Node> ht )
 	{
 		boolean test = false;                
 		if( ht.containsKey( objectID ) )
 		{
-			object = ( Node ) ht.get( objectID );
+			object = ht.get( objectID );
 			test = true;
 		}
 		return test;
@@ -129,17 +129,20 @@ public class C14NTriple extends Object implements Comparable
      * @param ht hashtable of Node object
      * @return true if the value is set with the value in the hashtable
     */
-	public boolean setTildeSubject( Hashtable ht )
+	public boolean setTildeSubject( Hashtable<Node,Node> ht )
 	{
 		boolean test = false;
 		if( ht.containsKey( subjectID ) )
 		{
-			subject = ( Node ) ht.get( subjectID );
+			subject = ht.get( subjectID );
 			test = true;
 		}
 		return test;        
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	public int compareTo( Object arg ) 
 			throws ClassCastException 
 	{

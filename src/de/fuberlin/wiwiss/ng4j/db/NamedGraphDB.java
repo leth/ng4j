@@ -1,4 +1,4 @@
-// $Id: NamedGraphDB.java,v 1.3 2008/08/20 11:04:48 hartig Exp $
+// $Id: NamedGraphDB.java,v 1.4 2009/01/21 18:10:53 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.util.Iterator;
@@ -31,16 +31,25 @@ public class NamedGraphDB extends GraphBase implements NamedGraph {
 		this.graphName = graphName;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraph#getGraphName()
+	 */
 	public Node getGraphName() {
 		return this.graphName;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.impl.GraphBase#performDelete(com.hp.hpl.jena.graph.Triple)
+	 */
 	public void performDelete(Triple t) {
 		this.db.delete(this.graphName, t.getSubject(), t.getPredicate(), t.getObject());
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.impl.GraphBase#graphBaseFind(com.hp.hpl.jena.graph.TripleMatch)
+	 */
 	public ExtendedIterator graphBaseFind(TripleMatch m) {
-		final Iterator quadIt = this.db.find(
+		final Iterator<Quad> quadIt = this.db.find(
 				this.graphName,
 				m.getMatchSubject(),
 				m.getMatchPredicate(),
@@ -50,7 +59,7 @@ public class NamedGraphDB extends GraphBase implements NamedGraph {
 				return quadIt.hasNext();
 			}
 			public Object next() {
-				return ((Quad) quadIt.next()).getTriple();
+				return ( quadIt.next()).getTriple();
 			}
 			public void remove() {
 				quadIt.remove();
@@ -58,6 +67,9 @@ public class NamedGraphDB extends GraphBase implements NamedGraph {
 		};
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.impl.GraphBase#performAdd(com.hp.hpl.jena.graph.Triple)
+	 */
 	public void performAdd(Triple t) {
 		this.db.insert(this.graphName, t.getSubject(), t.getPredicate(), t.getObject());
 	}

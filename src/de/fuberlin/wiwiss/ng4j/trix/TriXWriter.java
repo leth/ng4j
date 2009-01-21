@@ -1,5 +1,5 @@
 /*
- * $Id: TriXWriter.java,v 1.2 2008/08/20 11:05:10 hartig Exp $
+ * $Id: TriXWriter.java,v 1.3 2009/01/21 18:10:53 jenpc Exp $
  */
 package de.fuberlin.wiwiss.ng4j.trix;
 
@@ -30,6 +30,9 @@ public class TriXWriter implements NamedGraphSetWriter {
 	private String encoding = null;
 	private Writer writer;
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSetWriter#write(de.fuberlin.wiwiss.ng4j.NamedGraphSet, java.io.Writer, java.lang.String)
+	 */
 	public void write(NamedGraphSet set, Writer out, String baseURI) {
 		this.writer = new BufferedWriter(out);
 		try {
@@ -37,9 +40,9 @@ public class TriXWriter implements NamedGraphSetWriter {
 				write("<?xml version=\"1.0\" encoding=\"" + this.encoding + "\"?>\n");
 			}
 			write("<TriX xmlns=\"http://www.w3.org/2004/03/trix/trix-1/\">\n");
-			Iterator it = set.listGraphs();
+			Iterator<NamedGraph> it = set.listGraphs();
 			while (it.hasNext()) {
-				NamedGraph graph = (NamedGraph) it.next();
+				NamedGraph graph = it.next();
 				writeGraph(graph);
 			}
 			write("</TriX>");
@@ -49,6 +52,9 @@ public class TriXWriter implements NamedGraphSetWriter {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSetWriter#write(de.fuberlin.wiwiss.ng4j.NamedGraphSet, java.io.OutputStream, java.lang.String)
+	 */
 	public void write(NamedGraphSet set, OutputStream out, String baseURI) {
 		try {
 			this.encoding = "utf-8";
@@ -62,9 +68,9 @@ public class TriXWriter implements NamedGraphSetWriter {
 		String graphName = graph.getGraphName().getURI();
 		write("  <graph>\n");
 		write("    <uri>" + escape(graphName) + "</uri>\n");
-		Iterator it = graph.find(Node.ANY, Node.ANY, Node.ANY);
+		Iterator<Triple> it = graph.find(Node.ANY, Node.ANY, Node.ANY);
 		while (it.hasNext()) {
-			Triple triple = (Triple) it.next();
+			Triple triple = it.next();
 			writeTriple(triple);
 		}
 		write("  </graph>\n");

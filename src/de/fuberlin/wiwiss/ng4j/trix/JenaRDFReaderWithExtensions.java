@@ -112,49 +112,82 @@ public class JenaRDFReaderWithExtensions implements RDFReader, ParserCallback {
 		return null;
 	}
 
-	public void startGraph(List uris) {
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.trix.ParserCallback#startGraph(java.util.List)
+	 */
+	public void startGraph(List<String> uris) {
 		// ignore graph names
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.trix.ParserCallback#endGraph()
+	 */
 	public void endGraph() {
 		this.done = true;	// ignore all further graphs
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.trix.ParserCallback#subjectURI(java.lang.String)
+	 */
 	public void subjectURI(String uri) {
 		this.subject = this.targetModel.createResource(uri);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.trix.ParserCallback#subjectBNode(java.lang.String)
+	 */
 	public void subjectBNode(String id) {
 		this.subject = this.targetModel.createResource(new AnonId(id));
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.trix.ParserCallback#subjectPlainLiteral(java.lang.String, java.lang.String)
+	 */
 	public void subjectPlainLiteral(String value, String lang) {
 		throw new JenaException("Literals are not allowed as subjects in RDF");
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.trix.ParserCallback#subjectTypedLiteral(java.lang.String, java.lang.String)
+	 */
 	public void subjectTypedLiteral(String value, String datatypeURI) {
 		throw new JenaException("Literals are not allowed as subjects in RDF");
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.trix.ParserCallback#predicate(java.lang.String)
+	 */
 	public void predicate(String uri) {
 		this.predicate = this.targetModel.createProperty(uri);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.trix.ParserCallback#objectURI(java.lang.String)
+	 */
 	public void objectURI(String uri) {
 		this.object = this.targetModel.createResource(uri);
 		addStatement();
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.trix.ParserCallback#objectBNode(java.lang.String)
+	 */
 	public void objectBNode(String id) {
 		this.object = this.targetModel.createResource(new AnonId(id));
 		addStatement();
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.trix.ParserCallback#objectPlainLiteral(java.lang.String, java.lang.String)
+	 */
 	public void objectPlainLiteral(String value, String lang) {
 		this.object = this.targetModel.createLiteral(value, lang);
 		addStatement();
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.trix.ParserCallback#objectTypedLiteral(java.lang.String, java.lang.String)
+	 */
 	public void objectTypedLiteral(String value, String datatypeURI) {
 		this.object = this.targetModel.createTypedLiteral(value, datatypeURI);
 		addStatement();

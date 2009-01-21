@@ -24,6 +24,9 @@ public abstract class NamedGraphSetBase extends NamedGraphSetIO implements
 		NamedGraphSet {
 
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#addQuad(de.fuberlin.wiwiss.ng4j.Quad)
+	 */
 	public void addQuad(Quad quad) {
 		if (!quad.isConcrete()) {
 			throw new IllegalArgumentException("Cannot add quads with wildcards");
@@ -35,6 +38,9 @@ public abstract class NamedGraphSetBase extends NamedGraphSetIO implements
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#containsQuad(de.fuberlin.wiwiss.ng4j.Quad)
+	 */
 	public boolean containsQuad(Quad pattern) {
 		if (!Node.ANY.equals(pattern.getGraphName())) {
 			if (!containsGraph(pattern.getGraphName())) {
@@ -42,9 +48,9 @@ public abstract class NamedGraphSetBase extends NamedGraphSetIO implements
 			}
 			return getGraph(pattern.getGraphName()).contains(pattern.getTriple());
 		}
-		Iterator it = listGraphs();
+		Iterator<NamedGraph> it = listGraphs();
 		while (it.hasNext()) {
-			NamedGraph graph = (NamedGraph) it.next();
+			NamedGraph graph = it.next();
 			if (graph.contains(pattern.getTriple())) {
 				return true;
 			}
@@ -52,21 +58,30 @@ public abstract class NamedGraphSetBase extends NamedGraphSetIO implements
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#countQuads()
+	 */
 	public int countQuads() {
 		int sum = 0;
-		Iterator it = listGraphs();
+		Iterator<NamedGraph> it = listGraphs();
 		while (it.hasNext()) {
-			NamedGraph graph = (NamedGraph) it.next();
+			NamedGraph graph = it.next();
 			sum += graph.size();
 		}
 		return sum;
 	}
 
-	public Iterator findQuads(Node graphName, Node subject,
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#findQuads(com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node)
+	 */
+	public Iterator<Quad> findQuads(Node graphName, Node subject,
 			Node predicate, Node object) {
 		return findQuads(new Quad(graphName, subject, predicate, object));
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#findQuads(de.fuberlin.wiwiss.ng4j.Quad)
+	 */
 	public Iterator findQuads(Quad pattern) {
 		if (!containsGraph(pattern.getGraphName())) {
 			return new NullIterator();
@@ -79,11 +94,14 @@ public abstract class NamedGraphSetBase extends NamedGraphSetIO implements
 				pattern.getTriple());
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#removeQuad(de.fuberlin.wiwiss.ng4j.Quad)
+	 */
 	public void removeQuad(Quad pattern) {
-		Iterator it = findQuads(pattern);
+		Iterator<Quad> it = findQuads(pattern);
 		// Read the entire iterator into a collection first to avoid
 		// ConcurrentModificationException
-		Collection quadsToDelete = new ArrayList();
+		Collection<Quad> quadsToDelete = new ArrayList<Quad>();
 		while (it.hasNext()) {
 			quadsToDelete.add(it.next());
 		}
@@ -113,7 +131,7 @@ public abstract class NamedGraphSetBase extends NamedGraphSetIO implements
 	}
 
 	private class FindQuadsIterator extends NiceIterator {
-	    private Iterator graphIt;
+	    private Iterator<NamedGraph> graphIt;
 	    private Iterator currentIt;
 	    private Triple findMe;
 	    private Node currentGraphName;
@@ -127,7 +145,7 @@ public abstract class NamedGraphSetBase extends NamedGraphSetIO implements
 	            if (!this.graphIt.hasNext()) {
 	                return false;
 	            }
-	            NamedGraph graph = (NamedGraph) this.graphIt.next();
+	            NamedGraph graph = this.graphIt.next();
 	            this.currentGraphName = graph.getGraphName();
 	            this.currentIt = graph.find(this.findMe);
 	        }

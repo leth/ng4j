@@ -95,12 +95,12 @@ public class PKCS12Utils {
 				    pkcs12 + ").\nThe file is either not in PKCS#12 format (.p12) or is corrupted or the password you entered is invalid.";
 				throw new SWPSignatureException( errorMessage );
 			*/
-				Enumeration aliasesEnum = ks.aliases();
+				Enumeration<String> aliasesEnum = ks.aliases();
 		        String alias = null;
 		        Certificate[] certChain = null;
 		        while ( aliasesEnum.hasMoreElements() ) 
 		        {
-		            alias = (String)aliasesEnum.nextElement();
+		            alias = aliasesEnum.nextElement();
 		            certChain = ks.getCertificateChain( alias );
 		        }
 		        
@@ -150,10 +150,10 @@ public class PKCS12Utils {
 			try 
 			{
 				ks = PKCS12Utils.loadAndDecryptPKCS12( pkcs12, password );
-				Enumeration aliasesEnum = ks.aliases();
+				Enumeration<String> aliasesEnum = ks.aliases();
 				while ( aliasesEnum.hasMoreElements() ) 
 		        {
-		            alias = ( String ) aliasesEnum.nextElement();
+		            alias = aliasesEnum.nextElement();
 		            certChain = ks.getCertificateChain( alias );
 		        }
 			} 

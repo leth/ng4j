@@ -48,8 +48,11 @@ public class TriXReaderWithExtensions implements ParserCallback, NamedGraphSetRe
 	private Node subject;
 	private Node predicate;
 	private Node object;
-	private Set pastGraphNames = new HashSet();
+	private Set<Node> pastGraphNames = new HashSet<Node>();
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSetReader#read(de.fuberlin.wiwiss.ng4j.NamedGraphSet, java.io.Reader, java.lang.String, java.lang.String)
+	 */
 	public void read(NamedGraphSet namedGraphSet, Reader source,
 			String baseURI, String defaultGraphName) {
 		this.set = namedGraphSet;
@@ -67,6 +70,9 @@ public class TriXReaderWithExtensions implements ParserCallback, NamedGraphSetRe
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSetReader#read(de.fuberlin.wiwiss.ng4j.NamedGraphSet, java.io.InputStream, java.lang.String, java.lang.String)
+	 */
 	public void read(NamedGraphSet namedGraphSet, InputStream source,
 			String baseURI, String defaultGraphName) {
 		this.set = namedGraphSet;
@@ -84,55 +90,88 @@ public class TriXReaderWithExtensions implements ParserCallback, NamedGraphSetRe
 		}
 	}
 
-	public void startGraph(List uris) {
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.trix.ParserCallback#startGraph(java.util.List)
+	 */
+	public void startGraph(List<String> uris) {
 		Node graphName = uris.isEmpty() ?
 				this.defaultGraph :
-				Node.createURI((String) uris.get(0));
+				Node.createURI( uris.get(0));
 		if (this.pastGraphNames.contains(graphName)) {
 			throw new JenaException("Multiple graphs with same name: " + graphName);
 		}
 		this.currentGraph = this.set.createGraph(graphName);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.trix.ParserCallback#endGraph()
+	 */
 	public void endGraph() {
 		// don't have to do anything
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.trix.ParserCallback#subjectURI(java.lang.String)
+	 */
 	public void subjectURI(String uri) {
 		this.subject = Node.createURI(uri);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.trix.ParserCallback#subjectBNode(java.lang.String)
+	 */
 	public void subjectBNode(String id) {
 		this.subject = Node.createAnon(new AnonId(id));
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.trix.ParserCallback#subjectPlainLiteral(java.lang.String, java.lang.String)
+	 */
 	public void subjectPlainLiteral(String value, String lang) {
 		throw new JenaException("Literals are not allowed as subjects in RDF");
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.trix.ParserCallback#subjectTypedLiteral(java.lang.String, java.lang.String)
+	 */
 	public void subjectTypedLiteral(String value, String datatypeURI) {
 		throw new JenaException("Literals are not allowed as subjects in RDF");
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.trix.ParserCallback#predicate(java.lang.String)
+	 */
 	public void predicate(String uri) {
 		this.predicate = Node.createURI(uri);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.trix.ParserCallback#objectURI(java.lang.String)
+	 */
 	public void objectURI(String uri) {
 		this.object = Node.createURI(uri);
 		addTriple();
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.trix.ParserCallback#objectBNode(java.lang.String)
+	 */
 	public void objectBNode(String id) {
 		this.object = Node.createAnon(new AnonId(id));
 		addTriple();
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.trix.ParserCallback#objectPlainLiteral(java.lang.String, java.lang.String)
+	 */
 	public void objectPlainLiteral(String value, String lang) {
 		this.object = Node.createLiteral(new LiteralLabel(value, lang));
 		addTriple();
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.trix.ParserCallback#objectTypedLiteral(java.lang.String, java.lang.String)
+	 */
 	public void objectTypedLiteral(String value, String datatypeURI) {
 		// No idea what that line does, is copy&paste from ModelCom.createTypedLiteral
 		RDFDatatype dt = TypeMapper.getInstance().getSafeTypeByName(datatypeURI);

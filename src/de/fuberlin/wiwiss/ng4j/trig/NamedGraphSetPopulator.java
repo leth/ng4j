@@ -34,7 +34,7 @@ import de.fuberlin.wiwiss.ng4j.trig.parser.TriGAntlrParser;
  * 
  * @author		Andy Seaborne
  * @author Richard Cyganiak (richard@cyganiak.de)
- * @version 	$Id: NamedGraphSetPopulator.java,v 1.9 2008/08/20 20:16:36 hartig Exp $
+ * @version 	$Id: NamedGraphSetPopulator.java,v 1.10 2009/01/21 18:10:53 jenpc Exp $
  */
 public class NamedGraphSetPopulator implements TriGParserEventHandler
 {
@@ -49,7 +49,7 @@ public class NamedGraphSetPopulator implements TriGParserEventHandler
 	Map propertyRef = new HashMap() ;
     
     // A more liberal prefix mapping map.
-    Map myPrefixMapping = new HashMap() ;
+    Map<String,String> myPrefixMapping = new HashMap<String,String>() ;
 	
 	// Well known namespaces
 	
@@ -66,7 +66,7 @@ public class NamedGraphSetPopulator implements TriGParserEventHandler
 	final String anonPrefix = "_" ;
 
 	private Node defaultGraphName;
-	private Set previousGraphNames = new HashSet();
+	private Set<Node> previousGraphNames = new HashSet<Node>();
 
 	public NamedGraphSetPopulator(NamedGraphSet ngs, String _base,
 			String defaultGraphName)
@@ -257,7 +257,7 @@ public class NamedGraphSetPopulator implements TriGParserEventHandler
 		}
 	}
 	
-	private Map bNodeMap = new HashMap() ;
+	private Map<String,Node> bNodeMap = new HashMap<String,Node>() ;
     
 	private Node createNode(int line, AST thing) 
 	{

@@ -1,4 +1,4 @@
-// $Id: SyntacticExtensionProcessor.java,v 1.2 2008/08/20 11:05:06 hartig Exp $
+// $Id: SyntacticExtensionProcessor.java,v 1.3 2009/01/21 18:10:53 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.trix;
 
 import java.io.IOException;
@@ -41,7 +41,7 @@ public class SyntacticExtensionProcessor {
 	}
 
 	List getTransforms() {
-		List transformURIs = new ArrayList();
+		List<String> transformURIs = new ArrayList<String>();
 		for (int i = 0; i < this.doc.getChildNodes().getLength(); i++) {
 			Node node = this.doc.getChildNodes().item(i);
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -65,7 +65,7 @@ public class SyntacticExtensionProcessor {
 	}
 
 	public void process(Result target) throws TransformerException {
-		Iterator it = getTransforms().iterator();
+		Iterator<String> it = getTransforms().iterator();
 		while (it.hasNext()) {
 			String stylesheetURI = (String) it.next();
 			try {

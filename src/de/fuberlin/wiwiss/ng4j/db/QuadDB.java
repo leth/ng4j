@@ -1,4 +1,4 @@
-// $Id: QuadDB.java,v 1.11 2009/01/20 16:39:40 jenpc Exp $
+// $Id: QuadDB.java,v 1.12 2009/01/21 18:10:53 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -83,7 +83,7 @@ public class QuadDB {
 		dbCompatibility.execute(sql);
 	}
 	
-	public Iterator find(Node graph, Node subject, Node predicate, Node object) {
+	public Iterator<Quad> find(Node graph, Node subject, Node predicate, Node object) {
 		if (graph == null) {
 			graph = Node.ANY;
 		}
@@ -105,11 +105,14 @@ public class QuadDB {
 				"FROM " + quadsTableName + " " +
 				getWhereClause(graph, subject, predicate, object);
 		final ResultSet results = executeQuery(sql);
-		return new Iterator() {
+		return new Iterator<Quad>() {
 			private boolean hasReadNext = false;
 			private Quad current = null;
 			private Quad next = null;
 
+			/* (non-Javadoc)
+			 * @see java.util.Iterator#hasNext()
+			 */
 			public boolean hasNext() {
 				if (!this.hasReadNext) {
 					try {
@@ -127,7 +130,11 @@ public class QuadDB {
 				}
 				return (this.next != null);
 			}
-			public Object next() {
+
+			/* (non-Javadoc)
+			 * @see java.util.Iterator#next()
+			 */
+			public Quad next() {
 				if (!hasNext()) {
 					throw new NoSuchElementException();
 				}
@@ -136,6 +143,10 @@ public class QuadDB {
 				this.hasReadNext = false;
 				return this.current;
 			}
+
+			/* (non-Javadoc)
+			 * @see java.util.Iterator#remove()
+			 */
 			public void remove() {
 				if (this.current == null) {
 					throw new IllegalStateException();
@@ -144,6 +155,7 @@ public class QuadDB {
 						this.current.getPredicate(), this.current.getObject());
 				this.current = null;
 			}
+
 			private Quad makeQuad() {
 				Node object;
 				try {
@@ -165,6 +177,7 @@ public class QuadDB {
 					throw new JenaException(ex);
 				}
 			}
+
 			private Node toResource(String str) {
 				if (str.startsWith("_:")) {
 					return Node.createAnon(new AnonId(str.substring(2)));
@@ -217,14 +230,17 @@ public class QuadDB {
 		}
 	}
 	
-	public Iterator listGraphNames() {
+	public Iterator<Node> listGraphNames() {
 		String sql = "SELECT name FROM " + graphNamesTableName;
 		final ResultSet results = executeQuery(sql);
 
-		return new Iterator() {
+		return new Iterator<Node>() {
 			private boolean isOnNext = false;
 			private boolean hasNext;
 
+			/* (non-Javadoc)
+			 * @see java.util.Iterator#hasNext()
+			 */
 			public boolean hasNext() {
 				if (!this.isOnNext) {
 					try {
@@ -241,7 +257,10 @@ public class QuadDB {
 				return this.hasNext;
 			}
 
-			public Object next() {
+			/* (non-Javadoc)
+			 * @see java.util.Iterator#next()
+			 */
+			public Node next() {
 				if (!hasNext()) {
 					throw new NoSuchElementException();
 				}
@@ -254,6 +273,9 @@ public class QuadDB {
 				}
 			}
 
+			/* (non-Javadoc)
+			 * @see java.util.Iterator#remove()
+			 */
 			public void remove() {
 				throw new UnsupportedOperationException("Remove not supported");
 			}

@@ -28,7 +28,7 @@ public class SWPNamedGraphImpl extends NamedGraphImpl implements SWPNamedGraph {
     /* (non-Javadoc)
      * @see de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraph#swpAssert(de.fuberlin.wiwiss.ng4j.swp.SWPAuthority, java.util.ArrayList)
      */
-    public boolean swpAssert(SWPAuthority authority, ArrayList listOfAuthorityProperties) {
+    public boolean swpAssert(SWPAuthority authority, ArrayList<Node> listOfAuthorityProperties) {
 
 		// Check if the graph is already a warrant graph.
 		if (!this.contains(this.getGraphName(), SWP.assertedBy, this.getGraphName()) &&
@@ -46,13 +46,13 @@ public class SWPNamedGraphImpl extends NamedGraphImpl implements SWPNamedGraph {
     }
 
     public boolean swpAssert(SWPAuthority authority ) {
-			return swpAssert(authority, new ArrayList());
+			return swpAssert(authority, new ArrayList<Node>());
     }
 
     /* (non-Javadoc)
      * @see de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraph#swpQuote(de.fuberlin.wiwiss.ng4j.swp.SWPAuthority, java.util.ArrayList)
      */
-    public boolean swpQuote(SWPAuthority authority, ArrayList listOfAuthorityProperties) {
+    public boolean swpQuote(SWPAuthority authority, ArrayList<Node> listOfAuthorityProperties) {
         // Check if the graph is already a warrant graph.
 		if (!this.contains(this.getGraphName(), SWP.assertedBy, this.getGraphName()) &&
             !this.contains(this.getGraphName(), SWP.quotedBy, this.getGraphName())) {
@@ -69,13 +69,13 @@ public class SWPNamedGraphImpl extends NamedGraphImpl implements SWPNamedGraph {
     }
 
     public boolean swpQuote(SWPAuthority authority ) {
-			return swpQuote(authority, new ArrayList());
+			return swpQuote(authority, new ArrayList<Node>());
     }
 
     /* (non-Javadoc)
      * @see de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraph#assertWithSignature(de.fuberlin.wiwiss.ng4j.swp.SWPAuthority, com.hp.hpl.jena.graph.Node, java.util.ArrayList)
      */
-    public boolean assertWithSignature(SWPAuthority authority, Node signatureMethod, ArrayList listOfAuthorityProperties) {
+    public boolean assertWithSignature(SWPAuthority authority, Node signatureMethod, ArrayList<Node> listOfAuthorityProperties) {
         // TODO Auto-generated method stub
         return false;
     }

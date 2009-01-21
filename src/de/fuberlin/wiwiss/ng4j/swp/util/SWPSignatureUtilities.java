@@ -63,9 +63,9 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
 
 /**
  * 
- * Last commit info    :   $Author: hartig $
- * $Date: 2009/01/16 18:29:26 $
- * $Revision: 1.13 $
+ * Last commit info    :   $Author: jenpc $
+ * $Date: 2009/01/21 18:10:52 $
+ * $Revision: 1.14 $
  * 
  * 
  * SWPSignatureUtilities
@@ -131,16 +131,16 @@ public class SWPSignatureUtilities
      */
     public static String getCanonicalGraph( NamedGraph graph )
     {
-		ArrayList last = new ArrayList();
+		ArrayList<String> last = new ArrayList<String>();
         NamedGraphSet set = new NamedGraphSetImpl();
 		
 		try
 		{
 			set.addGraph( graph );
 			Model model = set.asJenaModel( graph.getGraphName().toString() );
-			ArrayList canonicalTripleList = new RDFC14NImpl( model ).getCanonicalStringsArray();
+			ArrayList<String> canonicalTripleList = new RDFC14NImpl( model ).getCanonicalStringsArray();
         
-			Iterator litr = canonicalTripleList.iterator();
+			Iterator<String> litr = canonicalTripleList.iterator();
         
 			last.add( graph.getGraphName().toString() );
 			while ( litr.hasNext() )
@@ -167,19 +167,19 @@ public class SWPSignatureUtilities
     public static String getCanonicalGraphSet( NamedGraphSet set )
     {
     	String graph = "urn:uuid"+ uuidGen.nextUUID();
-		ArrayList result = new ArrayList();
+		ArrayList<String> result = new ArrayList<String>();
 		
 		Model model = set.asJenaModel( graph );
-		ArrayList canonicalTripleList = new RDFC14NImpl( model ).getCanonicalStringsArray();
+		ArrayList<String> canonicalTripleList = new RDFC14NImpl( model ).getCanonicalStringsArray();
 		set.removeGraph( graph );
-		Iterator itr = set.listGraphs();
+		Iterator<NamedGraph> itr = set.listGraphs();
 		while ( itr.hasNext() )
 		{
 			NamedGraph grph = ( NamedGraph )itr.next();
 			result.add( grph.getGraphName().toString() );
 		}
 		Collections.sort( result );
-		for ( Iterator it = canonicalTripleList.iterator(); it.hasNext(); )
+		for ( Iterator<String> it = canonicalTripleList.iterator(); it.hasNext(); )
 		{
 			result.add( it.next() );
 		}

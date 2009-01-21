@@ -48,9 +48,9 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
 
 /**
  * 
- * Last commit info    :   $Author: hartig $
- * $Date: 2009/01/16 18:29:26 $
- * $Revision: 1.21 $
+ * Last commit info    :   $Author: jenpc $
+ * $Date: 2009/01/21 18:10:52 $
+ * $Revision: 1.22 $
  * 
  * @author Chris Bizer.
  * @author Rowland Watkins.
@@ -83,7 +83,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 	}
 
 	protected boolean actOnGraphs( SWPAuthority authority,
-			ArrayList listOfAuthorityProperties,
+			ArrayList<Node> listOfAuthorityProperties,
 			Node property, // typically SWP.assertedBy or SWP.quotedBy
 			ArrayList listOfGraphNames, // the particular graphs to act on; use null if all graphs in the set should be acted on
 			Node digestMethod, // the method to use when creating the digest; use null if digest should not be included
@@ -154,7 +154,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
         return true;
 	}
 
-    public boolean swpAssert(SWPAuthority authority, ArrayList listOfAuthorityProperties) {
+    public boolean swpAssert(SWPAuthority authority, ArrayList<Node> listOfAuthorityProperties) {
 		return actOnGraphs(authority, listOfAuthorityProperties, SWP.assertedBy, null, null, null);
     }
 
@@ -165,20 +165,20 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     /* (non-Javadoc)
      * @see de.fuberlin.wiwiss.ng4j.swp.signature.SWPNamedGraphSet#swpQuote(de.fuberlin.wiwiss.ng4j.swp.signature.SWPAuthority, java.util.ArrayList)
      */
-    public boolean swpQuote( SWPAuthority authority, ArrayList listOfAuthorityProperties ) 
+    public boolean swpQuote( SWPAuthority authority, ArrayList<Node> listOfAuthorityProperties ) 
 	{
     	return actOnGraphs(authority, listOfAuthorityProperties, SWP.quotedBy, null, null, null);
     }
 
     public boolean swpQuote( SWPAuthority authority ) 
     {
-        return swpQuote( authority, new ArrayList() );
+        return swpQuote( authority, new ArrayList<Node>() );
     }
 
     /* (non-Javadoc)
      * @see de.fuberlin.wiwiss.ng4j.swp.signature.SWPNamedGraphSet#assertGraphs(java.util.ArrayList, de.fuberlin.wiwiss.ng4j.swp.signature.SWPAuthority, java.util.ArrayList)
      */
-    public boolean assertGraphs( ArrayList listOfGraphNames, SWPAuthority authority, ArrayList listOfAuthorityProperties ) 
+    public boolean assertGraphs( ArrayList<Node> listOfGraphNames, SWPAuthority authority, ArrayList<Node> listOfAuthorityProperties ) 
 	{
     	return actOnGraphs(authority, listOfAuthorityProperties, SWP.assertedBy, listOfGraphNames, null, null);
     }
@@ -186,13 +186,13 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     /* (non-Javadoc)
      * @see de.fuberlin.wiwiss.ng4j.swp.signature.SWPNamedGraphSet#assertGraphs(java.util.ArrayList, de.fuberlin.wiwiss.ng4j.swp.signature.SWPAuthority, java.util.ArrayList)
      */
-    public boolean quoteGraphs( ArrayList listOfGraphNames, SWPAuthority authority, ArrayList listOfAuthorityProperties ) 
+    public boolean quoteGraphs( ArrayList<Node> listOfGraphNames, SWPAuthority authority, ArrayList<Node> listOfAuthorityProperties ) 
     {
     	return actOnGraphs(authority, listOfAuthorityProperties, SWP.quotedBy, listOfGraphNames, null, null);
     }
 
 	protected boolean actOnGraphsAndIncludeSignature( SWPAuthority authority,
-			ArrayList listOfAuthorityProperties,
+			ArrayList<Node> listOfAuthorityProperties,
 			Node property, // typically SWP.assertedBy or SWP.quotedBy
 			ArrayList listOfGraphURIs, // the particular graphs to act on; use null if all graphs in the set should be acted on
 			Node digestMethod, // the method to use when creating the digest
@@ -401,7 +401,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     public boolean assertWithSignature( SWPAuthority authority, 
     									Node signatureMethod, 
     									Node digestMethod, 
-    									ArrayList listOfAuthorityProperties, 
+    									ArrayList<Node> listOfAuthorityProperties, 
     									String keystore,
     									String password ) 
 	throws SWPBadSignatureException, SWPBadDigestException 
@@ -416,7 +416,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     public boolean quoteWithSignature( SWPAuthority authority, 
     									Node signatureMethod, 
     									Node digestMethod, 
-    									ArrayList listOfAuthorityProperties, 
+    									ArrayList<Node> listOfAuthorityProperties, 
     									String keystore,
     									String password ) throws SWPBadSignatureException
     {
@@ -431,7 +431,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     										SWPAuthority authority, 
     										Node signatureMethod, 
     										Node digestMethod, 
-    										ArrayList listOfAuthorityProperties, 
+    										ArrayList<Node> listOfAuthorityProperties, 
     										String keystore,
     										String password ) throws SWPBadSignatureException
     {
@@ -532,7 +532,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     	//Now, we can create a new verification graph to record
     	//results.
     	NamedGraph verificationGraph = this.createGraph( SWP_V.default_graph );
-    	Iterator ngsIt = this.listGraphs();
+    	Iterator<NamedGraph> ngsIt = this.listGraphs();
     	
     	// For each NamedGraph in the NamedGraphSet, we will check for 
     	// the swp:assertedBy triple. We then take the object of that
@@ -541,13 +541,13 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     	while ( ngsIt.hasNext() )
     	{
     		Quad quad = null;
-    		NamedGraph ng = ( NamedGraph )ngsIt.next();
+    		NamedGraph ng = ngsIt.next();
         	
-    		Iterator it = findQuads( Node.ANY, Node.ANY, SWP.assertedBy, ng.getGraphName() );
+    		Iterator<Quad> it = findQuads( Node.ANY, Node.ANY, SWP.assertedBy, ng.getGraphName() );
 			
     		if ( it.hasNext() )
     		{	
-    			quad = ( Quad )it.next();
+    			quad = it.next();
     			String ngName = ng.getGraphName().toString();
 //    			String warrantQuery = "SELECT * WHERE <"+ng.getGraphName().toString()+"> (<"+ng.getGraphName().toString()+"> swp:signature ?signature . <"+ng.getGraphName().toString()+"> swp:signatureMethod ?smethod . <"+ng.getGraphName().toString()+"> swp:authority ?authority . ?authority swp:X509Certificate ?certificate) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
 	            String warrantQuery = "SELECT ?signature ?smethod ?certificate" + NL

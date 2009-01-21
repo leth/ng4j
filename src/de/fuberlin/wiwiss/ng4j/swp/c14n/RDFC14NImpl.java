@@ -42,7 +42,7 @@ public class RDFC14NImpl
         public static final Node X = NodeCreateUtils.create( "x" );        
         
         private Model model = ModelFactory.createDefaultModel();
-        private ArrayList canonical_string;
+        private ArrayList<String> canonical_string;
         
         /**
          * This function will return an array list with a sequence of strings forming 
@@ -51,7 +51,7 @@ public class RDFC14NImpl
          * the result can be used as needed for example in digital signatures.
          * @return the canonical string list.
          */
-        public ArrayList getCanonicalStringsArray() 
+        public ArrayList<String> getCanonicalStringsArray() 
         {
         	return canonical_string;
         }
@@ -103,7 +103,7 @@ public class RDFC14NImpl
         {
         	this.model = model;
         	StmtIterator st = model.listStatements();
-        	ArrayList a = new ArrayList();
+        	ArrayList<Triple> a = new ArrayList<Triple>();
         	while( st.hasNext() ) 
         	{
         		a.add( st.nextStatement().asTriple() );//create an ArrayList of Triples                
@@ -117,12 +117,12 @@ public class RDFC14NImpl
          * @param a ArrayList di Triple
          * @return am ArrayList di C14NTtriple
          */
-        private ArrayList putTilde( ArrayList a )
+        private ArrayList<C14NTriple> putTilde( ArrayList<Triple> a )
         {
-        	ArrayList am = new ArrayList();
+        	ArrayList<C14NTriple> am = new ArrayList<C14NTriple>();
         	for( int i=0;i<a.size();i++ )
         	{
-        		Triple tmp = ( Triple ) a.get( i );                        
+        		Triple tmp = a.get( i );                        
         		am.add( i, new C14NTriple( tmp.getSubject(), tmp.getPredicate(), tmp.getObject() ) );
         	}
         	return am;                
@@ -133,12 +133,12 @@ public class RDFC14NImpl
          * @param a ArrayList of C14NTtriples
          */
                          
-        private void labelledNode( ArrayList a )
+        private void labelledNode( ArrayList<C14NTriple> a )
         {
         	//create a hashtable and replace contents with a Tilde
-        	Hashtable ht = new Hashtable();
+        	Hashtable<Node,Node> ht = new Hashtable<Node,Node>();
         	int symCount = 1;
-        	ArrayList af = new ArrayList();
+        	ArrayList<C14NTriple> af = new ArrayList<C14NTriple>();
 
         	for( int i=0;i<a.size();i++ )
         	{
@@ -154,7 +154,7 @@ public class RDFC14NImpl
         		if (i==0)
         		{ 
         			//Compare only the triple that exclude the ID
-        			if( ( t.compareTo( ( C14NTriple )a.get( i+1 ) ) ) == 0 )
+        			if( ( t.compareTo( a.get( i+1 ) ) ) == 0 )
         			{ 
         				af.add( t );
         				continue;    //if the line is equal to the next one
@@ -216,10 +216,10 @@ public class RDFC14NImpl
          * @param a ArrayList of Triples
          * @return al ArrayList of C14NTtriples
          */
-        private ArrayList one_step_algorithm( ArrayList a )
+        private ArrayList<C14NTriple> one_step_algorithm( ArrayList<Triple> a )
         {//algorithm to determine if nodes exist that are hard to label
                         
-        	ArrayList al = new ArrayList(); //ArrayList of StructuredString objects                 
+        	ArrayList<C14NTriple> al = new ArrayList<C14NTriple>(); //ArrayList of StructuredString objects                 
         	al = putTilde( a );
         	Collections.sort( al );
         	labelledNode( al );
@@ -232,12 +232,12 @@ public class RDFC14NImpl
          * @param a ArrayList C14NTtriple objects
          * @return true if no hard-to-label nodes exist
          */
-        private boolean isAllLabelled( ArrayList a )
+        private boolean isAllLabelled( ArrayList<C14NTriple> a )
         {
         	boolean test = true;
         	for( int i=0;i<a.size();i++ )
         	{
-        		C14NTriple t = ( C14NTriple ) a.get( i );
+        		C14NTriple t = a.get( i );
         		if ( ( t.subject.equals( TILDE ) ) || ( t.objectID.equals( TILDE ) ) )
         		{
         			test = false;
@@ -255,11 +255,11 @@ public class RDFC14NImpl
          * @param model 
          * @return ArrayList of Triples
          */
-        private ArrayList removeTripleWithC14N( ArrayList a, Model model )
+        private ArrayList<Triple> removeTripleWithC14N( ArrayList<C14NTriple> a, Model model )
         {
                         
-        	ArrayList statementList = new ArrayList();// ArrayList of statements to be removed
-        	ArrayList tripleList = new ArrayList(); // New arraylist of Triple objects
+        	ArrayList<Statement> statementList = new ArrayList<Statement>();// ArrayList of statements to be removed
+        	ArrayList<Triple> tripleList = new ArrayList<Triple>(); // New arraylist of Triple objects
         	//Create an arraylist of C14N statements to remove
         	for( int i=0;i<a.size();i++ )
         	{   
@@ -290,11 +290,11 @@ public class RDFC14NImpl
          * @param model
          * @return a ArrayList of Triples
          */
-        private ArrayList addTripleWithC14N( ArrayList a, Model model )
+        private ArrayList<Triple> addTripleWithC14N( ArrayList<C14NTriple> a, Model model )
         {               
-        	ArrayList statementList = new ArrayList();// Arraylist of statements to be created              
-        	ArrayList tripleList = new ArrayList();// New arraylist of Triple objects
-        	Hashtable ht = new Hashtable();
+        	ArrayList<Statement> statementList = new ArrayList<Statement>();// Arraylist of statements to be created              
+        	ArrayList<Triple> tripleList = new ArrayList<Triple>();// New arraylist of Triple objects
+        	Hashtable<Node,Node> ht = new Hashtable<Node,Node>();
         	int symCount = 1;
         	//Create a new set of statements and place them in arraylist
         	for( int i=0;i<a.size();i++ )
@@ -337,6 +337,7 @@ public class RDFC14NImpl
          	}                        
         	return tripleList;                
          }
+         
         /**
          * 
          * Algorithm labels all the nodes in C14NTtriple arraylist and returns the canonical list. 
@@ -346,17 +347,17 @@ public class RDFC14NImpl
          * @param model
          * @return canonicString ArrayList of strings representing the canonical triple list.
          */
-         private ArrayList pre_canonicalization( ArrayList a, Model model )
+         private ArrayList<String> pre_canonicalization( ArrayList<Triple> a, Model model )
          { //return the canonical list as a string
                         
-         	ArrayList canonicString = new ArrayList(); //ArrayList of string
-         	ArrayList pre_canonic = one_step_algorithm( a ); // 1) alg one_step
+         	ArrayList<String> canonicString = new ArrayList<String>(); //ArrayList of string
+         	ArrayList<C14NTriple> pre_canonic = one_step_algorithm( a ); // 1) alg one_step
          	//if it is in canonical form, add to canonicString           
          	if ( isAllLabelled( pre_canonic ) )
          	{  
          		for( int i=0;i<pre_canonic.size();i++ )
          		{
-         			C14NTriple t = ( C14NTriple ) pre_canonic.get( i );
+         			C14NTriple t = pre_canonic.get( i );
          			canonicString.add( i, t.createTripleString( t ) );
          		}
          	}
@@ -368,7 +369,7 @@ public class RDFC14NImpl
          		pre_canonic = one_step_algorithm( a ); // 5) repeat alg: this time label all triples
          		for( int i=0;i<pre_canonic.size();i++ )
          		{
-         			C14NTriple t = ( C14NTriple ) pre_canonic.get( i );
+         			C14NTriple t = pre_canonic.get( i );
          			canonicString.add( i, t.createTripleString( t ) );
          		}                        
          	}

@@ -1,5 +1,5 @@
 /*
- * $Id: TriGWriter.java,v 1.6 2008/08/20 11:04:57 hartig Exp $
+ * $Id: TriGWriter.java,v 1.7 2009/01/21 18:10:53 jenpc Exp $
  */
 package de.fuberlin.wiwiss.ng4j.trig;
 
@@ -20,6 +20,7 @@ import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.mem.GraphMem;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.impl.ModelCom;
 import com.hp.hpl.jena.shared.JenaException;
 
@@ -47,16 +48,16 @@ public class TriGWriter implements NamedGraphSetWriter {
 	private Writer writer;
 	private NamedGraph currentGraph;
 	private PrettyNamespacePrefixMaker prefixMaker;
-	private Map customPrefixes = new HashMap();
+	private Map<String,String> customPrefixes = new HashMap<String,String>();
 	
 	/**
 	 * Writes a NamedGraphSet to a Writer. The base URI is optional.
 	 */
 	public void write(NamedGraphSet set, Writer out, String baseURI) {
 		this.writer = new BufferedWriter(out);
-		Iterator graphIt = set.listGraphs();
+		Iterator<NamedGraph> graphIt = set.listGraphs();
 		Graph allTriples = graphIt.hasNext() ?
-				set.asJenaGraph(((NamedGraph) graphIt.next()).getGraphName()) :
+				set.asJenaGraph(( graphIt.next()).getGraphName()) :
 				new GraphMem();
 		this.prefixMaker = new PrettyNamespacePrefixMaker(allTriples);
 		this.prefixMaker.setBaseURI(baseURI);
@@ -74,7 +75,7 @@ public class TriGWriter implements NamedGraphSetWriter {
 		this.prefixMaker.addDefaultNamespace("swp1", "http://www.w3.org/2004/03/trix/swp-1/");
 		this.prefixMaker.addDefaultNamespace("swp", "http://www.w3.org/2004/03/trix/swp-2/");
 		this.prefixMaker.addDefaultNamespace("rdfg", "http://www.w3.org/2004/03/trix/rdfg-1/");
-		Iterator it = this.customPrefixes.keySet().iterator();
+		Iterator<String> it = this.customPrefixes.keySet().iterator();
 		while (it.hasNext()) {
 			String prefix = (String) it.next();
 			String uri = (String) this.customPrefixes.get(prefix);
@@ -127,11 +128,11 @@ public class TriGWriter implements NamedGraphSetWriter {
 		return this.currentGraph.isEmpty();
 	}
 
-	private List getSortedGraphNames(NamedGraphSet set) {
-		Iterator unsortedIt = set.listGraphs();
-		List sorting = new ArrayList();
+	private List<String> getSortedGraphNames(NamedGraphSet set) {
+		Iterator<NamedGraph> unsortedIt = set.listGraphs();
+		List<String> sorting = new ArrayList<String>();
 		while (unsortedIt.hasNext()) {
-			sorting.add(((NamedGraph) unsortedIt.next()).getGraphName().getURI());
+			sorting.add((unsortedIt.next()).getGraphName().getURI());
 		}
 		Collections.sort(sorting);
 		return sorting;
@@ -153,7 +154,7 @@ public class TriGWriter implements NamedGraphSetWriter {
 	    {
 	        prefixMap = baseModel.getNsPrefixMap() ;
 	        Model model = ModelFactory.withHiddenStatements( baseModel );
-	        bNodesMap = new HashMap() ;
+	        bNodesMap = new HashMap<Resource,String>() ;
 
 	        // If no base defined for the model, but one given to writer,
 	        // then use this.
@@ -162,9 +163,9 @@ public class TriGWriter implements NamedGraphSetWriter {
 	        if ( base2 == null && baseURIrefHash != null )
 	            prefixMap.put("", baseURIrefHash) ;
 
-	        for ( Iterator iter = prefixMap.keySet().iterator() ; iter.hasNext() ; )
+	        for ( Iterator<String> iter = prefixMap.keySet().iterator() ; iter.hasNext() ; )
 	        {
-	            String prefix = (String)iter.next() ;
+	            String prefix = iter.next() ;
 	            if ( prefix.indexOf('.') != -1 )
 	                iter.remove() ;
 	        }

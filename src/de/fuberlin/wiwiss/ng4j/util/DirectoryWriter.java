@@ -1,4 +1,4 @@
-// $Id: DirectoryWriter.java,v 1.2 2008/08/20 11:05:12 hartig Exp $
+// $Id: DirectoryWriter.java,v 1.3 2009/01/21 18:10:53 jenpc Exp $
 
 package de.fuberlin.wiwiss.ng4j.util;
 
@@ -94,11 +94,11 @@ public class DirectoryWriter {
 
 		factory.setWriterClassName("TRIX", JenaRDFWriter.class.getName());
 
-		Iterator it = set.listGraphs();
+		Iterator<NamedGraph> it = set.listGraphs();
 
 		while (it.hasNext()) {
 
-			NamedGraph graph = (NamedGraph) it.next();
+			NamedGraph graph = it.next();
 
 			try {
 

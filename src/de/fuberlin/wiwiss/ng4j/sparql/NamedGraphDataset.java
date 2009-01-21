@@ -51,38 +51,64 @@ public class NamedGraphDataset implements Dataset, DatasetGraph {
 		this.defaultGraph = defaultGraph;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.query.Dataset#containsNamedModel(java.lang.String)
+	 */
 	public boolean containsNamedModel(String uri) {
 		return this.set.containsGraph(uri);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.query.Dataset#getDefaultModel()
+	 */
 	public Model getDefaultModel() {
 		return new ModelCom(this.defaultGraph);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.query.Dataset#getNamedModel(java.lang.String)
+	 */
 	public Model getNamedModel(String graphName) {
 		return new ModelCom(this.set.getGraph(graphName));
 	}
 
-	public Iterator listNames() {
-		final Iterator it = this.set.listGraphs();
-		return new Iterator() {
-			public Object next() {
-				return ((NamedGraph) it.next()).getGraphName().getURI();
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.query.Dataset#listNames()
+	 */
+	public Iterator<String> listNames() {
+		final Iterator<NamedGraph> it = this.set.listGraphs();
+		return new Iterator<String>() {
+			
+			/* (non-Javadoc)
+			 * @see java.util.Iterator#next()
+			 */
+			public String next() {
+				return (it.next()).getGraphName().getURI();
 			}
+			
+			/* (non-Javadoc)
+			 * @see java.util.Iterator#hasNext()
+			 */
 			public boolean hasNext() {
 				return it.hasNext();
 			}
+			
+			/* (non-Javadoc)
+			 * @see java.util.Iterator#remove()
+			 */
 			public void remove() {
 				it.remove();
 			}
 		};
 	}
 
-	/**
-	 * Returns a LockMutex. I've no idea if this works or what
-	 * it is supposed to do.
+
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.query.Dataset#getLock()
 	 */
 	public Lock getLock() {
+		// Returns a LockMutex. 
+		// TODO Revisit: I've no idea if this works or what it is supposed to do.
 		if (this.lock == null) {
 			this.lock = new LockMutex();
 		}
@@ -120,9 +146,9 @@ public class NamedGraphDataset implements Dataset, DatasetGraph {
 	/* (non-Javadoc)
 	 * @see com.hp.hpl.jena.sparql.core.DatasetGraph#listGraphNodes()
 	 */
-	public Iterator listGraphNodes() {
-		Set graphNodes = new HashSet();
-		for ( Iterator it = set.listGraphs(); it.hasNext(); ) {
+	public Iterator<Node> listGraphNodes() {
+		Set<Node> graphNodes = new HashSet<Node>();
+		for ( Iterator<NamedGraph> it = set.listGraphs(); it.hasNext(); ) {
 			NamedGraph ng = (NamedGraph) it.next();
 			graphNodes.add(ng.getGraphName());
 		}
