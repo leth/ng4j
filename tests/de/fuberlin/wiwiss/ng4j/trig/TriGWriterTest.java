@@ -1,4 +1,4 @@
-// $Id: TriGWriterTest.java,v 1.4 2008/08/21 16:36:06 hartig Exp $
+// $Id: TriGWriterTest.java,v 1.5 2009/01/21 17:35:55 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import java.io.StringWriter;
@@ -21,6 +21,8 @@ public class TriGWriterTest extends TestCase {
 	private final static Node graph2 = Node.createURI(EX + "graph2");
 	private NamedGraphSet set;
 	
+	public static final String NL = System.getProperty("line.separator");
+	
 	public void setUp() {
 		this.set = new NamedGraphSetImpl();
 	}
@@ -37,7 +39,9 @@ public class TriGWriterTest extends TestCase {
 		TriGWriter writer = new TriGWriter();
 		StringWriter s = new StringWriter();
 		writer.write(this.set, s, null);
-		assertEquals("<" + EX + "graph1> { }\n\n", s.toString());
+		String string = s.toString();
+		String comparisonString = "<" + EX + "graph1> { }" + NL + NL;
+		assertEquals(comparisonString, string);
 	}
 	
 	public void testTwoEmptyGraphs() {
@@ -46,8 +50,9 @@ public class TriGWriterTest extends TestCase {
 		TriGWriter writer = new TriGWriter();
 		StringWriter s = new StringWriter();
 		writer.write(this.set, s, null);
-		assertEquals("<" + EX + "graph1> { }\n\n<" + EX + "graph2> { }\n\n",
-				s.toString());
+		String string = s.toString();
+		String comparisonString = "<" + EX + "graph1> { }" + NL + NL + "<" + EX + "graph2> { }" + NL + NL;
+		assertEquals(comparisonString, string);
 	}
 
 	public void testAddNamespace() {
@@ -56,7 +61,8 @@ public class TriGWriterTest extends TestCase {
 		writer.addNamespace("ex", EX);
 		StringWriter s = new StringWriter();
 		writer.write(this.set, s, null);
-		assertEquals("@prefix ex:      <" + EX + "> .\n\nex:graph1 { }\n\n",
-				s.toString());
+		String string = s.toString();
+		String comparisonString = "@prefix ex:      <" + EX + "> ." + NL + NL + "ex:graph1 { }" + NL + NL;
+		assertEquals(comparisonString, string);
 	}
 }
