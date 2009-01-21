@@ -1,4 +1,4 @@
-// $Id: AllTests.java,v 1.2 2004/12/12 17:30:29 cyganiak Exp $
+// $Id: AllTests.java,v 1.3 2009/01/21 01:37:39 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import junit.framework.Test;
@@ -22,7 +22,8 @@ public class AllTests {
 		TestSuite suite = new TestSuite("Test for de.fuberlin.wiwiss.ng4j.db");
 		//$JUnit-BEGIN$
 		suite.addTestSuite(QuadDBTest.class);
-		suite.addTestSuite(TriQLAgainstDBTest.class);
+//		suite.addTestSuite(TriQLAgainstDBTest.class);
+		suite.addTestSuite(SPARQLAgainstDBTest.class);
 		suite.addTestSuite(NamedGraphSetDBTest.class);
 		//$JUnit-END$
 		return suite;
