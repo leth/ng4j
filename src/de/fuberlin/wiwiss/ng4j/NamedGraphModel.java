@@ -1,4 +1,4 @@
-// $Id: NamedGraphModel.java,v 1.5 2008/08/20 11:04:43 hartig Exp $
+// $Id: NamedGraphModel.java,v 1.6 2009/02/10 22:44:33 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.io.InputStream;
@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 
 import java.io.Writer;
+import java.util.Map;
 
 
 
@@ -98,6 +99,19 @@ public class NamedGraphModel extends ModelCom implements Model {
 	 */
 	public NamedGraphSet getNamedGraphSet() {
 		return this.graphSet;
+	}
+	
+	/**
+	 * Returns a TriGWriter object, primed with the namespaces of this Model
+	 * @return the TriGWriter
+	 */
+	public TriGWriter getTriGWriter() {
+		TriGWriter writer = new TriGWriter();
+		Map map = this.getNsPrefixMap();
+		for (Object key : map.keySet()) {
+			writer.addNamespace((String) key, (String) map.get(key));
+		}
+		return writer;
 	}
 	
 	/**
@@ -198,7 +212,7 @@ public class NamedGraphModel extends ModelCom implements Model {
 			return this;
 		}
 		if ("TRIG".equals(lang)) {
-			new TriGWriter().write(this.graphSet, writer, base);
+			getTriGWriter().write(this.graphSet, writer, base);
 			return this;
 		}
 		return super.write(writer, lang, base);
@@ -210,7 +224,7 @@ public class NamedGraphModel extends ModelCom implements Model {
 			return this;
 		}
 		if ("TRIG".equals(lang)) {
-			new TriGWriter().write(this.graphSet, writer, null);
+			getTriGWriter().write(this.graphSet, writer, null);
 			return this;
 		}
 		return super.write(writer, lang);
@@ -226,7 +240,7 @@ public class NamedGraphModel extends ModelCom implements Model {
 			return this;
 		}
 		if ("TRIG".equals(lang)) {
-			new TriGWriter().write(this.graphSet, writer, base);
+			getTriGWriter().write(this.graphSet, writer, base);
 			return this;
 		}
 		return super.write(writer, lang, base);
@@ -238,7 +252,7 @@ public class NamedGraphModel extends ModelCom implements Model {
 			return this;
 		}
 		if ("TRIG".equals(lang)) {
-			new TriGWriter().write(this.graphSet, writer, null);
+			getTriGWriter().write(this.graphSet, writer, null);
 			return this;
 		}
 		return super.write(writer, lang);
