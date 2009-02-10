@@ -1,4 +1,8 @@
 
+02/10/09 (Jennifer)
+Fixed NamedGraphModel code so that when it uses a TriGWriter, the writer includes the model's namespace prefix map.
+This fix was supplied by Daryl McCullough of Architecture Technology Corporation.
+
 01/21/09 (Olaf)
 Removed TriQL
 
