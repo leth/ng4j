@@ -1,4 +1,4 @@
-// $Id: SyntacticExtensionProcessor.java,v 1.3 2009/01/21 18:10:53 jenpc Exp $
+// $Id: SyntacticExtensionProcessor.java,v 1.4 2009/02/10 22:31:32 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.trix;
 
 import java.io.IOException;
@@ -40,7 +40,7 @@ public class SyntacticExtensionProcessor {
 		this.doc = doc;
 	}
 
-	List getTransforms() {
+	List<String> getTransforms() {
 		List<String> transformURIs = new ArrayList<String>();
 		for (int i = 0; i < this.doc.getChildNodes().getLength(); i++) {
 			Node node = this.doc.getChildNodes().item(i);
@@ -52,12 +52,12 @@ public class SyntacticExtensionProcessor {
 			}
 			ProcessingInstruction pi = (ProcessingInstruction) node;
 			if (!"xml-stylesheet".equals(pi.getTarget())) {
-				return Collections.EMPTY_LIST;
+				return Collections.emptyList();
 			}
 			NamedNodeMap pseudoAttribs =
 					extractPseudoAttribsFromPI(pi);
 			if (!isXSLTMimeType(pseudoAttribs.getNamedItem("type").getNodeValue())) {
-				return Collections.EMPTY_LIST;
+				return Collections.emptyList();
 			}
 			transformURIs.add(pseudoAttribs.getNamedItem("href").getNodeValue());
 		}
