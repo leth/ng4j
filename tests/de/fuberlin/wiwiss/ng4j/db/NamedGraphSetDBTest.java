@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetDBTest.java,v 1.2 2009/01/20 22:04:31 jenpc Exp $
+// $Id: NamedGraphSetDBTest.java,v 1.3 2009/02/10 22:38:17 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.util.ArrayList;
@@ -62,7 +62,7 @@ public class NamedGraphSetDBTest extends NamedGraphSetTest {
 	}
 	
 	public void testTriQL() {
-		// REVISIT this test tests SPARQL now rather than TriQL.  Should rename test.
+		// TODO Revisit - this test tests SPARQL now rather than TriQL.  Should rename test.
 		List<Quad> l = new ArrayList<Quad>();
 		l.add(new Quad(node1, foo, bar, baz));
 		l.add(new Quad(node1, foo, foo, foo));
