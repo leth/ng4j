@@ -1,4 +1,4 @@
-// $Id: QuadDBTest.java,v 1.3 2004/12/14 13:30:15 cyganiak Exp $
+// $Id: QuadDBTest.java,v 1.4 2009/02/11 15:14:06 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.util.Iterator;
@@ -150,7 +150,7 @@ public class QuadDBTest extends TestCase {
 	
 	public void testFindIterator() {
 		this.db.insert(graph1, node1, node2, node3);
-		Iterator it = this.db.find(Node.ANY, Node.ANY, Node.ANY, Node.ANY);
+		Iterator<Quad> it = this.db.find(Node.ANY, Node.ANY, Node.ANY, Node.ANY);
 		assertTrue(it.hasNext());
 		assertTrue(it.hasNext());
 		assertNotNull(it.next());
