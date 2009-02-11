@@ -1,5 +1,5 @@
 /*
- * $Id: TriXWriter.java,v 1.3 2009/01/21 18:10:53 jenpc Exp $
+ * $Id: TriXWriter.java,v 1.4 2009/02/11 01:58:19 jenpc Exp $
  */
 package de.fuberlin.wiwiss.ng4j.trix;
 
@@ -14,6 +14,7 @@ import java.util.Iterator;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.shared.JenaException;
+import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
@@ -68,9 +69,9 @@ public class TriXWriter implements NamedGraphSetWriter {
 		String graphName = graph.getGraphName().getURI();
 		write("  <graph>\n");
 		write("    <uri>" + escape(graphName) + "</uri>\n");
-		Iterator<Triple> it = graph.find(Node.ANY, Node.ANY, Node.ANY);
+		ExtendedIterator it = graph.find(Node.ANY, Node.ANY, Node.ANY);
 		while (it.hasNext()) {
-			Triple triple = it.next();
+			Triple triple = (Triple) it.next();
 			writeTriple(triple);
 		}
 		write("  </graph>\n");
