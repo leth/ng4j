@@ -1,8 +1,9 @@
-// $Id: NamedGraphSetImpl.java,v 1.11 2009/01/21 18:10:53 jenpc Exp $
+// $Id: NamedGraphSetImpl.java,v 1.12 2009/02/11 02:05:20 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -204,7 +205,7 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 	/* (non-Javadoc)
 	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#findQuads(com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node)
 	 */
-	public Iterator<Quad> findQuads(Node graphName, Node subject,
+	public Iterator findQuads(Node graphName, Node subject,
 			Node predicate, Node object) {
 		return findQuads(new Quad(graphName, subject, predicate, object));
 	}
@@ -214,7 +215,8 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 	 */
 	public Iterator findQuads(Quad pattern) {
 		if (!containsGraph(pattern.getGraphName())) {
-			return new NullIterator();
+			List<Quad> quadsList = Collections.emptyList();
+			return quadsList.iterator();
 		}
 		if (Node.ANY.equals(pattern.getGraphName())) {
 			return getQuadIteratorOverAllGraphs(pattern.getTriple());
@@ -228,16 +230,16 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#removeQuad(de.fuberlin.wiwiss.ng4j.Quad)
 	 */
 	public void removeQuad(Quad pattern) {
-		Iterator<Quad> it = findQuads(pattern);
+		Iterator it = findQuads(pattern);
 		// Read the entire iterator into a collection first to avoid
 		// ConcurrentModificationException
 		Collection<Quad> quadsToDelete = new ArrayList<Quad>();
 		while (it.hasNext()) {
-			quadsToDelete.add(it.next());
+			quadsToDelete.add((Quad)it.next());
 		}
 		it = quadsToDelete.iterator();
 		while (it.hasNext()) {
-			Quad quad = it.next();
+			Quad quad = (Quad) it.next();
 			getGraph(quad.getGraphName()).delete(quad.getTriple());
 		}
 	}
@@ -316,7 +318,7 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 	 * Note: This is a hack.
 	 */
 	private class UnionGraph extends MultiUnion {
-		public UnionGraph (List members) {
+		public UnionGraph (List<NamedGraph> members) {
 			super();
 			this.m_subGraphs = members;
 		}
