@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetImpl.java,v 1.12 2009/02/11 02:05:20 jenpc Exp $
+// $Id: NamedGraphSetImpl.java,v 1.13 2009/02/11 15:19:13 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import java.util.ArrayList;
@@ -354,7 +354,7 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 
 	private class FindQuadsIterator extends NiceIterator {
 	    private Iterator<NamedGraph> graphIt;
-	    private Iterator currentIt;
+	    private ExtendedIterator currentIt; // Triple
 	    private Triple findMe;
 	    private Node currentGraphName;
 	    
