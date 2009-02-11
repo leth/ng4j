@@ -28,7 +28,8 @@ import java.util.Collections;
 import java.util.Iterator;
 
 import org.apache.axis.components.uuid.SimpleUUIDGen;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.digests.SHA1Digest;
 import org.bouncycastle.crypto.digests.SHA224Digest;
@@ -64,8 +65,8 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
 /**
  * 
  * Last commit info    :   $Author: jenpc $
- * $Date: 2009/01/21 18:10:52 $
- * $Revision: 1.14 $
+ * $Date: 2009/02/11 04:16:48 $
+ * $Revision: 1.15 $
  * 
  * 
  * SWPSignatureUtilities
@@ -98,7 +99,7 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
  */
 public class SWPSignatureUtilities 
 {
-    private static final Logger logger = Logger.getLogger( SWPSignatureUtilities.class );
+	private static final Log logger = LogFactory.getLog( SWPSignatureUtilities.class );
 //    private static boolean debug = logger.isDebugEnabled();
     private static boolean info = logger.isInfoEnabled();
     // nb: the following must agree with the Signature.getInstance(...) names
