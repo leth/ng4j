@@ -1,4 +1,4 @@
-// $Id: NamedGraphStatementIteratorTest.java,v 1.1 2004/10/23 13:31:25 cyganiak Exp $
+// $Id: NamedGraphStatementIteratorTest.java,v 1.2 2009/02/11 15:15:25 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.util.ArrayList;
@@ -6,6 +6,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.impl.StatementImpl;
 import com.hp.hpl.jena.rdf.model.impl.StmtIteratorImpl;
 
@@ -27,7 +28,7 @@ public class NamedGraphStatementIteratorTest extends TestCase {
 
 	public void testIterator() {
 		NamedGraphModel model = new NamedGraphModel(new NamedGraphSetImpl(), uri1);
-		List statements = new ArrayList();
+		List<Statement> statements = new ArrayList<Statement>();
 		statements.add(new StatementImpl(model.createResource(foo),
 				model.createProperty(bar), model.createResource(baz)));
 		statements.add(new NamedGraphStatement(model.createResource(baz),
