@@ -1,13 +1,13 @@
-// $Id: SWPExample.java,v 1.8 2008/09/04 07:37:47 hartig Exp $
+// $Id: SWPExample.java,v 1.9 2009/02/11 01:59:46 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.examples;
 
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
+import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 import de.fuberlin.wiwiss.ng4j.Quad;
 
@@ -74,16 +74,16 @@ public class SWPExample {
         rowland.setLabel("Rowland Watkins");
         rowland.setEmail("erw01r@ecs.soton.ac.uk");
 
-        ArrayList RowlandsPropertiestoBePublished = new ArrayList();
+        ArrayList<Node> RowlandsPropertiestoBePublished = new ArrayList<Node>();
         RowlandsPropertiestoBePublished.add(Node.createURI("http://www.w3.org/2000/01/rdf-schema#label"));
         RowlandsPropertiestoBePublished.add(FOAF.mboxNode);
 
 		graphset.swpAssert(rowland, RowlandsPropertiestoBePublished);
 
-        ArrayList graphs = new ArrayList();
+        ArrayList<Node> graphs = new ArrayList<Node>();
         graphs.add(Node.createURI("http://example.org/persons/123"));
         graphs.add(Node.createURI("http://www.bizer.de/InformationAboutRichard"));
-		graphset.quoteGraphs(graphs, chris, new ArrayList());
+		graphset.quoteGraphs(graphs, chris, new ArrayList<Node>());
 
         graphset.write(System.out, "TRIG", "");
         System.out.println();
@@ -145,7 +145,7 @@ public class SWPExample {
 		// 2. Test to see if warrant is signed
 		// 3. Get the warrant's SWPAuthority
 		// 4. List all graphs asserted by this warrant
-		Iterator it = graphset2.getAllWarrants( rowland );
+		ExtendedIterator it = graphset2.getAllWarrants( rowland );
 		while ( it.hasNext() )
 		{
 			SWPWarrant warrant = ( SWPWarrant ) it.next();
@@ -167,7 +167,7 @@ public class SWPExample {
 			// Chris, Richard: I assume this should be the case?
 			System.out.println( "Asserted Graphs in Warrant:" );
 			System.out.println();
-			Iterator itr = warrant.getAssertedGraphs();
+			ExtendedIterator itr = warrant.getAssertedGraphs();
 			while ( itr.hasNext() )
 			{
 				System.out.println( itr.next() );
