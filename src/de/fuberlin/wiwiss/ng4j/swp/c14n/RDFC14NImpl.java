@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 
-import org.apache.log4j.Logger;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
@@ -35,7 +35,7 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 public class RDFC14NImpl  
 {
-		static final Logger log = Logger.getLogger( RDFC14NImpl.class );
+		static final Log log = LogFactory.getLog( RDFC14NImpl.class );
         public static final Node TILDE = NodeCreateUtils.create( "~" );
         public static final Node C14N_TRUE = NodeCreateUtils.create( "http://www-uk.hpl.hp.com/people/jjc/rdf/c14n#true" );
         public static final String C14N = "http://www-uk.hpl.hp.com/people/jjc/rdf/c14n#";
