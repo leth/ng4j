@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetDB.java,v 1.6 2009/01/21 18:10:53 jenpc Exp $
+// $Id: NamedGraphSetDB.java,v 1.7 2009/02/11 15:20:40 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -7,6 +7,7 @@ import java.util.Iterator;
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
+import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.NamedGraphModel;
@@ -85,7 +86,7 @@ public class NamedGraphSetDB extends NamedGraphSetIO implements NamedGraphSet {
 	 */
 	public void addGraph(NamedGraph graph) {
 		createGraph(graph.getGraphName());
-		Iterator it = graph.find(Node.ANY, Node.ANY, Node.ANY);
+		ExtendedIterator it = graph.find(Node.ANY, Node.ANY, Node.ANY);
 		while (it.hasNext()) {
 			Triple triple = (Triple) it.next();
 			this.db.insert(graph.getGraphName(), triple.getSubject(), triple.getPredicate(), triple.getObject());
@@ -166,14 +167,14 @@ public class NamedGraphSetDB extends NamedGraphSetIO implements NamedGraphSet {
 	/* (non-Javadoc)
 	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#listGraphs()
 	 */
-	public Iterator listGraphs() {
+	public Iterator<NamedGraph> listGraphs() {
 		final Iterator<Node> graphNames = this.db.listGraphNames();
-		return new Iterator() {
+		return new Iterator<NamedGraph>() {
 			private Node current = null;
 			public boolean hasNext() {
 				return graphNames.hasNext();
 			}
-			public Object next() {
+			public NamedGraph next() {
 				this.current = (Node) graphNames.next();
 				return new NamedGraphDB(getDB(), this.current);
 			}
