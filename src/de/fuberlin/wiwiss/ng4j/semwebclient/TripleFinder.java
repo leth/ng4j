@@ -1,7 +1,5 @@
 package de.fuberlin.wiwiss.ng4j.semwebclient;
 
-import java.util.Iterator;
-
 import com.hp.hpl.jena.graph.Triple;
 
 /**
