@@ -1,4 +1,4 @@
-// $Id: SyntacticExtensionProcessorTest.java,v 1.1 2004/12/13 02:05:53 cyganiak Exp $
+// $Id: SyntacticExtensionProcessorTest.java,v 1.2 2009/02/11 01:54:39 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.trix;
 
 import java.io.IOException;
@@ -44,7 +44,7 @@ public class SyntacticExtensionProcessorTest extends TestCase {
 				"<?xml-stylesheet href=\"" + XSL1 + "\" type=\"application/xml\"?>" +
 				"<TriX xmlns=\"" + TRIX_NS + "\"/>");
 		SyntacticExtensionProcessor processor = new SyntacticExtensionProcessor(doc);
-		List transforms = processor.getTransforms();
+		List<String> transforms = processor.getTransforms();
 		assertNotNull(transforms);
 		assertEquals(1, transforms.size());
 		assertEquals(XSL1, transforms.get(0));
@@ -72,7 +72,7 @@ public class SyntacticExtensionProcessorTest extends TestCase {
 				"<?xml-stylesheet href=\"" + XSL1 + "\" type=\"application/xml\"?>" +
 				"<TriX xmlns=\"" + TRIX_NS + "\"/>");
 		SyntacticExtensionProcessor processor = new SyntacticExtensionProcessor(doc);
-		List transforms = processor.getTransforms();
+		List<String> transforms = processor.getTransforms();
 		assertNotNull(transforms);
 		assertEquals(1, transforms.size());
 		assertEquals(XSL1, transforms.get(0));		
@@ -84,7 +84,7 @@ public class SyntacticExtensionProcessorTest extends TestCase {
 				"<?xml-stylesheet href=\"" + XSL1 + "\" type=\"application/xml\"?>" +
 				"<TriX xmlns=\"" + TRIX_NS + "\"/>");
 		SyntacticExtensionProcessor processor = new SyntacticExtensionProcessor(doc);
-		List transforms = processor.getTransforms();
+		List<String> transforms = processor.getTransforms();
 		assertNotNull(transforms);
 		assertEquals(1, transforms.size());
 		assertEquals(XSL1, transforms.get(0));		
@@ -96,7 +96,7 @@ public class SyntacticExtensionProcessorTest extends TestCase {
 				"<?xml-stylesheet href=\"" + XSL1 + "\" type=\"application/xml\"?>" +
 				"<TriX xmlns=\"" + TRIX_NS + "\"/>");
 		SyntacticExtensionProcessor processor = new SyntacticExtensionProcessor(doc);
-		List transforms = processor.getTransforms();
+		List<String> transforms = processor.getTransforms();
 		assertNotNull(transforms);
 		assertEquals(1, transforms.size());
 		assertEquals(XSL1, transforms.get(0));		
@@ -125,7 +125,7 @@ public class SyntacticExtensionProcessorTest extends TestCase {
 				"<?xml-stylesheet href=\"" + XSL2 + "\" type=\"application/xml\"?>" +
 				"<TriX xmlns=\"" + TRIX_NS + "\"/>");
 		SyntacticExtensionProcessor processor = new SyntacticExtensionProcessor(doc);
-		List transforms = processor.getTransforms();
+		List<String> transforms = processor.getTransforms();
 		assertNotNull(transforms);
 		assertEquals(2, transforms.size());
 		assertEquals(XSL1, transforms.get(0));		
