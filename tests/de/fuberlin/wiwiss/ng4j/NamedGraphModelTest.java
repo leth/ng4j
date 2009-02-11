@@ -1,4 +1,4 @@
-// $Id: NamedGraphModelTest.java,v 1.3 2009/02/11 01:56:06 jenpc Exp $
+// $Id: NamedGraphModelTest.java,v 1.4 2009/02/11 15:16:24 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.util.ArrayList;
@@ -121,16 +121,16 @@ public class NamedGraphModelTest extends TestCase {
 	public void testListStatementsWithSelector() {
 		this.model.add(twoStatementsList());
 		assertAllNamedGraphStatements(this.model.listStatements(new SimpleSelector()));
-		Collection stmts = toCollection(this.model.listStatements(new SimpleSelector()));
+		Collection<Statement> stmts = toCollection(this.model.listStatements(new SimpleSelector()));
 		assertTrue(stmts.contains(new NamedGraphStatement(foo, bar, baz, this.model)));
 		assertTrue(stmts.contains(new NamedGraphStatement(baz, bar, foo, this.model)));
 		assertEquals(2, stmts.size());
 	}
 	
-	private Collection toCollection(Iterator it) {
-		Collection result = new ArrayList();
+	private Collection<Statement> toCollection(StmtIterator it) {
+		Collection<Statement> result = new ArrayList<Statement>();
 		while (it.hasNext()) {
-			result.add(it.next());
+			result.add((Statement)it.next());
 		}
 		return result;
 	}
