@@ -186,9 +186,9 @@ public class ARQNamedGraphSet extends NamedGraphSetBase {
 	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#clear()
 	 */
 	public void clear() {
-		Iterator it = listGraphs();
+		Iterator<NamedGraph> it = listGraphs();
 		while (it.hasNext()) {
-			NamedGraph g = (NamedGraph) it.next();
+			NamedGraph g = it.next();
 			removeGraph(g.getGraphName());
 		}
 	}
