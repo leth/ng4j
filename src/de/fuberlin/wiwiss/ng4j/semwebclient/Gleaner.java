@@ -118,9 +118,9 @@ public class Gleaner
 	this.is = is;
     }
 
-    public ArrayList links()
+    public ArrayList<String> links()
     { 
-	return this.h == null? new ArrayList() : this.h.links();
+	return this.h == null? new ArrayList<String>() : this.h.links();
     }
     
     public void glean(NamedGraphSet ngs)
@@ -177,7 +177,7 @@ public class Gleaner
 	
 	try {
 	    TransformerFactory tFactory = TransformerFactory.newInstance();
-	    Iterator it = h.transformations().iterator();
+	    Iterator<URI> it = h.transformations().iterator();
 	    Model m = ModelFactory.createDefaultModel();
 	    while(it.hasNext()) {
 		String stylesheet = it.next().toString();
@@ -198,9 +198,9 @@ public class Gleaner
 	    // so we record this information as rdfs:seeAlso properties
 	    // (thanks Richard!)
 	    //
-	    it = h.links().iterator();
-	    while (it.hasNext()) {
-		String lnk = it.next().toString();
+	    Iterator<String> itl = h.links().iterator();
+	    while (itl.hasNext()) {
+		String lnk = itl.next().toString();
 		m.add( m.createStatement(m.createResource(this.u),
 					 m.createProperty("http://www.w3.org/2000/01/rdf-schema#", 
 							  "seeAlso"),
