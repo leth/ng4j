@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetTest.java,v 1.7 2009/01/20 22:04:31 jenpc Exp $
+// $Id: NamedGraphSetTest.java,v 1.8 2009/02/11 15:15:41 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.util.ArrayList;
@@ -202,7 +202,7 @@ public class NamedGraphSetTest extends TestCase {
 		assertEquals(node1, ((NamedGraph) this.set.listGraphs().next()).getGraphName());
 		Collection<Node> graphs = new ArrayList<Node>();
 		this.set.createGraph(uri2);
-		Iterator it = this.set.listGraphs();
+		Iterator<NamedGraph> it = this.set.listGraphs();
 		assertTrue(it.hasNext());
 		graphs.add(((NamedGraph) it.next()).getGraphName());
 		assertTrue(it.hasNext());
