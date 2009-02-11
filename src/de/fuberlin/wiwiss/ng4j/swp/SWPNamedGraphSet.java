@@ -87,6 +87,7 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * Return true if successful.
      * 
      * @param authority
+     * @param listOfAuthorityProperties
      * @return
      */
     public boolean swpQuote( SWPAuthority authority, ArrayList<Node> listOfAuthorityProperties );
@@ -123,7 +124,11 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * @param signatureMethod
      * @param digestMethod
      * @param listOfAuthorityProperties
+     * @param keystore
+     * @param password
      * @return
+     * @throws SWPBadSignatureException
+     * @throws SWPBadDigestException
      */
     public boolean assertWithSignature( SWPAuthority authority, 
     									Node signatureMethod, 
@@ -164,7 +169,11 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * @param signatureMethod
      * @param digestMethod
      * @param listOfAuthorityProperties
+     * @param keystore
+     * @param password
      * @return
+     * @throws SWPBadSignatureException
+     * @throws SWPBadDigestException
      */
     public boolean quoteWithSignature( SWPAuthority authority, 
     									Node signatureMethod, 
@@ -187,7 +196,6 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * @param listOfAuthorityProperties
      * @return
      */
-	
     public boolean assertGraphs( ArrayList<Node> listOfGraphNames, SWPAuthority authority, ArrayList<Node> listOfAuthorityProperties );
 
     public boolean quoteGraphs( ArrayList<Node> listOfGraphNames, SWPAuthority authority, ArrayList<Node> listOfAuthorityProperties );
@@ -201,10 +209,16 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * 
      * @param listOfGraphURIs
      * @param authority
+     * @param signatureMethod
+     * @param digestMethod
+     * @param listOfAuthorityProperties
+     * @param keystore
+     * @param password
      * @return
+     * @throws SWPBadSignatureException
+     * @throws SWPBadDigestException
      */
-	
-    public boolean assertGraphsWithSignature( ArrayList listOfGraphNames, 
+    public boolean assertGraphsWithSignature( ArrayList<String> listOfGraphURIs, 
     										SWPAuthority authority, 
     										Node signatureMethod, 
     										Node digestMethod, 
