@@ -1,4 +1,4 @@
-// $Id: PrettyNamespacePrefixMakerTest.java,v 1.1 2004/12/17 05:06:31 cyganiak Exp $
+// $Id: PrettyNamespacePrefixMakerTest.java,v 1.2 2009/02/11 15:11:31 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import java.util.HashMap;
@@ -20,18 +20,18 @@ import com.hp.hpl.jena.mem.GraphMem;
 public class PrettyNamespacePrefixMakerTest extends TestCase {
 	private Graph graph;
 	private PrettyNamespacePrefixMaker maker;
-	private Map actualPrefixes;
-	private Map expectedPrefixes;
+	private Map<String,String> actualPrefixes;
+	private Map<String,String> expectedPrefixes;
 
 	public void setUp() {
 		this.graph = new GraphMem();
 		this.maker = new PrettyNamespacePrefixMaker(this.graph);
-		this.expectedPrefixes = new HashMap();
+		this.expectedPrefixes = new HashMap<String,String>();
 	}
 
 	public void tearDown() {
 		this.actualPrefixes = this.maker.getPrefixMap();
-		Iterator it = this.expectedPrefixes.keySet().iterator();
+		Iterator<String> it = this.expectedPrefixes.keySet().iterator();
 		while (it.hasNext()) {
 			String expectedPrefix = (String) it.next();
 			assertTrue("Expected prefix: '" + expectedPrefix + "'",
