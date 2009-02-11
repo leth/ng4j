@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetDBTest.java,v 1.3 2009/02/10 22:38:17 jenpc Exp $
+// $Id: NamedGraphSetDBTest.java,v 1.4 2009/02/11 15:14:38 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.util.ArrayList;
@@ -52,9 +52,9 @@ public class NamedGraphSetDBTest extends NamedGraphSetTest {
 		assertFalse(this.set.containsGraph(node2));
 		assertTrue(this.set.getGraph(node1).isEmpty());
 		assertNull(this.set.getGraph(node2));
-		Iterator it = this.set.listGraphs();
+		Iterator<NamedGraph> it = this.set.listGraphs();
 		assertTrue(it.hasNext());
-		assertEquals(node1, ((NamedGraph) it.next()).getGraphName());
+		assertEquals(node1, (it.next()).getGraphName());
 		assertFalse(it.hasNext());
 		assertFalse(this.set.isEmpty());
 		it.remove();
@@ -78,7 +78,7 @@ public class NamedGraphSetDBTest extends NamedGraphSetTest {
 			+ " } }";
 		QueryExecution qe = QueryExecutionFactory.create( queryString, localDS );
 		ResultSet results = ResultSetFactory.copyResults( qe.execSelect() );
-		List actual = new ArrayList();
+		List<Object> actual = new ArrayList<Object>();
 		assertTrue(results.hasNext());
 		actual.add(results.next());
 		assertTrue(results.hasNext());
