@@ -1,4 +1,4 @@
-// $Id: GraphReaderService.java,v 1.8 2008/08/20 11:04:51 hartig Exp $
+// $Id: GraphReaderService.java,v 1.9 2009/02/11 02:05:48 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import java.io.File;
@@ -69,8 +69,8 @@ public class GraphReaderService {
 	private String sourceString = null;
 	private String baseURI = null;
 	private String lang = null;
-	private Map mimeTypes = new HashMap();
-	private Map fileExtensions = new HashMap();
+	private Map<String,String> mimeTypes = new HashMap<String,String>();
+	private Map<String,String> fileExtensions = new HashMap<String,String>();
 	private RDFReaderF readerFactory = new RDFReaderFImpl();
 
 	public GraphReaderService() {
@@ -333,7 +333,7 @@ public class GraphReaderService {
 		try {
 			URL realURL = new URL(uri);
 			String filename = realURL.getFile();
-			Iterator it = this.fileExtensions.keySet().iterator();
+			Iterator<String> it = this.fileExtensions.keySet().iterator();
 			while (it.hasNext()) {
 				String extension = (String) it.next();
 				if (filename.indexOf(extension) >= 0) {
