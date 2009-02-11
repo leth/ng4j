@@ -1,4 +1,4 @@
-// $Id: NamedGraphSet.java,v 1.10 2009/01/21 18:10:51 jenpc Exp $
+// $Id: NamedGraphSet.java,v 1.11 2009/02/11 02:09:11 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.io.InputStream;
@@ -185,7 +185,7 @@ public interface NamedGraphSet {
 	 * @param pattern A quad or quad pattern
 	 * @return An iterator over all {@link Quad}s that match the pattern
 	 */
-	public Iterator<Quad> findQuads(Quad pattern);
+	public Iterator findQuads(Quad pattern);
 
 	/**
 	 * Finds Quads that match a pattern. All arguments may be
@@ -196,7 +196,7 @@ public interface NamedGraphSet {
 	 * @param object The object to be matched
 	 * @return An iterator over all {@link Quad}s that match the pattern
 	 */
-	public Iterator<Quad> findQuads(Node graphName, Node subject, Node predicate, Node object);	
+	public Iterator findQuads(Node graphName, Node subject, Node predicate, Node object);	
 	
 //	=== Views on the Graph Set ========================		
 	

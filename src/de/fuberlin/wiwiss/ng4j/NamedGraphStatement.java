@@ -1,4 +1,4 @@
-// $Id: NamedGraphStatement.java,v 1.3 2009/01/21 18:10:51 jenpc Exp $
+// $Id: NamedGraphStatement.java,v 1.4 2009/02/11 02:09:11 jenpc Exp $
 
 package de.fuberlin.wiwiss.ng4j;
 
@@ -82,7 +82,7 @@ public class NamedGraphStatement extends StatementImpl {
 
 	public NamedGraph getGraph() {
 
-		Iterator<Quad> it = this.namedGraphSet.findQuads(
+		Iterator it = this.namedGraphSet.findQuads(
 
 				Node.ANY,
 
@@ -98,7 +98,7 @@ public class NamedGraphStatement extends StatementImpl {
 
 		}
 
-		return this.namedGraphSet.getGraph((it.next()).getGraphName());
+		return this.namedGraphSet.getGraph(((Quad) it.next()).getGraphName());
 
 	}
 
@@ -142,7 +142,7 @@ public class NamedGraphStatement extends StatementImpl {
 
 		List<NamedGraph> graphs = new ArrayList<NamedGraph>();
 
-		Iterator<Quad> it = this.namedGraphSet.findQuads(
+		Iterator it = this.namedGraphSet.findQuads(
 
 				Node.ANY,
 
@@ -154,7 +154,7 @@ public class NamedGraphStatement extends StatementImpl {
 
 		while (it.hasNext()) {
 
-			Quad quad = it.next();
+			Quad quad = (Quad) it.next();
 
 			graphs.add(this.namedGraphSet.getGraph(quad.getGraphName()));
 
@@ -184,7 +184,7 @@ public class NamedGraphStatement extends StatementImpl {
 
 		List<Resource> graphs = new ArrayList<Resource>();
 
-		Iterator<Quad> it = this.namedGraphSet.findQuads(
+		Iterator it = this.namedGraphSet.findQuads(
 
 				Node.ANY,
 
@@ -196,7 +196,7 @@ public class NamedGraphStatement extends StatementImpl {
 
 		while (it.hasNext()) {
 
-			Quad quad = it.next();
+			Quad quad = (Quad) it.next();
 
 			NamedGraph graph = this.namedGraphSet.getGraph(quad.getGraphName());
 
@@ -220,7 +220,7 @@ public class NamedGraphStatement extends StatementImpl {
 
 	 */
 
-	public Iterator<Quad> listQuads() {
+	public Iterator listQuads() {
 
 		return this.namedGraphSet.findQuads(
 
