@@ -50,8 +50,8 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
 /**
  * 
  * Last commit info    :   $Author: jenpc $
- * $Date: 2009/02/11 04:16:23 $
- * $Revision: 1.24 $
+ * $Date: 2009/02/11 15:18:07 $
+ * $Revision: 1.25 $
  * 
  * @author Chris Bizer.
  * @author Rowland Watkins.
@@ -86,7 +86,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 	protected boolean actOnGraphs( SWPAuthority authority,
 			ArrayList<Node> listOfAuthorityProperties,
 			Node property, // typically SWP.assertedBy or SWP.quotedBy
-			ArrayList listOfGraphNames, // the particular graphs to act on; use null if all graphs in the set should be acted on
+			ArrayList<Node> listOfGraphNames, // the particular graphs to act on; use null if all graphs in the set should be acted on
 			Node digestMethod, // the method to use when creating the digest; use null if digest should not be included
 			ArrayList<Triple> additionalWarrantStatements // additional triples to add to the warrant; null for none
 			) {
@@ -110,10 +110,10 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 			{
 				currentGraph = ( NamedGraph ) this.getGraph( ( Node ) next );
 			}
-			else if ( next instanceof String )
-			{
-				currentGraph = ( NamedGraph ) this.getGraph( ( String ) next );
-			}
+//			else if ( next instanceof String )
+//			{
+//				currentGraph = ( NamedGraph ) this.getGraph( ( String ) next );
+//			}
 			else if ( next instanceof NamedGraph )
 			{
 				currentGraph = ( NamedGraph ) next;
@@ -164,7 +164,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     }
 
     /* (non-Javadoc)
-     * @see de.fuberlin.wiwiss.ng4j.swp.signature.SWPNamedGraphSet#swpQuote(de.fuberlin.wiwiss.ng4j.swp.signature.SWPAuthority, java.util.ArrayList)
+     * @see de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraphSet#swpQuote(de.fuberlin.wiwiss.ng4j.swp.SWPAuthority, java.util.ArrayList)
      */
     public boolean swpQuote( SWPAuthority authority, ArrayList<Node> listOfAuthorityProperties ) 
 	{
@@ -177,7 +177,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     }
 
     /* (non-Javadoc)
-     * @see de.fuberlin.wiwiss.ng4j.swp.signature.SWPNamedGraphSet#assertGraphs(java.util.ArrayList, de.fuberlin.wiwiss.ng4j.swp.signature.SWPAuthority, java.util.ArrayList)
+     * @see de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraphSet#assertGraphs(java.util.ArrayList, de.fuberlin.wiwiss.ng4j.swp.SWPAuthority, java.util.ArrayList)
      */
     public boolean assertGraphs( ArrayList<Node> listOfGraphNames, SWPAuthority authority, ArrayList<Node> listOfAuthorityProperties ) 
 	{
@@ -185,7 +185,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     }
 
     /* (non-Javadoc)
-     * @see de.fuberlin.wiwiss.ng4j.swp.signature.SWPNamedGraphSet#assertGraphs(java.util.ArrayList, de.fuberlin.wiwiss.ng4j.swp.signature.SWPAuthority, java.util.ArrayList)
+     * @see de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraphSet#quoteGraphs(java.util.ArrayList, de.fuberlin.wiwiss.ng4j.swp.SWPAuthority, java.util.ArrayList)
      */
     public boolean quoteGraphs( ArrayList<Node> listOfGraphNames, SWPAuthority authority, ArrayList<Node> listOfAuthorityProperties ) 
     {
@@ -195,7 +195,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 	protected boolean actOnGraphsAndIncludeSignature( SWPAuthority authority,
 			ArrayList<Node> listOfAuthorityProperties,
 			Node property, // typically SWP.assertedBy or SWP.quotedBy
-			ArrayList listOfGraphURIs, // the particular graphs to act on; use null if all graphs in the set should be acted on
+			ArrayList<String> listOfGraphURIs, // the particular graphs to act on; use null if all graphs in the set should be acted on
 			Node digestMethod, // the method to use when creating the digest
 			Node signatureMethod,
 			String keystore,
@@ -397,7 +397,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 	}
 
     /* (non-Javadoc)
-     * @see de.fuberlin.wiwiss.ng4j.swp.signature.SWPNamedGraphSet#assertWithSignature(de.fuberlin.wiwiss.ng4j.swp.signature.SWPAuthority, com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node, java.util.ArrayList)
+     * @see de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraphSet#assertWithSignature(de.fuberlin.wiwiss.ng4j.swp.SWPAuthority, com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node, java.util.ArrayList, java.lang.String, java.lang.String)
      */
     public boolean assertWithSignature( SWPAuthority authority, 
     									Node signatureMethod, 
@@ -412,7 +412,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     }
 
     /* (non-Javadoc)
-     * @see de.fuberlin.wiwiss.ng4j.swp.signature.SWPNamedGraphSet#quoteWithSignature(de.fuberlin.wiwiss.ng4j.swp.signature.SWPAuthority, com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node, java.util.ArrayList)
+     * @see de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraphSet#quoteWithSignature(de.fuberlin.wiwiss.ng4j.swp.SWPAuthority, com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node, java.util.ArrayList, java.lang.String, java.lang.String)
      */
     public boolean quoteWithSignature( SWPAuthority authority, 
     									Node signatureMethod, 
@@ -426,9 +426,9 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     }
 
     /* (non-Javadoc)
-     * @see de.fuberlin.wiwiss.ng4j.swp.signature.SWPNamedGraphSet#assertGraphsWithSignature(java.util.ArrayList, de.fuberlin.wiwiss.ng4j.swp.signature.SWPAuthority, com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node, java.util.ArrayList)
+     * @see de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraphSet#assertGraphsWithSignature(java.util.ArrayList, de.fuberlin.wiwiss.ng4j.swp.SWPAuthority, com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node, java.util.ArrayList, java.lang.String, java.lang.String)
      */
-    public boolean assertGraphsWithSignature( ArrayList listOfGraphURIs, 
+    public boolean assertGraphsWithSignature( ArrayList<String> listOfGraphURIs, 
     										SWPAuthority authority, 
     										Node signatureMethod, 
     										Node digestMethod, 
@@ -441,9 +441,8 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     }
 
     /* (non-Javadoc)
-     * @see de.fuberlin.wiwiss.ng4j.swp.signature.SWPNamedGraphSet#getAllWarrants(de.fuberlin.wiwiss.ng4j.swp.signature.SWPAuthority)
+     * @see de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraphSet#getAllWarrants(de.fuberlin.wiwiss.ng4j.swp.SWPAuthority)
      */
-    
     public ExtendedIterator getAllWarrants( SWPAuthority authority ) 
     {
 //		String warrantQuery = "SELECT * WHERE ?warrant (?warrant swp:assertedBy ?warrant) (?warrant swp:authority <"+authority.getID()+">) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
@@ -475,7 +474,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     }
 
     /* (non-Javadoc)
-     * @see de.fuberlin.wiwiss.ng4j.swp.signature.SWPNamedGraphSet#getAllAssertedGraphs(de.fuberlin.wiwiss.ng4j.swp.signature.SWPAuthority)
+     * @see de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraphSet#getAllAssertedGraphs(de.fuberlin.wiwiss.ng4j.swp.SWPAuthority)
      */
     public ExtendedIterator getAllAssertedGraphs( SWPAuthority authority ) 
 	{
@@ -483,7 +482,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     }
 
     /* (non-Javadoc)
-     * @see de.fuberlin.wiwiss.ng4j.swp.signature.SWPNamedGraphSet#getAllquotedGraphs(de.fuberlin.wiwiss.ng4j.swp.signature.SWPAuthority)
+     * @see de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraphSet#getAllQuotedGraphs(de.fuberlin.wiwiss.ng4j.swp.SWPAuthority)
      */
     public ExtendedIterator getAllQuotedGraphs( SWPAuthority authority ) 
 	{
@@ -522,6 +521,9 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
         return WrappedIterator.create(graphs.iterator());
     }
         
+    /* (non-Javadoc)
+     * @see de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraphSet#verifyAllSignatures()
+     */
     public boolean verifyAllSignatures() 
     {
     	//First, let's remove any previous verification
@@ -581,7 +583,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
         	            {
         	                try 
         	                {
-        	                	Iterator exit = ng.find( ng.getGraphName(), SWP.signature, Node.ANY );
+        	                	ExtendedIterator exit = ng.find( ng.getGraphName(), SWP.signature, Node.ANY );
         	                	ArrayList<Triple> li = new ArrayList<Triple>();
         	                	while ( exit.hasNext() )
         	                	{
