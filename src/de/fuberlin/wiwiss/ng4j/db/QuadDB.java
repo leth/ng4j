@@ -1,4 +1,4 @@
-// $Id: QuadDB.java,v 1.13 2009/02/11 15:20:20 jenpc Exp $
+// $Id: QuadDB.java,v 1.14 2009/02/11 15:38:22 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -453,6 +453,13 @@ public class QuadDB {
 		this.escapeReplacement = dbCompatibility.getEscapeReplacement();
 	}
 
+	public void initializePreparedStatements() {
+		try {
+			dbCompatibility.initializePreparedStatements();
+		} catch (SQLException e) {
+			throw new RuntimeException("Unable to initialize prepared statements for database: " + dbCompatibility.getClass().getName());
+		}
+	}
 }
 
 /*

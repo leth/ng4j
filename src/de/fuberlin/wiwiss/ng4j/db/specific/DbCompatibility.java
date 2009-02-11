@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/DbCompatibility.java,v 1.2 2009/01/20 16:14:35 jenpc Exp $
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/DbCompatibility.java,v 1.3 2009/02/11 15:38:22 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db.specific;
 
 import java.sql.Connection;
@@ -171,6 +171,11 @@ public abstract class DbCompatibility {
 	 */
 	public Connection getConnection() {
 		return connection;
+	}
+
+	public void initializePreparedStatements() throws SQLException {
+		// TODO Implement
+		
 	}
 
 	/*
