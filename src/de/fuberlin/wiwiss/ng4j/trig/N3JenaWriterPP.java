@@ -18,7 +18,7 @@ import java.util.* ;
  *  Tries to make N3 data look readable - works better on regular data.
  *
  * @author		Andy Seaborne
- * @version 	$Id: N3JenaWriterPP.java,v 1.4 2009/02/11 02:08:13 jenpc Exp $
+ * @version 	$Id: N3JenaWriterPP.java,v 1.5 2009/02/11 15:16:56 jenpc Exp $
  */
 
 
@@ -177,6 +177,7 @@ public class N3JenaWriterPP extends N3JenaWriterCommon
 			// Corrupt graph!
 			throw new JenaException("N3: found object with no arcs!") ;
 
+		@SuppressWarnings("unused")
 		Statement s = pointsToIter.nextStatement() ;
                
 		if ( pointsToIter.hasNext() )
