@@ -523,7 +523,7 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 				}
 				if (result.isSuccess()) {
 					addProvenanceInformation(result.getURI());
-					Iterator it = result.getResultData().listGraphs();
+					Iterator<NamedGraph> it = result.getResultData().listGraphs();
 					while (it.hasNext()) {
 						addGraph((NamedGraph) it.next());
 					}
