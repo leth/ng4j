@@ -1,4 +1,4 @@
-// $Id: QuadDB.java,v 1.12 2009/01/21 18:10:53 jenpc Exp $
+// $Id: QuadDB.java,v 1.13 2009/02/11 15:20:20 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -15,7 +16,6 @@ import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.rdf.model.AnonId;
 import com.hp.hpl.jena.shared.JenaException;
-import com.hp.hpl.jena.util.iterator.NullIterator;
 
 import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.db.specific.DbCompatibility;
@@ -99,7 +99,8 @@ public class QuadDB {
 		if ((!graph.isURI() && !graph.equals(Node.ANY))
 				|| (!subject.isURI() && !subject.isBlank() && !subject.equals(Node.ANY))
 				|| (!predicate.isURI() && !predicate.equals(Node.ANY))) {
-			return new NullIterator();
+			List<Quad> quadsList = Collections.emptyList();
+			return quadsList.iterator();
 		}
 		String sql = "SELECT graph, subject, predicate, object, literal, lang, datatype " +
 				"FROM " + quadsTableName + " " +
@@ -383,7 +384,7 @@ public class QuadDB {
 	}
 
 	private String getWhereClause(Node graph, Node subject, Node predicate, Node object) {
-		List clauses = new ArrayList();
+		List<String> clauses = new ArrayList<String>();
 		if (!Node.ANY.equals(graph)) {
 			clauses.add("graph='" + escape(graph.getURI()) + "'");
 		}
@@ -414,7 +415,7 @@ public class QuadDB {
 			return "";
 		}
 		String result = "";
-		Iterator it = clauses.iterator();
+		Iterator<String> it = clauses.iterator();
 		while (it.hasNext()) {
 			String clause = (String) it.next();
 			if (!"".equals(result)) {
