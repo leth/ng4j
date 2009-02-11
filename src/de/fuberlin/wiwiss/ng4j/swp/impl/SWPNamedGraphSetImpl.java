@@ -49,8 +49,8 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
 /**
  * 
  * Last commit info    :   $Author: jenpc $
- * $Date: 2009/01/21 18:10:52 $
- * $Revision: 1.22 $
+ * $Date: 2009/02/11 02:03:26 $
+ * $Revision: 1.23 $
  * 
  * @author Chris Bizer.
  * @author Rowland Watkins.
@@ -159,7 +159,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     }
 
     public boolean swpAssert(SWPAuthority authority) {
-        return swpAssert(authority, new ArrayList());
+        return swpAssert(authority, new ArrayList<Node>());
     }
 
     /* (non-Javadoc)
@@ -543,11 +543,11 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     		Quad quad = null;
     		NamedGraph ng = ngsIt.next();
         	
-    		Iterator<Quad> it = findQuads( Node.ANY, Node.ANY, SWP.assertedBy, ng.getGraphName() );
+    		Iterator it = findQuads( Node.ANY, Node.ANY, SWP.assertedBy, ng.getGraphName() );
 			
     		if ( it.hasNext() )
     		{	
-    			quad = it.next();
+    			quad = (Quad) it.next();
     			String ngName = ng.getGraphName().toString();
 //    			String warrantQuery = "SELECT * WHERE <"+ng.getGraphName().toString()+"> (<"+ng.getGraphName().toString()+"> swp:signature ?signature . <"+ng.getGraphName().toString()+"> swp:signatureMethod ?smethod . <"+ng.getGraphName().toString()+"> swp:authority ?authority . ?authority swp:X509Certificate ?certificate) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
 	            String warrantQuery = "SELECT ?signature ?smethod ?certificate" + NL
