@@ -10,7 +10,8 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.axis.components.uuid.SimpleUUIDGen;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.graph.Node;
@@ -49,15 +50,15 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
 /**
  * 
  * Last commit info    :   $Author: jenpc $
- * $Date: 2009/02/11 02:03:26 $
- * $Revision: 1.23 $
+ * $Date: 2009/02/11 04:16:23 $
+ * $Revision: 1.24 $
  * 
  * @author Chris Bizer.
  * @author Rowland Watkins.
  */
 public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedGraphSet
 {
-	protected static final Logger logger = Logger.getLogger( SWPNamedGraphSetImpl.class );
+	protected static final Log logger = LogFactory.getLog( SWPNamedGraphSetImpl.class );
 	protected static boolean debug = logger.isDebugEnabled();
 	//This means we no longer have to rely on a not-so-well known uuid impl.
 	//Now dependent on Axis.
