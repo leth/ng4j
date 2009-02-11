@@ -98,7 +98,8 @@ public class PKCS12Utils {
 			*/
 				Enumeration<String> aliasesEnum = ks.aliases();
 		        String alias = null;
-		        Certificate[] certChain = null;
+		        @SuppressWarnings("unused")
+				Certificate[] certChain = null;
 		        while ( aliasesEnum.hasMoreElements() ) 
 		        {
 		            alias = aliasesEnum.nextElement();
