@@ -1,13 +1,12 @@
-// $Id: UnionGraphTest.java,v 1.1 2004/10/23 13:31:25 cyganiak Exp $
+// $Id: UnionGraphTest.java,v 1.2 2009/02/11 15:15:05 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j;
-
-import java.util.Iterator;
 
 import junit.framework.TestCase;
 
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
+import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.Quad;
@@ -49,7 +48,7 @@ public class UnionGraphTest extends TestCase {
 	public void testRemoveDuplicateTriples() {
 		this.set.addQuad(new Quad(node1, foo, bar, baz));
 		this.set.addQuad(new Quad(node2, foo, bar, baz));
-		Iterator it = this.graph.find(Node.ANY, Node.ANY, Node.ANY);
+		ExtendedIterator it = this.graph.find(Node.ANY, Node.ANY, Node.ANY);
 		assertTrue(it.hasNext());
 		assertEquals(new Triple(foo, bar, baz), it.next());
 		assertFalse(it.hasNext());
