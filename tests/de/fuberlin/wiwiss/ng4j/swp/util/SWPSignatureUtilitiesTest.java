@@ -296,8 +296,8 @@ public class SWPSignatureUtilitiesTest extends TestCase
 	{
 		Certificate[] certs = PKCS12Utils.getCertChain( keystore, password );
 		
-		ArrayList list = new ArrayList();
-		list.add( certs[1]);
+		ArrayList<X509Certificate> list = new ArrayList<X509Certificate>();
+		list.add( (X509Certificate )certs[1]);
 
 		assertTrue( SWPSignatureUtilities.validateSignature( g1, 
 															SWP.JjcRdfC14N_rsa_sha224, //SWP.JjcRdfC14N_rsa_sha1, 
@@ -354,8 +354,8 @@ public class SWPSignatureUtilitiesTest extends TestCase
 	GeneralSecurityException 
 	{
 		Certificate[] certs = PKCS12Utils.getCertChain( keystore, password );
-		ArrayList list = new ArrayList();
-		list.add( certs[1]);
+		ArrayList<X509Certificate> list = new ArrayList<X509Certificate>();
+		list.add(( X509Certificate )certs[1]);
 		SWPSignatureUtilities.verifyCertificate( ( X509Certificate )certs[0], list );
 	}
 	
