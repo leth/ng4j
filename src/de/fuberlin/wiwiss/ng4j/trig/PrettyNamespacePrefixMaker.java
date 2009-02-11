@@ -1,13 +1,13 @@
-// $Id: PrettyNamespacePrefixMaker.java,v 1.4 2009/01/21 18:10:53 jenpc Exp $
+// $Id: PrettyNamespacePrefixMaker.java,v 1.5 2009/02/11 02:07:10 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
+import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 /**
  * Analyzes a graph and generates a pretty namespace mapping from it.
@@ -62,7 +62,7 @@ public class PrettyNamespacePrefixMaker {
 	}
 
 	private void analyzeGraph() {
-		Iterator it = this.graph.find(Node.ANY, Node.ANY, Node.ANY);
+		ExtendedIterator it = this.graph.find(Node.ANY, Node.ANY, Node.ANY);
 		while (it.hasNext()) {
 			Triple triple = (Triple) it.next();
 			analyzeURI(triple.getPredicate().getURI());
