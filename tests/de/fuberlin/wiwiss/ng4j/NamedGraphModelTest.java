@@ -1,10 +1,11 @@
-// $Id: NamedGraphModelTest.java,v 1.2 2007/03/06 18:16:55 zedlitz Exp $
+// $Id: NamedGraphModelTest.java,v 1.3 2009/02/11 01:56:06 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
@@ -110,7 +111,8 @@ public class NamedGraphModelTest extends TestCase {
 	public void testListStatementsAll() {
 		this.model.add(twoStatementsList());
 		assertAllNamedGraphStatements(this.model.listStatements());
-		Collection stmts = toCollection(this.model.listStatements());
+		Set stmts = this.model.listStatements().toSet();
+		//Collection stmts = toCollection(this.model.listStatements());
 		assertTrue(stmts.contains(new NamedGraphStatement(foo, bar, baz, this.model)));
 		assertTrue(stmts.contains(new NamedGraphStatement(baz, bar, foo, this.model)));
 		assertEquals(2, stmts.size());
@@ -133,8 +135,8 @@ public class NamedGraphModelTest extends TestCase {
 		return result;
 	}
 
-	private List twoStatementsList() {
-		List statements = new ArrayList();
+	private List<StatementImpl> twoStatementsList() {
+		List<StatementImpl> statements = new ArrayList<StatementImpl>();
 		statements.add(new StatementImpl(foo, bar, baz));
 		statements.add(new NamedGraphStatement(baz, bar, foo, this.model));
 		return statements;
