@@ -18,7 +18,7 @@ import java.util.* ;
  *  Tries to make N3 data look readable - works better on regular data.
  *
  * @author		Andy Seaborne
- * @version 	$Id: N3JenaWriterPP.java,v 1.3 2009/01/21 18:10:53 jenpc Exp $
+ * @version 	$Id: N3JenaWriterPP.java,v 1.4 2009/02/11 02:08:13 jenpc Exp $
  */
 
 
@@ -336,9 +336,11 @@ public class N3JenaWriterPP extends N3JenaWriterCommon
                 complex.add(obj) ;
         }
         sIter.close() ;
-        // DEBUG
-        int simpleSize = simple.size() ;
-        int complexSize = complex.size() ;
+        // DEBUG variables.
+        @SuppressWarnings("unused")
+		int simpleSize = simple.size() ;
+        @SuppressWarnings("unused")
+		int complexSize = complex.size() ;
         
         // Write property/simple objects
         
@@ -412,7 +414,8 @@ public class N3JenaWriterPP extends N3JenaWriterCommon
             // Can we fit teh start of teh complex object on this line?
             
             // DEBUG variable.
-            int tmp = propStr.length() ;
+            @SuppressWarnings("unused")
+			int tmp = propStr.length() ;
             // Complex objects - do not allow property to be long and alignment to be lost
             if ((propStr.length()+minGap) <= propertyCol)
             {
