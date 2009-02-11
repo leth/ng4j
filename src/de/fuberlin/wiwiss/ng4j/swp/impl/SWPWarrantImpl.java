@@ -1,4 +1,4 @@
-//$Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/swp/impl/SWPWarrantImpl.java,v 1.7 2009/01/21 01:32:57 jenpc Exp $
+//$Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/swp/impl/SWPWarrantImpl.java,v 1.8 2009/02/11 15:17:14 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.swp.impl;
 
 import java.io.ByteArrayInputStream;
@@ -151,6 +151,7 @@ public class SWPWarrantImpl implements SWPWarrant
 	public Signature getSignature() throws SWPSignatureException 
 	{
 		Signature sig = null;
+		@SuppressWarnings("unused")
 		byte[] signature = null;
 		String warrantUriString = warrant.getGraphName().getURI();
 		//String query = "SELECT * WHERE (<"+warrant.getGraphName().getURI()+"> swp:signature ?signature) (<"+warrant.getGraphName().getURI()+"> swp:signatureMethod ?smethod) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
