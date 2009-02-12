@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/DerbyCompatibility.java,v 1.1 2009/01/20 16:13:39 jenpc Exp $ 
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/DerbyCompatibility.java,v 1.2 2009/02/12 20:56:39 jenpc Exp $ 
 package de.fuberlin.wiwiss.ng4j.db.specific;
 
 import java.sql.Connection;
@@ -17,6 +17,8 @@ public class DerbyCompatibility extends DbCompatibility {
 	/* The default schema in Apache Derby databases is "app".
 	 */
 
+	protected static final String VARCHAR_NAME = "VARCHAR";
+
 	public DerbyCompatibility(Connection connection) {
 		super(connection);
 	}
@@ -26,17 +28,17 @@ public class DerbyCompatibility extends DbCompatibility {
 	 */
 	@Override
 	public void createTables() {
-		execute("CREATE TABLE app." + graphNamesTableName + " (name VARCHAR(160) , PRIMARY KEY(name)) ");
+		execute("CREATE TABLE app." + graphNamesTableName + " (name " + URI_DATATYPE + " , PRIMARY KEY(name)) ");
 		try {
 			executeNoErrorHandling(
 					"CREATE TABLE app." + quadsTableName + " (" +
-					"graph VARCHAR(160) NOT NULL," +
-					"subject VARCHAR(160) NOT NULL," +
-					"predicate VARCHAR(160) NOT NULL," +
-					"object VARCHAR(160)," +
-					"literal VARCHAR(2000)," +
-					"lang VARCHAR(10)," +
-					"datatype VARCHAR(160) )");
+					"graph " + URI_DATATYPE + " NOT NULL," +
+					"subject " + URI_DATATYPE + " NOT NULL," +
+					"predicate " + URI_DATATYPE + " NOT NULL," +
+					"object " + URI_DATATYPE + "," +
+					"literal " + LITERAL_DATATYPE + "," +
+					"lang " + LANGUAGE_DATATYPE + "," +
+					"datatype " + DATATYPE_DATATYPE + " )");
 			execute("CREATE INDEX g_idx ON " + quadsTableName +
 					" (graph, subject, predicate, object)");
 		} catch (SQLException ex) {
@@ -49,8 +51,17 @@ public class DerbyCompatibility extends DbCompatibility {
 	/* (non-Javadoc)
 	 * @see de.fuberlin.wiwiss.ng4j.db.specific.DbCompatibility#getGraphNamesTableNameForQueries()
 	 */
+	@Override
 	public String getGraphNamesTableNameForQueries() {
 		return graphNamesTableName.toUpperCase();
+	}
+
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.db.specific.DbCompatibility#getVarcharName()
+	 */
+	@Override
+	public String getVarcharName() {
+		return VARCHAR_NAME;
 	}
 
 	/* (non-Javadoc)

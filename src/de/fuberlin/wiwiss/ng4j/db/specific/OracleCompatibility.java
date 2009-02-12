@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/OracleCompatibility.java,v 1.1 2008/09/03 16:37:28 cyganiak Exp $
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/OracleCompatibility.java,v 1.2 2009/02/12 20:56:39 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db.specific;
 
 import java.sql.Connection;
@@ -14,10 +14,12 @@ import com.hp.hpl.jena.shared.JenaException;
 public class OracleCompatibility extends DbCompatibility {
 //	private static final String DEFAULT_STRING_ASSIGNMENT = "DEFAULT ''";
 	private static final String DEFAULT_NULL_ASSIGNMENT = "DEFAULT NULL";
-	private static final String URI_DATATYPE = "VARCHAR2(160)";
-	private static final String LITERAL_DATATYPE = "VARCHAR2(2000)";
-	private static final String LANGUAGE_DATATYPE = "VARCHAR2(10)";
-	private static final String DATATYPE_DATATYPE = "VARCHAR2(160)";
+//	private static final String URI_DATATYPE = "VARCHAR2(160)";
+//	private static final String LITERAL_DATATYPE = "VARCHAR2(2000)";
+//	private static final String LANGUAGE_DATATYPE = "VARCHAR2(10)";
+//	private static final String DATATYPE_DATATYPE = "VARCHAR2(160)";
+	
+	protected static final String VARCHAR_NAME = "VARCHAR2";
 
 	public OracleCompatibility(Connection connection) {
 		super(connection);
@@ -26,6 +28,7 @@ public class OracleCompatibility extends DbCompatibility {
 	/* (non-Javadoc)
 	 * @see de.fuberlin.wiwiss.ng4j.db.specific.DbCompatibility#getGraphNamesTableNameForQueries()
 	 */
+	@Override
 	public String getGraphNamesTableNameForQueries() {
 		return graphNamesTableName.toUpperCase();
 	}
@@ -54,6 +57,14 @@ public class OracleCompatibility extends DbCompatibility {
 			execute("DROP INDEX g_idx");
 			throw new JenaException(ex);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.db.specific.DbCompatibility#getVarcharName()
+	 */
+	@Override
+	public String getVarcharName() {
+		return VARCHAR_NAME;
 	}
 
 	/*

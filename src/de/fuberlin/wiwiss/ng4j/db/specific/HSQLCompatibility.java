@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/HSQLCompatibility.java,v 1.1 2008/09/03 16:37:28 cyganiak Exp $
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/HSQLCompatibility.java,v 1.2 2009/02/12 20:56:38 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db.specific;
 
 import java.sql.Connection;
@@ -15,7 +15,9 @@ public class HSQLCompatibility extends DbCompatibility {
 
 	public static final Pattern HSQLDB_ESCAPE_PATTERN = Pattern.compile("([\\'])");
 	public static final String HSQLDB_ESCAPE_REPLACEMENT = "$1$1";
-	
+
+	protected static final String VARCHAR_NAME = "VARCHAR";
+
 	public HSQLCompatibility(Connection connection) {
 		super(connection);
 	}
@@ -23,6 +25,7 @@ public class HSQLCompatibility extends DbCompatibility {
 	/* (non-Javadoc)
 	 * @see de.fuberlin.wiwiss.ng4j.db.specific.DbCompatibility#createTables()
 	 */
+	@Override
 	public void createTables() {
 		execute("CREATE TABLE " + graphNamesTableName + " (name VARCHAR , PRIMARY KEY(name)) ");
 		try {
@@ -44,6 +47,7 @@ public class HSQLCompatibility extends DbCompatibility {
 	/* (non-Javadoc)
 	 * @see de.fuberlin.wiwiss.ng4j.db.specific.DbCompatibility#getGraphNamesTableNameForQueries()
 	 */
+	@Override
 	public String getGraphNamesTableNameForQueries() {
 		return graphNamesTableName.toUpperCase();
 	}
@@ -51,6 +55,7 @@ public class HSQLCompatibility extends DbCompatibility {
 	/* (non-Javadoc)
 	 * @see de.fuberlin.wiwiss.ng4j.db.specific.DbCompatibility#getEscapePattern()
 	 */
+	@Override
 	public Pattern getEscapePattern() {
 		return HSQLDB_ESCAPE_PATTERN;
 	}
@@ -58,8 +63,17 @@ public class HSQLCompatibility extends DbCompatibility {
 	/* (non-Javadoc)
 	 * @see de.fuberlin.wiwiss.ng4j.db.specific.DbCompatibility#getEscapeReplacement()
 	 */
+	@Override
 	public String getEscapeReplacement() {
 		return HSQLDB_ESCAPE_REPLACEMENT;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.db.specific.DbCompatibility#getVarcharName()
+	 */
+	@Override
+	public String getVarcharName() {
+		return VARCHAR_NAME;
 	}
 
 	/*

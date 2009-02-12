@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/DbCompatibility.java,v 1.3 2009/02/11 15:38:22 jenpc Exp $
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/DbCompatibility.java,v 1.4 2009/02/12 20:56:38 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db.specific;
 
 import java.sql.Connection;
@@ -18,6 +18,16 @@ public abstract class DbCompatibility {
 	public static final Pattern DEFAULT_ESCAPE_PATTERN = Pattern.compile("([\\\\'])");
 	public static final String DEFAULT_ESCAPE_REPLACEMENT = "\\\\$1";
 	
+	protected static final String URI_DATATYPE_LENGTH = "255";
+	protected static final String LITERAL_DATATYPE_LENGTH = "2000";
+	protected static final String LANGUAGE_DATATYPE_LENGTH = "10";
+	protected static final String DATATYPE_DATATYPE_LENGTH = "255";
+	
+	protected final String URI_DATATYPE;
+	protected final String LITERAL_DATATYPE;
+	protected final String LANGUAGE_DATATYPE;
+	protected final String DATATYPE_DATATYPE;
+	
 	protected static final String INITIALIZATION_NOT_COMPLETED_ERROR_MSG = "";
 	
 	final Connection connection;
@@ -27,6 +37,11 @@ public abstract class DbCompatibility {
 	
 	public DbCompatibility( Connection connection ) {
 		this.connection = connection;
+		String varcharName = getVarcharName();
+		URI_DATATYPE = getDatatype(varcharName, URI_DATATYPE_LENGTH);
+		LITERAL_DATATYPE = getDatatype(varcharName, LITERAL_DATATYPE_LENGTH);
+		LANGUAGE_DATATYPE = getDatatype(varcharName, LANGUAGE_DATATYPE_LENGTH);
+		DATATYPE_DATATYPE = getDatatype(varcharName, DATATYPE_DATATYPE_LENGTH);
 	}
 
 	/** Initializes the database compatibility mechanism. <br>
@@ -60,7 +75,31 @@ public abstract class DbCompatibility {
 	 * before this method is called.
 	 */
 	public abstract void createTables();
-	
+
+	/** This is only needed if the DbCompatibility implementation uses
+	 * URI_DATATYPE, LITERAL_DATATYPE, LANGUAGE_DATATYPE, or DATATYPE_DATATYPE
+	 * in a method such as createTables(). <p>
+	 * 
+	 * However a dummy implementation should not return <code>null</code>
+	 * because the result is used to populate the aforementioned fields even
+	 * if they are not used.
+	 * 
+	 * @return the correct term for a VARCHAR for the database, e.g. "VARCHAR", "varchar", "VARCHAR2"
+	 */
+	public abstract String getVarcharName();
+
+	/** For variable-length varchars.  
+	 * Given the term for the varchar and the desired length, 
+	 * returns varcharName(length), e.g. VARCHAR(10).
+	 * 
+	 * @param varcharName the term for a varchar for the particular database, e.g. "VARCHAR", "varchar", "VARCHAR2"
+	 * @param length the length of the datatype to create, e.g. 10, 100, 432
+	 * @return varcharName with the length appended in parentheses.
+	 */
+	protected String getDatatype(String varcharName, String length) {
+		return varcharName + "(" + length + ")";
+	}
+
 	/** Returns the graphNamesTableName to be used for queries.
 	 * 
 	 * <p>The <code>initialize</code> method must be called

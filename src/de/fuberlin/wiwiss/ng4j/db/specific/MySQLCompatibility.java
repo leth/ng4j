@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/MySQLCompatibility.java,v 1.1 2008/09/03 16:37:28 cyganiak Exp $
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/MySQLCompatibility.java,v 1.2 2009/02/12 20:56:39 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db.specific;
 
 import java.sql.Connection;
@@ -12,6 +12,8 @@ import com.hp.hpl.jena.shared.JenaException;
  */
 public class MySQLCompatibility extends DbCompatibility {
 
+	protected static final String VARCHAR_NAME = "varchar";
+
 	public MySQLCompatibility(Connection connection) {
 		super(connection);
 	}
@@ -21,18 +23,18 @@ public class MySQLCompatibility extends DbCompatibility {
 	 */
 	public void createTables() {
 		execute("CREATE TABLE " + graphNamesTableName + " (" +
-				"name varchar(160) NOT NULL default '', " +
+				"name " + URI_DATATYPE + " NOT NULL default '', " +
 				"PRIMARY KEY  (`name`)) TYPE=MyISAM");
 		try {
 			executeNoErrorHandling(
 					"CREATE TABLE " + quadsTableName + " (" +
-					"graph varchar(160) NOT NULL default ''," +
-					"subject varchar(160) NOT NULL default ''," +
-					"predicate varchar(160) NOT NULL default ''," +
-					"object varchar(160) default NULL," +
+					"graph " + URI_DATATYPE + " NOT NULL default ''," +
+					"subject " + URI_DATATYPE + " NOT NULL default ''," +
+					"predicate " + URI_DATATYPE + " NOT NULL default ''," +
+					"object " + URI_DATATYPE + " default NULL," +
 					"literal text," +
-					"lang varchar(10) default NULL," +
-					"datatype varchar(160) default NULL," +
+					"lang " + LANGUAGE_DATATYPE + " default NULL," +
+					"datatype " + DATATYPE_DATATYPE + " default NULL," +
 					"KEY graph (`graph`)," +
 					"KEY subject (`subject`)," +
 					"KEY predicate (`predicate`)," +
@@ -42,6 +44,14 @@ public class MySQLCompatibility extends DbCompatibility {
 			execute("DROP TABLE " + graphNamesTableName);
 			throw new JenaException(ex);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.db.specific.DbCompatibility#getVarcharName()
+	 */
+	@Override
+	public String getVarcharName() {
+		return VARCHAR_NAME;
 	}
 
 	/*
