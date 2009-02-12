@@ -1,6 +1,7 @@
 
 02/12/09 (Jennifer)
 We neglected to update from wstx-asl-2.8.jar to wstx-asl-3.0.0.jar when we upgraded to ARQ 2.4 for release 0.8 of ng4j.  Updated the library.
+Generalize the sizes of fields used for databases which allow variable-length varchars.  The field size is set in DbCompatibility and used (in classes which support it) when tables are initially created.
 
 02/10/09 (Jennifer)
 Fixed NamedGraphModel code so that when it uses a TriGWriter, the writer includes the model's namespace prefix map.
