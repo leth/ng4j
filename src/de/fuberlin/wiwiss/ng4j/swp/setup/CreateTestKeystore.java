@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/swp/setup/CreateTestKeystore.java,v 1.2 2008/10/29 18:36:46 hartig Exp $
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/swp/setup/CreateTestKeystore.java,v 1.3 2009/02/18 15:52:02 hartig Exp $
 
 package de.fuberlin.wiwiss.ng4j.swp.setup;
 
@@ -26,8 +26,9 @@ import java.security.spec.RSAPublicKeySpec;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1InputStream;
@@ -77,7 +78,7 @@ import sun.misc.BASE64Encoder;
  */
 public class CreateTestKeystore {
 
-	private static final Logger logger = Logger.getLogger( CreateTestKeystore.class );
+	private static final Log logger = LogFactory.getLog( CreateTestKeystore.class );
 	
 	/**
 	 * @param args
@@ -96,10 +97,9 @@ public class CreateTestKeystore {
 	NoSuchProviderException, SignatureException, 
 	InvalidCipherTextException, InvalidKeySpecException, IOException 
 	{
-		logger.setLevel(Level.ALL);
 		createCertificate();
 		
-		// If the logger level is set to ALL as above, then expect 
+		// If the logger level is set to ALL, then expect 
 		// output messages like the following:
 		
 //		INFO - CreateTestKeystore.createCertificate(146) | Generating certificate for distinguished subject name 'CN=NG4J test CA, O=NG4J test, ST=SH, C=DE', valid for 3000 days
