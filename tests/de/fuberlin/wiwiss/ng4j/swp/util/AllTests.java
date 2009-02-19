@@ -1,4 +1,4 @@
-// $Id: AllTests.java,v 1.2 2008/09/04 07:37:54 hartig Exp $
+// $Id: AllTests.java,v 1.3 2009/02/19 22:09:39 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.swp.util;
 
 import junit.framework.Test;
@@ -16,7 +16,7 @@ public class AllTests {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite("Test for de.fuberlin.wiwiss.ng4j.swp.signature");
+		TestSuite suite = new TestSuite("Test for de.fuberlin.wiwiss.ng4j.swp.util");
 		//$JUnit-BEGIN$
 		suite.addTestSuite(SWPSignatureUtilitiesTest.class);
 		//$JUnit-END$
