@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/swp/setup/CreateTestKeystore.java,v 1.3 2009/02/18 15:52:02 hartig Exp $
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/swp/setup/CreateTestKeystore.java,v 1.4 2009/02/19 22:08:46 jenpc Exp $
 
 package de.fuberlin.wiwiss.ng4j.swp.setup;
 
@@ -72,7 +72,12 @@ import de.fuberlin.wiwiss.ng4j.swp.util.SWPSignatureUtilities;
 
 import sun.misc.BASE64Encoder;
 
-/** Creates the keystore used by the tests.
+/** Creates the keystore used by the tests. <p>
+ * 
+ * Note that important information is printed via the logger, whose level
+ * should be set to ALL to view all messages. <p>
+ * 
+ * TODO: Consider replacing calls to logger with System.out.print statements
  *
  * @author Jennifer Cormier, Architecture Technology Corporation
  */
@@ -400,19 +405,10 @@ public class CreateTestKeystore {
 	public static String makeHexString( byte[] bytes ) {
 		StringBuffer sb = new StringBuffer();
 		
-		int i=0;
-		while ( i < bytes.length ) {
-			sb.append( HEX_CHARS[ (bytes[i] >> 4) & 0x0F ] );
-			sb.append( HEX_CHARS[ bytes[i] & 0x0F] );
-			i++;
+		for ( byte b : bytes ) {
+			sb.append( HEX_CHARS[ (b >> 4) & 0x0F ] );
+			sb.append( HEX_CHARS[ b & 0x0F] );
 		}
-		
-		// TODO if/when we change compiler compliance to Java 5 or above, 
-		// can change to the simpler form:
-//		for ( byte b : bytes ) {
-//			sb.append( HEX_CHARS[ (b >> 4) & 0x0F ] );
-//			sb.append( HEX_CHARS[ b & 0x0F] );
-//		}
 		
 		return sb.toString();
 	}
