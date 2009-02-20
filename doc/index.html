@@ -208,6 +208,11 @@ href="http://www.w3.org/RDF/">RDF</A> | </P>
 <h3>News</h3>
 <ul>
   <li>
+    <strong>20/02/2009: NG4J 0.9 released</strong>,
+    with support for Apache Derby database, some bug fixes, and various code
+    cleanups. Notice, we drop Java 1.4 compatibility with this release.
+  </li>
+  <li>
     <strong>17/11/2008: NG4J 0.8 released</strong>,
     with recent libraries (Jena 2.5.6, ARQ 2.4, and Bouncy Castle 1.41),
     support for different output formats in the command line tool of the
@@ -657,8 +662,8 @@ while (results.hasNext()) {
 
 <p>&nbsp;</p>
 <h3><A id=Persistence name=Persistence>2.3 Using Database Persistence</A></h3>
-<p>NamedGraphSets can be stored in a relational database. As of NG4J v0.7,
-   HSQLDB, MySQL, Oracle, and PostgreSQL are supported. To create a persistent
+<p>NamedGraphSets can be stored in a relational database. As of NG4J v0.9,
+   HSQLDB, MySQL, Oracle, PostgreSQL, and Apache Derby are supported. To create a persistent
    NamedGraphSet, you have to set up a java.sql database connection and create
    a new NamedGraphSetDB instance:</p>
 
@@ -902,6 +907,11 @@ It is described in a separate document:
       <TH>Release Date</TH>
     </TR>
     <TR>
+      <TD align=middle>V0.9</TD>
+      <TD align=left>Support for Apache Derby database added; Java 1.4 compatibility dropped; TriQL removed; bugfixes and code cleanups.</TD>
+      <TD align=middle valign="top">2009-02-20</TD>
+    </TR>
+    <TR>
       <TD align=middle>V0.8</TD>
       <TD align=left>Upgrade to the latest versions of Jena and ARQ (Jena 2.5.6, ARQ 2.4); support for different output formats in the command line tool of the Semantic Web Client Library; bugfixes; deprecated TriQL (please use SPARQL queries instead).</TD>
       <TD align=middle valign="top">2008-11-17</TD>
@@ -972,7 +982,7 @@ Please sent comments and bug reports to the NG4J-namedgraphs mailing list:</p>
 <p>The archives of the list are found at <a href="http://sourceforge.net/mailarchive/forum.php?forum=ng4j-namedgraphs">http://sourceforge.net/mailarchive/forum.php?forum=ng4j-namedgraphs </a><br />
   You can subscribe to the list at <a href="http://lists.sourceforge.net/lists/listinfo/ng4j-namedgraphs">http://lists.sourceforge.net/lists/listinfo/ng4j-namedgraphs</a>.</p>
 <HR title="Separator for header">
-<p>$Date: 2009/01/21 16:41:52 $<br />
-  $Id: index.html,v 1.33 2009/01/21 16:41:52 hartig Exp $</p>
+<p>$Date: 2009/02/20 14:13:24 $<br />
+  $Id: index.html,v 1.34 2009/02/20 14:13:24 hartig Exp $</p>
 </BODY>
 </HTML>
