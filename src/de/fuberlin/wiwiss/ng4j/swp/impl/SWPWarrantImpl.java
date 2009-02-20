@@ -1,4 +1,4 @@
-//$Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/swp/impl/SWPWarrantImpl.java,v 1.8 2009/02/11 15:17:14 jenpc Exp $
+//$Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/swp/impl/SWPWarrantImpl.java,v 1.9 2009/02/20 08:09:52 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.swp.impl;
 
 import java.io.ByteArrayInputStream;
@@ -216,7 +216,7 @@ public class SWPWarrantImpl implements SWPWarrant
 }
 
 /*
- *  (c)   Copyright 2004, 2005, 2006, 2007, 2008 Rowland Watkins (rowland@grid.cx) & Chris Bizer (chris@bizer.de)
+ *  (c)   Copyright 2004 - 2009 Rowland Watkins (rowland@grid.cx) & Chris Bizer (chris@bizer.de)
  *   	  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

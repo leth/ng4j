@@ -1,5 +1,5 @@
 /*
- * $Id: TriXWriter.java,v 1.4 2009/02/11 01:58:19 jenpc Exp $
+ * $Id: TriXWriter.java,v 1.5 2009/02/20 08:09:52 hartig Exp $
  */
 package de.fuberlin.wiwiss.ng4j.trix;
 
@@ -135,7 +135,7 @@ public class TriXWriter implements NamedGraphSetWriter {
 }
 
 /*
- *  (c) Copyright 2004, 2005, 2006, 2007, 2008 Christian Bizer (chris@bizer.de)
+ *  (c) Copyright 2004 - 2009 Christian Bizer (chris@bizer.de)
  *   All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

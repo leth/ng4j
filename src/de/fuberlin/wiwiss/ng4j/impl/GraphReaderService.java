@@ -1,4 +1,4 @@
-// $Id: GraphReaderService.java,v 1.9 2009/02/11 02:05:48 jenpc Exp $
+// $Id: GraphReaderService.java,v 1.10 2009/02/20 08:09:51 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import java.io.File;
@@ -356,7 +356,7 @@ public class GraphReaderService {
 }
 
 /*
- *  (c) Copyright 2004, 2005, 2006, 2007, 2008 Christian Bizer (chris@bizer.de)
+ *  (c) Copyright 2004 - 2009 Christian Bizer (chris@bizer.de)
  *   All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

@@ -689,7 +689,7 @@ HEX_DIGIT
 protected
 HEX4 : HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT ;
 /*
- *  (c) Copyright Hewlett-Packard Company 2002-2008
+ *  (c) Copyright Hewlett-Packard Company 2002-2009
  *  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

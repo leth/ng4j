@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetImpl.java,v 1.13 2009/02/11 15:19:13 jenpc Exp $
+// $Id: NamedGraphSetImpl.java,v 1.14 2009/02/20 08:09:51 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import java.util.ArrayList;
@@ -400,7 +400,7 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 }
 
 /*
- *  (c) Copyright 2004, 2005, 2006, 2007, 2008 Christian Bizer (chris@bizer.de)
+ *  (c) Copyright 2004 - 2009 Christian Bizer (chris@bizer.de)
  *   All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

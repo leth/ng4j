@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Hewlett-Packard Development Company, LP
+ * (c) Copyright 2001 - 2009 Hewlett-Packard Development Company, LP
  * [See end of file]
  */
 
@@ -10,7 +10,7 @@ package de.fuberlin.wiwiss.ng4j.trig;
  *   
  * @author		Andy Seaborne
  * @author Richard Cyganiak (richard@cyganiak.de)
- * @version 	$Id: TriGException.java,v 1.3 2008/11/04 13:00:21 hartig Exp $
+ * @version 	$Id: TriGException.java,v 1.4 2009/02/20 08:09:52 hartig Exp $
  */
 
 import com.hp.hpl.jena.shared.*;
@@ -29,7 +29,7 @@ public class TriGException extends SyntaxError
 
 
 /*
- *  (c) Copyright 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Hewlett-Packard Development Company, LP
+ *  (c) Copyright 2001 - 2009 Hewlett-Packard Development Company, LP
  *  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

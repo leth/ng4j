@@ -1,4 +1,4 @@
-// $Id: NamedGraphImpl.java,v 1.5 2008/11/04 13:00:21 hartig Exp $
+// $Id: NamedGraphImpl.java,v 1.6 2009/02/20 08:09:51 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import com.hp.hpl.jena.graph.BulkUpdateHandler;
@@ -179,7 +179,7 @@ public class NamedGraphImpl implements NamedGraph {
 }
 
 /*
- *  (c) Copyright 2004, 2005, 2006, 2007, 2008 Christian Bizer (chris@bizer.de)
+ *  (c) Copyright 2004 - 2009 Christian Bizer (chris@bizer.de)
  *   All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

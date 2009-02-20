@@ -1,4 +1,4 @@
-// $Id: QuadDB.java,v 1.14 2009/02/11 15:38:22 jenpc Exp $
+// $Id: QuadDB.java,v 1.15 2009/02/20 08:09:51 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -33,7 +33,7 @@ import de.fuberlin.wiwiss.ng4j.db.specific.PostgreSQLCompatibility;
  * 
  * <p>All operations but {@link #insert} allow {@link Node#ANY} wildcards.</p>
  *
- * <p>The implementation is na•ve: a <tt>graphs</tt> table and a <tt>quads</tt>
+ * <p>The implementation is naï¿½ve: a <tt>graphs</tt> table and a <tt>quads</tt>
  * table. A table prefix can be supplied in order to support multiple QuadDBs
  * in a single database.</p>
  * 
@@ -463,7 +463,7 @@ public class QuadDB {
 }
 
 /*
- *  (c) Copyright 2004, 2005, 2006, 2007, 2008 Christian Bizer (chris@bizer.de)
+ *  (c) Copyright 2004 - 2009 Christian Bizer (chris@bizer.de)
  *   All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

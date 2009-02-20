@@ -64,9 +64,9 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
 
 /**
  * 
- * Last commit info    :   $Author: jenpc $
- * $Date: 2009/02/11 04:16:48 $
- * $Revision: 1.15 $
+ * Last commit info    :   $Author: hartig $
+ * $Date: 2009/02/20 08:09:52 $
+ * $Revision: 1.16 $
  * 
  * 
  * SWPSignatureUtilities
@@ -937,7 +937,7 @@ public class SWPSignatureUtilities
 }
 
 /*
- *  (c)   Copyright 2004, 2005, 2006, 2007, 2008 Rowland Watkins (rowland@grid.cx) 
+ *  (c)   Copyright 2004 - 2009 Rowland Watkins (rowland@grid.cx) 
  *   	  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

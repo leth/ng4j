@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/HSQLCompatibility.java,v 1.2 2009/02/12 20:56:38 jenpc Exp $
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/HSQLCompatibility.java,v 1.3 2009/02/20 08:09:51 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.db.specific;
 
 import java.sql.Connection;
@@ -77,7 +77,7 @@ public class HSQLCompatibility extends DbCompatibility {
 	}
 
 	/*
-	 *  (c)   Copyright 2008 Christian Bizer (chris@bizer.de)
+	 *  (c)   Copyright 2008, 2009 Christian Bizer (chris@bizer.de)
 	 *   All rights reserved.
 	 *
 	 * Redistribution and use in source and binary forms, with or without

@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/DbCompatibility.java,v 1.4 2009/02/12 20:56:38 jenpc Exp $
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/DbCompatibility.java,v 1.5 2009/02/20 08:09:51 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.db.specific;
 
 import java.sql.Connection;
@@ -218,7 +218,7 @@ public abstract class DbCompatibility {
 	}
 
 	/*
-	 *  (c)   Copyright 2008 Christian Bizer (chris@bizer.de)
+	 *  (c)   Copyright 2008, 2009 Christian Bizer (chris@bizer.de)
 	 *   All rights reserved.
 	 *
 	 * Redistribution and use in source and binary forms, with or without

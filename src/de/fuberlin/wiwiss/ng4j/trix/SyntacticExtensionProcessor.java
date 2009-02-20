@@ -1,4 +1,4 @@
-// $Id: SyntacticExtensionProcessor.java,v 1.4 2009/02/10 22:31:32 jenpc Exp $
+// $Id: SyntacticExtensionProcessor.java,v 1.5 2009/02/20 08:09:52 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.trix;
 
 import java.io.IOException;
@@ -115,7 +115,7 @@ public class SyntacticExtensionProcessor {
 	}
 }
 /*
- *  (c) Copyright 2004, 2005, 2006, 2007, 2008 Christian Bizer (chris@bizer.de)
+ *  (c) Copyright 2004 - 2009 Christian Bizer (chris@bizer.de)
  *   All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
