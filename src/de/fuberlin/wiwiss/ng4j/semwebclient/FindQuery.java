@@ -192,13 +192,15 @@ public class FindQuery implements DereferencingListener, URISearchListener {
 		}
 		if ( enableURISearch ) {
 			if ( client.requestDereferencingWithSearch(uri, step, this, this) ) {
-				urisInDerefProcessing.add(uri);
+				String derefURI = ( uri.contains("#") ) ? uri.substring( 0, uri.indexOf("#") ) : uri;
+				urisInDerefProcessing.add(derefURI);
 				urisInSearchProcessing.add(uri);
 			}
 		}
 		else {
 			if ( client.requestDereferencing(uri, step, this) ) {
-				urisInDerefProcessing.add(uri);
+				String derefURI = ( uri.contains("#") ) ? uri.substring( 0, uri.indexOf("#") ) : uri;
+				urisInDerefProcessing.add(derefURI);
 			}
 		}
 	}

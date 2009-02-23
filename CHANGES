@@ -1,4 +1,7 @@
 
+02/23/09 (Olaf)
+Bug fix in the SemWebClLib: pending deref tasks for find queries are identified by the corresponding URIs; in case of hash-URIs: mismatch between requested and dereferenced URI caused blocking until timeouts; now: cut off hash part identifying URIs; huge performance gain!
+
 Release 0.9
 -----------
 
