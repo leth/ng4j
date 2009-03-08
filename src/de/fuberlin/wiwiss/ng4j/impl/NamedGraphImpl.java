@@ -1,4 +1,4 @@
-// $Id: NamedGraphImpl.java,v 1.6 2009/02/20 08:09:51 hartig Exp $
+// $Id: NamedGraphImpl.java,v 1.7 2009/03/08 19:47:15 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import com.hp.hpl.jena.graph.BulkUpdateHandler;
@@ -55,7 +55,7 @@ import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
  */
 public class NamedGraphImpl implements NamedGraph {
 	private Node name;
-	private Graph graph;
+	final protected Graph graph;
 
 	/**
 	 * Creates a NamedGraph from a Graph instance and a name.

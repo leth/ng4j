@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetImpl.java,v 1.14 2009/02/20 08:09:51 hartig Exp $
+// $Id: NamedGraphSetImpl.java,v 1.15 2009/03/08 19:47:15 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ import de.fuberlin.wiwiss.ng4j.Quad;
  */
 public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet {
 	/** Map from names (Node) to NamedGraphs */
-	private Map<Node,NamedGraph> namesToGraphsMap = new HashMap<Node,NamedGraph>();
+	final protected Map<Node,NamedGraph> namesToGraphsMap = new HashMap<Node,NamedGraph>();
 	
 	/**
 	 * List of all NamedGraphs that backs the UnionGraphs handed
@@ -46,7 +46,7 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 	 * with namesToGraphsMap.values(), but it's a List, not a
 	 * Collection. This whole graphs List affair is probably rather slow.
 	 */
-	private List<NamedGraph> graphs = new ArrayList<NamedGraph>();
+	final protected List<NamedGraph> graphs = new ArrayList<NamedGraph>();
 
 	/* (non-Javadoc)
 	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#addGraph(de.fuberlin.wiwiss.ng4j.NamedGraph)
@@ -317,7 +317,7 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 	 * <p>
 	 * Note: This is a hack.
 	 */
-	private class UnionGraph extends MultiUnion {
+	protected class UnionGraph extends MultiUnion {
 		public UnionGraph (List<NamedGraph> members) {
 			super();
 			this.m_subGraphs = members;
