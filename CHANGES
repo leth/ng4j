@@ -1,5 +1,6 @@
 02/08/09 (Olaf)
-First commit of a SemWebClLib-specific Graph implementation which improves performance of query executions.
+First commit of a SemWebClLib-specific Graph implementation which improves performance of query executions. For details see:
+  http://apps.sourceforge.net/wordpress/squin/2009/03/28/new-storage-solution-for-the-semantic-web-client-library/
 
 02/23/09 (Olaf)
 Bug fix in the SemWebClLib: pending deref tasks for find queries are identified by the corresponding URIs; in case of hash-URIs: mismatch between requested and dereferenced URI caused blocking until timeouts; now: cut off hash part identifying URIs; huge performance gain!
