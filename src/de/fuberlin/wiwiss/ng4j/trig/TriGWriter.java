@@ -1,5 +1,5 @@
 /*
- * $Id: TriGWriter.java,v 1.8 2009/02/20 08:09:52 hartig Exp $
+ * $Id: TriGWriter.java,v 1.9 2009/04/13 17:13:28 hartig Exp $
  */
 package de.fuberlin.wiwiss.ng4j.trig;
 
@@ -12,11 +12,15 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.hp.hpl.jena.graph.Graph;
+import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.mem.GraphMem;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -59,6 +63,12 @@ public class TriGWriter implements NamedGraphSetWriter {
 		Graph allTriples = graphIt.hasNext() ?
 				set.asJenaGraph(( graphIt.next()).getGraphName()) :
 				new GraphMem();
+		while ( graphIt.hasNext() ) {
+			Iterator tripleIt = graphIt.next().find( Node.ANY, Node.ANY, Node.ANY );
+			while ( tripleIt.hasNext() ) {
+				allTriples.add( (Triple) tripleIt.next() );
+			}
+		}
 		this.prefixMaker = new PrettyNamespacePrefixMaker(allTriples);
 		this.prefixMaker.setBaseURI(baseURI);
 		this.prefixMaker.addDefaultNamespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
@@ -89,6 +99,10 @@ public class TriGWriter implements NamedGraphSetWriter {
 			String graphName = (String) it.next();
 			this.currentGraph = set.getGraph(graphName);
 			Model aModel = new ModelCom(this.currentGraph);
+			Set tmp = new HashSet( aModel.getNsPrefixMap().keySet() );
+			for ( Object p : tmp ) {               // Remove all prefixes because
+				aModel.removeNsPrefix( (String) p); // some of them could be un-
+			}                                      // known to prefixMaker.  Olaf
 			aModel.setNsPrefixes(this.prefixMaker.getPrefixMap());
 			new N3JenaWriterOnlyStatements().write(
 					aModel, out, baseURI);
