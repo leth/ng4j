@@ -1,4 +1,4 @@
-// $Id: Quad.java,v 1.3 2009/02/20 08:09:51 hartig Exp $
+// $Id: Quad.java,v 1.4 2009/04/22 17:03:14 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import com.hp.hpl.jena.graph.Node;
@@ -59,7 +59,10 @@ public class Quad {
 	 * Return a human-readable (sort of) string "graphname { s p o . }"
 	 * describing the quad.
 	 * @return human-readable representation of this quad
+	 *
+	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return toString(PrefixMapping.Standard);
 	}
@@ -104,10 +107,13 @@ public class Quad {
 	public boolean isConcrete() {
 		return this.graphName.isConcrete() && this.triple.isConcrete();
 	}
-	        
-    /**
+
+	/**
      * Quads are equal iff both have four equal components. 
-     */
+	 *
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
 	public boolean equals(Object o) {
 		return o instanceof Quad && ((Quad) o).sameAs(this.graphName, this.triple);
 	}
@@ -141,14 +147,17 @@ public class Quad {
 	public boolean predicateMatches(Node p) {
 		return this.triple.getPredicate().matches(p);
 	}
-	
+
 	public boolean objectMatches(Node o) {
 		return this.triple.getObject().matches(o);
 	}
 
 	/**
 	 * The hash code of a quad is calculated in a way similar to Triple.
+	 *
+	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return (this.graphName.hashCode() >> 2) ^ this.triple.hashCode();
 	}
