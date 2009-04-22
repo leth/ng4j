@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.axis.components.uuid.SimpleUUIDGen;
@@ -49,9 +50,9 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
 
 /**
  * 
- * Last commit info    :   $Author: hartig $
- * $Date: 2009/02/20 08:09:52 $
- * $Revision: 1.26 $
+ * Last commit info    :   $Author: jenpc $
+ * $Date: 2009/04/22 17:20:09 $
+ * $Revision: 1.27 $
  * 
  * @author Chris Bizer.
  * @author Rowland Watkins.
@@ -59,7 +60,7 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
 public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedGraphSet
 {
 	protected static final Log logger = LogFactory.getLog( SWPNamedGraphSetImpl.class );
-	protected static boolean debug = logger.isDebugEnabled();
+	protected static final boolean debug = logger.isDebugEnabled();
 	//This means we no longer have to rely on a not-so-well known uuid impl.
 	//Now dependent on Axis.
 	protected SimpleUUIDGen uuidGen = new SimpleUUIDGen ();
@@ -108,7 +109,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 			Object next = graphNameIterator.next();
 			if ( next instanceof Node )
 			{
-				currentGraph = ( NamedGraph ) this.getGraph( ( Node ) next );
+				currentGraph = this.getGraph( ( Node ) next );
 			}
 //			else if ( next instanceof String )
 //			{
@@ -200,7 +201,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 			Node signatureMethod,
 			String keystore,
 			String password,
-			ArrayList<Triple> additionalWarrantStatements // additional triples to add to the warrant; null for none
+			List<Triple> additionalWarrantStatements // additional triples to add to the warrant; null for none
 			) throws SWPBadSignatureException
 	{
 		ArrayList<Node> graphsAsserted = new ArrayList<Node>();
@@ -279,7 +280,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 			{
 				if ( this.containsGraph( (String)next ) )
 				{
-					currentGraph = ( NamedGraph ) this.getGraph( ( String ) next );
+					currentGraph = this.getGraph( ( String ) next );
 				}
 				else
 				{
@@ -458,11 +459,19 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
         return new NiceIterator()
         {
 			
+			/* (non-Javadoc)
+			 * @see com.hp.hpl.jena.util.iterator.NiceIterator#hasNext()
+			 */
+			@Override
 			public boolean hasNext() 
 			{
 				return results.hasNext();
 			}
 
+			/* (non-Javadoc)
+			 * @see com.hp.hpl.jena.util.iterator.NiceIterator#next()
+			 */
+			@Override
 			public Object next() 
 			{
 				QuerySolution s = results.nextSolution();
@@ -571,9 +580,6 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
         	            Literal signature = solution.getLiteral( "?signature" );
         	            Node signatureMethod = solution.get( "?smethod" ).asNode();
         	            
-        	            String certificate = cert.getLexicalForm();
-        	            String certs = "-----BEGIN CERTIFICATE-----\n" +
-        	            					certificate + "\n-----END CERTIFICATE-----";
         	            // If the certificate and signature are not null, we can use these
         	            // to verify the signature. 
         	            // We, of course, need to provide the warrant graph as it
@@ -581,6 +587,9 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
         	            // the signature and add back again later.
         	            if ( ( cert != null ) & ( signature != null )  )
         	            {
+            	            String certificate = cert.getLexicalForm();
+            	            String certs = "-----BEGIN CERTIFICATE-----\n" +
+            	            					certificate + "\n-----END CERTIFICATE-----";
         	                try 
         	                {
         	                	ExtendedIterator exit = ng.find( ng.getGraphName(), SWP.signature, Node.ANY );
@@ -591,7 +600,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
         	                	}
         	                	for ( Iterator<Triple> i = li.iterator(); i.hasNext(); )
         	                	{
-        	                		ng.delete( ( Triple )i.next() );
+        	                		ng.delete( i.next() );
         	                	}
         	                	// If the warrant's signature is ok, we want to test whether the graph
         	                	// digests of the graphs it asserts are ok. 
@@ -677,7 +686,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
         	                    
         	                    for ( Iterator<Triple> i = li.iterator(); i.hasNext(); )
         	                    {
-        	                    	ng.add( ( Triple )i.next() );
+        	                    	ng.add( i.next() );
         	                    }
         	                }
         	                catch ( Exception e ) 
@@ -742,6 +751,10 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     	verificationGraph.add( new Triple( warrantGraph.getGraphName(), SWP_V.notSuccessful, Node.createLiteral( "true" ) ) );
     }
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl#createNamedGraphInstance(com.hp.hpl.jena.graph.Node)
+	 */
+	@Override
 	protected NamedGraph createNamedGraphInstance( Node graphName ) 
 	{
 		if ( !graphName.isURI() ) 
