@@ -1,4 +1,4 @@
-// $Id: NamedGraphDB.java,v 1.5 2009/02/20 08:09:51 hartig Exp $
+// $Id: NamedGraphDB.java,v 1.6 2009/04/22 17:06:00 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.util.Iterator;
@@ -41,6 +41,7 @@ public class NamedGraphDB extends GraphBase implements NamedGraph {
 	/* (non-Javadoc)
 	 * @see com.hp.hpl.jena.graph.impl.GraphBase#performDelete(com.hp.hpl.jena.graph.Triple)
 	 */
+	@Override
 	public void performDelete(Triple t) {
 		this.db.delete(this.graphName, t.getSubject(), t.getPredicate(), t.getObject());
 	}
@@ -48,6 +49,7 @@ public class NamedGraphDB extends GraphBase implements NamedGraph {
 	/* (non-Javadoc)
 	 * @see com.hp.hpl.jena.graph.impl.GraphBase#graphBaseFind(com.hp.hpl.jena.graph.TripleMatch)
 	 */
+	@Override
 	public ExtendedIterator graphBaseFind(TripleMatch m) {
 		final Iterator<Quad> quadIt = this.db.find(
 				this.graphName,
@@ -55,12 +57,27 @@ public class NamedGraphDB extends GraphBase implements NamedGraph {
 				m.getMatchPredicate(),
 				m.getMatchObject());
 		return new NiceIterator() {
+			
+			/* (non-Javadoc)
+			 * @see com.hp.hpl.jena.util.iterator.NiceIterator#hasNext()
+			 */
+			@Override
 			public boolean hasNext() {
 				return quadIt.hasNext();
 			}
+			
+			/* (non-Javadoc)
+			 * @see com.hp.hpl.jena.util.iterator.NiceIterator#next()
+			 */
+			@Override
 			public Object next() {
 				return ( quadIt.next()).getTriple();
 			}
+			
+			/* (non-Javadoc)
+			 * @see com.hp.hpl.jena.util.iterator.NiceIterator#remove()
+			 */
+			@Override
 			public void remove() {
 				quadIt.remove();
 			}
@@ -70,6 +87,7 @@ public class NamedGraphDB extends GraphBase implements NamedGraph {
 	/* (non-Javadoc)
 	 * @see com.hp.hpl.jena.graph.impl.GraphBase#performAdd(com.hp.hpl.jena.graph.Triple)
 	 */
+	@Override
 	public void performAdd(Triple t) {
 		this.db.insert(this.graphName, t.getSubject(), t.getPredicate(), t.getObject());
 	}
