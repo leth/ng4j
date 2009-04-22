@@ -1,4 +1,4 @@
-//$Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/swp/impl/SWPWarrantImpl.java,v 1.9 2009/02/20 08:09:52 hartig Exp $
+//$Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/swp/impl/SWPWarrantImpl.java,v 1.10 2009/04/22 17:22:06 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.swp.impl;
 
 import java.io.ByteArrayInputStream;
@@ -58,11 +58,19 @@ public class SWPWarrantImpl implements SWPWarrant
 			this.results = results;
 		}
 
+		/* (non-Javadoc)
+		 * @see com.hp.hpl.jena.util.iterator.NiceIterator#hasNext()
+		 */
+		@Override
 		public boolean hasNext() 
 		{
 			return results.hasNext();
 		}
 
+		/* (non-Javadoc)
+		 * @see com.hp.hpl.jena.util.iterator.NiceIterator#next()
+		 */
+		@Override
 		public Object next() 
 		{
 			QuerySolution solution = results.nextSolution();
