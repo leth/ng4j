@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetImpl.java,v 1.15 2009/03/08 19:47:15 hartig Exp $
+// $Id: NamedGraphSetImpl.java,v 1.16 2009/04/22 17:18:15 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import java.util.ArrayList;
@@ -104,7 +104,7 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#getGraph(com.hp.hpl.jena.graph.Node)
 	 */
 	public NamedGraph getGraph(Node graphName) {
-		return (NamedGraph) this.namesToGraphsMap.get(graphName);
+		return this.namesToGraphsMap.get(graphName);
 	}
 
 	/* (non-Javadoc)
@@ -271,7 +271,7 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 	public void close() {
 		Iterator<NamedGraph> it = listGraphs();
 		while (it.hasNext()) {
-			NamedGraph graph = (NamedGraph) it.next();
+			NamedGraph graph = it.next();
 			graph.close();
 		}
 	}
@@ -288,12 +288,20 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 		final ExtendedIterator triples = graph.find(triple);
 		return new NiceIterator() {
 
+			/* (non-Javadoc)
+			 * @see com.hp.hpl.jena.util.iterator.NiceIterator#hasNext()
+			 */
+			@Override
 			public boolean hasNext() {
 
 				return triples.hasNext();
 
 			}
 
+			/* (non-Javadoc)
+			 * @see com.hp.hpl.jena.util.iterator.NiceIterator#next()
+			 */
+			@Override
 			public Object next() {
 
 				Triple t = (Triple) triples.next();
@@ -329,6 +337,7 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 		 * 
 		 * @see com.hp.hpl.jena.graph.compose.MultiUnion#performDelete(com.hp.hpl.jena.graph.Triple)
 		 */
+		@Override
 		public void performDelete(Triple t) {
 			Iterator it = this.m_subGraphs.iterator();
 			while (it.hasNext()) {
@@ -345,7 +354,8 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 		 * 
          * @see com.hp.hpl.jena.graph.compose.Polyadic#getBulkUpdateHandler()
          */
-        public BulkUpdateHandler getBulkUpdateHandler() {
+        @Override
+		public BulkUpdateHandler getBulkUpdateHandler() {
             if (this.bulkHandler == null)
                 this.bulkHandler = new SimpleBulkUpdateHandler(this);
             return this.bulkHandler;
@@ -367,7 +377,8 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 	    /* (non-Javadoc)
 	     * @see com.hp.hpl.jena.util.iterator.NiceIterator#hasNext()
 	     */
-	    public boolean hasNext() {
+	    @Override
+		public boolean hasNext() {
 	        while (!this.currentIt.hasNext()) {
 	            if (!this.graphIt.hasNext()) {
 	                return false;
@@ -382,7 +393,8 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 	    /* (non-Javadoc)
 	     * @see com.hp.hpl.jena.util.iterator.NiceIterator#next()
 	     */
-	    public Object next() {
+	    @Override
+		public Object next() {
 	        if (!hasNext()) {
 	            throw new NoSuchElementException();
 	        }
@@ -393,7 +405,8 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 	    /* (non-Javadoc)
 	     * @see com.hp.hpl.jena.util.iterator.NiceIterator#remove()
 	     */
-	    public void remove() {
+	    @Override
+		public void remove() {
 	        this.currentIt.remove();
 	    }
 	}
