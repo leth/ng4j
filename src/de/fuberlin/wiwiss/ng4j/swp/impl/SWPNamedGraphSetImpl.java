@@ -51,8 +51,8 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
 /**
  * 
  * Last commit info    :   $Author: jenpc $
- * $Date: 2009/04/22 17:20:09 $
- * $Revision: 1.27 $
+ * $Date: 2009/04/22 17:49:56 $
+ * $Revision: 1.28 $
  * 
  * @author Chris Bizer.
  * @author Rowland Watkins.
@@ -87,9 +87,9 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 	protected boolean actOnGraphs( SWPAuthority authority,
 			ArrayList<Node> listOfAuthorityProperties,
 			Node property, // typically SWP.assertedBy or SWP.quotedBy
-			ArrayList<Node> listOfGraphNames, // the particular graphs to act on; use null if all graphs in the set should be acted on
+			List<Node> listOfGraphNames, // the particular graphs to act on; use null if all graphs in the set should be acted on
 			Node digestMethod, // the method to use when creating the digest; use null if digest should not be included
-			ArrayList<Triple> additionalWarrantStatements // additional triples to add to the warrant; null for none
+			List<Triple> additionalWarrantStatements // additional triples to add to the warrant; null for none
 			) {
 		
 		// Create a new warrant graph.
@@ -196,7 +196,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 	protected boolean actOnGraphsAndIncludeSignature( SWPAuthority authority,
 			ArrayList<Node> listOfAuthorityProperties,
 			Node property, // typically SWP.assertedBy or SWP.quotedBy
-			ArrayList<String> listOfGraphURIs, // the particular graphs to act on; use null if all graphs in the set should be acted on
+			List<String> listOfGraphURIs, // the particular graphs to act on; use null if all graphs in the set should be acted on
 			Node digestMethod, // the method to use when creating the digest
 			Node signatureMethod,
 			String keystore,
