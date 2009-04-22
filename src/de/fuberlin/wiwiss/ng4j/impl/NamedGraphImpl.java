@@ -1,4 +1,4 @@
-// $Id: NamedGraphImpl.java,v 1.7 2009/03/08 19:47:15 hartig Exp $
+// $Id: NamedGraphImpl.java,v 1.8 2009/04/22 17:08:56 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import com.hp.hpl.jena.graph.BulkUpdateHandler;
@@ -90,82 +90,143 @@ public class NamedGraphImpl implements NamedGraph {
 
 	// === Delegations to the underlying Graph ===
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.Graph#close()
+	 */
 	public void close() {
 		this.graph.close();
 	}
-        public boolean isClosed() {
-                return this.graph.isClosed();
-        }
 
+    /* (non-Javadoc)
+     * @see com.hp.hpl.jena.graph.Graph#isClosed()
+     */
+    public boolean isClosed() {
+            return this.graph.isClosed();
+    }
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.Graph#contains(com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node)
+	 */
 	public boolean contains(Node s, Node p, Node o) {
 		return this.graph.contains(s, p, o);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.Graph#contains(com.hp.hpl.jena.graph.Triple)
+	 */
 	public boolean contains(Triple t) {
 		return this.graph.contains(t);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.Graph#delete(com.hp.hpl.jena.graph.Triple)
+	 */
 	public void delete(Triple t) throws DeleteDeniedException {
 		this.graph.delete(t);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.Graph#dependsOn(com.hp.hpl.jena.graph.Graph)
+	 */
 	public boolean dependsOn(Graph other) {
 		return this.graph.dependsOn(other);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.Graph#find(com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node)
+	 */
 	public ExtendedIterator find(Node s, Node p, Node o) {
 		return this.graph.find(s, p, o);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.Graph#find(com.hp.hpl.jena.graph.TripleMatch)
+	 */
 	public ExtendedIterator find(TripleMatch m) {
 		return this.graph.find(m);
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.Graph#getBulkUpdateHandler()
+	 */
 	public BulkUpdateHandler getBulkUpdateHandler() {
 		return this.graph.getBulkUpdateHandler();
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.Graph#getCapabilities()
+	 */
 	public Capabilities getCapabilities() {
 		return this.graph.getCapabilities();
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.Graph#getEventManager()
+	 */
 	public GraphEventManager getEventManager() {
 		return this.graph.getEventManager();
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.Graph#getPrefixMapping()
+	 */
 	public PrefixMapping getPrefixMapping() {
 		return this.graph.getPrefixMapping();
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.Graph#getReifier()
+	 */
 	public Reifier getReifier() {
 		return this.graph.getReifier();
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.Graph#getTransactionHandler()
+	 */
 	public TransactionHandler getTransactionHandler() {
 		return this.graph.getTransactionHandler();
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.Graph#isEmpty()
+	 */
 	public boolean isEmpty() {
 		return this.graph.isEmpty();
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.Graph#isIsomorphicWith(com.hp.hpl.jena.graph.Graph)
+	 */
 	public boolean isIsomorphicWith(Graph g) {
 		return this.graph.isIsomorphicWith(g);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.Graph#queryHandler()
+	 */
 	public QueryHandler queryHandler() {
 		return this.graph.queryHandler();
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.Graph#size()
+	 */
 	public int size() {
 		return this.graph.size();
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.GraphAdd#add(com.hp.hpl.jena.graph.Triple)
+	 */
 	public void add(Triple t) throws AddDeniedException {
 		this.graph.add(t);
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
 	public String toString() {
 		return this.name + this.graph.toString();
 	}
