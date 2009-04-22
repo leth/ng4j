@@ -34,7 +34,7 @@ import de.fuberlin.wiwiss.ng4j.trig.parser.TriGAntlrParser;
  * 
  * @author		Andy Seaborne
  * @author Richard Cyganiak (richard@cyganiak.de)
- * @version 	$Id: NamedGraphSetPopulator.java,v 1.12 2009/02/20 08:09:52 hartig Exp $
+ * @version 	$Id: NamedGraphSetPopulator.java,v 1.13 2009/04/22 17:23:50 jenpc Exp $
  */
 public class NamedGraphSetPopulator implements TriGParserEventHandler
 {
@@ -207,7 +207,7 @@ public class NamedGraphSetPopulator implements TriGParserEventHandler
                         error("Line "+line+": N3toRDF: Can't have properties with labelled bNodes in RDF") ;
                     
                     String uriref = expandPrefix(propStr) ;
-                    if ( uriref == propStr )
+                    if ( uriref.equals(propStr) )
                     {
                         // Failed to expand ...
                         error("Line "+line+": N3toRDF: Undefined qname namespace: " + propStr);
@@ -349,11 +349,11 @@ public class NamedGraphSetPopulator implements TriGParserEventHandler
 				{
 					if ( ! bNodeMap.containsKey(text) )
 						bNodeMap.put(text, Node.createAnon());
-					return (Node) bNodeMap.get(text) ;
+					return bNodeMap.get(text) ;
 				}
 			
                 String uriref = expandPrefix(text) ;
-                if ( uriref == text )
+                if ( uriref.equals(text) )
                 {
                     error("Line "+line+": N3toRDF: Undefined qname namespace: " + text);
                     return null ;
@@ -373,7 +373,7 @@ public class NamedGraphSetPopulator implements TriGParserEventHandler
 			case TriGParser.ANON:			// bNodes via [] or [:- ] QNAME starts "=:"
 				if ( ! bNodeMap.containsKey(text) )
 					bNodeMap.put(text, Node.createAnon());
-				return (Node) bNodeMap.get(text);
+				return bNodeMap.get(text);
 
             case TriGParser.UVAR:
                 error("Line "+line+": N3toRDF: Can't map variables to RDF: "+text) ;
@@ -418,7 +418,7 @@ public class NamedGraphSetPopulator implements TriGParserEventHandler
         else
         {
             String prefix = prefixed.substring( 0, colon );
-            String uri = (String) myPrefixMapping.get( prefix );
+            String uri = myPrefixMapping.get( prefix );
             if ( uri == null )
                 return prefixed ;
             return uri + prefixed.substring( colon + 1 ) ;
