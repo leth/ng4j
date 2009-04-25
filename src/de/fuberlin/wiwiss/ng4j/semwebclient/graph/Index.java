@@ -19,9 +19,8 @@ public class Index
 	// members
 
 	/** Bitmask that selects the bits of identifiers used for hash keys. */
-// 	static final private int INDEXKEYMASK = 255;
-	static final private int INDEXKEYMASK = 2047;
-// 	static final private int INDEXKEYMASK = 4095;
+	static final private int KEYMASKSIZE = 4;
+	static final private int INDEXKEYMASK = ( 1 << KEYMASKSIZE ) - 1;
 
 	/** the hash table */
 	final private List<EncodedTriple> [] index = new List [INDEXKEYMASK+1];

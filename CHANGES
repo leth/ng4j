@@ -1,3 +1,7 @@
+04/25/09 (Olaf)
+Finished the SemWebClLib-specific Graph implementation which improves performance of query executions. For details see:
+  http://apps.sourceforge.net/wordpress/squin/2009/04/25/identified-a-proper-index-size-for-the-new-swcllib-storage-solution/
+
 04/13/09 (Olaf)
 Fixed bug in TriG writer - some namespace prefixes were used without being defined
 
