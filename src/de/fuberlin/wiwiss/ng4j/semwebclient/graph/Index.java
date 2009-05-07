@@ -59,6 +59,22 @@ public class Index
 		return new AllEntriesIterator();
 	}
 
+	/**
+	 * Returns the number of entries in this index.
+	 */
+	public int size ()
+	{
+		int result = 0;
+		int buckets = index.length;
+		for ( int i = 0; i< buckets; ++i )
+		{
+			if ( index[i] != null ) {
+				result += index[i].size();
+			}
+		}
+		return result;
+	}
+
 
 	// helpers
 

@@ -143,6 +143,12 @@ public class SWClGraphMem extends GraphBase
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
+	protected int graphBaseSize ()
+	{
+		return indexS.size();
+	}
+
 
 	// operation
 
