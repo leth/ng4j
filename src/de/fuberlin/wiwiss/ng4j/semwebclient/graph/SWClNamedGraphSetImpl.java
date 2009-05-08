@@ -3,11 +3,20 @@ package de.fuberlin.wiwiss.ng4j.semwebclient.graph;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.graph.TripleMatch;
+import com.hp.hpl.jena.graph.query.BindingQueryPlan;
+import com.hp.hpl.jena.graph.query.ExpressionSet;
+import com.hp.hpl.jena.graph.query.Mapping;
+import com.hp.hpl.jena.graph.query.SimpleQueryHandler;
+import com.hp.hpl.jena.graph.query.Stage;
+import com.hp.hpl.jena.graph.query.Query;
+import com.hp.hpl.jena.graph.query.QueryHandler;
 import com.hp.hpl.jena.shared.ReificationStyle;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.util.iterator.WrappedIterator;
@@ -74,12 +83,28 @@ public class SWClNamedGraphSetImpl extends NamedGraphSetImpl
 	 * and that uses the identifier-based query execution.
 	 */
 	class UnionGraph extends NamedGraphSetImpl.UnionGraph
+	                 implements IdBasedGraph
 	{
 		public UnionGraph ( List<NamedGraph> members )
 		{
 			super( members );
 		}
 
+// 		/**
+// 		 * Returns a query handler (see {@link IdBasedQueryHandler} that is based
+// 		 * on the identifiers used to represent RDF nodes in the RDF graphs that
+// 		 * make up this union graph.
+// 	 	*/
+// 		@Override
+// 		public QueryHandler queryHandler ()
+// 		{
+// 			if ( queryHandler == null ) {
+// 				queryHandler = new IdBasedQueryHandler( this );
+// 			}
+// 			return queryHandler;
+// 		}
+
+		@Override
 		public ExtendedIterator graphBaseFind ( TripleMatch m )
 		{
 			Node matchSubject = m.getMatchSubject();
@@ -96,17 +121,167 @@ public class SWClNamedGraphSetImpl extends NamedGraphSetImpl
 				return WrappedIterator.create( EmptyIterator.emptyTripleIterator );
 			}
 
-			Set seen = new HashSet();
- 			ExtendedIterator result = WrappedIterator.create( EmptyIterator.emptyTripleIterator );
+			return new ConvertingIterator( find(sId,pId,oId) );
+		}
+
+
+		// implementation of the IdBasedGraph interface
+
+		public Node getNode ( int id )
+		{
+			return nodeDict.getNode( id );
+		}
+
+		public int getId ( Node n )
+		{
+			return nodeDict.getId( n );
+		}
+
+		public boolean contains ( int sId, int pId, int oId )
+		{
 			Iterator itGraph = m_subGraphs.iterator();
 			while ( itGraph.hasNext() )
 			{
 				SWClNamedGraphImpl ng = (SWClNamedGraphImpl) itGraph.next();
-				ExtendedIterator itFind = new ConvertingIterator( ng.find(sId,pId,oId) );
-				ExtendedIterator newTriples = recording( rejecting( itFind, seen ), seen );
-				result = result.andThen( newTriples );
+				if ( ng.contains(sId,pId,oId) ) {
+					return true;
+				}
 			}
+			return false;
+		}
+
+		public Iterator<EncodedTriple> find ( int sId, int pId, int oId )
+		{
+			return new UnionFindIterator( m_subGraphs, sId, pId, oId );
+		}
+	}
+
+	/**
+	 * Evaluates a find query (triple pattern query) over a set of RDF graphs
+	 * where the result is a union of the triples found in the graphs.
+	 * Hence, a matching triple that occurs in multiple graphs is returned only
+	 * once.
+	 */
+	static class UnionFindIterator implements Iterator<EncodedTriple>
+	{
+		final protected List<NamedGraph> graphs;
+		final protected int sId;
+		final protected int pId;
+		final protected int oId;
+
+		/**
+		 * This index stores the matching triples that have already been returned
+		 * in order to skip later occurences of them.
+		 */
+		final protected Index seen = new Index ();
+
+		/**
+		 * Represents the element of the seen triples that is used as index key
+		 * in {@link #seen}.
+		 * 1 for subject, 2 for predicate, 3 for object
+		 */
+		final protected byte seenIndexKey;
+
+		protected Iterator itCurrentGraph;
+		protected Iterator<EncodedTriple> itCurrentMatch;
+		protected EncodedTriple currentMatch;
+
+		/**
+		 * @param graphs the graphs in this list must be instances of the class
+		 *               {@link SWClNamedGraphImpl}
+		 * @param sId identifier representing the subject of the triple pattern
+		 * @param pId identifier representing the predicate of the triple pattern
+		 * @param oId identifier representing the object of the triple pattern
+		 */
+		public UnionFindIterator ( List<NamedGraph> graphs, int sId, int pId, int oId )
+		{
+			this.graphs = graphs;
+			this.sId = sId;
+			this.pId = pId;
+			this.oId = oId;
+
+			if ( sId == -1 ) {
+				seenIndexKey = 1;
+			} else if ( pId == -1 ) {
+				seenIndexKey = 2;
+			} else {
+				seenIndexKey = 3;
+			}
+		}
+
+		public boolean hasNext ()
+		{
+			if ( currentMatch != null ) {
+				return true;
+			}
+
+			while ( currentMatch == null || hasSeen(currentMatch) )
+			{
+				while ( itCurrentMatch == null || ! itCurrentMatch.hasNext() )
+				{
+					if ( itCurrentGraph == null ) {
+						itCurrentGraph = graphs.iterator();
+					}
+
+					if ( ! itCurrentGraph.hasNext() )
+					{
+						currentMatch = null;
+						return false;
+					}
+
+					itCurrentMatch = ( (SWClNamedGraphImpl) itCurrentGraph.next() ).find( sId, pId, oId );
+				}
+
+				currentMatch = itCurrentMatch.next();
+			}
+
+			return true;
+		}
+
+		public EncodedTriple next ()
+		{
+			if ( ! hasNext() ) {
+				throw new NoSuchElementException();
+			}
+
+			recordAsSeen( currentMatch );
+			EncodedTriple result = currentMatch;
+			currentMatch = null;
 			return result;
+		}
+
+		public void remove () { throw new UnsupportedOperationException(); }
+
+		protected boolean hasSeen ( EncodedTriple et )
+		{
+			Iterator<EncodedTriple> itBucket;
+			if ( seenIndexKey == 1 ) {
+				itBucket = seen.get( et.s );
+			} else if ( seenIndexKey == 2 ) {
+				itBucket = seen.get( et.p );
+			} else {
+				itBucket = seen.get( et.o );
+			}
+
+			while ( itBucket.hasNext() )
+			{
+				if ( itBucket.next().equals(et) ) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		protected void recordAsSeen ( EncodedTriple et )
+		{
+			if ( seenIndexKey == 1 ) {
+				seen.put( et.s, et );
+			} else if ( seenIndexKey == 2 ) {
+				seen.put( et.p, et );
+			} else {
+				seen.put( et.o, et );
+			}
 		}
 	}
 
