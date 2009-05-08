@@ -66,11 +66,13 @@ abstract public class TaskQueueBase extends Thread {
 	/**
 	 * Adds the given task to the queue.
 	 */
-	public synchronized void addTask ( Task task ) {
+	public void addTask ( Task task ) {
 		if ( closed )
 			throw new IllegalStateException( "This queue '" + getName() + "' (type: " + getClass().getName() + ") has been closed." );
 
-		tasks.offer ( task );
+		synchronized ( tasks ) {
+			tasks.offer ( task );
+		}
 		log.debug( "Enqueued task '" + task.getIdentifier() + "' in queue '" + getName() + "' (type: " + getClass().getName() + ") - " + tasks.size() + " tasks in queue." );
 		notify();
 	}
@@ -111,9 +113,24 @@ abstract public class TaskQueueBase extends Thread {
 			freeThreads.addAll( tmp );
 
 			// assign queued tasks to free threads
-			while ( ! tasks.isEmpty() && ! freeThreads.isEmpty() ) {
-				TaskExecutorBase thread = freeThreads.remove();
-				Task task = tasks.remove();
+			while ( true ) {
+				if ( freeThreads.isEmpty() ) {
+					break;
+				}
+
+				TaskExecutorBase thread = null;
+				Task task = null;
+				synchronized ( tasks ) {
+					if ( ! tasks.isEmpty() ) {
+						thread = freeThreads.remove();
+						task = tasks.remove();
+					}
+				}
+
+				if ( task == null ) {
+					break;
+				}
+
 				thread.startTask( task );
 				busyThreads.add( thread );
 
