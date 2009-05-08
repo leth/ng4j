@@ -9,6 +9,7 @@ import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.graph.TripleMatch;
 import com.hp.hpl.jena.graph.impl.GraphBase;
+import com.hp.hpl.jena.graph.query.QueryHandler;
 import com.hp.hpl.jena.shared.ReificationStyle;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.util.iterator.WrappedIterator;
@@ -22,6 +23,7 @@ import com.hp.hpl.jena.util.iterator.WrappedIterator;
  * @author Olaf Hartig
  */
 public class SWClGraphMem extends GraphBase
+                          implements IdBasedGraph
 {
 	// members
 
@@ -143,6 +145,20 @@ public class SWClGraphMem extends GraphBase
 		throw new UnsupportedOperationException();
 	}
 
+// 	/**
+// 	 * Returns a query handler (see {@link IdBasedQueryHandler} that is based on
+// 	 * the identifiers used to represent RDF nodes in this RDF graph
+// 	 * implementation.
+// 	 */
+// 	@Override
+// 	public QueryHandler queryHandler ()
+// 	{
+// 		if ( queryHandler == null ) {
+// 			queryHandler = new IdBasedQueryHandler( this );
+// 		}
+// 		return queryHandler;
+// 	}
+
 	@Override
 	protected int graphBaseSize ()
 	{
@@ -150,16 +166,23 @@ public class SWClGraphMem extends GraphBase
 	}
 
 
-	// operation
+	// implementation of the IdBasedGraph interface
 
-	/**
-	 * Executes a triple pattern query specified by the given identifiers.
-	 * An identifier of -1 represents a wildcard.
-	 *
-	 * @param sId the identifier for the subject of the triple pattern
-	 * @param pId the identifier for the predicate of the triple pattern
-	 * @param oId the identifier for the object of the triple pattern
-	 */
+	public Node getNode ( int id )
+	{
+		return nodeDict.getNode( id );
+	}
+
+	public int getId ( Node n )
+	{
+		return nodeDict.getId( n );
+	}
+
+	public boolean contains ( int sId, int pId, int oId )
+	{
+		return ( find(sId,pId,oId).hasNext() );
+	}
+
 	public Iterator<EncodedTriple> find ( int sId, int pId, int oId )
 	{
 		if ( sId != -1 && ! containedIds.contains(sId) ) {

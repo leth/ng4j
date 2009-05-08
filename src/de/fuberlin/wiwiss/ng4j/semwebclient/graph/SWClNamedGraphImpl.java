@@ -14,6 +14,7 @@ import de.fuberlin.wiwiss.ng4j.impl.NamedGraphImpl;
  * @author Olaf Hartig
  */
 public class SWClNamedGraphImpl extends NamedGraphImpl
+                                implements IdBasedGraph
 {
 	// initialization
 
@@ -28,7 +29,31 @@ public class SWClNamedGraphImpl extends NamedGraphImpl
 	}
 
 
-	// operations
+	// implementation of the IdBasedGraph interface
+
+	/**
+	 * Calls the corresponding method of the embedded graph ({@link SWClGraphMem#getNode}).
+	 */
+	final public Node getNode ( int id )
+	{
+		return ( (SWClGraphMem) graph ).getNode( id );
+	}
+
+	/**
+	 * Calls the corresponding method of the embedded graph ({@link SWClGraphMem#getId}).
+	 */
+	final public int getId ( Node n )
+	{
+		return ( (SWClGraphMem) graph ).getId( n );
+	}
+
+	/**
+	 * Calls the corresponding method of the embedded graph ({@link SWClGraphMem#contains}).
+	 */
+	final public boolean contains ( int sId, int pId, int oId )
+	{
+		return ( (SWClGraphMem) graph ).contains( sId, pId, oId );
+	}
 
 	/**
 	 * Calls the corresponding method of the embedded graph ({@link SWClGraphMem#find}).
