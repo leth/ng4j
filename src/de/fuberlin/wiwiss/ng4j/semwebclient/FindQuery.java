@@ -232,7 +232,9 @@ public class FindQuery implements DereferencingListener, URISearchListener {
 		}
 		public synchronized void run() {
 			try {
-				wait(getTimeout());
+				if (this.closeIterator) {
+					wait(getTimeout());
+				}
 			} catch (InterruptedException ex) {
 				// We don't know when this happens
 				throw new RuntimeException(ex);
