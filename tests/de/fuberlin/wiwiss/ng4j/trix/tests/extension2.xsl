@@ -5,7 +5,7 @@
 		xmlns="http://www.w3.org/2004/03/trix/trix-1/"
 		xmlns:trix="http://www.w3.org/2004/03/trix/trix-1/"
 		xmlns:ex="http://example.com/#"
-		version="1.0">
+		version="2.0">
 
 	<!-- Expand qnames -->
 	<xsl:template match="trix:qname">
