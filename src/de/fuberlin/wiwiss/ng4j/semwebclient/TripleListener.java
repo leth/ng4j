@@ -5,7 +5,7 @@ import java.util.EventListener;
 /**
  * Listener to handle TripleFoundEvents.
  * 
- * @author Tobias Gauﬂ
+ * @author Tobias Gau√ü
  */
 public interface TripleListener extends EventListener {
 

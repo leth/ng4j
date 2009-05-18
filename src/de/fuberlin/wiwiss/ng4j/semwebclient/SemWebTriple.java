@@ -6,7 +6,7 @@ import com.hp.hpl.jena.graph.Triple;
 /**
  * A Triple which contains information about it's source.
  * 
- * @author Tobias Gauﬂ
+ * @author Tobias Gau√ü
  * 
  */
 public class SemWebTriple extends Triple {
