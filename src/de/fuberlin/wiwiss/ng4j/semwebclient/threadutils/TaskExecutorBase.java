@@ -92,7 +92,7 @@ abstract public class TaskExecutorBase extends Thread {
 				try {
 					executeTask( currentTask );
 				} catch ( RuntimeException e ) {
-					log.error( "Executing the task '" + currentTask.getIdentifier() + "' for thread '" + getName() + "' (type: " + getClass().getName() + ") caused an " + e.getClass().getName() + " (" + e.getMessage() + ")." );
+					log.error( "Executing the task '" + currentTask.getIdentifier() + "' for thread '" + getName() + "' (type: " + getClass().getName() + ") caused an " + e.getClass().getName() + " (" + e.getMessage() + ").", e );
 				}
 
 				if ( log.isDebugEnabled() ) {

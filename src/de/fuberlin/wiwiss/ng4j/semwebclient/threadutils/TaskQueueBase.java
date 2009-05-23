@@ -74,7 +74,9 @@ abstract public class TaskQueueBase extends Thread {
 			tasks.offer ( task );
 		}
 		log.debug( "Enqueued task '" + task.getIdentifier() + "' in queue '" + getName() + "' (type: " + getClass().getName() + ") - " + tasks.size() + " tasks in queue." );
-		notify();
+		synchronized ( this ) {
+			notify();
+		}
 	}
 
 	/**
