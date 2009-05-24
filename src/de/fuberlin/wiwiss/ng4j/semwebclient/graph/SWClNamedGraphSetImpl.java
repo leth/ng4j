@@ -90,19 +90,19 @@ public class SWClNamedGraphSetImpl extends NamedGraphSetImpl
 			super( members );
 		}
 
-// 		/**
-// 		 * Returns a query handler (see {@link IdBasedQueryHandler} that is based
-// 		 * on the identifiers used to represent RDF nodes in the RDF graphs that
-// 		 * make up this union graph.
-// 	 	*/
-// 		@Override
-// 		public QueryHandler queryHandler ()
-// 		{
-// 			if ( queryHandler == null ) {
-// 				queryHandler = new IdBasedQueryHandler( this );
-// 			}
-// 			return queryHandler;
-// 		}
+		/**
+		 * Returns a query handler (see {@link IdBasedQueryHandler} that is based
+		 * on the identifiers used to represent RDF nodes in the RDF graphs that
+		 * make up this union graph.
+	 	*/
+		@Override
+		public QueryHandler queryHandler ()
+		{
+			if ( queryHandler == null ) {
+				queryHandler = new IdBasedQueryHandler( this );
+			}
+			return queryHandler;
+		}
 
 		@Override
 		public ExtendedIterator graphBaseFind ( TripleMatch m )

@@ -145,19 +145,19 @@ public class SWClGraphMem extends GraphBase
 		throw new UnsupportedOperationException();
 	}
 
-// 	/**
-// 	 * Returns a query handler (see {@link IdBasedQueryHandler} that is based on
-// 	 * the identifiers used to represent RDF nodes in this RDF graph
-// 	 * implementation.
-// 	 */
-// 	@Override
-// 	public QueryHandler queryHandler ()
-// 	{
-// 		if ( queryHandler == null ) {
-// 			queryHandler = new IdBasedQueryHandler( this );
-// 		}
-// 		return queryHandler;
-// 	}
+	/**
+	 * Returns a query handler (see {@link IdBasedQueryHandler} that is based on
+	 * the identifiers used to represent RDF nodes in this RDF graph
+	 * implementation.
+	 */
+	@Override
+	public QueryHandler queryHandler ()
+	{
+		if ( queryHandler == null ) {
+			queryHandler = new IdBasedQueryHandler( this );
+		}
+		return queryHandler;
+	}
 
 	@Override
 	protected int graphBaseSize ()

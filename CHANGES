@@ -1,3 +1,7 @@
+05/24/09 (Olaf)
+Enabled the new BGP query evaluation commited on 05/08/09. For details see:
+  http://apps.sourceforge.net/wordpress/squin/2009/05/24/new-bgp-query-handler-for-the-semantic-web-client-library-reduces-query-times-to-a-third/
+
 05/23/09 (Olaf)
 Bug fixes in the SemWebClLib: eliminated two concurrency issues
 
