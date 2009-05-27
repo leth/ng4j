@@ -1,39 +1,23 @@
-// $Id: NamedGraphModel.java,v 1.7 2009/02/20 08:09:50 hartig Exp $
+// $Id: NamedGraphModel.java,v 1.8 2009/05/27 14:15:39 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.io.InputStream;
-
 import java.io.OutputStream;
-
 import java.io.Reader;
-
 import java.io.Writer;
 import java.util.Map;
-
-
 
 import com.hp.hpl.jena.graph.Node;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ResourceF;
-
 import com.hp.hpl.jena.rdf.model.Property;
-
 import com.hp.hpl.jena.rdf.model.RDFNode;
-
 import com.hp.hpl.jena.rdf.model.Resource;
-
 import com.hp.hpl.jena.rdf.model.Selector;
-
 import com.hp.hpl.jena.rdf.model.Statement;
-
 import com.hp.hpl.jena.rdf.model.StmtIterator;
-
 import com.hp.hpl.jena.rdf.model.impl.ModelCom;
-
-
-
-
 
 import de.fuberlin.wiwiss.ng4j.impl.GraphReaderService;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphResourceImpl;
@@ -81,6 +65,10 @@ public class NamedGraphModel extends ModelCom implements Model {
 	private String baseGraphName;
 	private NamedGraphSet graphSet;
 	
+	public static final String DEFAULT_READ_LANGUAGE = "RDF/XML";
+	public static final String TRIX_LANGUAGE = "TRIX";
+	public static final String TRIG_LANGUAGE = "TRIG";
+	
 	/**
 	 * Initialises a NamedGraphModel.
 	 * @param graphSet A NamedGraphSet to back the model
@@ -107,9 +95,9 @@ public class NamedGraphModel extends ModelCom implements Model {
 	 */
 	public TriGWriter getTriGWriter() {
 		TriGWriter writer = new TriGWriter();
-		Map map = this.getNsPrefixMap();
-		for (Object key : map.keySet()) {
-			writer.addNamespace((String) key, (String) map.get(key));
+		Map<String,String> map = this.getNsPrefixMap();
+		for ( Map.Entry<String, String> mapEntry : map.entrySet() ) {
+			writer.addNamespace(mapEntry.getKey(), mapEntry.getValue());
 		}
 		return writer;
 	}
@@ -123,41 +111,31 @@ public class NamedGraphModel extends ModelCom implements Model {
 		return createResource(this.baseGraphName);
 	}
 
-	/** 
-	 * Create a Statement instance. (Creating a statement does not add it to the set of 
-	 * statements in the model; see Model::add). This method may return an existing 
-	 * Statement with the correct components and model, or it may construct a fresh one, 
-	 * as it sees fit.
-	 * <p>
-	 * Subsequent operations on the statement or any of its parts may modify this model.
-	 * @param s the subject of the statement
-	 * @param p the predicate of the statement
-	 * @param o the object of the statement
-	 * @return the new statement
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#createStatement(com.hp.hpl.jena.rdf.model.Resource, com.hp.hpl.jena.rdf.model.Property, com.hp.hpl.jena.rdf.model.RDFNode)
 	 */
 	public Statement createStatement(Resource s, Property p, RDFNode o) {
 		return new NamedGraphStatement(s, p, o, this);
 	}
 
-	/**
-	 * Lists all statements. Subsequent operations on those statements may
-	 * modify this model.
-	 * @return An iterator over all statements in the model.
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#listStatements()
 	 */
 	public StmtIterator listStatements() {
 		return new NamedGraphStatementIterator(super.listStatements(), this);
 	}
 
-	/**
-	 * Lists the statements matching a selector.
-	 * @param selector A selector object
-	 * @return an iterator over the matching statements
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#listStatements(com.hp.hpl.jena.rdf.model.Selector)
 	 */
 	public StmtIterator listStatements(Selector selector) {
 		return convertStatementsToNamedGraphStatements(
 				super.listStatements(selector));
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#read(java.io.InputStream, java.lang.String, java.lang.String)
+	 */
 	public Model read(InputStream reader, String base, String lang) {
 		GraphReaderService service = new GraphReaderService();
 		service.setSourceInputStream(reader, base);
@@ -166,14 +144,16 @@ public class NamedGraphModel extends ModelCom implements Model {
 		return this;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#read(java.io.InputStream, java.lang.String)
+	 */
 	public Model read(InputStream reader, String base) {
-		GraphReaderService service = new GraphReaderService();
-		service.setSourceInputStream(reader, base);
-		service.setLanguage("RDF/XML");
-		service.readInto(this.graphSet);
-		return this;
+		return read(reader, base, this.DEFAULT_READ_LANGUAGE);
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#read(java.io.Reader, java.lang.String, java.lang.String)
+	 */
 	public Model read(Reader reader, String base, String lang) {
 		GraphReaderService service = new GraphReaderService();
 		service.setSourceReader(reader, base);
@@ -182,14 +162,16 @@ public class NamedGraphModel extends ModelCom implements Model {
 		return this;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#read(java.io.Reader, java.lang.String)
+	 */
 	public Model read(Reader reader, String base) {
-		GraphReaderService service = new GraphReaderService();
-		service.setSourceReader(reader, base);
-		service.setLanguage("RDF/XML");
-		service.readInto(this.graphSet);
-		return this;
+		return read(reader, base, this.DEFAULT_READ_LANGUAGE);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#read(java.lang.String, java.lang.String)
+	 */
 	public Model read(String url, String lang) {
 		GraphReaderService service = new GraphReaderService();
 		service.setSourceURL(url);
@@ -198,82 +180,101 @@ public class NamedGraphModel extends ModelCom implements Model {
 		return this;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#read(java.lang.String)
+	 */
 	public Model read(String url) {
-		GraphReaderService service = new GraphReaderService();
-		service.setSourceURL(url);
-		service.setLanguage("RDF/XML");
-		service.readInto(this.graphSet);
-		return this;
+		return read(url, this.DEFAULT_READ_LANGUAGE);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#write(java.io.OutputStream, java.lang.String, java.lang.String)
+	 */
 	public Model write(OutputStream writer, String lang, String base) {
-		if ("TRIX".equals(lang)) {
+		if (TRIX_LANGUAGE.equals(lang)) {
 			new TriXWriter().write(this.graphSet, writer, base);
 			return this;
 		}
-		if ("TRIG".equals(lang)) {
+		if (TRIG_LANGUAGE.equals(lang)) {
 			getTriGWriter().write(this.graphSet, writer, base);
 			return this;
 		}
 		return super.write(writer, lang, base);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#write(java.io.OutputStream, java.lang.String)
+	 */
 	public Model write(OutputStream writer, String lang) {
-		if ("TRIX".equals(lang)) {
+		if (TRIX_LANGUAGE.equals(lang)) {
 			new TriXWriter().write(this.graphSet, writer, null);
 			return this;
 		}
-		if ("TRIG".equals(lang)) {
+		if (TRIG_LANGUAGE.equals(lang)) {
 			getTriGWriter().write(this.graphSet, writer, null);
 			return this;
 		}
 		return super.write(writer, lang);
 	}
 
-	public Model write(OutputStream writer) {
-		return super.write(writer);
-	}
+// Commenting out because its implementation is no different from that in the parent class
+//	/* (non-Javadoc)
+//	 * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#write(java.io.OutputStream)
+//	 */
+//	public Model write(OutputStream writer) {
+//		return super.write(writer);
+//	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#write(java.io.Writer, java.lang.String, java.lang.String)
+	 */
 	public Model write(Writer writer, String lang, String base) {
-		if ("TRIX".equals(lang)) {
+		if (TRIX_LANGUAGE.equals(lang)) {
 			new TriXWriter().write(this.graphSet, writer, base);
 			return this;
 		}
-		if ("TRIG".equals(lang)) {
+		if (TRIG_LANGUAGE.equals(lang)) {
 			getTriGWriter().write(this.graphSet, writer, base);
 			return this;
 		}
 		return super.write(writer, lang, base);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#write(java.io.Writer, java.lang.String)
+	 */
 	public Model write(Writer writer, String lang) {
-		if ("TRIX".equals(lang)) {
+		if (TRIX_LANGUAGE.equals(lang)) {
 			new TriXWriter().write(this.graphSet, writer, null);
 			return this;
 		}
-		if ("TRIG".equals(lang)) {
+		if (TRIG_LANGUAGE.equals(lang)) {
 			getTriGWriter().write(this.graphSet, writer, null);
 			return this;
 		}
 		return super.write(writer, lang);
 	}
 
-	public Model write(Writer writer) {
-		return super.write(writer);
-	}
+// Commenting out because its implementation is no different from that in the parent class
+//	/* (non-Javadoc)
+//	 * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#write(java.io.Writer)
+//	 */
+//	public Model write(Writer writer) {
+//		return super.write(writer);
+//	}
 
 	private StmtIterator convertStatementsToNamedGraphStatements(StmtIterator it) {
 		return new NamedGraphStatementIterator(it, this);
 	}
 
-    /**
+    /* (non-Javadoc)
      * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#getResource(java.lang.String)
      */
     public Resource getResource(String uri) {
         return new NamedGraphResourceImpl(super.getResource(uri),this);
     }
-    
-    /**
+
+    /* (non-Javadoc)
      * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#getResource(java.lang.String, com.hp.hpl.jena.rdf.model.ResourceF)
      */
     public Resource getResource(String uri, ResourceF f) {
