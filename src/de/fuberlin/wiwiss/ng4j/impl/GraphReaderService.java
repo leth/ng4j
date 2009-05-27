@@ -1,4 +1,4 @@
-// $Id: GraphReaderService.java,v 1.10 2009/02/20 08:09:51 hartig Exp $
+// $Id: GraphReaderService.java,v 1.11 2009/05/27 14:18:21 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import java.io.File;
@@ -297,24 +297,24 @@ public class GraphReaderService {
 		if (this.url != null) {
 			String mimeType = getMIMEType(this.url);
 			if (this.mimeTypes.get(mimeType) != null) {
-				return (String) this.mimeTypes.get(mimeType);
+				return this.mimeTypes.get(mimeType);
 			}
 		}
 		if (getURI() == null) {
 			return null;
 		}
-		Iterator it = this.fileExtensions.entrySet().iterator();
+		Iterator<Entry<String,String>> it = this.fileExtensions.entrySet().iterator();
 		while (it.hasNext()) {
-			Entry entry = (Entry) it.next();
+			Entry<String,String> entry = it.next();
 			if (getURI().endsWith("." + entry.getKey())) {
-				return (String) entry.getValue();
+				return entry.getValue();
 			}
 		}
 		String desperateLastAttempt = findFileExtensionInName(getURI());
 		if (desperateLastAttempt == null) {
 			return null;
 		}
-		return (String) this.fileExtensions.get(desperateLastAttempt);
+		return this.fileExtensions.get(desperateLastAttempt);
 	}
 	
 	private String getMIMEType(String someURL) {
@@ -335,7 +335,7 @@ public class GraphReaderService {
 			String filename = realURL.getFile();
 			Iterator<String> it = this.fileExtensions.keySet().iterator();
 			while (it.hasNext()) {
-				String extension = (String) it.next();
+				String extension = it.next();
 				if (filename.indexOf(extension) >= 0) {
 					return extension;
 				}
