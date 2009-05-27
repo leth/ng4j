@@ -1,4 +1,4 @@
-// $Id: NamedGraphModel.java,v 1.8 2009/05/27 14:15:39 jenpc Exp $
+// $Id: NamedGraphModel.java,v 1.9 2009/05/27 14:33:22 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.io.InputStream;
@@ -114,6 +114,7 @@ public class NamedGraphModel extends ModelCom implements Model {
 	/* (non-Javadoc)
 	 * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#createStatement(com.hp.hpl.jena.rdf.model.Resource, com.hp.hpl.jena.rdf.model.Property, com.hp.hpl.jena.rdf.model.RDFNode)
 	 */
+	@Override
 	public Statement createStatement(Resource s, Property p, RDFNode o) {
 		return new NamedGraphStatement(s, p, o, this);
 	}
@@ -121,6 +122,7 @@ public class NamedGraphModel extends ModelCom implements Model {
 	/* (non-Javadoc)
 	 * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#listStatements()
 	 */
+	@Override
 	public StmtIterator listStatements() {
 		return new NamedGraphStatementIterator(super.listStatements(), this);
 	}
@@ -128,6 +130,7 @@ public class NamedGraphModel extends ModelCom implements Model {
 	/* (non-Javadoc)
 	 * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#listStatements(com.hp.hpl.jena.rdf.model.Selector)
 	 */
+	@Override
 	public StmtIterator listStatements(Selector selector) {
 		return convertStatementsToNamedGraphStatements(
 				super.listStatements(selector));
@@ -136,6 +139,7 @@ public class NamedGraphModel extends ModelCom implements Model {
 	/* (non-Javadoc)
 	 * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#read(java.io.InputStream, java.lang.String, java.lang.String)
 	 */
+	@Override
 	public Model read(InputStream reader, String base, String lang) {
 		GraphReaderService service = new GraphReaderService();
 		service.setSourceInputStream(reader, base);
@@ -147,13 +151,15 @@ public class NamedGraphModel extends ModelCom implements Model {
 	/* (non-Javadoc)
 	 * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#read(java.io.InputStream, java.lang.String)
 	 */
+	@Override
 	public Model read(InputStream reader, String base) {
-		return read(reader, base, this.DEFAULT_READ_LANGUAGE);
+		return read(reader, base, DEFAULT_READ_LANGUAGE);
 	}
 	
 	/* (non-Javadoc)
 	 * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#read(java.io.Reader, java.lang.String, java.lang.String)
 	 */
+	@Override
 	public Model read(Reader reader, String base, String lang) {
 		GraphReaderService service = new GraphReaderService();
 		service.setSourceReader(reader, base);
@@ -165,13 +171,15 @@ public class NamedGraphModel extends ModelCom implements Model {
 	/* (non-Javadoc)
 	 * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#read(java.io.Reader, java.lang.String)
 	 */
+	@Override
 	public Model read(Reader reader, String base) {
-		return read(reader, base, this.DEFAULT_READ_LANGUAGE);
+		return read(reader, base, DEFAULT_READ_LANGUAGE);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#read(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public Model read(String url, String lang) {
 		GraphReaderService service = new GraphReaderService();
 		service.setSourceURL(url);
@@ -183,13 +191,15 @@ public class NamedGraphModel extends ModelCom implements Model {
 	/* (non-Javadoc)
 	 * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#read(java.lang.String)
 	 */
+	@Override
 	public Model read(String url) {
-		return read(url, this.DEFAULT_READ_LANGUAGE);
+		return read(url, DEFAULT_READ_LANGUAGE);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#write(java.io.OutputStream, java.lang.String, java.lang.String)
 	 */
+	@Override
 	public Model write(OutputStream writer, String lang, String base) {
 		if (TRIX_LANGUAGE.equals(lang)) {
 			new TriXWriter().write(this.graphSet, writer, base);
@@ -205,6 +215,7 @@ public class NamedGraphModel extends ModelCom implements Model {
 	/* (non-Javadoc)
 	 * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#write(java.io.OutputStream, java.lang.String)
 	 */
+	@Override
 	public Model write(OutputStream writer, String lang) {
 		if (TRIX_LANGUAGE.equals(lang)) {
 			new TriXWriter().write(this.graphSet, writer, null);
@@ -228,6 +239,7 @@ public class NamedGraphModel extends ModelCom implements Model {
 	/* (non-Javadoc)
 	 * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#write(java.io.Writer, java.lang.String, java.lang.String)
 	 */
+	@Override
 	public Model write(Writer writer, String lang, String base) {
 		if (TRIX_LANGUAGE.equals(lang)) {
 			new TriXWriter().write(this.graphSet, writer, base);
@@ -243,6 +255,7 @@ public class NamedGraphModel extends ModelCom implements Model {
 	/* (non-Javadoc)
 	 * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#write(java.io.Writer, java.lang.String)
 	 */
+	@Override
 	public Model write(Writer writer, String lang) {
 		if (TRIX_LANGUAGE.equals(lang)) {
 			new TriXWriter().write(this.graphSet, writer, null);
@@ -270,6 +283,7 @@ public class NamedGraphModel extends ModelCom implements Model {
     /* (non-Javadoc)
      * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#getResource(java.lang.String)
      */
+	@Override
     public Resource getResource(String uri) {
         return new NamedGraphResourceImpl(super.getResource(uri),this);
     }
@@ -277,6 +291,7 @@ public class NamedGraphModel extends ModelCom implements Model {
     /* (non-Javadoc)
      * @see com.hp.hpl.jena.rdf.model.impl.ModelCom#getResource(java.lang.String, com.hp.hpl.jena.rdf.model.ResourceF)
      */
+	@Override
     public Resource getResource(String uri, ResourceF f) {
         return new NamedGraphResourceImpl(super.getResource(uri, f),this);
     }
