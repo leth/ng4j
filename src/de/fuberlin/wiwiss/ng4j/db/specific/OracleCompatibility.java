@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/OracleCompatibility.java,v 1.3 2009/02/20 08:09:51 hartig Exp $
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/OracleCompatibility.java,v 1.4 2009/05/27 13:42:30 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db.specific;
 
 import java.sql.Connection;
@@ -36,6 +36,7 @@ public class OracleCompatibility extends DbCompatibility {
 	/* (non-Javadoc)
 	 * @see de.fuberlin.wiwiss.ng4j.db.specific.DbCompatibility#createTables()
 	 */
+	@Override
 	public void createTables() {
 		execute("CREATE TABLE " + graphNamesTableName +
 			"(name " + URI_DATATYPE + " NOT NULL" + /*" " + DEFAULT_STRING_ASSIGNMENT +*/ " PRIMARY KEY)");
