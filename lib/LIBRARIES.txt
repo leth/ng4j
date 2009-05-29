@@ -1,0 +1,30 @@
+
+Library										Version								Source
+
+antlr-2.7.5.jar								2.7.5 (included with Jena 2.5.6)
+arq.jar										2.3 (included with Jena 2.5.6)
+axis.jar									
+bcpg-jdk15-141.jar							1.41 for JDK 1.5					http://www.bouncycastle.org/
+bcprov-jdk15-141.jar						1.41 for JDK 1.5					http://www.bouncycastle.org/
+commons-lang-2.0.jar						2.0
+commons-logging-1.1.1.jar					1.1.1 (included with Jena 2.5.6)
+concurrent.jar								1.3.2 (included with Jena 2.5.6)
+grddl.jar									
+hsqldb-1.8.0.7.jar							1.8.0.7
+icu4j_3_4.jar								3.4 (included with Jena 2.5.6)
+iri.jar										0.5 (included with Jena 2.5.6)
+jakarta-oro-2.0.5.jar						2.0.5
+jena.jar									2.5.6
+jenatest.jar								 (included with Jena 2.5.6)
+json.jar									 (included with Jena 2.5.6)
+junit.jar									 (included with Jena 2.5.6)
+log4j-1.2.12.jar							1.2.12 (included with Jena 2.5.6)
+mysql-connector-java-3.2.0-alpha-bin.jar	
+nekohtml.jar								
+saxon8-dom.jar								
+saxon8.jar									
+stax-api-1.0.jar							1.0 (included with Jena 2.5.6)
+tagsoup-1.0.4.jar							1.0.4
+wstx-asl-3.0.0.jar							3.0.0 (included with Jena 2.5.6)
+xercesImpl.jar								 (included with Jena 2.5.6)
+xml-apis.jar								 (included with Jena 2.5.6)
