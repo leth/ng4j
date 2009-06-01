@@ -1,30 +1,44 @@
 
-Library										Version								Source
+Upgrade?    Library                                         Version                            Source
 
-antlr-2.7.5.jar								2.7.5 (included with Jena 2.5.6)
-arq.jar										2.3 (included with Jena 2.5.6)
-axis.jar									
-bcpg-jdk15-141.jar							1.41 for JDK 1.5					http://www.bouncycastle.org/
-bcprov-jdk15-141.jar						1.41 for JDK 1.5					http://www.bouncycastle.org/
-commons-lang-2.0.jar						2.0
-commons-logging-1.1.1.jar					1.1.1 (included with Jena 2.5.6)
-concurrent.jar								1.3.2 (included with Jena 2.5.6)
-grddl.jar									0.3					http://jena.sourceforge.net
-hsqldb-1.8.0.7.jar							1.8.0.7
-icu4j_3_4.jar								3.4 (included with Jena 2.5.6)
-iri.jar										0.5 (included with Jena 2.5.6)
-jakarta-oro-2.0.5.jar						2.0.5
-jena.jar									2.5.6
-jenatest.jar								 (included with Jena 2.5.6)
-json.jar									 (included with Jena 2.5.6)
-junit.jar									 (included with Jena 2.5.6)
-log4j-1.2.12.jar							1.2.12 (included with Jena 2.5.6)
-mysql-connector-java-3.2.0-alpha-bin.jar	
-nekohtml.jar								
-saxon8-dom.jar								
-saxon8.jar									
-stax-api-1.0.jar							1.0 (included with Jena 2.5.6)
-tagsoup-1.0.4.jar							1.0.4
-wstx-asl-3.0.0.jar							3.0.0 (included with Jena 2.5.6)
-xercesImpl.jar								 (included with Jena 2.5.6)
-xml-apis.jar								 (included with Jena 2.5.6)
+N1          antlr-2.7.5.jar                                 2.7.5 (included with Jena 2.5.6)    
+N1          arq.jar                                         2.3 (included with Jena 2.5.6)      http://jena.sourceforge.net/ARQ/
+   C1       axis.jar                                    ??                                      http://ws.apache.org/axis/index.html
+                                                                committed 20 November 2005
+   C1       bcpg-jdk15-141.jar								1.41 for JDK 1.5                    http://www.bouncycastle.org/
+   C1       bcprov-jdk15-141.jar							1.41 for JDK 1.5                    http://www.bouncycastle.org/
+   C1       commons-lang-2.0.jar							2.0                                 http://commons.apache.org/lang/
+N1          commons-logging-1.1.1.jar						1.1.1 (included with Jena 2.5.6)
+N1          concurrent.jar									1.3.2 (included with Jena 2.5.6)
+   C1		grddl.jar                                   ??                                      http://jena.sourceforge.net/grddl/
+                                                                committed 7 March 2007 so is older than 0.2 (sourceforge date 13 March 2007)
+                                                                also checked differences between it and 0.2 (and 0.3) and neither matched - differences in classes
+            hsqldb-1.8.0.7.jar                              1.8.0.7
+N1          icu4j_3_4.jar                                   3.4 (included with Jena 2.5.6)      http://site.icu-project.org/
+N1          iri.jar                                         0.5 (included with Jena 2.5.6)
+   C1		jakarta-oro-2.0.5.jar                           2.0.5                               http://jakarta.apache.org/oro/
+N1          jena.jar                                        2.5.6                               http://jena.sourceforge.net/
+N1          jenatest.jar                                 (included with Jena 2.5.6)
+N1          json.jar                                     (included with Jena 2.5.6)
+N1          junit.jar                                       3.8.1 (included with Jena 2.5.6)    http://www.junit.org/
+N1          log4j-1.2.12.jar                                1.2.12 (included with Jena 2.5.6)   http://logging.apache.org/log4j/
+       RC   mysql-connector-java-3.2.0-alpha-bin.jar        3.2.0-alpha                         
+   C1		nekohtml.jar                                    0.9.5                               http://sourceforge.net/projects/nekohtml
+                                                                committed 8 March 2007 as part of the GRDDL libraries
+            saxon8-dom.jar                                  8.0.7j
+            saxon8.jar                                      8.0.7j
+N1          stax-api-1.0.jar                                1.0 (included with Jena 2.5.6)      http://stax.codehaus.org/Home
+   C1		tagsoup-1.0.4.jar                               1.0.4                               http://home.ccil.org/~cowan/XML/tagsoup/
+                                                                committed 28 February 2007 in support of GRDDL
+N1          wstx-asl-3.0.0.jar                              3.0.0 (included with Jena 2.5.6)    http://woodstox.codehaus.org/
+N1          xercesImpl.jar                                  2.7.1 (included with Jena 2.5.6)    http://xerces.apache.org/xerces2-j/
+N1          xml-apis.jar                                 (included with Jena 2.5.6)
+
+
+
+KEY:
+
+N1 - No, stay with Jena 2.5.6 for now
+NL - No, is already latest
+C1 - Yes, should investigate / consider upgrading
+RC - Consider removing; if not, consider upgrading
