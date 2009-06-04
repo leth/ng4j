@@ -1,3 +1,4 @@
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/semwebclient/graph/SWClNamedGraphImpl.java,v 1.3 2009/06/04 13:19:29 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.semwebclient.graph;
 
 import java.util.Iterator;
@@ -33,6 +34,8 @@ public class SWClNamedGraphImpl extends NamedGraphImpl
 
 	/**
 	 * Calls the corresponding method of the embedded graph ({@link SWClGraphMem#getNode}).
+	 * 
+	 * @see de.fuberlin.wiwiss.ng4j.semwebclient.graph.IdBasedGraph#getNode(int)
 	 */
 	final public Node getNode ( int id )
 	{
@@ -41,6 +44,8 @@ public class SWClNamedGraphImpl extends NamedGraphImpl
 
 	/**
 	 * Calls the corresponding method of the embedded graph ({@link SWClGraphMem#getId}).
+	 * 
+	 * @see de.fuberlin.wiwiss.ng4j.semwebclient.graph.IdBasedGraph#getId(com.hp.hpl.jena.graph.Node)
 	 */
 	final public int getId ( Node n )
 	{
@@ -49,6 +54,8 @@ public class SWClNamedGraphImpl extends NamedGraphImpl
 
 	/**
 	 * Calls the corresponding method of the embedded graph ({@link SWClGraphMem#contains}).
+	 * 
+	 * @see de.fuberlin.wiwiss.ng4j.semwebclient.graph.IdBasedGraph#contains(int, int, int)
 	 */
 	final public boolean contains ( int sId, int pId, int oId )
 	{
@@ -57,6 +64,8 @@ public class SWClNamedGraphImpl extends NamedGraphImpl
 
 	/**
 	 * Calls the corresponding method of the embedded graph ({@link SWClGraphMem#find}).
+	 * 
+	 * @see de.fuberlin.wiwiss.ng4j.semwebclient.graph.IdBasedGraph#find(int, int, int)
 	 */
 	final public Iterator<EncodedTriple> find ( int sId, int pId, int oId )
 	{
