@@ -1,3 +1,6 @@
+06/03/09 (Jennifer)
+Upgraded the Bouncy Castle libraries from version 1.41 to version 1.43.
+
 05/27/09 (Jennifer)
 Simplify and improve NamedGraphModel code.
 Add classes SingleNamedGraphModel, SingleNamedGraphStatement, SingleNamedGraphResourceImpl, and SingleNamedGraphStatementIterator.
