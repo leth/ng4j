@@ -1,3 +1,4 @@
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/semwebclient/graph/Attic/IdBasedQueryHandler.java,v 1.2 2009/06/04 13:18:09 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.semwebclient.graph;
 
 import com.hp.hpl.jena.graph.Node;
@@ -29,6 +30,9 @@ public class IdBasedQueryHandler extends SimpleQueryHandler
 
 	// overridden base class methods
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.query.SimpleQueryHandler#patternStage(com.hp.hpl.jena.graph.query.Mapping, com.hp.hpl.jena.graph.query.ExpressionSet, com.hp.hpl.jena.graph.Triple[])
+	 */
 	@Override
 	public Stage patternStage ( Mapping map, ExpressionSet constraints, Triple [] t )
 	{
@@ -37,12 +41,18 @@ public class IdBasedQueryHandler extends SimpleQueryHandler
 		throw new UnsupportedOperationException();
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.query.SimpleQueryHandler#prepareBindings(com.hp.hpl.jena.graph.query.Query, com.hp.hpl.jena.graph.Node[])
+	 */
 	@Override
 	public BindingQueryPlan prepareBindings ( Query q, Node [] variables )
 	{
 		return new IdBasedQueryPlan( (IdBasedGraph) graph, q, variables );
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.query.SimpleQueryHandler#containsNode(com.hp.hpl.jena.graph.Node)
+	 */
 	@Override
 	public boolean containsNode ( Node n )
 	{
