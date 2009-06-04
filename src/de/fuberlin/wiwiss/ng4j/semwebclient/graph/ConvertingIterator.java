@@ -1,9 +1,9 @@
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/semwebclient/graph/Attic/ConvertingIterator.java,v 1.2 2009/06/04 13:16:30 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.semwebclient.graph;
 
 import java.util.Iterator;
 
 import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.util.iterator.NiceIterator;
 
 
@@ -32,16 +32,28 @@ public class ConvertingIterator extends NiceIterator
 
 	// implementation of the Iterator interface
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.util.iterator.NiceIterator#hasNext()
+	 */
+	@Override
 	final public boolean hasNext ()
 	{
 		return base.hasNext();
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.util.iterator.NiceIterator#next()
+	 */
+	@Override
 	final public Triple next ()
 	{
 		return base.next().triple;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.util.iterator.NiceIterator#remove()
+	 */
+	@Override
 	final public void remove ()
 	{
 		throw new UnsupportedOperationException();
