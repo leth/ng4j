@@ -1,21 +1,13 @@
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/semwebclient/graph/SWClNamedGraphSetImpl.java,v 1.4 2009/06/04 13:20:51 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.semwebclient.graph;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.graph.TripleMatch;
-import com.hp.hpl.jena.graph.query.BindingQueryPlan;
-import com.hp.hpl.jena.graph.query.ExpressionSet;
-import com.hp.hpl.jena.graph.query.Mapping;
-import com.hp.hpl.jena.graph.query.SimpleQueryHandler;
-import com.hp.hpl.jena.graph.query.Stage;
-import com.hp.hpl.jena.graph.query.Query;
 import com.hp.hpl.jena.graph.query.QueryHandler;
 import com.hp.hpl.jena.shared.ReificationStyle;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
@@ -46,6 +38,8 @@ public class SWClNamedGraphSetImpl extends NamedGraphSetImpl
 	/**
 	 * Uses the RDF graph implementation and the named graph implementation for
 	 * the Semantic Web client ({@link SWClGraphMem} and {@link SWClNamedGraphImpl}).
+	 * 
+	 * @see de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl#createNamedGraphInstance(com.hp.hpl.jena.graph.Node)
 	 */
 	@Override
 	protected NamedGraph createNamedGraphInstance ( Node graphName )
@@ -59,6 +53,8 @@ public class SWClNamedGraphSetImpl extends NamedGraphSetImpl
 
 	/**
 	 * Uses the union graph defined below.
+	 * 
+	 * @see de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl#asJenaGraph(com.hp.hpl.jena.graph.Node)
 	 */
 	@Override
 	public Graph asJenaGraph ( Node defaultGraphForAdding )
@@ -94,7 +90,9 @@ public class SWClNamedGraphSetImpl extends NamedGraphSetImpl
 		 * Returns a query handler (see {@link IdBasedQueryHandler} that is based
 		 * on the identifiers used to represent RDF nodes in the RDF graphs that
 		 * make up this union graph.
-	 	*/
+		 * 
+		 * @see com.hp.hpl.jena.graph.compose.MultiUnion#queryHandler()
+		 */
 		@Override
 		public QueryHandler queryHandler ()
 		{
@@ -104,6 +102,9 @@ public class SWClNamedGraphSetImpl extends NamedGraphSetImpl
 			return queryHandler;
 		}
 
+		/* (non-Javadoc)
+		 * @see com.hp.hpl.jena.graph.compose.MultiUnion#graphBaseFind(com.hp.hpl.jena.graph.TripleMatch)
+		 */
 		@Override
 		public ExtendedIterator graphBaseFind ( TripleMatch m )
 		{
@@ -127,16 +128,25 @@ public class SWClNamedGraphSetImpl extends NamedGraphSetImpl
 
 		// implementation of the IdBasedGraph interface
 
+		/* (non-Javadoc)
+		 * @see de.fuberlin.wiwiss.ng4j.semwebclient.graph.IdBasedGraph#getNode(int)
+		 */
 		public Node getNode ( int id )
 		{
 			return nodeDict.getNode( id );
 		}
 
+		/* (non-Javadoc)
+		 * @see de.fuberlin.wiwiss.ng4j.semwebclient.graph.IdBasedGraph#getId(com.hp.hpl.jena.graph.Node)
+		 */
 		public int getId ( Node n )
 		{
 			return nodeDict.getId( n );
 		}
 
+		/* (non-Javadoc)
+		 * @see de.fuberlin.wiwiss.ng4j.semwebclient.graph.IdBasedGraph#contains(int, int, int)
+		 */
 		public boolean contains ( int sId, int pId, int oId )
 		{
 			Iterator itGraph = m_subGraphs.iterator();
@@ -150,6 +160,9 @@ public class SWClNamedGraphSetImpl extends NamedGraphSetImpl
 			return false;
 		}
 
+		/* (non-Javadoc)
+		 * @see de.fuberlin.wiwiss.ng4j.semwebclient.graph.IdBasedGraph#find(int, int, int)
+		 */
 		public Iterator<EncodedTriple> find ( int sId, int pId, int oId )
 		{
 			return new UnionFindIterator( m_subGraphs, sId, pId, oId );
@@ -182,7 +195,7 @@ public class SWClNamedGraphSetImpl extends NamedGraphSetImpl
 		 */
 		final protected byte seenIndexKey;
 
-		protected Iterator itCurrentGraph;
+		protected Iterator<NamedGraph> itCurrentGraph;
 		protected Iterator<EncodedTriple> itCurrentMatch;
 		protected EncodedTriple currentMatch;
 
@@ -209,6 +222,9 @@ public class SWClNamedGraphSetImpl extends NamedGraphSetImpl
 			}
 		}
 
+		/* (non-Javadoc)
+		 * @see java.util.Iterator#hasNext()
+		 */
 		public boolean hasNext ()
 		{
 			if ( currentMatch != null ) {
@@ -238,6 +254,9 @@ public class SWClNamedGraphSetImpl extends NamedGraphSetImpl
 			return true;
 		}
 
+		/* (non-Javadoc)
+		 * @see java.util.Iterator#next()
+		 */
 		public EncodedTriple next ()
 		{
 			if ( ! hasNext() ) {
@@ -250,6 +269,9 @@ public class SWClNamedGraphSetImpl extends NamedGraphSetImpl
 			return result;
 		}
 
+		/* (non-Javadoc)
+		 * @see java.util.Iterator#remove()
+		 */
 		public void remove () { throw new UnsupportedOperationException(); }
 
 		protected boolean hasSeen ( EncodedTriple et )
