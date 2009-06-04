@@ -1,3 +1,4 @@
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/semwebclient/graph/SWClGraphMem.java,v 1.5 2009/06/04 13:19:00 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.semwebclient.graph;
 
 import java.util.HashSet;
@@ -91,7 +92,10 @@ public class SWClGraphMem extends GraphBase
 	 * This method obtains the identifiers for the concrete components of the
 	 * given triple pattern and facilitates the identifier-based find method
 	 * (i.e. {@link #find}).
+	 * 
+	 * @see com.hp.hpl.jena.graph.impl.GraphBase#graphBaseFind(com.hp.hpl.jena.graph.TripleMatch)
 	 */
+	@Override
 	protected ExtendedIterator graphBaseFind ( TripleMatch m )
 	{
 		Node matchSubject = m.getMatchSubject();
@@ -115,7 +119,10 @@ public class SWClGraphMem extends GraphBase
 	 * Adds the given triple to this graph.
 	 * Uses the node dictionary to obtain or (if necessary) create identifiers
 	 * for the RDF nodes in the given triple.
+	 * 
+	 * @see com.hp.hpl.jena.graph.impl.GraphBase#performAdd(com.hp.hpl.jena.graph.Triple)
 	 */
+	@Override
 	public void performAdd ( Triple t )
 	{
 		assert ( t.isConcrete() );
@@ -139,7 +146,10 @@ public class SWClGraphMem extends GraphBase
 
 	/**
 	 * Deleting triples from this graph is not supported.
+	 * 
+	 * @see com.hp.hpl.jena.graph.impl.GraphBase#performDelete(com.hp.hpl.jena.graph.Triple)
 	 */
+	@Override
 	public void performDelete ( Triple t )
 	{
 		throw new UnsupportedOperationException();
@@ -149,6 +159,8 @@ public class SWClGraphMem extends GraphBase
 	 * Returns a query handler (see {@link IdBasedQueryHandler} that is based on
 	 * the identifiers used to represent RDF nodes in this RDF graph
 	 * implementation.
+	 * 
+	 * @see com.hp.hpl.jena.graph.impl.GraphBase#queryHandler()
 	 */
 	@Override
 	public QueryHandler queryHandler ()
@@ -159,6 +171,9 @@ public class SWClGraphMem extends GraphBase
 		return queryHandler;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.impl.GraphBase#graphBaseSize()
+	 */
 	@Override
 	protected int graphBaseSize ()
 	{
@@ -168,21 +183,33 @@ public class SWClGraphMem extends GraphBase
 
 	// implementation of the IdBasedGraph interface
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.semwebclient.graph.IdBasedGraph#getNode(int)
+	 */
 	public Node getNode ( int id )
 	{
 		return nodeDict.getNode( id );
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.semwebclient.graph.IdBasedGraph#getId(com.hp.hpl.jena.graph.Node)
+	 */
 	public int getId ( Node n )
 	{
 		return nodeDict.getId( n );
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.semwebclient.graph.IdBasedGraph#contains(int, int, int)
+	 */
 	public boolean contains ( int sId, int pId, int oId )
 	{
 		return ( find(sId,pId,oId).hasNext() );
 	}
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.semwebclient.graph.IdBasedGraph#find(int, int, int)
+	 */
 	public Iterator<EncodedTriple> find ( int sId, int pId, int oId )
 	{
 		if ( sId != -1 && ! containedIds.contains(sId) ) {
@@ -285,6 +312,9 @@ public class SWClGraphMem extends GraphBase
 			this.reqId = reqId;
 		}
 
+		/* (non-Javadoc)
+		 * @see java.util.Iterator#hasNext()
+		 */
 		final public boolean hasNext ()
 		{
 			if ( nextTriple != null ) {
@@ -305,6 +335,9 @@ public class SWClGraphMem extends GraphBase
 			return ( nextTriple != null );
 		}
 
+		/* (non-Javadoc)
+		 * @see java.util.Iterator#next()
+		 */
 		final public EncodedTriple next ()
 		{
 			if ( ! hasNext() ) {
@@ -316,6 +349,9 @@ public class SWClGraphMem extends GraphBase
 			return t;
 		}
 
+		/* (non-Javadoc)
+		 * @see java.util.Iterator#remove()
+		 */
 		final public void remove () { throw new UnsupportedOperationException(); }
 
 		abstract protected boolean matches ( EncodedTriple e );
@@ -378,6 +414,10 @@ public class SWClGraphMem extends GraphBase
 			this.reqId3 = oId;
 		}
 
+		/* (non-Javadoc)
+		 * @see de.fuberlin.wiwiss.ng4j.semwebclient.graph.SWClGraphMem.IteratorIndex1#matches(de.fuberlin.wiwiss.ng4j.semwebclient.graph.EncodedTriple)
+		 */
+		@Override
 		final protected boolean matches ( EncodedTriple e )
 		{
 			return (e.o == reqId3) && (e.s == reqId) && (e.p == reqId2);
