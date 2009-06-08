@@ -51,8 +51,8 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
 /**
  * 
  * Last commit info    :   $Author: jenpc $
- * $Date: 2009/04/22 17:49:56 $
- * $Revision: 1.28 $
+ * $Date: 2009/06/08 20:21:21 $
+ * $Revision: 1.29 $
  * 
  * @author Chris Bizer.
  * @author Rowland Watkins.
@@ -585,7 +585,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
         	            // We, of course, need to provide the warrant graph as it
         	            // was *before* adding the signature. We therefore remove,
         	            // the signature and add back again later.
-        	            if ( ( cert != null ) & ( signature != null )  )
+        	            if ( ( cert != null ) && ( signature != null )  )
         	            {
             	            String certificate = cert.getLexicalForm();
             	            String certs = "-----BEGIN CERTIFICATE-----\n" +

@@ -1,4 +1,4 @@
-//$Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/swp/impl/SWPWarrantImpl.java,v 1.10 2009/04/22 17:22:06 jenpc Exp $
+//$Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/swp/impl/SWPWarrantImpl.java,v 1.11 2009/06/08 20:21:22 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.swp.impl;
 
 import java.io.ByteArrayInputStream;
@@ -216,7 +216,7 @@ public class SWPWarrantImpl implements SWPWarrant
 			boolean hasSigValue = s.contains( "?signature" );
 			boolean hasSigMethod = s.contains( "?smethod" );
 			boolean hasAuthority = s.contains( "?authority" );
-			if ( hasSigValue & hasSigMethod & hasAuthority )
+			if ( hasSigValue && hasSigMethod && hasAuthority )
 				result = true;
 		}
 		return result;
