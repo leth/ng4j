@@ -1,3 +1,6 @@
+06/08/09 (Jennifer)
+Fixed bugs in classes (SWPNamedGraphSetImpl and SWPWarrantImpl) where bitwise and was used instead of logical and.
+
 06/03/09 (Jennifer)
 Upgraded the Bouncy Castle libraries from version 1.41 to version 1.43.
 
