@@ -1,11 +1,9 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/semwebclient/graph/SWClNamedGraphImpl.java,v 1.3 2009/06/04 13:19:29 jenpc Exp $
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/semwebclient/graph/SWClNamedGraphImpl.java,v 1.4 2009/06/09 17:18:54 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.semwebclient.graph;
-
-import java.util.Iterator;
 
 import com.hp.hpl.jena.graph.Node;
 
-import de.fuberlin.wiwiss.ng4j.impl.NamedGraphImpl;
+import de.fuberlin.wiwiss.ng4j.impl.idbased.IdBasedNamedGraphImpl;
 
 
 /**
@@ -14,8 +12,7 @@ import de.fuberlin.wiwiss.ng4j.impl.NamedGraphImpl;
  *
  * @author Olaf Hartig
  */
-public class SWClNamedGraphImpl extends NamedGraphImpl
-                                implements IdBasedGraph
+public class SWClNamedGraphImpl extends IdBasedNamedGraphImpl
 {
 	// initialization
 
@@ -29,53 +26,10 @@ public class SWClNamedGraphImpl extends NamedGraphImpl
 		super( graphNameURI, graph );
 	}
 
-
-	// implementation of the IdBasedGraph interface
-
-	/**
-	 * Calls the corresponding method of the embedded graph ({@link SWClGraphMem#getNode}).
-	 * 
-	 * @see de.fuberlin.wiwiss.ng4j.semwebclient.graph.IdBasedGraph#getNode(int)
-	 */
-	final public Node getNode ( int id )
-	{
-		return ( (SWClGraphMem) graph ).getNode( id );
-	}
-
-	/**
-	 * Calls the corresponding method of the embedded graph ({@link SWClGraphMem#getId}).
-	 * 
-	 * @see de.fuberlin.wiwiss.ng4j.semwebclient.graph.IdBasedGraph#getId(com.hp.hpl.jena.graph.Node)
-	 */
-	final public int getId ( Node n )
-	{
-		return ( (SWClGraphMem) graph ).getId( n );
-	}
-
-	/**
-	 * Calls the corresponding method of the embedded graph ({@link SWClGraphMem#contains}).
-	 * 
-	 * @see de.fuberlin.wiwiss.ng4j.semwebclient.graph.IdBasedGraph#contains(int, int, int)
-	 */
-	final public boolean contains ( int sId, int pId, int oId )
-	{
-		return ( (SWClGraphMem) graph ).contains( sId, pId, oId );
-	}
-
-	/**
-	 * Calls the corresponding method of the embedded graph ({@link SWClGraphMem#find}).
-	 * 
-	 * @see de.fuberlin.wiwiss.ng4j.semwebclient.graph.IdBasedGraph#find(int, int, int)
-	 */
-	final public Iterator<EncodedTriple> find ( int sId, int pId, int oId )
-	{
-		return ( (SWClGraphMem) graph ).find( sId, pId, oId );
-	}
-
 }
 
 /*
- * (c) Copyright 2006 - 2009 Christian Bizer (chris@bizer.de)
+ * (c) Copyright 2009 Christian Bizer (chris@bizer.de)
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
