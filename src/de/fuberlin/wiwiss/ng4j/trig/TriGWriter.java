@@ -1,5 +1,5 @@
 /*
- * $Id: TriGWriter.java,v 1.9 2009/04/13 17:13:28 hartig Exp $
+ * $Id: TriGWriter.java,v 1.10 2009/06/09 16:20:51 hartig Exp $
  */
 package de.fuberlin.wiwiss.ng4j.trig;
 
@@ -59,10 +59,8 @@ public class TriGWriter implements NamedGraphSetWriter {
 	 */
 	public void write(NamedGraphSet set, Writer out, String baseURI) {
 		this.writer = new BufferedWriter(out);
+		Graph allTriples = new GraphMem();
 		Iterator<NamedGraph> graphIt = set.listGraphs();
-		Graph allTriples = graphIt.hasNext() ?
-				set.asJenaGraph(( graphIt.next()).getGraphName()) :
-				new GraphMem();
 		while ( graphIt.hasNext() ) {
 			Iterator tripleIt = graphIt.next().find( Node.ANY, Node.ANY, Node.ANY );
 			while ( tripleIt.hasNext() ) {

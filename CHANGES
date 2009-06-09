@@ -1,3 +1,6 @@
+06/09/09 (Olaf)
+Fixed bug in the fix introduced on 04/13/09
+
 06/08/09 (Jennifer)
 Fixed bugs in classes (SWPNamedGraphSetImpl and SWPWarrantImpl) where bitwise and was used instead of logical and.
 
