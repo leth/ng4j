@@ -1,4 +1,7 @@
 06/09/09 (Olaf)
+Moved the identifier based graph implementation from 'de.fuberlin.wiwiss.ng4j.semwebclient.graph' to 'de.fuberlin.wiwiss.ng4j.impl.idbased'.
+
+06/09/09 (Olaf)
 Fixed bug in the fix introduced on 04/13/09
 
 06/08/09 (Jennifer)

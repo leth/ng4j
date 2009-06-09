@@ -77,7 +77,7 @@ import de.fuberlin.wiwiss.ng4j.semwebclient.urisearch.URISearchTaskQueue;
  * @author Olaf Hartig (hartig@informatik.hu-berlin.de)
  */
 // public class SemanticWebClient extends NamedGraphSetImpl {
-public class SemanticWebClient extends de.fuberlin.wiwiss.ng4j.semwebclient.graph.SWClNamedGraphSetImpl {
+public class SemanticWebClient extends de.fuberlin.wiwiss.ng4j.impl.idbased.IdBasedNamedGraphSetImpl {
 	public static final String CONFIG_MAXSTEPS = "maxsteps";
 	public static final String CONFIG_MAXTHREADS = "maxthreads";
 	public static final String CONFIG_TIMEOUT = "timeout";
