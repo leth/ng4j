@@ -7,24 +7,23 @@ N1          arq.jar                                         2.3 (included with J
                                                                 committed 20 November 2005
 NL          bcpg-jdk15-143.jar								1.43 for JDK 1.5                    http://www.bouncycastle.org/
 NL          bcprov-jdk15-143.jar							1.43 for JDK 1.5                    http://www.bouncycastle.org/
-   C1       commons-lang-2.0.jar							2.0                                 http://commons.apache.org/lang/
+       RC   commons-lang-2.0.jar							2.0                                 http://commons.apache.org/lang/
 N1          commons-logging-1.1.1.jar						1.1.1 (included with Jena 2.5.6)
 N1          concurrent.jar									1.3.2 (included with Jena 2.5.6)
-   C1		grddl.jar                                   ??                                      http://jena.sourceforge.net/grddl/
+   C1       grddl.jar                                   ??                                      http://jena.sourceforge.net/grddl/
                                                                 committed 7 March 2007 so is older than 0.2 (sourceforge date 13 March 2007)
                                                                 also checked differences between it and 0.2 (and 0.3) and neither matched - differences in classes
             hsqldb-1.8.0.7.jar                              1.8.0.7
 N1          icu4j_3_4.jar                                   3.4 (included with Jena 2.5.6)      http://site.icu-project.org/
 N1          iri.jar                                         0.5 (included with Jena 2.5.6)
-   C1		jakarta-oro-2.0.5.jar                           2.0.5                               http://jakarta.apache.org/oro/
+       RC   jakarta-oro-2.0.5.jar                           2.0.5                               http://jakarta.apache.org/oro/
 N1          jena.jar                                        2.5.6                               http://jena.sourceforge.net/
-N1          jenatest.jar                                 (included with Jena 2.5.6)
+N1     RM   jenatest.jar                                 (included with Jena 2.5.6)
 N1          json.jar                                     (included with Jena 2.5.6)
 N1          junit.jar                                       3.8.1 (included with Jena 2.5.6)    http://www.junit.org/
 N1          log4j-1.2.12.jar                                1.2.12 (included with Jena 2.5.6)   http://logging.apache.org/log4j/
        RC   mysql-connector-java-3.2.0-alpha-bin.jar        3.2.0-alpha                         
-   C1		nekohtml.jar                                    0.9.5                               http://sourceforge.net/projects/nekohtml
-                                                                committed 8 March 2007 as part of the GRDDL libraries
+N2   		nekohtml.jar                                    0.9.5 (included with GRDDL 0.3)     http://sourceforge.net/projects/nekohtml
             saxon8-dom.jar                                  8.0.7j
             saxon8.jar                                      8.0.7j
 N1          stax-api-1.0.jar                                1.0 (included with Jena 2.5.6)      http://stax.codehaus.org/Home
@@ -39,9 +38,19 @@ N1          xml-apis.jar                                 (included with Jena 2.5
 KEY:
 
 N1 - No, stay with Jena 2.5.6 for now
+N2 - No, stay with GRDDL 0.3 for now
 NL - No, is already latest
 C1 - Yes, should investigate / consider upgrading
 RC - Consider removing; if not, consider upgrading
+RM - Consider removing
 
 NOTES:
-* When committing a new library, make sure keyword mode is binary, not ASCII.
+* When committing a new library, 
+  * make sure keyword mode is binary, not ASCII.
+  * include version number in the file name.
+  * update .classpath
+  * update POM.XML
+  * remove old library
+  * update LIBRARIES.txt
+
+
