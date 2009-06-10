@@ -1,4 +1,7 @@
 06/10/09 (Jennifer)
+Moved the failing SWP test to a separate file so that it can be excluded from Maven builds.
+
+06/10/09 (Jennifer)
 Upgraded the axis library to version 1.4.
 Removed the jakarta-oro library since it was only used for TriQL, which has been removed.
 
