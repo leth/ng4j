@@ -3,20 +3,19 @@
 <project name="namedgraphs" default="all" basedir=".">
 
 	<property name="project" value="ng4j"/>
+	<property name="version" value="0.9-SNAPSHOT"/>
 	<property name="project.package" value="de.fuberlin.wiwiss.ng4j"/>
 	<property name="project.path" value="de/fuberlin/wiwiss/ng4j"/>
 	<property name="src" value="src"/>
 	<property name="src.tests" value="tests"/>
-	<property name="src.triql.grammar" value="${src}/${project.path}/triql/parser"/>
 	<property name="src.trig.grammar" value="${src}/${project.path}/trig/parser"/>
 	<property name="build" value="build"/>
 	<property name="build.tests" value="build-tests"/>
 	<property name="lib" value="lib"/>
 	<property name="doc" value="doc"/>
 	<property name="javadoc" value="${doc}/javadoc"/>
-	<property name="jar" value="${lib}/${project}.jar"/>
-	<property name="zip" value="${project}.zip"/>
-	<property name="javacc.home" value="bin/javacc-2.1"/>
+	<property name="jar" value="${lib}/${project}-${version}.jar"/>
+	<property name="zip" value="${project}-${version}.zip"/>
 
 	<path id="project.class.path">
 		<fileset dir="${lib}">
@@ -111,20 +110,6 @@
 				<pathelement path="${lib}/junit.jar"/>
 			</classpath>
 		</java>
-	</target>
-
-	<target name="grammar.triql">
-		<!-- Re-generates the TriQL parser from the triql.jjt file;
-			is not part of the regular build process and must be
-			called explicitly when the triql.jjt file changes -->
-		<jjtree target="${src.triql.grammar}/triql.jjt"
-				outputdirectory="${src.triql.grammar}"
-				javacchome="${javacc.home}"
-				buildnodefiles="false"/>
-
-		<javacc target="${src.triql.grammar}/triql.jj"
-				outputdirectory="${src.triql.grammar}"
-				javacchome="${javacc.home}"/>
 	</target>
 
 	<target name="grammar.trig">
