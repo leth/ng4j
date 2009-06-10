@@ -1,3 +1,33 @@
+Known issues in the tests for v0.9.1
+----------------------------------
+The tests produce 1 known failure:
+
+1) testValidateSignatureNamedGraphNodeStringX509CertificateArrayList(de.fuberlin.wiwiss.ng4j.swp.util.SWPSignatureUtilitiesFailingTest)junit.framework.AssertionFailedError
+
+This is the same failure as in previous versions.  
+The particular test case was moved to a separate class so that it could be more easily excluded.
+
+
+Known issues in the tests for v0.9
+----------------------------------
+The tests produce 0 errors and 1 known failure:
+
+1) testValidateSignatureNamedGraphNodeStringX509CertificateArrayList(de.fuberlin.wiwiss.ng4j.swp.util.SWPSignatureUtilitiesTest)junit.framework.AssertionFailedError
+
+The 3 TriQL-related failures no longer occur because TriQL was removed.
+The other SWP failure that was occurring no longer occurs because the method that it tested was removed.
+
+
+Known issues in the tests for v0.8
+----------------------------------
+The tests produce 0 errors and 5 known failures.  The same as in version 0.7.
+
+Note that when checking out version 0.8 from source, the following changes need to be made to the .classpath:
+* Change bouncy castle libraries from version 1.38 to 1.41
+* Change commons-logging library to version 1.1.1
+* Add jenatest.jar
+
+
 Known issues in the tests for v0.7
 ----------------------------------
 The tests produce 5 known failures:
@@ -9,4 +39,4 @@ The tests produce 5 known failures:
 5) testValidateSignatureNamedGraphNodeStringX509CertificateArrayListArrayList(de.fuberlin.wiwiss.ng4j.swp.util.SWPSignatureUtilitiesTest)junit.framework.AssertionFailedError
 
 Failures 1 to 3 occur in (at least) v0.6 too.
-Failure 4 and 5 occured after replacing expired test certificates by new certificates. The reason for the failures probably is an incompatibility between the new certificates and the certificates and signatures embedded in the file ./tests/de/fuberlin/wiwiss/ng4j/swp/util/SWPSignatureUtilitiesTest. We ignored these failures because the actual SWP code has not been changed for v0.7. However, if you are working on SWP, please update the tests.
+Failures 4 and 5 occurred after replacing expired test certificates by new certificates. The reason for the failures probably is an incompatibility between the new certificates and the certificates and signatures embedded in the file ./tests/de/fuberlin/wiwiss/ng4j/swp/util/SWPSignatureUtilitiesTest. We ignored these failures because the actual SWP code has not been changed for v0.7. However, if you are working on SWP, please update the tests.
