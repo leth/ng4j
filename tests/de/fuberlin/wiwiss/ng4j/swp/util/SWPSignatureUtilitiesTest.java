@@ -63,21 +63,21 @@ public class SWPSignatureUtilitiesTest extends TestCase
 //            + "ae4N0WrP9yLP/nVvqEA=";
 	// These are the new values; unfortunately they do not work
 	// TODO Figure out how to change CreateTestKeystore and/or these values so that the tests work as they should
-	protected final static String signature = "Kzzo/VIg+hpZkJS628S8ut1IQZSYXvV/1WSXRHD9nRjfyzlqZKbTmClPZDG/+TfBfjDzC+L8S9gU"
+	final static String signature = "Kzzo/VIg+hpZkJS628S8ut1IQZSYXvV/1WSXRHD9nRjfyzlqZKbTmClPZDG/+TfBfjDzC+L8S9gU"
     	+ "l/Vmqq47QIafM/vIqALS5b0/1/xfIROqj594mxk/J25wy4GQmGIjnCv6NoNG/KJDO2WBklQFeU5h"
     	+ "lz9UON1lcp/CzGdcJJs=";
-    protected final static String badsignature = "Kzzo/VIg--wrong--+hpZkJS628S8ut1IQZSYXvV/1WSXRHD9nRjfyzlqZKbTmClPZDG/+TfBfjDzC+L8S9gU"
+    final static String badsignature = "Kzzo/VIg--wrong--+hpZkJS628S8ut1IQZSYXvV/1WSXRHD9nRjfyzlqZKbTmClPZDG/+TfBfjDzC+L8S9gU"
         + "l/Vmqq47QIafM/vIqALS5b0/1/xfIROqj594mxk/J25wy4GQmGIjnCv6NoNG/KJDO2WBklQFeU5h"
         + "lz9UON1lcp/CzGdcJJs=";
 	
     
-	protected final static String uri1 = "http://example.org/graph1";
+	final static String uri1 = "http://example.org/graph1";
 	protected final static String uri2 = "http://example.org/graph2";
-	protected final static Node foo = Node.createURI("http://example.org/#foo");
-	protected final static Node bar = Node.createURI("http://example.org/#bar");
-	protected final static Node baz = Node.createURI("http://example.org/#baz");
-	protected final static String keystore = "tests/ng4jtest.p12";
-	protected final static String password = "dpuser";
+	final static Node foo = Node.createURI("http://example.org/#foo");
+	final static Node bar = Node.createURI("http://example.org/#bar");
+	final static Node baz = Node.createURI("http://example.org/#baz");
+	final static String keystore = "tests/ng4jtest.p12";
+	final static String password = "dpuser";
 	
 	protected SWPNamedGraphSet set;
 	protected NamedGraph g1;
@@ -87,9 +87,10 @@ public class SWPSignatureUtilitiesTest extends TestCase
 	protected String g2signature;
 	protected String setSignature;
 
-	/*
-	 * @see TestCase#setUp()
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception 
 	{
 		this.set = createSWPNamedGraphSet();
@@ -99,9 +100,10 @@ public class SWPSignatureUtilitiesTest extends TestCase
 		g2.add( new Triple( bar, baz, foo ) );
 	}
 
-	/*
-	 * @see TestCase#tearDown()
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception 
 	{
 		this.set.close();
@@ -282,35 +284,35 @@ public class SWPSignatureUtilitiesTest extends TestCase
 															certificate ) );
 	}
 	
-
-	/*
-	 * Class under test for boolean validateSignature(NamedGraph, Node, String, X509Certificate, ArrayList)
-	 */
-	
-	public void testValidateSignatureNamedGraphNodeStringX509CertificateArrayList() 
-	throws SWPInvalidKeyException, 
-	SWPSignatureException, 
-	SWPCertificateException, 
-	SWPNoSuchAlgorithmException, 
-	SWPValidationException, SWPAlgorithmNotSupportedException 
-	{
-		Certificate[] certs = PKCS12Utils.getCertChain( keystore, password );
-		
-		ArrayList<X509Certificate> list = new ArrayList<X509Certificate>();
-		list.add( (X509Certificate )certs[1]);
-
-		assertTrue( SWPSignatureUtilities.validateSignature( g1, 
-															SWP.JjcRdfC14N_rsa_sha224, //SWP.JjcRdfC14N_rsa_sha1, 
-															signature, 
-															(X509Certificate )certs[0], 
-															list ) );
-		
-		assertFalse( SWPSignatureUtilities.validateSignature( g1, 
-															SWP.JjcRdfC14N_rsa_sha224, //SWP.JjcRdfC14N_rsa_sha1, 
-															badsignature, 
-															(X509Certificate )certs[0], 
-															list ) );
-	}
+// Moved to SWPSignatureUtilitiesFailingTest
+//	/*
+//	 * Class under test for boolean validateSignature(NamedGraph, Node, String, X509Certificate, ArrayList)
+//	 */
+//	
+//	public void testValidateSignatureNamedGraphNodeStringX509CertificateArrayList() 
+//	throws SWPInvalidKeyException, 
+//	SWPSignatureException, 
+//	SWPCertificateException, 
+//	SWPNoSuchAlgorithmException, 
+//	SWPValidationException, SWPAlgorithmNotSupportedException 
+//	{
+//		Certificate[] certs = PKCS12Utils.getCertChain( keystore, password );
+//		
+//		ArrayList<X509Certificate> list = new ArrayList<X509Certificate>();
+//		list.add( (X509Certificate )certs[1]);
+//
+//		assertTrue( SWPSignatureUtilities.validateSignature( g1, 
+//															SWP.JjcRdfC14N_rsa_sha224, //SWP.JjcRdfC14N_rsa_sha1, 
+//															signature, 
+//															(X509Certificate )certs[0], 
+//															list ) );
+//		
+//		assertFalse( SWPSignatureUtilities.validateSignature( g1, 
+//															SWP.JjcRdfC14N_rsa_sha224, //SWP.JjcRdfC14N_rsa_sha1, 
+//															badsignature, 
+//															(X509Certificate )certs[0], 
+//															list ) );
+//	}
 
 // Commented the following test because the tested method has been commented.
 // See the corresponding source file
@@ -383,7 +385,7 @@ public class SWPSignatureUtilitiesTest extends TestCase
 	 * Creates the NamedGraphSet instance under test. Might be overridden by
 	 * subclasses to test other NamedGraphSet implementations.
 	 */
-	protected SWPNamedGraphSet createSWPNamedGraphSet() throws Exception 
+	protected static SWPNamedGraphSet createSWPNamedGraphSet() throws Exception 
 	{
 		return new SWPNamedGraphSetImpl();
 	}
