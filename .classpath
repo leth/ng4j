@@ -20,7 +20,6 @@
 	<classpathentry kind="lib" path="lib/axis.jar"/>
 	<classpathentry kind="lib" path="lib/bcpg-jdk15-143.jar"/>
 	<classpathentry kind="lib" path="lib/bcprov-jdk15-143.jar"/>
-	<classpathentry kind="lib" path="lib/jakarta-oro-2.0.5.jar"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-java-3.2.0-alpha-bin.jar"/>
 	<classpathentry kind="lib" path="lib/tagsoup-1.0.4.jar"/>
 	<classpathentry kind="lib" path="lib/nekohtml.jar"/>
