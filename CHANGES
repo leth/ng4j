@@ -1,3 +1,6 @@
+06/10/09 (Olaf)
+Fixed bug in DereferencerThread::parseRdf - an undefined 'lang' string would have caused a NullPointerException.
+
 06/09/09 (Olaf)
 Moved the identifier based graph implementation from 'de.fuberlin.wiwiss.ng4j.semwebclient.graph' to 'de.fuberlin.wiwiss.ng4j.impl.idbased'.
 

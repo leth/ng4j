@@ -234,9 +234,8 @@ public class DereferencerThread extends TaskExecutorBase {
 	 * Parses an RDF String.
 	 */
 	private DereferencingResult parseRdf(DereferencingTask task, String lang) throws Exception {
-		if (lang.equals("default"))
-			lang = null;
-		if (lang.equals("html") || lang.equals("HTML")){
+		if (    (lang != null)
+		     && (lang.equals("html") || lang.equals("HTML")) ) {
 		        if (this.enablegrddl) {
 			    com.hp.hpl.jena.grddl.GRDDLReader r = new com.hp.hpl.jena.grddl.GRDDLReader();
 			    /*
@@ -288,7 +287,7 @@ public class DereferencerThread extends TaskExecutorBase {
 	private String setLang() {
 		String type = this.connection.getContentType();
 		if (type == null)
-			return "default";
+			return null;
 
 		if (type.startsWith("application/rdf+xml")
 				|| type.startsWith("text/xml")
