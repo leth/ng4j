@@ -504,7 +504,7 @@ public class SemanticWebClient extends de.fuberlin.wiwiss.ng4j.impl.idbased.IdBa
 			// already in queue but not retrieved yet
 			// attach the given listener to the corresponding dereferencing task
 			DereferencingTask existingTask = getDerefQueue().getTask( derefURI );
-			if ( existingTask != null && ! existingTask.isAttached(listener) ) {
+			if ( existingTask != null && listener != null && ! existingTask.isAttached(listener) ) {
 				existingTask.attachListener( listener );
 				return true;
 			} else {
