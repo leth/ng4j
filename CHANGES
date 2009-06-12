@@ -1,5 +1,11 @@
+06/11/09 (Jennifer)
+Commit, with a few minor modifications like the version #, the pom.xml file submitted by Tim Pizey in feature request "Bring Maven POM upto date - ID: 2801813".
+
 06/10/09 (Jennifer)
 Moved the failing SWP test to a separate file so that it can be excluded from Maven builds.
+
+06/10/09 (Olaf)
+Applied feature request 2801765 to build.xml to add the version number to builds and also remove the grammar.triql target since TriQL has been removed. 
 
 06/10/09 (Jennifer)
 Upgraded the axis library to version 1.4.
