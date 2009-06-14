@@ -85,7 +85,7 @@ public class SemanticWebClient extends de.fuberlin.wiwiss.ng4j.impl.idbased.IdBa
 	public static final String CONFIG_DEREF_READ_TIMEOUT = "derefreadtimeout";
 	public static final String CONFIG_MAXGRAPHS = "maxgraphs";
 	public static final String CONFIG_MAXFILESIZE = "maxfilesize";
-	public static final String CONFIG_ENABLEGRDDL = "enablegrddl";
+	public static final String CONFIG_ENABLEGRDDL = "enablegrddl"; // Notice, GRDDL support is deprecated!
 	public static final String CONFIG_ENABLE_SINDICE = "enablesindicesearch"; // enables Sindice-based URI search during query execution
 	
 	private static final int MAXSTEPS_DEFAULT = 3;
