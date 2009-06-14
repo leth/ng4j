@@ -25,7 +25,7 @@ import de.fuberlin.wiwiss.ng4j.semwebclient.CommandLineQuery;
  *       RDF/XML, N3, N-Triple, SPARQL XML results, SPARQL JSON results, CSV, ...
  * 
  * @author Richard Cyganiak (richard@cyganiak.de)
- * @version $Id: query.java,v 1.9 2008/10/31 17:18:45 hartig Exp $
+ * @version $Id: query.java,v 1.10 2009/06/14 05:28:31 hartig Exp $
  */
 public class query {
 	private static boolean verbose = false;
@@ -156,7 +156,7 @@ public class query {
 		System.out.println("    -maxthreads <threads>  Set number of threads for loading URIs. Default: 10");
 		System.out.println("    -timeout <seconds>     Set query timeout. Default: 60 seconds");
 		System.out.println("    -load <URL>            Load seed graph from the Web");
-		System.out.println("    -grddl                 Perform GRDDL transformations");
+		System.out.println("    -grddl                 Perform GRDDL transformations (Notice, GRDDL support is deprecated!!)");
 		System.out.println("    -sindice               Enables Sindice-based URI search during query execution");
 		System.out.println("    -loadtrig <file>       Load seed graphs from a TriG file before starting");
 		System.out.println("    -savetrig <file>       Save loaded graphs to a TriG file after finishing");
