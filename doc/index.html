@@ -208,6 +208,10 @@ href="http://www.w3.org/RDF/">RDF</A> | </P>
 <h3>News</h3>
 <ul>
   <li>
+    <strong>14/06/2009: NG4J 0.9.1 released</strong>,
+    with recent libraries (Bouncy Castle 1.43 and Axis 1.4) and several bug fixes. Notice, we deprecate GRDDL support in the Semantic Web Client Library with this release; this means, this will be the last release that supports GRDDL unless someone steps up to maintain it in the future.
+  </li>
+  <li>
     <strong>09/06/2009: NG4J wiki created</strong>.
     See the MediaWiki Hosted Application at the NG4J SourceForge site
     <a href="http://sourceforge.net/apps/mediawiki/ng4j/">http://sourceforge.net/apps/mediawiki/ng4j/</a>.
@@ -912,6 +916,11 @@ It is described in a separate document:
       <TH>Release Date</TH>
     </TR>
     <TR>
+      <TD align=middle>V0.9.1</TD>
+      <TD align=left>Upgrade to the latest versions of Bouncy Castle libraries (1.43) and Axis (1.4); addition of a SingleNamedGraphModel which is a Jena model that wraps a single NamedGraph; several bug fixes (mainly concurrency issues and memory leaks in the Semantic Web Client Library; TriG writer); a few code cleanups; deprecated GRDDL support in the Semantic Web Client Library.</TD>
+      <TD align=middle valign="top">2009-06-14</TD>
+    </TR>
+    <TR>
       <TD align=middle>V0.9</TD>
       <TD align=left>Support for Apache Derby database added; Java 1.4 compatibility dropped; TriQL removed; bugfixes and code cleanups.</TD>
       <TD align=middle valign="top">2009-02-20</TD>
@@ -976,7 +985,7 @@ It is described in a separate document:
   <li>Rowland Watkins (erw01r at ecs.soton.ac.uk) for his work on the SWP API.</li>
   <li>Stelios Sfakianakis (ssfak at ics.forth.gr) for implementing the GRDDL support.</li>
   <li>Jesper Zedlitz (jesper at zedlitz.de) for his work on the unit tests and build system.</li>
-<!--  <li>Jennifer P. Cormier (jennifer at atc-nycorp.com) for various bug fixes, refactoring the database code, adding Oracle support, and enabling the upgrade to recent versions of Jena and ARQ.</li> -->
+  <li>Tim Pizey (tim.pizey at oucs.ox.ac.uk) for his work on Maven support.</li>
 </ul>
 
 <HR title="Separator for header">
@@ -989,7 +998,7 @@ Please sent comments and bug reports to the NG4J-namedgraphs mailing list:</p>
 <p>The archives of the list are found at <a href="http://sourceforge.net/mailarchive/forum.php?forum=ng4j-namedgraphs">http://sourceforge.net/mailarchive/forum.php?forum=ng4j-namedgraphs </a><br />
   You can subscribe to the list at <a href="http://lists.sourceforge.net/lists/listinfo/ng4j-namedgraphs">http://lists.sourceforge.net/lists/listinfo/ng4j-namedgraphs</a>.</p>
 <HR title="Separator for header">
-<p>$Date: 2009/06/11 23:31:55 $<br />
-  $Id: index.html,v 1.37 2009/06/11 23:31:55 jenpc Exp $</p>
+<p>$Date: 2009/06/14 05:16:10 $<br />
+  $Id: index.html,v 1.38 2009/06/14 05:16:10 hartig Exp $</p>
 </BODY>
 </HTML>
