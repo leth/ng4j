@@ -490,7 +490,7 @@ It is invoked using the <tt>semwebquery</tt> command, which is found in the <tt>
   </tr>
   <tr>
     <td valign="top"><tt>-grddl</tt><br /></td>
-    <td>Enables GRDDL support; see <a href="#grddl">below</a>.</td>
+    <td>Enables GRDDL support; see <a href="#grddl">below</a>. Notice, GRDDL support is deprecated!</td>
   </tr>
   <tr>
     <td valign="top"><tt>-sindice</tt><br /></td>
@@ -648,7 +648,7 @@ semWeb.setConfig("maxsteps","3");</pre>
   </tr>
   <tr>
     <td valign="top"><tt>enablegrddl</tt></td>
-    <td>Setting this to <tt>true</tt> enables GRDDL support; see <a href="#grddl">below</a>.</td>
+    <td>Setting this to <tt>true</tt> enables GRDDL support; see <a href="#grddl">below</a>. Notice, GRDDL support is deprecated!</td>
     <td valign="top">false</td>
   </tr>
   <tr>
@@ -678,7 +678,7 @@ semWeb.setConfig("maxsteps","3");</pre>
 
 
 <h2 id="grddl">6. GRDDL Support</h2>
-
+<p><span style="font-weight:bold">GRDDL support is deprecated</span> and will be dropped with the next release (unless someone steps up to maintain it in the future).</p>
 <p><a href="http://www.w3.org/TR/grddl/">GRDDL</a> is a technique for obtaining RDF data from XML 
 documents and in particular XHTML pages. This works by adding a link to an XSLT stylesheet to the
 XML document. The stylesheet transforms the document to RDF/XML. Here is an example taken from
@@ -782,7 +782,7 @@ searching for URIs increases the query execution time significantly.</p>
 <p>Good starting points for playing around with the library is interlinked data published by the Tabulator project (<a href="http://dig.csail.mit.edu/2005/ajar/ajaw/data">http://dig.csail.mit.edu/2005/ajar/ajaw/data</a>) and the D2R demo server running at <a href="http://www3.wiwiss.fu-berlin.de:2020/">http://www3.wiwiss.fu-berlin.de:2020/</a>. If you find other interesting chunks of interlinked data on the Semantic Web that can be queried using the library, please tell us. </p>
 <p><a href="http://sourceforge.net/projects/d2rq-map/"><img src="http://sourceforge.net/sflogo.php?group_id=111002&amp;type=5" alt="SourceForge Logo" /></a></p>
 <div id="footer">
-  <small>$Id: index.html,v 1.13 2009/01/21 16:29:54 hartig Exp $</small>
+  <small>$Id: index.html,v 1.14 2009/06/14 05:36:32 hartig Exp $</small>
 </div>
 </div>
 
