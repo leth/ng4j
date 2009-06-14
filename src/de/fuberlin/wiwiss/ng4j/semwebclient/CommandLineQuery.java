@@ -552,8 +552,8 @@ public class CommandLineQuery {
 	}
 
 	private void executeWriteIntro() {
-		System.out.println("--------------------------------");
-		System.out.println("Semantic Web Client Library V0.4");
-		System.out.println("--------------------------------");
+		System.out.println("----------------------------------");
+		System.out.println("Semantic Web Client Library V0.4.1");
+		System.out.println("----------------------------------");
 	}
 }
