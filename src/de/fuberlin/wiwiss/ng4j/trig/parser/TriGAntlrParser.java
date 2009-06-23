@@ -141,6 +141,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 					break;
 				}
 				case QNAME:
+				case LCURLY:
 				case URIREF:
 				{
 					namedGraph();
@@ -195,13 +196,30 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		AST namedGraph_AST = null;
 		AST label_AST = null;
 		
-		graphLabel();
-		label_AST = (AST)returnAST;
 		{
 		switch ( LA(1)) {
-		case NAME_OP:
+		case QNAME:
+		case URIREF:
 		{
-			match(NAME_OP);
+			graphLabel();
+			label_AST = (AST)returnAST;
+			{
+			switch ( LA(1)) {
+			case NAME_OP:
+			{
+				match(NAME_OP);
+				break;
+			}
+			case LCURLY:
+			{
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(LT(1), getFilename());
+			}
+			}
+			}
 			break;
 		}
 		case LCURLY:
@@ -398,7 +416,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		{
 			statement();
 			{
-			_loop13:
+			_loop14:
 			do {
 				if ((LA(1)==SEP)) {
 					AST tmp8_AST = null;
@@ -431,7 +449,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 					}
 				}
 				else {
-					break _loop13;
+					break _loop14;
 				}
 				
 			} while (true);
@@ -552,7 +570,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		n_AST = (AST)returnAST;
 		astFactory.addASTChild(currentAST, returnAST);
 		{
-		_loop25:
+		_loop26:
 		do {
 			switch ( LA(1)) {
 			case PATH:
@@ -587,7 +605,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 			}
 			default:
 			{
-				break _loop25;
+				break _loop26;
 			}
 			}
 		} while (true);
@@ -1248,10 +1266,10 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		AST literalModifier1_AST = null;
 		AST dt_AST = null;
 		
-		boolean synPredMatched41 = false;
+		boolean synPredMatched42 = false;
 		if (((LA(1)==AT_LANG))) {
-			int _m41 = mark();
-			synPredMatched41 = true;
+			int _m42 = mark();
+			synPredMatched42 = true;
 			inputState.guessing++;
 			try {
 				{
@@ -1259,12 +1277,12 @@ public TriGAntlrParser(ParserSharedInputState state) {
 				}
 			}
 			catch (RecognitionException pe) {
-				synPredMatched41 = false;
+				synPredMatched42 = false;
 			}
-			rewind(_m41);
+			rewind(_m42);
 			inputState.guessing--;
 		}
-		if ( synPredMatched41 ) {
+		if ( synPredMatched42 ) {
 			AST tmp29_AST = null;
 			tmp29_AST = astFactory.create(LT(1));
 			astFactory.addASTChild(currentAST, tmp29_AST);
@@ -1272,10 +1290,10 @@ public TriGAntlrParser(ParserSharedInputState state) {
 			literalModifier1_AST = (AST)currentAST.root;
 		}
 		else {
-			boolean synPredMatched43 = false;
+			boolean synPredMatched44 = false;
 			if (((LA(1)==DATATYPE))) {
-				int _m43 = mark();
-				synPredMatched43 = true;
+				int _m44 = mark();
+				synPredMatched44 = true;
 				inputState.guessing++;
 				try {
 					{
@@ -1283,12 +1301,12 @@ public TriGAntlrParser(ParserSharedInputState state) {
 					}
 				}
 				catch (RecognitionException pe) {
-					synPredMatched43 = false;
+					synPredMatched44 = false;
 				}
-				rewind(_m43);
+				rewind(_m44);
 				inputState.guessing--;
 			}
-			if ( synPredMatched43 ) {
+			if ( synPredMatched44 ) {
 				AST tmp30_AST = null;
 				tmp30_AST = astFactory.create(LT(1));
 				astFactory.addASTChild(currentAST, tmp30_AST);

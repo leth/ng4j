@@ -34,7 +34,7 @@ import de.fuberlin.wiwiss.ng4j.trig.parser.TriGAntlrParser;
  * 
  * @author		Andy Seaborne
  * @author Richard Cyganiak (richard@cyganiak.de)
- * @version 	$Id: NamedGraphSetPopulator.java,v 1.13 2009/04/22 17:23:50 jenpc Exp $
+ * @version 	$Id: NamedGraphSetPopulator.java,v 1.14 2009/06/23 14:55:29 hartig Exp $
  */
 public class NamedGraphSetPopulator implements TriGParserEventHandler
 {
@@ -73,7 +73,7 @@ public class NamedGraphSetPopulator implements TriGParserEventHandler
 	{
 		this.namedGraphSet = ngs;
 		this.base = _base ;
-		this.defaultGraphName = this.defaultGraphName == null ?
+		this.defaultGraphName = defaultGraphName == null ?
 				null : Node.createURI(defaultGraphName);
 		if ( VERBOSE )
 			System.out.println("N3toRDF: "+base) ;

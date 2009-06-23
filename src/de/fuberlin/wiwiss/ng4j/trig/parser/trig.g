@@ -161,7 +161,7 @@ n3Directive0!:
 		;
 
 namedGraph!
-	: label:graphLabel (NAME_OP!)? graph[#label] ;
+	: (label:graphLabel (NAME_OP!)? )? graph[#label] ;
 
 graphLabel!
 	: q:qname {#graphLabel=#q;}
