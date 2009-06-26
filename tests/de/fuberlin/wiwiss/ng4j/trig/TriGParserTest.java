@@ -1,4 +1,4 @@
-// $Id: TriGParserTest.java,v 1.10 2008/08/21 16:36:06 hartig Exp $
+// $Id: TriGParserTest.java,v 1.11 2009/06/26 10:48:40 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import java.io.Reader;
@@ -51,16 +51,19 @@ public class TriGParserTest extends TestCase {
 		}
 	}
 	
-	public void testUnlabelledGraph() throws Exception {
-		String triG = "@prefix ex: <http://example.com/ex#> .\n" +
-				"{ ex:a ex:b ex:c }";
-		try {
-			parseTriG(triG);
-			fail();
-		} catch (TriGException ex) {
-			// unlabelled graphs are not allowed
-		}
-	}
+// Commented this test because TriG allows unlabelled
+// graphs since Jun. 6, 2005.
+//                                   Olaf; Jun. 26, 2009
+// 	public void testUnlabelledGraph() throws Exception {
+// 		String triG = "@prefix ex: <http://example.com/ex#> .\n" +
+// 				"{ ex:a ex:b ex:c }";
+// 		try {
+// 			parseTriG(triG);
+// 			fail();
+// 		} catch (TriGException ex) {
+// 			// unlabelled graphs are not allowed
+// 		}
+// 	}
 	
 	public void testQuadFormula() throws Exception {
 		String triG = "@prefix ex: <http://example.com/ex#> .\n" +
@@ -195,13 +198,13 @@ public class TriGParserTest extends TestCase {
 
 	public void testReadFromReader() {
 		String trig = "@prefix : <http://example.com/ns#> .\n" +
-				":graph1 { :a :a \"ŠšŸ\" . }";
+				":graph1 { :a :a \"~J~Z~_\" . }";
 		Reader r = new StringReader(trig);
 		NamedGraphSetReader reader = new TriGReader();
 		NamedGraphSet set = new NamedGraphSetImpl();
 		reader.read(set, r, BASE, DEFAULT);
 		assertTrue(set.containsQuad(new Quad(Node.ANY, Node.ANY, Node.ANY,
-				Node.createLiteral("ŠšŸ", null, null))));
+				Node.createLiteral("~J~Z~_", null, null))));
 		assertEquals(1, set.countQuads());
 	}
 
