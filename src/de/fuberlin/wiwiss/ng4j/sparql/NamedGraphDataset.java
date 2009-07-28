@@ -163,4 +163,13 @@ public class NamedGraphDataset implements Dataset, DatasetGraph {
 		int graphNum = (int) numGraphs;
 		return graphNum;
 	}
+
+	/**
+	 * @see com.hp.hpl.jena.query.Dataset#close()
+	 */
+	public void close() {
+		set.close();
+		defaultGraph.close();
+	}
+
 }
