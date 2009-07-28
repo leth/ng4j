@@ -19,8 +19,8 @@ import de.fuberlin.wiwiss.ng4j.NamedGraph;
 
 /**
  * 
- * An SWPAuthority represents information about an authorty
- * like id, label, eMail, keys and certificates 
+ * An SWPAuthority represents information about an authority
+ * such as id, label, eMail, keys and certificates. 
  * 
  * @author chris bizer
  * @author rowland watkins
