@@ -1,4 +1,4 @@
-//$Id: SWPNamedGraphSetTest.java,v 1.14 2009/02/20 08:09:52 hartig Exp $
+//$Id: SWPNamedGraphSetTest.java,v 1.15 2009/07/28 17:17:33 timp Exp $
 package de.fuberlin.wiwiss.ng4j.swp;
 
 import java.io.StringReader;
@@ -73,6 +73,37 @@ public class SWPNamedGraphSetTest extends TestCase
 		this.set.close();
 	}
 
+	/** Test that add description works. */
+    public void testAddDescriptionToGraph() { 
+		assertEquals("http://example.org/graph1 {http://example.org/#foo @http://example.org/#bar http://example.org/#baz}",set.getGraph(uri1).toString());
+		assertEquals(1, set.getGraph(uri1).size());
+    	ArrayList<Node> listOfAuthorityProperties = new ArrayList<Node>();
+    	listOfAuthorityProperties.add(SWP.RSAKey);
+    	listOfAuthorityProperties.add(SWP.X509Certificate);
+    	try { 
+    		authority.addDescriptionToGraph(set.getGraph(uri1), listOfAuthorityProperties);
+    		fail("Should have bombed");
+    	} catch (NullPointerException expected) { 
+    		expected = null;
+    	}
+    	listOfAuthorityProperties = new ArrayList<Node>();
+    	listOfAuthorityProperties.add(SWP.X509Certificate);
+		authority.addDescriptionToGraph(set.getGraph(uri1), listOfAuthorityProperties);
+		// NOTE Sun Base64Encoder formats with line ends.
+		assertEquals("http://example.org/graph1 {http://example.org/graph1 @http://www.w3.org/2004/03/trix/swp-2/authority http://grid.cx/rowland; http://grid.cx/rowland @http://www.w3.org/2004/03/trix/swp-2/X509Certificate \"MIICEzCCAXygAwIBAgIGARwpavvgMA0GCSqGSIb3DQEBBQUAMEgxGDAWBgNVBAMMD0NOPU5HNEog" + 
+					"dGVzdCBDQTESMBAGA1UECgwJTkc0SiB0ZXN0MQswCQYDVQQIDAJTSDELMAkGA1UEBhMCREUwHhcN"+
+					"MDgwOTAzMTgxMzA5WhcNMTEwNTMxMTgxMzA5WjBUMRUwEwYDVQQDDAxDTj1ORzRKIHRlc3QxEjAQ" + 
+					"BgNVBAoMCU5HNEogdGVzdDENMAsGA1UEBwwES2llbDELMAkGA1UECAwCU0gxCzAJBgNVBAYTAkRF" + 
+					"MIGdMA0GCSqGSIb3DQEBAQUAA4GLADCBhwKBgQCHPAef4ch/XZtsJ6uAJWgDv4SPCGLUvp4FnM0I" +
+					"Qp82fkQ80O/VHTqVsoVDo28a1isub0zxf82M5h626NBdOoflCNMgaJ3cW8LPbOXSH9F8VHqjbg9e" + 
+					"vWNCESB8y56zZCMsqA58ODBZ+6I2k56uAPLklHlERLNJ6g8Tt66BuU9dqwIBAzANBgkqhkiG9w0B" +
+					"AQUFAAOBgQBlJZbiz3cA3D41nOAaFOrNZdUP6bGRkpR8HeRslRpLZ+V8Q1V7am6cwW/nEvH6nMLI" +
+					"ZrF9UPLUl0opxYqeecGv4rDFgftAP3hnN0ckjnKwzKvfeBrsspyANM15MwWIi8VmcmWZZl/AK36H" +
+					"f5bjmuuOMsSFbj4Yfg+5blSwaS8gaQ==\"^^http://www.w3.org/2001/XMLSchema#base64Binary; " + 
+					"http://example.org/#foo @http://example.org/#bar http://example.org/#baz}",
+					set.getGraph(uri1).toString());
+		assertEquals(3,set.getGraph(uri1).size());
+    }
 	public void testNoAssertedGraphs() {
 		assertFalse(set.getAllAssertedGraphs(authority).hasNext());
 	}
@@ -337,7 +368,7 @@ public class SWPNamedGraphSetTest extends TestCase
 	}
 
 	
-	/*
+	/**
 	 *	Class under test for boolean  
 	 */
 	public void testAssertGraphs() 

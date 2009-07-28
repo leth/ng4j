@@ -16,7 +16,8 @@ import java.security.PublicKey;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 
-import sun.misc.BASE64Encoder;
+import org.apache.commons.codec.binary.Base64;
+
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.swp.SWPAuthority;
@@ -216,7 +217,6 @@ public class SWPAuthorityImpl implements SWPAuthority
 		graph.add( new Triple( graph.getGraphName(), SWP.authority, this.getID() ) );
 		
 		
-		BASE64Encoder encoder = new BASE64Encoder();
         // Check if the eMail address has to be added.
 		if ( this.getID().isBlank() && this.getEmail() != null ) 
 		{
@@ -245,7 +245,7 @@ public class SWPAuthorityImpl implements SWPAuthority
 				// We need code for publishing information about a RSA key here, using the SWP-2 and the XML-Sig vocabulary
 				graph.add( new Triple( this.getID(), 
         								SWP.RSAKey, 
-        								Node.createLiteral( encoder.encode( this.getPublicKey().getEncoded() ), 
+        								Node.createLiteral( new String( Base64.encodeBase64( this.getPublicKey().getEncoded() ) ), 
         													null, 
         													XSDDatatype.XSDbase64Binary) ) );
         	}
@@ -256,7 +256,7 @@ public class SWPAuthorityImpl implements SWPAuthority
         		try {
         			graph.add( new Triple( this.getID(), 
 											SWP.X509Certificate, 
-											Node.createLiteral( encoder.encode( this.getCertificate().getEncoded() ), 
+											Node.createLiteral( new String( Base64.encodeBase64( this.getCertificate().getEncoded() ) ), 
 																null, 
 																XSDDatatype.XSDbase64Binary ) ) );
         		} 
@@ -279,7 +279,7 @@ public class SWPAuthorityImpl implements SWPAuthority
 			try {
 				graph.add( new Triple( this.getID(), 
 						SWP.X509Certificate, 
-						Node.createLiteral( encoder.encode( this.getCertificate().getEncoded() ), 
+						Node.createLiteral( new String( Base64.encodeBase64( this.getCertificate().getEncoded() ) ), 
 											null, 
 											XSDDatatype.XSDbase64Binary ) ) );
 			} catch (AddDeniedException e) {
