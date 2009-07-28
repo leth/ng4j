@@ -1,4 +1,4 @@
-//$Id: SWPNamedGraphSetTest.java,v 1.15 2009/07/28 17:17:33 timp Exp $
+//$Id: SWPNamedGraphSetTest.java,v 1.16 2009/07/28 17:54:47 timp Exp $
 package de.fuberlin.wiwiss.ng4j.swp;
 
 import java.io.StringReader;
@@ -6,6 +6,8 @@ import java.io.StringWriter;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+
+import org.apache.commons.codec.binary.Base64;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
@@ -90,16 +92,19 @@ public class SWPNamedGraphSetTest extends TestCase
     	listOfAuthorityProperties.add(SWP.X509Certificate);
 		authority.addDescriptionToGraph(set.getGraph(uri1), listOfAuthorityProperties);
 		// NOTE Sun Base64Encoder formats with line ends.
-		assertEquals("http://example.org/graph1 {http://example.org/graph1 @http://www.w3.org/2004/03/trix/swp-2/authority http://grid.cx/rowland; http://grid.cx/rowland @http://www.w3.org/2004/03/trix/swp-2/X509Certificate \"MIICEzCCAXygAwIBAgIGARwpavvgMA0GCSqGSIb3DQEBBQUAMEgxGDAWBgNVBAMMD0NOPU5HNEog" + 
-					"dGVzdCBDQTESMBAGA1UECgwJTkc0SiB0ZXN0MQswCQYDVQQIDAJTSDELMAkGA1UEBhMCREUwHhcN"+
-					"MDgwOTAzMTgxMzA5WhcNMTEwNTMxMTgxMzA5WjBUMRUwEwYDVQQDDAxDTj1ORzRKIHRlc3QxEjAQ" + 
-					"BgNVBAoMCU5HNEogdGVzdDENMAsGA1UEBwwES2llbDELMAkGA1UECAwCU0gxCzAJBgNVBAYTAkRF" + 
-					"MIGdMA0GCSqGSIb3DQEBAQUAA4GLADCBhwKBgQCHPAef4ch/XZtsJ6uAJWgDv4SPCGLUvp4FnM0I" +
-					"Qp82fkQ80O/VHTqVsoVDo28a1isub0zxf82M5h626NBdOoflCNMgaJ3cW8LPbOXSH9F8VHqjbg9e" + 
-					"vWNCESB8y56zZCMsqA58ODBZ+6I2k56uAPLklHlERLNJ6g8Tt66BuU9dqwIBAzANBgkqhkiG9w0B" +
-					"AQUFAAOBgQBlJZbiz3cA3D41nOAaFOrNZdUP6bGRkpR8HeRslRpLZ+V8Q1V7am6cwW/nEvH6nMLI" +
-					"ZrF9UPLUl0opxYqeecGv4rDFgftAP3hnN0ckjnKwzKvfeBrsspyANM15MwWIi8VmcmWZZl/AK36H" +
-					"f5bjmuuOMsSFbj4Yfg+5blSwaS8gaQ==\"^^http://www.w3.org/2001/XMLSchema#base64Binary; " + 
+		assertEquals("http://example.org/graph1 {http://example.org/graph1 " + 
+				"@http://www.w3.org/2004/03/trix/swp-2/authority http://grid.cx/rowland; http://grid.cx/rowland @http://www.w3.org/2004/03/trix/swp-2/X509Certificate " + 
+				 "\"MIICEzCCAXygAwIBAgIGARwpavvgMA0GCSqGSIb3DQEBBQUAMEgxGDAWBgNVBAMMD0NOPU5HNEog" + "\r\n"+
+					"dGVzdCBDQTESMBAGA1UECgwJTkc0SiB0ZXN0MQswCQYDVQQIDAJTSDELMAkGA1UEBhMCREUwHhcN"+ "\r\n"+
+					"MDgwOTAzMTgxMzA5WhcNMTEwNTMxMTgxMzA5WjBUMRUwEwYDVQQDDAxDTj1ORzRKIHRlc3QxEjAQ" + "\r\n"+ 
+					"BgNVBAoMCU5HNEogdGVzdDENMAsGA1UEBwwES2llbDELMAkGA1UECAwCU0gxCzAJBgNVBAYTAkRF" + "\r\n"+
+					"MIGdMA0GCSqGSIb3DQEBAQUAA4GLADCBhwKBgQCHPAef4ch/XZtsJ6uAJWgDv4SPCGLUvp4FnM0I" + "\r\n"+
+					"Qp82fkQ80O/VHTqVsoVDo28a1isub0zxf82M5h626NBdOoflCNMgaJ3cW8LPbOXSH9F8VHqjbg9e" + "\r\n"+
+					"vWNCESB8y56zZCMsqA58ODBZ+6I2k56uAPLklHlERLNJ6g8Tt66BuU9dqwIBAzANBgkqhkiG9w0B" + "\r\n"+
+					"AQUFAAOBgQBlJZbiz3cA3D41nOAaFOrNZdUP6bGRkpR8HeRslRpLZ+V8Q1V7am6cwW/nEvH6nMLI" + "\r\n"+
+					"ZrF9UPLUl0opxYqeecGv4rDFgftAP3hnN0ckjnKwzKvfeBrsspyANM15MwWIi8VmcmWZZl/AK36H" + "\r\n"+
+					"f5bjmuuOMsSFbj4Yfg+5blSwaS8gaQ==" +  "\r\n" + 
+					"\"^^http://www.w3.org/2001/XMLSchema#base64Binary; " + 
 					"http://example.org/#foo @http://example.org/#bar http://example.org/#baz}",
 					set.getGraph(uri1).toString());
 		assertEquals(3,set.getGraph(uri1).size());

@@ -245,7 +245,7 @@ public class SWPAuthorityImpl implements SWPAuthority
 				// We need code for publishing information about a RSA key here, using the SWP-2 and the XML-Sig vocabulary
 				graph.add( new Triple( this.getID(), 
         								SWP.RSAKey, 
-        								Node.createLiteral( new String( Base64.encodeBase64( this.getPublicKey().getEncoded() ) ), 
+        								Node.createLiteral( new String( Base64.encodeBase64Chunked( this.getPublicKey().getEncoded() ) ), 
         													null, 
         													XSDDatatype.XSDbase64Binary) ) );
         	}
@@ -256,7 +256,7 @@ public class SWPAuthorityImpl implements SWPAuthority
         		try {
         			graph.add( new Triple( this.getID(), 
 											SWP.X509Certificate, 
-											Node.createLiteral( new String( Base64.encodeBase64( this.getCertificate().getEncoded() ) ), 
+											Node.createLiteral( new String( Base64.encodeBase64Chunked( this.getCertificate().getEncoded() ) ), 
 																null, 
 																XSDDatatype.XSDbase64Binary ) ) );
         		} 
@@ -279,7 +279,7 @@ public class SWPAuthorityImpl implements SWPAuthority
 			try {
 				graph.add( new Triple( this.getID(), 
 						SWP.X509Certificate, 
-						Node.createLiteral( new String( Base64.encodeBase64( this.getCertificate().getEncoded() ) ), 
+						Node.createLiteral( new String( Base64.encodeBase64Chunked( this.getCertificate().getEncoded() ) ), 
 											null, 
 											XSDDatatype.XSDbase64Binary ) ) );
 			} catch (AddDeniedException e) {
