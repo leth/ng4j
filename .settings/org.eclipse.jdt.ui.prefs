@@ -1,3 +1,7 @@
-#Tue Oct 11 13:57:33 CEST 2005
+#Tue Jul 28 15:08:29 BST 2009
+cleanup_settings_version=2
 eclipse.preferences.version=1
+formatter_profile=_ng4j
+formatter_settings_version=11
 internal.default.compliance=default
+org.eclipse.jdt.ui.text.custom_code_templates=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><templates/>
