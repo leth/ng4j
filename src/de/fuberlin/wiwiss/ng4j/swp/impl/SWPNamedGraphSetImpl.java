@@ -50,9 +50,9 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
 
 /**
  * 
- * Last commit info    :   $Author: jenpc $
- * $Date: 2009/06/08 20:21:21 $
- * $Revision: 1.29 $
+ * Last commit info    :   $Author: timp $
+ * $Date: 2009/07/28 16:14:41 $
+ * $Revision: 1.30 $
  * 
  * @author Chris Bizer.
  * @author Rowland Watkins.
@@ -140,7 +140,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
             }
         }
         
-        // Add a description of the authorty to the warrant graph
+        // Add a description of the authority to the warrant graph
         authority.addDescriptionToGraph(warrantGraph, listOfAuthorityProperties);
         
         if ( additionalWarrantStatements != null ) {
