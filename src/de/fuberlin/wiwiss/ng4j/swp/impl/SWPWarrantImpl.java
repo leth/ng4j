@@ -1,14 +1,11 @@
-//$Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/swp/impl/SWPWarrantImpl.java,v 1.11 2009/06/08 20:21:22 jenpc Exp $
+//$Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/swp/impl/SWPWarrantImpl.java,v 1.12 2009/07/29 12:23:04 timp Exp $
 package de.fuberlin.wiwiss.ng4j.swp.impl;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.security.Signature;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-
-import sun.misc.BASE64Decoder;
 
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -159,8 +156,7 @@ public class SWPWarrantImpl implements SWPWarrant
 	public Signature getSignature() throws SWPSignatureException 
 	{
 		Signature sig = null;
-		@SuppressWarnings("unused")
-		byte[] signature = null;
+		//byte[] signature = null;
 		String warrantUriString = warrant.getGraphName().getURI();
 		//String query = "SELECT * WHERE (<"+warrant.getGraphName().getURI()+"> swp:signature ?signature) (<"+warrant.getGraphName().getURI()+"> swp:signatureMethod ?smethod) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
 		String query = "SELECT ?signature ?smethod" + NL
@@ -178,18 +174,17 @@ public class SWPWarrantImpl implements SWPWarrant
 			
         	try 
 			{
-				BASE64Decoder decoder = new BASE64Decoder();
-				signature = decoder.decodeBuffer( sigValue.getLexicalForm() );
+				//BASE64Decoder decoder = new BASE64Decoder();
+				//signature = decoder.decodeBuffer( sigValue.getLexicalForm() );
+				//System.err.println(new String(signature));
+				//signature = Base64.decodeBase64( sigValue.getLexicalForm().getBytes() );
+				//System.err.println(new String(signature));
 				sig = SWPSignatureUtilities.getSignatureAlgorithm( sigMethod.asNode() );
-			} 
-			catch ( IOException e ) 
-			{
-				throw new SWPSignatureException( "Error occured decoding signature value from Warrant graph." );
 			} 
 			catch ( SWPNoSuchAlgorithmException e ) 
 			{
 				
-				throw new SWPSignatureException( e.getMessage() );
+				throw new SWPSignatureException( e.getMessage(), e );
 			}
 		}
 		else return null;
