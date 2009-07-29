@@ -1,4 +1,4 @@
-#Tue Jul 28 16:49:12 BST 2009
+#Wed Jul 29 11:04:47 BST 2009
 eclipse.preferences.version=1
 org.eclipse.jdt.core.compiler.codegen.inlineJsrBytecode=enabled
 org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.5
@@ -204,7 +204,7 @@ org.eclipse.jdt.core.formatter.insert_space_after_opening_paren_in_enum_constant
 org.eclipse.jdt.core.formatter.insert_space_after_opening_paren_in_for=do not insert
 org.eclipse.jdt.core.formatter.insert_space_after_opening_paren_in_if=do not insert
 org.eclipse.jdt.core.formatter.insert_space_after_opening_paren_in_method_declaration=do not insert
-org.eclipse.jdt.core.formatter.insert_space_after_opening_paren_in_method_invocation=do not insert
+org.eclipse.jdt.core.formatter.insert_space_after_opening_paren_in_method_invocation=insert
 org.eclipse.jdt.core.formatter.insert_space_after_opening_paren_in_parenthesized_expression=do not insert
 org.eclipse.jdt.core.formatter.insert_space_after_opening_paren_in_switch=do not insert
 org.eclipse.jdt.core.formatter.insert_space_after_opening_paren_in_synchronized=do not insert
@@ -233,7 +233,7 @@ org.eclipse.jdt.core.formatter.insert_space_before_closing_paren_in_enum_constan
 org.eclipse.jdt.core.formatter.insert_space_before_closing_paren_in_for=do not insert
 org.eclipse.jdt.core.formatter.insert_space_before_closing_paren_in_if=do not insert
 org.eclipse.jdt.core.formatter.insert_space_before_closing_paren_in_method_declaration=do not insert
-org.eclipse.jdt.core.formatter.insert_space_before_closing_paren_in_method_invocation=do not insert
+org.eclipse.jdt.core.formatter.insert_space_before_closing_paren_in_method_invocation=insert
 org.eclipse.jdt.core.formatter.insert_space_before_closing_paren_in_parenthesized_expression=do not insert
 org.eclipse.jdt.core.formatter.insert_space_before_closing_paren_in_switch=do not insert
 org.eclipse.jdt.core.formatter.insert_space_before_closing_paren_in_synchronized=do not insert
