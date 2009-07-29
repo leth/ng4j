@@ -1,7 +1,3 @@
-/*
- * Created on 16-Feb-2005
- *
- */
 package de.fuberlin.wiwiss.ng4j.swp.util;
 
 import java.io.ByteArrayInputStream;
@@ -35,7 +31,8 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
 import junit.framework.TestCase;
 
-/** Tests the SWP signature utilities. <br>
+/** 
+ * Tests the SWP signature utilities. <br>
  * 
  * If a new keystore needs to be created, then run the main()
  * in de.fuberlin.wiwiss.ng4j.swp.setup.CreateTestKeystore and
@@ -43,6 +40,7 @@ import junit.framework.TestCase;
  * described below.
  * 
  * @author Rowland Watkins (rowland@grid.cx)
+ * @since 16-Feb-2005
  */
 public class SWPSignatureUtilitiesTest extends TestCase 
 {
@@ -213,11 +211,16 @@ public class SWPSignatureUtilitiesTest extends TestCase
 	SWPAlgorithmNotSupportedException, 
 	SWPCertificateException 
 	{
-		assertNotNull( SWPSignatureUtilities.calculateSignature( g1, 
+		assertEquals( "IXtrbfK+a8DIDuon/WEKrUmEJzgT1nz3RVP+LLVK2TR0ncGSlDRucdYPMHpE3BPFx5548UkUlprb" +  
+                     "/9tTsrKVYVkFk6VqxylUTXpsKjKmjdbW3fGolM3RrXMRbwkPudSsyj7yS1LgMAmRexgBw2l+GHkq" +   
+                     "0nIY5Qzr6xVYEN8XcgY=" ,  stripLineEnds(SWPSignatureUtilities.calculateSignature( g1, 
 															SWP.JjcRdfC14N_rsa_sha224, 
-															PKCS12Utils.decryptPrivateKey( keystore, password ) ) );
+															PKCS12Utils.decryptPrivateKey( keystore, password ) ) ) );
 	}
 
+	private String stripLineEnds(String in) { 
+		return in.replaceAll( "\n", "" ).replaceAll( "\r", "");
+	}
 	/*
 	 * Class under test for String calculateSignature(NamedGraphSet, Node, PrivateKey)
 	 */
@@ -227,9 +230,11 @@ public class SWPSignatureUtilitiesTest extends TestCase
 	SWPNoSuchAlgorithmException, 
 	SWPValidationException 
 	{
-		assertNotNull( SWPSignatureUtilities.calculateSignature( this.set, 
+		assertEquals( "dj0rKtKf9qyxj3Ci/PcXKUbEKMozrPHQ85HB2uhuH9gW8gI0OsVk8N4ubXctadvTthaCSslFYUxs" +  
+					  "MtUtZYkP9Nx0KMWiKDpIqMTf4Bl1+NAxkogSfu39BRLzers9RmZuuXCZ0tFuF0e09vE9KIBkcFZ/" + 
+					  "Dw3itkJ3T7TnqKk1/hc=" ,  stripLineEnds( SWPSignatureUtilities.calculateSignature( this.set, 
 															SWP.JjcRdfC14N_rsa_sha1, 
-															PKCS12Utils.decryptPrivateKey( keystore, password ) ) );
+															PKCS12Utils.decryptPrivateKey( keystore, password ) ) ) );
 	}
 
 	/*
@@ -265,22 +270,22 @@ public class SWPSignatureUtilitiesTest extends TestCase
 		
 		CertificateFactory cf = CertificateFactory.getInstance( "X.509" );
 		X509Certificate certificate = ( X509Certificate ) cf.generateCertificate( new ByteArrayInputStream( cert.getBytes() ) );
-		String signature = "Q5giVuVAnlhxj9XEDws5erZA4yBmPHyzrh+BaI/7aIOAH9inXcaav1+yluhA5IG898ycUZsSqQLw" +
+		String localSignature = "Q5giVuVAnlhxj9XEDws5erZA4yBmPHyzrh+BaI/7aIOAH9inXcaav1+yluhA5IG898ycUZsSqQLw" +
 						"JdVtQhaZOvEUVggv7WWO0/RpjJnrrm1BpVFKGF8Wb/9mls+FDFAPFR03nPxCvWzpU+n4RRMbWqtf" +
 						"6laHEeKwHV64f4L6tcw=";
 		
-		String badsignature = "Q5giVuVAnlhxj9XEDws5erZA4yBmPHyzrh+B/7aIOAH9inXcaav1+yluhA5IG898ycUZsSqQLw" +
+		String localBadSignature = "Q5giVuVAnlhxj9XEDws5erZA4yBmPHyzrh+B/7aIOAH9inXcaav1+yluhA5IG898ycUZsSqQLw" +
 						"JdVthaZOvEUVggv7WWO0/RpjJnrrm1pVFKGF8Wb/9mls+FDFAPFR03nPxCvWzpU+n4RRMbWqtf" +
 						"6laHEeKwHV64f4L6tcw=";
 		
 		assertTrue( SWPSignatureUtilities.validateSignature( g1, 
 															SWP.JjcRdfC14N_rsa_sha224, 
-															signature, 
+															localSignature, 
 															certificate ) );
 		
 		assertFalse( SWPSignatureUtilities.validateSignature( g1, 
 															SWP.JjcRdfC14N_rsa_sha224, 
-															badsignature, 
+															localBadSignature, 
 															certificate ) );
 	}
 	
@@ -370,12 +375,12 @@ public class SWPSignatureUtilitiesTest extends TestCase
 	/**
 	 * 
 	 */
-	public SWPAuthority getAuthority( String keystore, String password )
+	public SWPAuthority getAuthority( String keystoreP, String passwordP )
 	{
 		SWPAuthority auth = new SWPAuthorityImpl();
 		auth.setEmail( "mailto:rowland@grid.cx" );
 		auth.setID( Node.createURI( "http://grid.cx/rowland" ) );
-		Certificate[] chain = PKCS12Utils.getCertChain( keystore, password );
+		Certificate[] chain = PKCS12Utils.getCertChain( keystoreP, passwordP );
 		auth.setCertificate( ( X509Certificate )chain[0] );
 		
 		return auth;
