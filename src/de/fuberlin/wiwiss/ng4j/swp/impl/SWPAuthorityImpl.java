@@ -203,7 +203,7 @@ public class SWPAuthorityImpl implements SWPAuthority
      * The listOfAuthorityProperties determines which information
      * about the authority is added.
      * 
-     * @param graph
+     * @param graphP
      * @param listOfAuthorityProperties
      * @throws SWPMissingAuthorityPropertyException
      * 
@@ -211,16 +211,16 @@ public class SWPAuthorityImpl implements SWPAuthority
 	 *  
      * 
      */
-	public boolean addDescriptionToGraph( NamedGraph graph, ArrayList<Node> listOfAuthorityProperties ) 
+	public boolean addDescriptionToGraph( NamedGraph graphP, ArrayList<Node> listOfAuthorityProperties ) 
 	{
 		// Add swp:authority
-		graph.add( new Triple( graph.getGraphName(), SWP.authority, this.getID() ) );
+		graphP.add( new Triple( graphP.getGraphName(), SWP.authority, this.getID() ) );
 		
 		
         // Check if the eMail address has to be added.
 		if ( this.getID().isBlank() && this.getEmail() != null ) 
 		{
-             graph.add( new Triple(this.getID(), FOAF.mbox.asNode(), Node.createURI( "mailto:" + this.getEmail() ) ) );
+             graphP.add( new Triple(this.getID(), FOAF.mbox.asNode(), Node.createURI( "mailto:" + this.getEmail() ) ) );
 		}
 		
 		
@@ -229,21 +229,21 @@ public class SWPAuthorityImpl implements SWPAuthority
 			// Add authority description
 			if ( listOfAuthorityProperties.contains( FOAF.mbox.asNode() ) ) 
 			{
-				graph.add(new Triple( this.getID(), FOAF.mbox.asNode(), Node.createURI( "mailto:" + this.getEmail() ) ) );
+				graphP.add(new Triple( this.getID(), FOAF.mbox.asNode(), Node.createURI( "mailto:" + this.getEmail() ) ) );
 			}
 
 			//Node rdfsLabel = Node.createURI("http://www.w3.org/2000/01/rdf-schema#label");
 			//Not fatal, so won't throw exception if missing
 			if ( listOfAuthorityProperties.contains( RDFS.label.asNode() ) ) 
 			{
-				graph.add( new Triple( this.getID(), RDFS.label.asNode(), Node.createLiteral( this.getLabel(), null, null ) ) );
+				graphP.add( new Triple( this.getID(), RDFS.label.asNode(), Node.createLiteral( this.getLabel(), null, null ) ) );
 			}
 
         
 			if ( listOfAuthorityProperties.contains( SWP.RSAKey ) ) 
         	{
 				// We need code for publishing information about a RSA key here, using the SWP-2 and the XML-Sig vocabulary
-				graph.add( new Triple( this.getID(), 
+				graphP.add( new Triple( this.getID(), 
         								SWP.RSAKey, 
         								Node.createLiteral( new String( Base64.encodeBase64Chunked( this.getPublicKey().getEncoded() ) ), 
         													null, 
@@ -254,7 +254,7 @@ public class SWPAuthorityImpl implements SWPAuthority
 			{
 				// We need code for publishing information about a X509 certificate here, using the SWP-2 and the XML-Sig vocabulary
         		try {
-        			graph.add( new Triple( this.getID(), 
+        			graphP.add( new Triple( this.getID(), 
 											SWP.X509Certificate, 
 											Node.createLiteral( new String( Base64.encodeBase64Chunked( this.getCertificate().getEncoded() ) ), 
 																null, 
@@ -277,7 +277,7 @@ public class SWPAuthorityImpl implements SWPAuthority
 		else if ( this.getCertificate() != null)
 		{
 			try {
-				graph.add( new Triple( this.getID(), 
+				graphP.add( new Triple( this.getID(), 
 						SWP.X509Certificate, 
 						Node.createLiteral( new String( Base64.encodeBase64Chunked( this.getCertificate().getEncoded() ) ), 
 											null, 
@@ -290,7 +290,7 @@ public class SWPAuthorityImpl implements SWPAuthority
 				throw new RuntimeException(e);
 			}
 		}
-        this.graph = graph;
+        this.graph = graphP;
 
         return true;
 	}
