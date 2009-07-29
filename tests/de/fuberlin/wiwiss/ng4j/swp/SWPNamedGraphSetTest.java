@@ -1,4 +1,4 @@
-//$Id: SWPNamedGraphSetTest.java,v 1.16 2009/07/28 17:54:47 timp Exp $
+//$Id: SWPNamedGraphSetTest.java,v 1.17 2009/07/29 15:17:33 timp Exp $
 package de.fuberlin.wiwiss.ng4j.swp;
 
 import java.io.StringReader;
@@ -6,8 +6,6 @@ import java.io.StringWriter;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-
-import org.apache.commons.codec.binary.Base64;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
@@ -393,13 +391,13 @@ public class SWPNamedGraphSetTest extends TestCase
 	SWPSignatureException, 
 	SWPCertificateException 
 	{
-		ArrayList<String> list = new ArrayList<String>();
-		list.add(uri1);
-		list.add(uri2);
-		list.add(uri3);
-		list.add(uri4);
+		ArrayList<String> uriList = new ArrayList<String>();
+		uriList.add(uri1);
+		uriList.add(uri2);
+		uriList.add(uri3);
+		uriList.add(uri4);
 		
-		set.assertGraphsWithSignature( list, 
+		set.assertGraphsWithSignature( uriList, 
 									authority, 
 									SWP.JjcRdfC14N_rsa_sha256, 
 									SWP.JjcRdfC14N_sha384, 
@@ -428,6 +426,7 @@ public class SWPNamedGraphSetTest extends TestCase
 			assertTrue( itr2.hasNext() );
 			
 			assertNotNull( warrant.getSignature() );
+			assertEquals("Signature object: SHA256withRSA<not initialized>", warrant.getSignature().toString());
 			assertNotNull( warrant.getAuthority() );
 			
 			assertTrue( warrant.isSigned() );
@@ -436,12 +435,12 @@ public class SWPNamedGraphSetTest extends TestCase
 	}
 	
 	
-	public SWPAuthority getAuthority( String keystore, String password )
+	public SWPAuthority getAuthority( String keystoreP, String passwordP )
 	{
 		SWPAuthority auth = new SWPAuthorityImpl();
 		auth.setEmail("mailto:rowland@grid.cx");
 		auth.setID(Node.createURI( "http://grid.cx/rowland" ) );
-		Certificate[] chain = PKCS12Utils.getCertChain( keystore, password );
+		Certificate[] chain = PKCS12Utils.getCertChain( keystore, passwordP );
 		auth.setCertificate( (X509Certificate)chain[0] );
 		
 		return auth;
