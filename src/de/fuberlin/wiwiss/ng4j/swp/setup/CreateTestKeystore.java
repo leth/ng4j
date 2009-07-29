@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/swp/setup/CreateTestKeystore.java,v 1.5 2009/07/29 12:46:51 timp Exp $
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/swp/setup/CreateTestKeystore.java,v 1.6 2009/07/29 14:49:57 timp Exp $
 
 package de.fuberlin.wiwiss.ng4j.swp.setup;
 
@@ -26,9 +26,7 @@ import java.security.spec.RSAPublicKeySpec;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import org.apache.commons.codec.binary.Base64;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1InputStream;
@@ -70,7 +68,6 @@ import org.bouncycastle.x509.extension.SubjectKeyIdentifierStructure;
 
 import de.fuberlin.wiwiss.ng4j.swp.util.SWPSignatureUtilities;
 
-import sun.misc.BASE64Encoder;
 
 /** 
  * Creates the keystore used by the tests. 
@@ -85,60 +82,52 @@ import sun.misc.BASE64Encoder;
  */
 public class CreateTestKeystore {
 
-	private static final Log logger = LogFactory.getLog( CreateTestKeystore.class );
-	
 	/**
-	 * @param args
-	 * @throws IOException 
-	 * @throws InvalidKeySpecException 
-	 * @throws InvalidCipherTextException 
-	 * @throws SignatureException 
-	 * @throws NoSuchProviderException 
-	 * @throws CertificateException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws KeyStoreException 
-	 * @throws InvalidKeyException 
+	 * No arguments required.
 	 */
 	public static void main(String[] args) throws InvalidKeyException, 
 	KeyStoreException, NoSuchAlgorithmException, CertificateException, 
 	NoSuchProviderException, SignatureException, 
 	InvalidCipherTextException, InvalidKeySpecException, IOException 
 	{
-		createCertificate();
+		String password = "dpuser";
+		KeyStore store = createCertificate(password);
+
+        store.store(new FileOutputStream("tests/ng4jtest.p12"), password.toCharArray());
 		
 		// Expect output messages like the following:
 		
+
+//       Make the CA certificate
+//
 //		 Generating certificate for distinguished subject name 'CN=NG4J test CA, O=NG4J test, ST=SH, C=DE', valid for 3000 days
-//		 Generated keypair, extracting components and creating public structure for certificate
-//		 New public key is '308187028181008558b0a3dd80e707497e2afae0ae57b63f149a963ebb306d0f04d0bda7450f98baa642ffa18b216f717e69e21f2c5b4b19729d0318a32dd41861168dae58415e97d9a195654cd3cd7ea28bbf8c2bb678aee1d8f1a8bfb4f741f493682e54e00bfa06e330264155b4cab32a95218aa8d66cf2a3eb83f4e4d103e7d7aa0afada6f020103, exponent=3, modulus=93639058320031193716807082276072113639476687230687150205039085570071439862828044153264713283924021649674726066472471649686572139422688154478222383941077758488517214513596945845319393080523313699530959308767272968457334729193729778799057416104218817379376224970089426940334823685385785303502698392290221283951
-//		 Certificate structure generated, creating SHA1 digest
-//		 Block to sign is '30820170a0030201020206011c296af6ed300d06092a864886f70d010105050030483118301606035504030c0f434e3d4e47344a207465737420434131123010060355040a0c094e47344a2074657374310b300906035504080c025348310b3009060355040613024445301e170d3038303930333138313330375a170d3136313132303139313330375a30483118301606035504030c0f434e3d4e47344a207465737420434131123010060355040a0c094e47344a2074657374310b300906035504080c025348310b300906035504061302444530819d300d06092a864886f70d010101050003818b00308187028181008558b0a3dd80e707497e2afae0ae57b63f149a963ebb306d0f04d0bda7450f98baa642ffa18b216f717e69e21f2c5b4b19729d0318a32dd41861168dae58415e97d9a195654cd3cd7ea28bbf8c2bb678aee1d8f1a8bfb4f741f493682e54e00bfa06e330264155b4cab32a95218aa8d66cf2a3eb83f4e4d103e7d7aa0afada6f020103'
-//		 SHA1/RSA signature of digest is '71e3d44ac3cf3ed105fe50f2d488c27b4201cb69c7e6c59279f106f1b2c3a81dd60861f2145223ab5c75bee10780688eaa1223c6536710bab754d4a4085920c7a2cd8ca39e34afd4fcdba62a80230efbc6888a4d6c65741fc15707fc4157e30012fc77436d013b1a2341ee17042790f5c54846f82e8657a19e9464b96d04d099'
-//		 Verifying certificate for correct signature with CA public key
-//		 Exporting certificate in PKCS12 format
+//		   Generated keypair, extracting components and creating public structure for certificate
+//		   New public key is '308187028181008558b0a3dd80e707497e2afae0ae57b63f149a963ebb306d0f04d0bda7450f98baa642ffa18b216f717e69e21f2c5b4b19729d0318a32dd41861168dae58415e97d9a195654cd3cd7ea28bbf8c2bb678aee1d8f1a8bfb4f741f493682e54e00bfa06e330264155b4cab32a95218aa8d66cf2a3eb83f4e4d103e7d7aa0afada6f020103, exponent=3, modulus=93639058320031193716807082276072113639476687230687150205039085570071439862828044153264713283924021649674726066472471649686572139422688154478222383941077758488517214513596945845319393080523313699530959308767272968457334729193729778799057416104218817379376224970089426940334823685385785303502698392290221283951
+//		   Certificate structure generated, creating SHA1 digest
+//		   Block to sign is '30820170a0030201020206011c296af6ed300d06092a864886f70d010105050030483118301606035504030c0f434e3d4e47344a207465737420434131123010060355040a0c094e47344a2074657374310b300906035504080c025348310b3009060355040613024445301e170d3038303930333138313330375a170d3136313132303139313330375a30483118301606035504030c0f434e3d4e47344a207465737420434131123010060355040a0c094e47344a2074657374310b300906035504080c025348310b300906035504061302444530819d300d06092a864886f70d010101050003818b00308187028181008558b0a3dd80e707497e2afae0ae57b63f149a963ebb306d0f04d0bda7450f98baa642ffa18b216f717e69e21f2c5b4b19729d0318a32dd41861168dae58415e97d9a195654cd3cd7ea28bbf8c2bb678aee1d8f1a8bfb4f741f493682e54e00bfa06e330264155b4cab32a95218aa8d66cf2a3eb83f4e4d103e7d7aa0afada6f020103'
+//		   SHA1/RSA signature of digest is '71e3d44ac3cf3ed105fe50f2d488c27b4201cb69c7e6c59279f106f1b2c3a81dd60861f2145223ab5c75bee10780688eaa1223c6536710bab754d4a4085920c7a2cd8ca39e34afd4fcdba62a80230efbc6888a4d6c65741fc15707fc4157e30012fc77436d013b1a2341ee17042790f5c54846f82e8657a19e9464b96d04d099'
+//		   Verifying certificate for correct signature with CA public key
+//		   Exporting certificate in PKCS12 format
+//
+//       Make the client certificate
+//        
 //		 Generating certificate for distinguished subject name 'CN=NG4J test, O=NG4J test, L=Kiel, ST=SH, C=DE', valid for 1000 days
-//		 Generated keypair, extracting components and creating public structure for certificate
-//		 New public key is '30818702818100873c079fe1c87f5d9b6c27ab80256803bf848f0862d4be9e059ccd08429f367e443cd0efd51d3a95b28543a36f1ad62b2e6f4cf17fcd8ce61eb6e8d05d3a87e508d320689ddc5bc2cf6ce5d21fd17c547aa36e0f5ebd634211207ccb9eb364232ca80e7c383059fba236939eae00f2e494794444b349ea0f13b7ae81b94f5dab020103, exponent=3, modulus=94964889328409624208863996852639754228839220656011084775799286173333465455230138462307809145644482970224488806529838690211275578355190503635307944811710659520638886284253466151257952391265619968539187994334739363608876245090216750871409761151227453035069813401866155304515529925054428665723002770474295844267
-//		 Certificate structure generated, creating SHA1 digest
-//		 Block to sign is '3082017ca0030201020206011c296afbe0300d06092a864886f70d010105050030483118301606035504030c0f434e3d4e47344a207465737420434131123010060355040a0c094e47344a2074657374310b300906035504080c025348310b3009060355040613024445301e170d3038303930333138313330395a170d3131303533313138313330395a30543115301306035504030c0c434e3d4e47344a207465737431123010060355040a0c094e47344a2074657374310d300b06035504070c044b69656c310b300906035504080c025348310b300906035504061302444530819d300d06092a864886f70d010101050003818b0030818702818100873c079fe1c87f5d9b6c27ab80256803bf848f0862d4be9e059ccd08429f367e443cd0efd51d3a95b28543a36f1ad62b2e6f4cf17fcd8ce61eb6e8d05d3a87e508d320689ddc5bc2cf6ce5d21fd17c547aa36e0f5ebd634211207ccb9eb364232ca80e7c383059fba236939eae00f2e494794444b349ea0f13b7ae81b94f5dab020103'
-//		 SHA1/RSA signature of digest is '652596e2cf7700dc3e359ce01a14eacd65d50fe9b19192947c1de46c951a4b67e57c43557b6a6e9cc16fe712f1fa9cc2c866b17d50f2d4974a29c58a9e79c1afe2b0c581fb403f78673747248e72b0ccabdf781aecb29c8034cd793305888bc566726599665fc02b7e877f96e39aeb8e32c4856e3e187e0fb96e54b0692f2069'
-//		 Verifying certificate for correct signature with CA public key
-//		 Exporting certificate in PKCS12 format
-//		 SHA1/RSA signature of digest is 'ZSWW4s93ANw+NZzgGhTqzWXVD+mxkZKUfB3kbJUaS2flfENVe2punMFv5xLx+pzCyGaxfVDy1JdK
-//		KcWKnnnBr+KwxYH7QD94ZzdHJI5ysMyr33ga7LKcgDTNeTMFiIvFZnJlmWZfwCt+h3+W45rrjjLE
-//		hW4+GH4PuW5UsGkvIGk=
-//		'
-//		 SHA224/RSA signature of digest is 'Kzzo/VIg+hpZkJS628S8ut1IQZSYXvV/1WSXRHD9nRjfyzlqZKbTmClPZDG/+TfBfjDzC+L8S9gU
-//		l/Vmqq47QIafM/vIqALS5b0/1/xfIROqj594mxk/J25wy4GQmGIjnCv6NoNG/KJDO2WBklQFeU5h
-//		lz9UON1lcp/CzGdcJJs=
-//		'
+//		   Generated keypair, extracting components and creating public structure for certificate
+//		   New public key is '30818702818100873c079fe1c87f5d9b6c27ab80256803bf848f0862d4be9e059ccd08429f367e443cd0efd51d3a95b28543a36f1ad62b2e6f4cf17fcd8ce61eb6e8d05d3a87e508d320689ddc5bc2cf6ce5d21fd17c547aa36e0f5ebd634211207ccb9eb364232ca80e7c383059fba236939eae00f2e494794444b349ea0f13b7ae81b94f5dab020103, exponent=3, modulus=94964889328409624208863996852639754228839220656011084775799286173333465455230138462307809145644482970224488806529838690211275578355190503635307944811710659520638886284253466151257952391265619968539187994334739363608876245090216750871409761151227453035069813401866155304515529925054428665723002770474295844267
+//		   Certificate structure generated, creating SHA1 digest
+//		   Block to sign is '3082017ca0030201020206011c296afbe0300d06092a864886f70d010105050030483118301606035504030c0f434e3d4e47344a207465737420434131123010060355040a0c094e47344a2074657374310b300906035504080c025348310b3009060355040613024445301e170d3038303930333138313330395a170d3131303533313138313330395a30543115301306035504030c0c434e3d4e47344a207465737431123010060355040a0c094e47344a2074657374310d300b06035504070c044b69656c310b300906035504080c025348310b300906035504061302444530819d300d06092a864886f70d010101050003818b0030818702818100873c079fe1c87f5d9b6c27ab80256803bf848f0862d4be9e059ccd08429f367e443cd0efd51d3a95b28543a36f1ad62b2e6f4cf17fcd8ce61eb6e8d05d3a87e508d320689ddc5bc2cf6ce5d21fd17c547aa36e0f5ebd634211207ccb9eb364232ca80e7c383059fba236939eae00f2e494794444b349ea0f13b7ae81b94f5dab020103'
+//		   SHA1/RSA signature of digest is '652596e2cf7700dc3e359ce01a14eacd65d50fe9b19192947c1de46c951a4b67e57c43557b6a6e9cc16fe712f1fa9cc2c866b17d50f2d4974a29c58a9e79c1afe2b0c581fb403f78673747248e72b0ccabdf781aecb29c8034cd793305888bc566726599665fc02b7e877f96e39aeb8e32c4856e3e187e0fb96e54b0692f2069'
+//		   Verifying certificate for correct signature with CA public key
+//		   Exporting certificate in PKCS12 format
+//		 SHA1/RSA signature of digest is 'ZSWW4s93ANw+NZzgGhTqzWXVD+mxkZKUfB3kbJUaS2flfENVe2punMFv5xLx+pzCyGaxfVDy1JdKKcWKnnnBr+KwxYH7QD94ZzdHJI5ysMyr33ga7LKcgDTNeTMFiIvFZnJlmWZfwCt+h3+W45rrjjLEhW4+GH4PuW5UsGkvIGk='
+//		 SHA224/RSA signature of digest is 'Kzzo/VIg+hpZkJS628S8ut1IQZSYXvV/1WSXRHD9nRjfyzlqZKbTmClPZDG/+TfBfjDzC+L8S9gUl/Vmqq47QIafM/vIqALS5b0/1/xfIROqj594mxk/J25wy4GQmGIjnCv6NoNG/KJDO2WBklQFeU5hlz9UON1lcp/CzGdcJJs='
 		
 	}
 
 	// This code borrows heavily from the sample code given
 	// http://www.mayrhofer.eu.org/Default.aspx?pageindex=4&pageid=39
 	// by Rene Mayrhofer in "Creating X.509 certificates programmatically in Java"
-	private static void createCertificate() 
+	public static KeyStore createCertificate(String exportPassword) 
 	throws KeyStoreException, NoSuchAlgorithmException, CertificateException, 
 	IOException, InvalidKeyException, NoSuchProviderException, 
 	SignatureException,	InvalidCipherTextException, InvalidKeySpecException {
@@ -148,24 +137,25 @@ public class CreateTestKeystore {
     	String caDN = "CN=NG4J test CA, O=NG4J test, ST=SH, C=DE";
     	int caValidityDays = 3000;
     	int clientValidityDays = 1000;
-    	String exportPassword = "dpuser";
-    	String exportFile = "tests/ng4jtest.p12";
     	
     	
     	/* ***** First make the certificate authority certificate ****** */
+        System.out.println("");
+        System.out.println("Make the CA certificate");
+        System.out.println("");
     	
-		System.out.println("Generating certificate for distinguished subject name '" + 
+    	System.out.println("Generating certificate for distinguished subject name '" + 
 				caDN + "', valid for " + caValidityDays + " days");
     	SecureRandom srForCA = new SecureRandom();
     	RSAKeyPairGenerator genForCA = new RSAKeyPairGenerator();
     	genForCA.init(new RSAKeyGenerationParameters(BigInteger.valueOf(3), srForCA, 1024, 80));
         AsymmetricCipherKeyPair caKeypair = genForCA.generateKeyPair();
-        logger.debug("Generated keypair, extracting components and creating public structure for certificate");
+        System.out.println("  Generated keypair, extracting components and creating public structure for certificate");
 		RSAKeyParameters caPublicKey = (RSAKeyParameters) caKeypair.getPublic();
         RSAPrivateCrtKeyParameters caPrivateKey = (RSAPrivateCrtKeyParameters) caKeypair.getPrivate();
         // used to get proper encoding for the certificate
         RSAPublicKeyStructure caPkStruct = new RSAPublicKeyStructure(caPublicKey.getModulus(), caPublicKey.getExponent());
-        logger.debug("New public key is '" + makeHexString(caPkStruct.getEncoded()) + 
+        System.out.println("  New public key is '" + makeHexString(caPkStruct.getEncoded()) + 
 				", exponent=" + caPublicKey.getExponent() + ", modulus=" + caPublicKey.getModulus());
         // JCE format needed for the certificate - because getEncoded() is necessary...
         PublicKey caPubKey = KeyFactory.getInstance("RSA").generatePublic(
@@ -199,7 +189,7 @@ public class CreateTestKeystore {
 		caCertGen.setStartDate(new Time(new Date(System.currentTimeMillis())));
 		caCertGen.setEndDate(new Time(caExpiry.getTime()));
 		
-		logger.debug("Certificate structure generated, creating SHA1 digest");
+		System.out.println("  Certificate structure generated, creating SHA1 digest");
 		// attention: hard coded to be SHA1+RSA!
 		SHA1Digest caDigester = new SHA1Digest();
 		AsymmetricBlockCipher rsaForCA = new PKCS1Encoding(new RSAEngine());
@@ -213,7 +203,7 @@ public class CreateTestKeystore {
 		byte[] signature;
 		byte[] certBlockForCA = bOutForCA.toByteArray();
 		// first create digest
-		logger.debug("Block to sign is '" + makeHexString(certBlockForCA) + "'");		
+		System.out.println("  Block to sign is '" + makeHexString(certBlockForCA) + "'");		
 		caDigester.update(certBlockForCA, 0, certBlockForCA.length);
 		byte[] caHash = new byte[caDigester.getDigestSize()];
 		caDigester.doFinal(caHash, 0);
@@ -224,7 +214,7 @@ public class CreateTestKeystore {
 		byte[] digest = dInfo.getEncoded(ASN1Encodable.DER);
 		signature = rsaForCA.processBlock(digest, 0, digest.length);
 		
-		logger.debug("SHA1/RSA signature of digest is '" + makeHexString(signature) + "'");
+		System.out.println("  SHA1/RSA signature of digest is '" + makeHexString(signature) + "'");
 
 		// and finally construct the certificate structure
         ASN1EncodableVector  vForCA = new ASN1EncodableVector();
@@ -234,13 +224,13 @@ public class CreateTestKeystore {
         vForCA.add(new DERBitString(signature));
 
         X509CertificateObject caCert = new X509CertificateObject(new X509CertificateStructure(new DERSequence(vForCA))); 
-        logger.debug("Verifying certificate for correct signature with CA public key");
+        System.out.println("  Verifying certificate for correct signature with CA public key");
         //clientCert.verify(caCert.getPublicKey());
         // instead of the above, verify against self-certificate
         caCert.verify(caPubKey); // an error occurs here because of an inconsistency in bouncycastle 1.38 
 
         // and export as PKCS12 formatted file along with the private key and the CA certificate 
-        logger.debug("Exporting certificate in PKCS12 format");
+        System.out.println("  Exporting certificate in PKCS12 format");
 
         PKCS12BagAttributeCarrier bagCert = caCert;
         bagCert.setBagAttribute(PKCSObjectIdentifiers.pkcs_9_at_friendlyName,
@@ -250,7 +240,9 @@ public class CreateTestKeystore {
                 new SubjectKeyIdentifierStructure(caPubKey));
         
         
-        
+        System.out.println("");
+        System.out.println("Make the client certificate");
+        System.out.println("");
         
         
     	/* ***** Next make the client certificate ****** */
@@ -262,12 +254,12 @@ public class CreateTestKeystore {
     	RSAKeyPairGenerator genForClient = new RSAKeyPairGenerator();
     	genForClient.init(new RSAKeyGenerationParameters(BigInteger.valueOf(3), srForClient, 1024, 80));
         AsymmetricCipherKeyPair clientKeypair = genForClient.generateKeyPair();
-        logger.debug("Generated keypair, extracting components and creating public structure for certificate");
+        System.out.println("  Generated keypair, extracting components and creating public structure for certificate");
 		RSAKeyParameters clientPublicKey = (RSAKeyParameters) clientKeypair.getPublic();
         RSAPrivateCrtKeyParameters clientPrivateKey = (RSAPrivateCrtKeyParameters) clientKeypair.getPrivate();
         // used to get proper encoding for the certificate
         RSAPublicKeyStructure clientPkStruct = new RSAPublicKeyStructure(clientPublicKey.getModulus(), clientPublicKey.getExponent());
-        logger.debug("New public key is '" + makeHexString(clientPkStruct.getEncoded()) + 
+        System.out.println("  New public key is '" + makeHexString(clientPkStruct.getEncoded()) + 
 				", exponent=" + clientPublicKey.getExponent() + ", modulus=" + clientPublicKey.getModulus());
         // JCE format needed for the certificate - because getEncoded() is necessary...
         PublicKey clientPubKey = KeyFactory.getInstance("RSA").generatePublic(
@@ -295,7 +287,7 @@ public class CreateTestKeystore {
 		clientCertGen.setStartDate(new Time(new Date(System.currentTimeMillis())));
 		clientCertGen.setEndDate(new Time(clientExpiry.getTime()));
 		
-		logger.debug("Certificate structure generated, creating SHA1 digest");
+		System.out.println("  Certificate structure generated, creating SHA1 digest");
 		// attention: hard coded to be SHA1+RSA!
 		SHA1Digest clientDigester = new SHA1Digest();
 		AsymmetricBlockCipher rsaForClient = new PKCS1Encoding(new RSAEngine());
@@ -309,7 +301,7 @@ public class CreateTestKeystore {
 		byte[] clientSignature;
 		byte[] certBlockForClient = bOutForClient.toByteArray();
 		// first create digest
-		logger.debug("Block to sign is '" + makeHexString(certBlockForClient) + "'");		
+		System.out.println("  Block to sign is '" + makeHexString(certBlockForClient) + "'");		
 		clientDigester.update(certBlockForClient, 0, certBlockForClient.length);
 		byte[] clientHash = new byte[clientDigester.getDigestSize()];
 		clientDigester.doFinal(clientHash, 0);
@@ -320,7 +312,7 @@ public class CreateTestKeystore {
 		digest = dInfo.getEncoded(ASN1Encodable.DER);
 		clientSignature = rsaForClient.processBlock(digest, 0, digest.length);
 		
-		logger.debug("SHA1/RSA signature of digest is '" + makeHexString(clientSignature) + "'");
+		System.out.println("  SHA1/RSA signature of digest is '" + makeHexString(clientSignature) + "'");
 
 		// and finally construct the certificate structure
         ASN1EncodableVector  vForClient = new ASN1EncodableVector();
@@ -330,11 +322,11 @@ public class CreateTestKeystore {
         vForClient.add(new DERBitString(clientSignature));
 
         X509CertificateObject clientCert = new X509CertificateObject(new X509CertificateStructure(new DERSequence(vForClient))); 
-        logger.debug("Verifying certificate for correct signature with CA public key");
+        System.out.println("  Verifying certificate for correct signature with CA public key");
         clientCert.verify(caCert.getPublicKey());
 
         // and export as PKCS12 formatted file along with the private key and the CA certificate 
-        logger.debug("Exporting certificate in PKCS12 format");
+        System.out.println("  Exporting certificate in PKCS12 format");
 
         PKCS12BagAttributeCarrier bagCert1 = clientCert;
         bagCert1.setBagAttribute(PKCSObjectIdentifiers.pkcs_9_at_friendlyName,
@@ -363,9 +355,6 @@ public class CreateTestKeystore {
         
         store.setKeyEntry("Private key for NG4J JUnit tests", clientPrivKey, exportPassword.toCharArray(), chain);
 
-        FileOutputStream fOut = new FileOutputStream(exportFile);
-
-        store.store(fOut, exportPassword.toCharArray());
         
         
         /* ***** Print a final helpful message for editing the JUnit tests ****** */
@@ -375,11 +364,8 @@ public class CreateTestKeystore {
 //        Signature sig = new JDKDigestSignature.SHA224WithRSAEncryption();
 //        clientCert.getSignature()
         
-        BASE64Encoder base64encoder = new BASE64Encoder();
-        String sigForTests;
-        
-        sigForTests = base64encoder.encodeBuffer(clientSignature);
-        System.out.println("SHA1/RSA signature of digest is '" + sigForTests + "'");
+        System.out.println("SHA1/RSA signature of digest is '" + 
+        		new String( Base64.encodeBase64( clientSignature ) ) + "'");
         
         //Signature sig = Signature.getInstance(sigOID.getId());
         //Signature sig = new JDKDigestSignature.SHA1WithRSAEncryption();
@@ -390,8 +376,10 @@ public class CreateTestKeystore {
         sig.update(bOutForClient.toByteArray());
         byte[] signatureForTests = sig.sign();
         
-        sigForTests = base64encoder.encodeBuffer(signatureForTests);
-        System.out.println("SHA224/RSA signature of digest is '" + sigForTests + "'");
+        System.out.println("SHA224/RSA signature of digest is '" + 
+        		new String( Base64.encodeBase64( signatureForTests ) ) + "'");
+        
+        return store;
         
 	}
 
@@ -403,7 +391,7 @@ public class CreateTestKeystore {
 	 * left-to-right (big-endian).  The result will contain
 	 * 2*bytes.size characters, leading 0s included.
 	 */
-	public static String makeHexString( byte[] bytes ) {
+	private static String makeHexString( byte[] bytes ) {
 		StringBuffer sb = new StringBuffer();
 		
 		for ( byte b : bytes ) {
