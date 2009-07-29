@@ -27,7 +27,7 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.FOAF;
 
 /**
  * 
- * An SWPAuthority represents information about an authorty
+ * An SWPAuthority represents information about an authority
  * like id, label, eMail, keys and certificates 
  * 
  * @author chris bizer
@@ -283,14 +283,11 @@ public class SWPAuthorityImpl implements SWPAuthority
 											null, 
 											XSDDatatype.XSDbase64Binary ) ) );
 			} catch (AddDeniedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			} catch (DatatypeFormatException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			} catch (CertificateEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			}
 		}
         this.graph = graph;
