@@ -1,9 +1,3 @@
-/*
- * Created on 06-Dec-2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 package de.fuberlin.wiwiss.ng4j.swp.util;
 
 import java.io.ByteArrayInputStream;
@@ -28,6 +22,7 @@ import java.util.Collections;
 import java.util.Iterator;
 
 import org.apache.axis.components.uuid.SimpleUUIDGen;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.bouncycastle.crypto.Digest;
@@ -40,7 +35,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPPrivateKey;
 import org.bouncycastle.util.encoders.Hex;
 
-import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
 import com.hp.hpl.jena.graph.Node;
@@ -64,9 +58,11 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
 
 /**
  * 
- * Last commit info    :   $Author: hartig $
- * $Date: 2009/02/20 08:09:52 $
- * $Revision: 1.16 $
+ *
+ * Last commit info    :   
+ * $Author: timp $
+ * $Date: 2009/07/29 16:10:21 $
+ * $Revision: 1.17 $
  * 
  * 
  * SWPSignatureUtilities
@@ -94,6 +90,7 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
  * erw@it-innovation.soton.ac.uk
  * 
  * @author Rowland Watkins
+ * @since 06-Dec-2004
  * 
  * Certificate and Chain verification code based on code by Svetlin Nakov
  */
@@ -226,9 +223,7 @@ public class SWPSignatureUtilities
         digest.doFinal( resBuf, 0 );
     
         res = Hex.encode( resBuf );
-		
-        BASE64Encoder encoder = new BASE64Encoder();
-        return encoder.encode( res );
+        return new String(Base64.encodeBase64Chunked( res )) ;
     }
     
     /**
@@ -377,15 +372,6 @@ public class SWPSignatureUtilities
     }
     
     /**
-     * 
-     * @param graph
-     * @param signatureMethod
-     * @param key
-     * @return signature
-     * @throws SWPNoSuchAlgorithmException
-     * @throws SWPSignatureException
-     * @throws SWPInvalidKeyException
-     * @throws SWPAlgorithmNotSupportedException 
      */
     public static String calculateSignature( NamedGraph graph, 
             						  Node signatureMethod, 
@@ -414,49 +400,41 @@ public class SWPSignatureUtilities
 				sig.initSign( pkey.getKey() );
 			}
 			else 
-				throw new SWPInvalidKeyException( "No suitable private key found." );
+				throw new SWPInvalidKeyException( "No suitable private key found.");
             
             sig.update( canonicalGraph.getBytes( "UTF-8" ) );
         } 
         catch ( InvalidKeyException e1 ) 
         { 
             logger.fatal( "Public key supplied is invalid. "+ e1.getMessage() );
-            throw new SWPInvalidKeyException( "Public key supplied is invalid." );
+            throw new SWPInvalidKeyException( "Public key supplied is invalid.", e1 );
         } 
         catch ( SignatureException e3 ) 
         {
             logger.fatal( "Error updating input data. "+ e3.getMessage() );
-            throw new SWPSignatureException( "Error updating input data." );
+            throw new SWPSignatureException( "Error updating input data.", e3 );
         } 
 		catch ( UnsupportedEncodingException e ) 
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		} 
             
         try 
         {
-            BASE64Encoder encoder = new BASE64Encoder();
-            signature = encoder.encodeBuffer( sig.sign() );
+            //BASE64Encoder encoder = new BASE64Encoder();
+            //signature = encoder.encodeBuffer( sig.sign() );
+            signature = new String( Base64.encodeBase64Chunked( sig.sign() ) );
         } 
         catch ( SignatureException e2 ) 
         {
             logger.fatal( "Error generating signature. "+ e2.getMessage() );
-            throw new SWPSignatureException( "Error generating signature." );
+            throw new SWPSignatureException( "Error generating signature.", e2);
         }
         
         return signature;
     }
     
     /**
-     * 
-     * @param set
-     * @param signatureMethod
-     * @param key
-     * @return signature
-     * @throws SWPNoSuchAlgorithmException
-     * @throws SWPSignatureException
-     * @throws SWPInvalidKeyException
      */
     public static String calculateSignature( NamedGraphSet set, 
 			  								Node signatureMethod, 
@@ -479,23 +457,24 @@ public class SWPSignatureUtilities
     	catch ( InvalidKeyException e1 ) 
     	{ 
     		logger.fatal( "Public key supplied is invalid. "+ e1.getMessage() );
-    		throw new SWPInvalidKeyException( "Public key supplied is invalid." );
+    		throw new SWPInvalidKeyException( "Public key supplied is invalid.", e1 );
     	} 
     	catch ( SignatureException e3 ) 
     	{
     		logger.fatal( "Error updating input data. "+ e3.getMessage() );
-    		throw new SWPSignatureException( "Error updating input data." );
+    		throw new SWPSignatureException( "Error updating input data.", e3 );
     	} 
 
     	try 
     	{
-    		BASE64Encoder encoder = new BASE64Encoder();
-    		signature = encoder.encodeBuffer( sig.sign() );
+    		//BASE64Encoder encoder = new BASE64Encoder();
+    		//signature = encoder.encodeBuffer( sig.sign() );
+    		signature = new String( Base64.encodeBase64Chunked( sig.sign() ) );
     	} 
     	catch ( SignatureException e2 ) 
     	{
     		logger.fatal("Error generating signature. "+ e2.getMessage() );
-    		throw new SWPSignatureException( "Error generating signature." );
+    		throw new SWPSignatureException( "Error generating signature.", e2 );
     	}
 
     	return signature;
@@ -543,17 +522,6 @@ public class SWPSignatureUtilities
 	}
 
     /**
-     * 
-     * @param graph
-     * @param signatureMethod
-     * @param signatureValue
-     * @param pem
-     * @return boolean
-     * @throws SWPNoSuchAlgorithmException
-     * @throws SWPValidationException
-     * @throws SWPInvalidKeyException
-     * @throws SWPSignatureException
-     * @throws CertificateException 
      */
     public static boolean validateSignature( NamedGraph graph, 
             						  Node signatureMethod, 
@@ -602,10 +570,9 @@ public class SWPSignatureUtilities
 		
     	try 
     	{
-    		BASE64Decoder decoder = new BASE64Decoder();
 			if ( signatureValue != null )
 			{
-				signature = decoder.decodeBuffer( signatureValue );
+				signature = Base64.decodeBase64( signatureValue.getBytes() );
 			}
 			else throw new SWPSignatureException( "The input signature value was empty." );
 			if ( certificate.getPublicKey() != null )
@@ -624,12 +591,12 @@ public class SWPSignatureUtilities
     	catch ( InvalidKeyException e ) 
     	{
     		logger.fatal( "Public key supplied is invalid. "+ e.getMessage() );
-    		throw new SWPInvalidKeyException( "Public key supplied is invalid." );
+    		throw new SWPInvalidKeyException( "Public key supplied is invalid.", e );
     	}
     	catch ( SignatureException e ) 
     	{
     		logger.fatal( "Error updating input data. "+ e.getMessage() );
-    		throw new SWPSignatureException( "Error updating input data. "+e.getMessage() );
+    		throw new SWPSignatureException( "Error updating input data. "+e.getMessage(), e );
     	} 
 
     	try 
@@ -639,7 +606,7 @@ public class SWPSignatureUtilities
     	catch ( SignatureException e4 ) 
     	{
     		logger.fatal( "Error verifying signature. "+e4.getMessage() );
-    		throw new SWPSignatureException( "Error verifying signature." );
+    		throw new SWPSignatureException( "Error verifying signature.", e4 );
     	}
 	}
 
@@ -750,8 +717,7 @@ public class SWPSignatureUtilities
 //        
 //        try 
 //        {
-//          BASE64Decoder decoder = new BASE64Decoder();
-//        	signature = decoder.decodeBuffer( signatureValue );
+//			signature = Base64.decodeBase64( signatureValue.getBytes() );
 //        	sig.initVerify( certificate.getPublicKey() );
 //        	sig.update( canonicalGraph.getBytes( "UTF-8" ) );
 //        } 
@@ -885,7 +851,7 @@ public class SWPSignatureUtilities
         if ( chainLength < 2 ) 
         {
             throw new CertPathValidatorException( "The certification chain is too " +
-                "short. It should consist of at least 2 certiicates." );
+                "short. It should consist of at least 2 certificates." );
         }
 
         // Create a set of trust anchors from given trusted root CA certificates
