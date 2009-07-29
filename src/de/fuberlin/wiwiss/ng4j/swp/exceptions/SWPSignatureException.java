@@ -1,13 +1,11 @@
-/*
- * Created on 05-Oct-2004
- *
- */
 package de.fuberlin.wiwiss.ng4j.swp.exceptions;
 
 import java.security.SignatureException;
 
 /**
  * Exception class used for document signing errors.
+ * 
+ * @since 05-Oct-2004 
  */
 public class SWPSignatureException 
 extends SignatureException 
@@ -18,6 +16,10 @@ extends SignatureException
     {
         super( aMessage );
     }
+
+	public SWPSignatureException(String message, Throwable cause) {
+		super( message, cause );
+	}
 
 }
 
