@@ -1,15 +1,10 @@
-/*
- * Created on 11-Dec-2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 package de.fuberlin.wiwiss.ng4j.swp.exceptions;
 
 import java.security.InvalidKeyException;
 
 /**
  * @author rowland
+ * @since 11-Dec-2004
  *
  * Declarative Systems & Software Engineering Group,
  * School of Electronics & Computer Science,
@@ -19,9 +14,13 @@ import java.security.InvalidKeyException;
  */
 public class SWPInvalidKeyException extends InvalidKeyException 
 {
-    private static final long serialVersionUID = 1L;
-    
-    public SWPInvalidKeyException( String aMessage ) 
+	private static final long serialVersionUID = -1867480311494073862L;
+
+	public SWPInvalidKeyException(String message, Throwable cause) {
+		super( message, cause );
+	}
+
+	public SWPInvalidKeyException( String aMessage ) 
     {
         super( aMessage );
     }
