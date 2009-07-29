@@ -35,7 +35,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPPrivateKey;
 import org.bouncycastle.util.encoders.Hex;
 
-import sun.misc.BASE64Encoder;
+//import sun.misc.BASE64Encoder;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -61,8 +61,8 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
  *
  * Last commit info    :   
  * $Author: timp $
- * $Date: 2009/07/29 16:10:21 $
- * $Revision: 1.17 $
+ * $Date: 2009/07/29 16:10:50 $
+ * $Revision: 1.18 $
  * 
  * 
  * SWPSignatureUtilities
