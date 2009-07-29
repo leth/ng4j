@@ -6,7 +6,11 @@
 	<classpathentry kind="lib" path="lib/stax-api-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.12.jar"/>
 	<classpathentry kind="lib" path="lib/icu4j_3_4.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+		<accessrules>
+			<accessrule kind="nonaccessible" pattern="sun/**"/>
+		</accessrules>
+	</classpathentry>
 	<classpathentry kind="lib" path="lib/bcpg-jdk15-143.jar"/>
 	<classpathentry kind="lib" path="lib/bcprov-jdk15-143.jar"/>
 	<classpathentry kind="lib" path="lib/hsqldb-1.8.0.7.jar"/>
