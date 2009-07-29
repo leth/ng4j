@@ -1,3 +1,6 @@
+07/29/09 (TimP) 
+Replaced references to sun.misc.Base64Encoder and sun.misc.Base64Decoder with commons-codec. 
+
 06/23/09 (Olaf)
 Applied patch 2806623: fixes a minor bug in the TRIG parser causing a NPE when reading default graphs such as in the example 3 at http://www4.wiwiss.fu-berlin.de/bizer/TriG/#example
 
