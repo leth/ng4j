@@ -9,6 +9,8 @@ package de.fuberlin.wiwiss.ng4j.semwebclient.urisearch;
  */
 public class QueryProcessingException extends Exception {
 
+	private static final long serialVersionUID = 6250976463579664481L;
+	
 	// members
 
 	/** the query processor that threw this exception */
