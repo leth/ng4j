@@ -1,4 +1,4 @@
-// $Id: NamedGraphModelTest.java,v 1.6 2009/07/30 12:26:08 timp Exp $
+// $Id: NamedGraphModelTest.java,v 1.7 2009/07/30 16:11:20 timp Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.util.ArrayList;
@@ -134,8 +134,8 @@ public class NamedGraphModelTest extends TestCase {
 		return result;
 	}
 
-	private List<StatementImpl> twoStatementsList() {
-		List<StatementImpl> statements = new ArrayList<StatementImpl>();
+	private List<Statement> twoStatementsList() {
+		List<Statement> statements = new ArrayList<Statement>();
 		statements.add(new StatementImpl(foo, bar, baz));
 		statements.add(new NamedGraphStatement(baz, bar, foo, this.model));
 		return statements;
