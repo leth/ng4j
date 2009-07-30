@@ -9,7 +9,6 @@ import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.graph.query.BindingQueryPlan;
 import com.hp.hpl.jena.graph.query.Domain;
-import com.hp.hpl.jena.graph.query.ExpressionSet;
 import com.hp.hpl.jena.graph.query.Query;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.util.iterator.NiceIterator;
