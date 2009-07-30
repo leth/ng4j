@@ -18,7 +18,9 @@ Execute:
 ant
 
 Upload resultant .zip to sourceforge.
-tag cvs with eg ng4j-2_9_1
+tag cvs with eg 
+
+cvs tag ng4j-2_9_1
 
 Add -SNAPSHOT back to version in pom.xml and build.xml
 commit
