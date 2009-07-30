@@ -1,10 +1,6 @@
 // $ANTLR 2.7.5 (20050128): "trig.g" -> "TriGAntlrLexer.java"$
 
 package de.fuberlin.wiwiss.ng4j.trig.parser ;
-import de.fuberlin.wiwiss.ng4j.trig.AntlrUtils ;
-import de.fuberlin.wiwiss.ng4j.trig.TriGParserEventHandler ;
-import java.io.* ;
-import antlr.TokenStreamRecognitionException ;
 
 public interface TriGAntlrParserTokenTypes {
 	int EOF = 1;
