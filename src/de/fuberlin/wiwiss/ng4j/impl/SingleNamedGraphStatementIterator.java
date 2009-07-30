@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/impl/SingleNamedGraphStatementIterator.java,v 1.1 2009/05/27 14:36:53 jenpc Exp $
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/impl/SingleNamedGraphStatementIterator.java,v 1.2 2009/07/30 16:14:34 timp Exp $
 
 package de.fuberlin.wiwiss.ng4j.impl;
 
@@ -29,7 +29,7 @@ public class SingleNamedGraphStatementIterator extends StmtIteratorImpl {
 	 * @see com.hp.hpl.jena.rdf.model.impl.StmtIteratorImpl#next()
 	 */
 	@Override
-	public Object next() {
+	public Statement next() {
 		Statement stmt = (Statement) super.next();
 		if (stmt instanceof SingleNamedGraphStatement) {
 			return stmt;
