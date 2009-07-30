@@ -176,7 +176,7 @@ public class IdBasedNamedGraphSetImpl extends NamedGraphSetImpl
 	 */
 	static class UnionFindIterator implements Iterator<EncodedTriple>
 	{
-		final protected List<NamedGraph> graphs;
+		final protected List<Graph> graphs;
 		final protected int sId;
 		final protected int pId;
 		final protected int oId;
@@ -194,7 +194,7 @@ public class IdBasedNamedGraphSetImpl extends NamedGraphSetImpl
 		 */
 		final protected byte seenIndexKey;
 
-		protected Iterator<NamedGraph> itCurrentGraph;
+		protected Iterator<Graph> itCurrentGraph;
 		protected Iterator<EncodedTriple> itCurrentMatch;
 		protected EncodedTriple currentMatch;
 
@@ -205,7 +205,7 @@ public class IdBasedNamedGraphSetImpl extends NamedGraphSetImpl
 		 * @param pId identifier representing the predicate of the triple pattern
 		 * @param oId identifier representing the object of the triple pattern
 		 */
-		public UnionFindIterator ( List<NamedGraph> graphs, int sId, int pId, int oId )
+		public UnionFindIterator ( List<Graph> graphs, int sId, int pId, int oId )
 		{
 			this.graphs = graphs;
 			this.sId = sId;
