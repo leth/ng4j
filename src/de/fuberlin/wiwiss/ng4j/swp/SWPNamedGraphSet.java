@@ -1,7 +1,3 @@
-/*
- * Created on 24-Nov-2004
- *
- */
 package de.fuberlin.wiwiss.ng4j.swp;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
@@ -17,7 +13,7 @@ import com.hp.hpl.jena.util.iterator.ExtendedIterator;
  * 
  * @author chris bizer
  * @author rowland watkins
- * 
+ * @since 24-Nov-2004 
  */
 public interface SWPNamedGraphSet extends NamedGraphSet
 {
@@ -46,7 +42,7 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * 
      * If the Authority doesn't have a URI, then a blank node will be used to
      * identify the authority and a additional triple containing the foaf:mbox
-     * adress of the authority will be added.
+     * address of the authority will be added.
      *  
      * Return true if successful.
      * </p>
@@ -84,11 +80,10 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      *              urn:uuid:X swp:authority <http://www.bizer.de/me> .
      *              <http://www.bizer.de/me> foaf:mbox <mailto:chris@bizer.de> }</li>
      *  
-     * Return true if successful.
      * 
      * @param authority
      * @param listOfAuthorityProperties
-     * @return
+     * @return true if successful
      */
     public boolean swpQuote( SWPAuthority authority, ArrayList<Node> listOfAuthorityProperties );
 
@@ -126,7 +121,7 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * @param listOfAuthorityProperties
      * @param keystore
      * @param password
-     * @return
+     * @return true if successful
      * @throws SWPBadSignatureException
      * @throws SWPBadDigestException
      */
@@ -163,7 +158,7 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * (as nodes) describing the authority. These properties will be included
      * into the warrant graph, e.g. foaf:name, foaf:mbox, swp:key, swp:certificate
      * 
-     * Return true of successful.
+     * Return true if successful.
      * 
      * @param authority
      * @param signatureMethod
@@ -171,7 +166,7 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * @param listOfAuthorityProperties
      * @param keystore
      * @param password
-     * @return
+     * @return true if successful
      * @throws SWPBadSignatureException
      * @throws SWPBadDigestException
      */
@@ -194,7 +189,7 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * @param listOfGraphnames as Nodes
      * @param authority
      * @param listOfAuthorityProperties
-     * @return
+     * @return true if successful
      */
     public boolean assertGraphs( ArrayList<Node> listOfGraphNames, SWPAuthority authority, ArrayList<Node> listOfAuthorityProperties );
 
@@ -214,7 +209,7 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * @param listOfAuthorityProperties
      * @param keystore
      * @param password
-     * @return
+     * @return true if successful
      * @throws SWPBadSignatureException
      * @throws SWPBadDigestException
      */
@@ -254,7 +249,7 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * 
      * Return true if successful.
      * 
-     * @return
+     * @return true if successful
      */
     public boolean verifyAllSignatures();
     
