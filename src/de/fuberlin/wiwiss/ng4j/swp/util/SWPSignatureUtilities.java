@@ -61,8 +61,8 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
  *
  * Last commit info    :   
  * $Author: timp $
- * $Date: 2009/07/29 16:10:50 $
- * $Revision: 1.18 $
+ * $Date: 2009/07/30 12:40:14 $
+ * $Revision: 1.19 $
  * 
  * 
  * SWPSignatureUtilities
@@ -124,7 +124,7 @@ public class SWPSignatureUtilities
      * This method fixes the flaw where the graph name is
      * excluded from the canonical form.
      * </p>
-     * @param Named Graph graph
+     * @param graph
      * @return canonicalString
      */
     public static String getCanonicalGraph( NamedGraph graph )
@@ -159,7 +159,7 @@ public class SWPSignatureUtilities
      * Takes a NamedGraphSet and returns its canonical
      * form.
      * 
-     * @param NamedGraphSet set
+     * @param set
      * @return canonicalString
      */
     public static String getCanonicalGraphSet( NamedGraphSet set )
