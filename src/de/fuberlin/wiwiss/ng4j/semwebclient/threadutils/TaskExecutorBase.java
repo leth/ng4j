@@ -35,7 +35,7 @@ abstract public class TaskExecutorBase extends Thread {
 
 	/**
 	 * Executes the given task (which is guaranteed to be of the type specified
-	 * by {@link #getTasktype}).
+	 * by {@link #getTaskType}).
 	 * Note for implementations: if this thread has already been stopped (cf.
 	 * {@link #isStopped}) the execution must be stopped as quickly as possible.
 	 */
