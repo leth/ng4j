@@ -62,12 +62,15 @@ public class TriGAntlrParser extends antlr.LLkParser       implements TriGAntlrP
 	{ 
 		handler.quad(lexer.getLine(), subj, prop, obj, currentGraphName);
 	}
+	/*
+	 * Unused private method
+	 * 
 
 	private void directive(AST directive, AST arg)
 	{
 		handler.directive(lexer.getLine(), directive, new AST[]{arg});
 	}
-
+*/
 	private void directive(AST directive, AST arg1, AST arg2)
 	{
 		handler.directive(lexer.getLine(), directive, new AST[]{arg1, arg2});
