@@ -5,20 +5,33 @@
 
 package de.fuberlin.wiwiss.ng4j.trig;
 
-//import org.apache.commons.logging.*;
-import com.hp.hpl.jena.rdf.model.*;
-import com.hp.hpl.jena.shared.JenaException;
-import com.hp.hpl.jena.vocabulary.RDF ;
-import com.hp.hpl.jena.vocabulary.RDFS ;
-import com.hp.hpl.jena.util.iterator.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
-import java.util.* ;
+import com.hp.hpl.jena.rdf.model.Literal;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.NodeIterator;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
+import com.hp.hpl.jena.shared.JenaException;
+import com.hp.hpl.jena.util.iterator.ClosableIterator;
+import com.hp.hpl.jena.util.iterator.ExtendedIterator;
+import com.hp.hpl.jena.util.iterator.SingletonIterator;
+import com.hp.hpl.jena.util.iterator.WrappedIterator;
+import com.hp.hpl.jena.vocabulary.RDF;
+import com.hp.hpl.jena.vocabulary.RDFS;
 
 /** An N3 pretty printer.
  *  Tries to make N3 data look readable - works better on regular data.
  *
  * @author		Andy Seaborne
- * @version 	$Id: N3JenaWriterPP.java,v 1.6 2009/02/20 08:09:52 hartig Exp $
+ * @version 	$Id: N3JenaWriterPP.java,v 1.7 2009/07/30 12:19:25 timp Exp $
  */
 
 
@@ -177,7 +190,6 @@ public class N3JenaWriterPP extends N3JenaWriterCommon
 			// Corrupt graph!
 			throw new JenaException("N3: found object with no arcs!") ;
 
-		@SuppressWarnings("unused")
 		Statement s = pointsToIter.nextStatement() ;
                
 		if ( pointsToIter.hasNext() )
@@ -338,9 +350,7 @@ public class N3JenaWriterPP extends N3JenaWriterCommon
         }
         sIter.close() ;
         // DEBUG variables.
-        @SuppressWarnings("unused")
 		int simpleSize = simple.size() ;
-        @SuppressWarnings("unused")
 		int complexSize = complex.size() ;
         
         // Write property/simple objects
@@ -412,10 +422,9 @@ public class N3JenaWriterPP extends N3JenaWriterCommon
             int padding = -1 ;
             String padSp = null ;
             
-            // Can we fit teh start of teh complex object on this line?
+            // Can we fit the start of the complex object on this line?
             
             // DEBUG variable.
-            @SuppressWarnings("unused")
 			int tmp = propStr.length() ;
             // Complex objects - do not allow property to be long and alignment to be lost
             if ((propStr.length()+minGap) <= propertyCol)
