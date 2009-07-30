@@ -1,4 +1,4 @@
-// $Id: NamedGraphModelTest.java,v 1.5 2009/07/30 12:24:57 timp Exp $
+// $Id: NamedGraphModelTest.java,v 1.6 2009/07/30 12:26:08 timp Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 /**
  * Unit tests for {@link NamedGraphModel}. We do not test the whole
  * Model interface because it is so large. We left out methods which
- * likely are uneffected by our changes, or which just call other methods
+ * likely are unaffected by our changes, or which just call other methods
  * that we already have tested.
  *
  * @author Richard Cyganiak (richard@cyganiak.de)
