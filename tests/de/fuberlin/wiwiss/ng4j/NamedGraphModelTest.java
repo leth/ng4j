@@ -1,9 +1,8 @@
-// $Id: NamedGraphModelTest.java,v 1.4 2009/02/11 15:16:24 jenpc Exp $
+// $Id: NamedGraphModelTest.java,v 1.5 2009/07/30 12:24:57 timp Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
