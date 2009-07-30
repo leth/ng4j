@@ -21,7 +21,6 @@ import org.apache.commons.codec.binary.Base64;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.swp.SWPAuthority;
-import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPMissingAuthorityPropertyException;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP;
 import de.fuberlin.wiwiss.ng4j.swp.vocabulary.FOAF;
 
@@ -202,13 +201,6 @@ public class SWPAuthorityImpl implements SWPAuthority
      * 
      * The listOfAuthorityProperties determines which information
      * about the authority is added.
-     * 
-     * @param graphP
-     * @param listOfAuthorityProperties
-     * @throws SWPMissingAuthorityPropertyException
-     * 
-     * @return boolean
-	 *  
      * 
      */
 	public boolean addDescriptionToGraph( NamedGraph graphP, ArrayList<Node> listOfAuthorityProperties ) 
