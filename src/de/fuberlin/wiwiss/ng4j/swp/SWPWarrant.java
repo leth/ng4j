@@ -25,43 +25,31 @@ public interface SWPWarrant
 	
     /**
      * Returns an iterator over all named graphs which are asserted or quoted by this warrant.
-     * 
-     * @return
      */
     public ExtendedIterator getGraphs();
 
     /**
      * Returns an iterator over all named graphs which are asserted by this warrant.
-     * 
-     * @return
      */
     public ExtendedIterator getAssertedGraphs();
 
     /**
      * Returns an iterator over all named graphs which are quoted by this warrant.
-     * 
-     * @return
      */    
     public ExtendedIterator getQuotedGraphs();
 
     /**
      * Returns the authority of this warrant.
-     * 
-     * @return
      */        
     public SWPAuthority getAuthority() throws SWPCertificateException;
 
     /**
      * Returns the signature of this warrant or null if the warrant is not signed.
-     * 
-     * @return
      */     
     public Signature getSignature() throws SWPSignatureException;
 
     /**
      * Returns true if the warrant is signed.
-     * 
-     * @return
      */  
     public boolean isSigned();
 
