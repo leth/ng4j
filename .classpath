@@ -2,10 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="tests"/>
-	<classpathentry kind="lib" path="lib/wstx-asl-3.0.0.jar"/>
-	<classpathentry kind="lib" path="lib/stax-api-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.12.jar"/>
-	<classpathentry kind="lib" path="lib/icu4j_3_4.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<accessrules>
 			<accessrule kind="nonaccessible" pattern="sun/**"/>
@@ -14,18 +11,20 @@
 	<classpathentry kind="lib" path="lib/bcpg-jdk15-143.jar"/>
 	<classpathentry kind="lib" path="lib/bcprov-jdk15-143.jar"/>
 	<classpathentry kind="lib" path="lib/hsqldb-1.8.0.7.jar"/>
-	<classpathentry kind="lib" path="lib/jena-2.5.7.jar"/>
-	<classpathentry kind="lib" path="lib/jenatest-2.5.7.jar"/>
 	<classpathentry kind="lib" path="lib/junit-3.8.2.jar"/>
-	<classpathentry kind="lib" path="lib/tagsoup-1.0.4.jar"/>
 	<classpathentry kind="lib" path="lib/axis-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/grddl.jar"/>
-	<classpathentry kind="lib" path="lib/antlr-2.7.5.jar"/>
-	<classpathentry kind="lib" path="lib/arq-2.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.3.jar"/>
-	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
-	<classpathentry kind="lib" path="lib/xml-apis.jar"/>
-	<classpathentry kind="lib" path="lib/iri-0.5.jar"/>
+	<classpathentry kind="lib" path="lib/antlr-2.7.7.jar"/>
+	<classpathentry kind="lib" path="lib/arq-2.8.0.jar"/>
+	<classpathentry kind="lib" path="lib/icu4j-3.4.4.jar"/>
+	<classpathentry kind="lib" path="lib/iri-0.6.jar"/>
+	<classpathentry kind="lib" path="lib/jena-2.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/jenatest-2.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/stax-api-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/tagsoup-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/wstx-asl-3.2.9.jar"/>
+	<classpathentry kind="lib" path="lib/xercesImpl-2.7.1.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
