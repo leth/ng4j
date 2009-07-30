@@ -7,7 +7,7 @@ NL          axis-1.4.jar                                1.4                     
 NL          bcpg-jdk15-143.jar                          1.43 for JDK 1.5                     http://www.bouncycastle.org/
 NL          bcprov-jdk15-143.jar                        1.43 for JDK 1.5                     http://www.bouncycastle.org/
 
-N1          commons-logging-1.1.1.jar                   1.1.1 (included with Jena 2.5.7)
+N1          commons-logging-1.1.1.jar                   1.1.1 (included with Jena 2.6.0)
 N1          commons-codec-1.3.jar                       1.3
        RG   grddl.jar                                   ??                                   http://jena.sourceforge.net/grddl/
                                                                 committed 7 March 2007 so is older than 0.2 (sourceforge date 13 March 2007)
@@ -17,8 +17,8 @@ N1          icu4j-3.4.4.jar                             3.4.4 (included with Jen
 N1          iri-0.6.jar                                 0.6 (included with Jena 2.6.0)
 N1          jena-2.6.0.jar                              
 N1     RM   jenatest-2.6.0.jar                          (included with Jena 2.6.0)
-N1          junit-3.8.2.jar                             3.8.2 (included with Jena 2.5.7)     http://www.junit.org/
-N1          log4j-1.2.12.jar                            1.2.12 (included with Jena 2.5.7)    http://logging.apache.org/log4j/
+N1          junit-3.8.2.jar                             3.8.2 (included with Jena 2.6.0)     http://www.junit.org/
+N1          log4j-1.2.12.jar                            1.2.12 (included with Jena 2.6.0)    http://logging.apache.org/log4j/
        RC   mysql-connector-java-3.2.0-alpha-bin.jar    3.2.0-alpha                         
        RG   nekohtml.jar                                0.9.5  (included with GRDDL 0.3)     http://sourceforge.net/projects/nekohtml
 N1          stax-api-1.0.1.jar                          1.0.1  (included with Jena 2.6.0)    http://stax.codehaus.org/Home
