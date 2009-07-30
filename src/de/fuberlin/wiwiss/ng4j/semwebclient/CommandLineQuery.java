@@ -116,8 +116,6 @@ public class CommandLineQuery {
 	/**
 	 * Sets the maximal number of iterations of the retrieval algorithm. The
 	 * default value is 3.
-	 * 
-	 * @param maxSteps
 	 */
 	public void setMaxFilesize(int maxFilesize) {
 		this.maxfilesize = maxFilesize;
@@ -166,8 +164,6 @@ public class CommandLineQuery {
 	/**
 	 * Enables a Sindice-based URI search during query execution.
 	 * The default is false.
-	 * 
-	 * @param enableSindiceSearch
 	 */
 	public void setResultFormat ( String resFmtStr ) {
 		String resFmtStrUC = resFmtStr.toUpperCase();
