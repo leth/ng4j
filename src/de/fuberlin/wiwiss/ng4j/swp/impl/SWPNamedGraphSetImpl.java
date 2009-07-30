@@ -51,8 +51,8 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
 /**
  * 
  * Last commit info    :   $Author: timp $
- * $Date: 2009/07/28 16:14:41 $
- * $Revision: 1.30 $
+ * $Date: 2009/07/30 12:54:10 $
+ * $Revision: 1.31 $
  * 
  * @author Chris Bizer.
  * @author Rowland Watkins.
@@ -511,7 +511,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     }
 
     protected ExtendedIterator getGraphsByQuery(String query, String resultVariable) {
-    	Collection<NamedGraph> graphs = new ArrayList<NamedGraph>();
+    	Collection<NamedGraph> namedGraphs = new ArrayList<NamedGraph>();
     	Set<Node> names = new HashSet<Node>();
     	QueryExecution qe = QueryExecutionFactory.create( query, thisAsDS );
         ResultSet results = ResultSetFactory.copyResults( qe.execSelect() );
@@ -523,11 +523,11 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 			if (names.add(node)) {
 				NamedGraph graph = getGraph(node);
 				if (graph != null) {
-					graphs.add(graph);
+					namedGraphs.add(graph);
 				}
 			}
         }
-        return WrappedIterator.create(graphs.iterator());
+        return WrappedIterator.create(namedGraphs.iterator());
     }
         
     /* (non-Javadoc)
