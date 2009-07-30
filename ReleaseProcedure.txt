@@ -1,0 +1,25 @@
+Procedure to create a release THIS_RELEASE
+
+Ensure CHANGES document contains THIS_RELEASE at top 
+
+Update version by one and remove SNAPSHOT modifier in pom.xml 
+Commit
+
+Execute:
+mvn clean deploy site site:deploy
+
+Check that http://paneris.net/ng4j/dependencies.html is reflected in 
+lib/
+
+Update version by one and remove SNAPSHOT modifier in build.xml
+Commit
+
+Execute:
+ant
+
+Upload resultant .zip to sourceforge.
+tag cvs with eg ng4j-2_9_1
+
+Add -SNAPSHOT back to version in pom.xml and build.xml
+commit
+
