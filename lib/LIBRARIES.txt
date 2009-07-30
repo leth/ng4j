@@ -21,8 +21,6 @@ N1          junit-3.8.2.jar                             3.8.2 (included with Jen
 N1          log4j-1.2.12.jar                            1.2.12 (included with Jena 2.5.7)    http://logging.apache.org/log4j/
        RC   mysql-connector-java-3.2.0-alpha-bin.jar    3.2.0-alpha                         
        RG   nekohtml.jar                                0.9.5  (included with GRDDL 0.3)     http://sourceforge.net/projects/nekohtml
-       RM   saxon8-dom.jar                              8.0.7j (Does not appear to be needed)
-       RM   saxon8.jar                                  8.0.7j (Does not appear to be needed)
 N1          stax-api-1.0.jar                            1.0    (included with Jena 2.5.7)    http://stax.codehaus.org/Home
         RG   tagsoup-1.0.4.jar                          1.0.4                                http://home.ccil.org/~cowan/XML/tagsoup/
                                                                committed 28 February 2007 in support of GRDDL
