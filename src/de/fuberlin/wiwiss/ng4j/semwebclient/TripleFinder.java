@@ -18,12 +18,8 @@ public class TripleFinder extends Thread {
 	/**
 	 * Constructs a TripleFinder.
 	 * 
-	 * @param sub
-	 *            The subject Node.
-	 * @param pred
-	 *            The predicate Node.
-	 * @param obj
-	 *            The object Node.
+	 * @param t
+	 *            The Node triple.
 	 * @param client
 	 *            The corresponding SemanticWebClient.
 	 * @param listener
