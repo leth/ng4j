@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/SingleNamedGraphModel.java,v 1.1 2009/05/27 14:36:53 jenpc Exp $
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/SingleNamedGraphModel.java,v 1.2 2009/07/30 12:58:55 timp Exp $
 
 package de.fuberlin.wiwiss.ng4j;
 
@@ -26,7 +26,7 @@ import de.fuberlin.wiwiss.ng4j.trix.TriXWriter;
 
 /** Model that wraps a single NamedGraph. <p>
  * 
- * "Modeled" after NamedGraphModel but deals with a single NamedGraph
+ * "Modelled" after NamedGraphModel but deals with a single NamedGraph
  * rather than a NamedGraphSet.
  * 
  * @author Jennifer Cormier, Architecture Technology Corporation
@@ -38,7 +38,6 @@ public class SingleNamedGraphModel extends ModelCom implements Model {
 	public static final String TRIG_LANGUAGE = "TRIG";
 	
 	/**
-	 * @param base
 	 */
 	public SingleNamedGraphModel(NamedGraph namedGraph) {
 		super(namedGraph);
@@ -244,7 +243,6 @@ public class SingleNamedGraphModel extends ModelCom implements Model {
 	 * @param reader The source input stream.
 	 * @param base A base URI which is used to resolve relative URI's in the document.
 	 * @param lang The language of the source.
-	 * @return
 	 */
 	public static NamedGraph readNamedGraph(InputStream reader, String base, String lang) {
 		NamedGraphSetImpl graphSet = new NamedGraphSetImpl();
@@ -261,7 +259,6 @@ public class SingleNamedGraphModel extends ModelCom implements Model {
 	 * @param reader The source reader.
 	 * @param base A base URI which is used to resolve relative URI's in the document.
 	 * @param lang The language of the source.
-	 * @return
 	 */
 	public static NamedGraph readNamedGraph(Reader reader, String base, String lang) {
 		NamedGraphSetImpl graphSet = new NamedGraphSetImpl();
