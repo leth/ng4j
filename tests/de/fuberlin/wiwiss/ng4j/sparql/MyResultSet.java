@@ -45,11 +45,11 @@ public class MyResultSet implements ResultSet {
 		return this.bindingIterator.hasNext();
 	}
 
-	public Object next() {
+  public QuerySolution next() {                                                                                 
 		ensureIteratorInitialized();
 		this.rowNumber++;
-		return new ResultBinding(this.model, 
-				(Binding) this.bindingIterator.next());
+    Binding b = (Binding) this.bindingIterator.next();
+    return new ResultBinding(this.model, b);          
 	}
 
 	public QuerySolution nextSolution() {
