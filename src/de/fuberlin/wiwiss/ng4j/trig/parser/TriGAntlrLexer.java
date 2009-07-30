@@ -1,34 +1,24 @@
 // $ANTLR 2.7.5 (20050128): "trig.g" -> "TriGAntlrLexer.java"$
 
 package de.fuberlin.wiwiss.ng4j.trig.parser ;
-import de.fuberlin.wiwiss.ng4j.trig.AntlrUtils ;
-import de.fuberlin.wiwiss.ng4j.trig.TriGParserEventHandler ;
-import java.io.* ;
-import antlr.TokenStreamRecognitionException ;
-
 import java.io.InputStream;
+import java.io.Reader;
+import java.util.Hashtable;
+
+import antlr.ByteBuffer;
+import antlr.CharBuffer;
+import antlr.CharStreamException;
+import antlr.CharStreamIOException;
+import antlr.InputBuffer;
+import antlr.LexerSharedInputState;
+import antlr.NoViableAltForCharException;
+import antlr.RecognitionException;
+import antlr.Token;
+import antlr.TokenStream;
 import antlr.TokenStreamException;
 import antlr.TokenStreamIOException;
 import antlr.TokenStreamRecognitionException;
-import antlr.CharStreamException;
-import antlr.CharStreamIOException;
-import antlr.ANTLRException;
-import java.io.Reader;
-import java.util.Hashtable;
-import antlr.CharScanner;
-import antlr.InputBuffer;
-import antlr.ByteBuffer;
-import antlr.CharBuffer;
-import antlr.Token;
-import antlr.CommonToken;
-import antlr.RecognitionException;
-import antlr.NoViableAltForCharException;
-import antlr.MismatchedCharException;
-import antlr.TokenStream;
-import antlr.ANTLRHashString;
-import antlr.LexerSharedInputState;
 import antlr.collections.impl.BitSet;
-import antlr.SemanticException;
 
 public class TriGAntlrLexer extends antlr.CharScanner implements TriGAntlrParserTokenTypes, TokenStream
  {
