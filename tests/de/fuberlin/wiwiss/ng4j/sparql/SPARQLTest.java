@@ -81,7 +81,7 @@ public class SPARQLTest extends TestCase {
 	private static final Node cURI = Node.createURI("http://example.org/data#c");
 	private static final Node graph1 = Node.createURI("http://example.com/graph1");
 	private static final Node graph2 = Node.createURI("http://example.com/graph2");
-	private static final Node graph3 = Node.createURI("http://example.com/graph3");
+	//private static final Node graph3 = Node.createURI("http://example.com/graph3");
 
 	public static final String NL = System.getProperty("line.separator") ;
 
