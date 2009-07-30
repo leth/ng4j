@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetTest.java,v 1.8 2009/02/11 15:15:41 jenpc Exp $
+// $Id: NamedGraphSetTest.java,v 1.9 2009/07/30 14:05:04 timp Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.util.ArrayList;
@@ -18,9 +18,6 @@ import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 import de.fuberlin.wiwiss.ng4j.sparql.NamedGraphDataset;
 
 /**
- * Abstract test cases for {@link NamedGraphSet}. Implementations can
- * run this by implementing {@link #createNamedGraphSetInstanceUnderTest}.
- *
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class NamedGraphSetTest extends TestCase {
