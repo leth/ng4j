@@ -15,11 +15,6 @@ import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.TaskQueueBase;
  */
 public class URISearchTaskQueue extends TaskQueueBase {
 
-	// members
-
-	static final public int MAXTHREADS_DEFAULT = 10;
-
-
 	// initialization
 
 	public URISearchTaskQueue () {
