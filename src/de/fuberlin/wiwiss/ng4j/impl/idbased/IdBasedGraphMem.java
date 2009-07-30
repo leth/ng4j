@@ -283,10 +283,10 @@ public class IdBasedGraphMem extends GraphBase
 	 */
 	static class SingleElementIterator<E> implements Iterator<E>
 	{
-		private E e;
-		public SingleElementIterator ( E e ) { this.e = e; }
-		public boolean hasNext () { return ( e != null ); }
-		public E next () { E e = this.e; this.e = null; return e; }
+		private E element;
+		public SingleElementIterator ( E e ) { this.element = e; }
+		public boolean hasNext () { return ( element != null ); }
+		public E next () { E e = this.element; this.element = null; return e; }
 		public void remove() { throw new UnsupportedOperationException(); }
 	}
 
