@@ -1,4 +1,4 @@
-// $Id: NamedGraphSet.java,v 1.12 2009/02/20 08:09:50 hartig Exp $
+// $Id: NamedGraphSet.java,v 1.13 2009/07/30 11:37:55 timp Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.io.InputStream;
@@ -66,7 +66,7 @@ public interface NamedGraphSet {
 	public void removeGraph(String graphNameURI);
 
 	/**
-	 * Tells wether the NamedGraphSet contains a NamedGraph.
+	 * Tells whether the NamedGraphSet contains a NamedGraph.
 	 * @param graphName The name of a NamedGraph
 	 * @return True if the set contains a graph with that name,
 	 * 		false otherwise.
@@ -74,7 +74,7 @@ public interface NamedGraphSet {
 	public boolean containsGraph(Node graphName);
 
 	/**
-	 * Tells wether the NamedGraphSet contains a NamedGraph.
+	 * Tells whether the NamedGraphSet contains a NamedGraph.
 	 * @param graphNameURI The name of a NamedGraph
 	 * @return True if the set contains a graph with that name,
 	 * 		false otherwise.
@@ -136,7 +136,7 @@ public interface NamedGraphSet {
 	long countGraphs() ;
 
 	/**
-	 * Tells wether the set contains any NamedGraphs.
+	 * Tells whether the set contains any NamedGraphs.
 	 * @return True if the set contains any NamedGraphs, false otherwise
 	 */
 	public boolean isEmpty();	
@@ -152,7 +152,7 @@ public interface NamedGraphSet {
 	public void addQuad(Quad quad);
 
 	/**
-	 * Tells wether the NamedGraphSet contains a quad or
+	 * Tells whether the NamedGraphSet contains a quad or
 	 * quads matching a pattern. Quad patterns are {@link Quad}
 	 * instances with {@link Node#ANY} in one or more positions.
 	 * 
@@ -302,7 +302,7 @@ public interface NamedGraphSet {
 	public void read(Reader source, String lang, String baseURI);
 
 	/** 
-	 * Writes a serialized represention of the NamedGraphSet to
+	 * Writes a serialized representation of the NamedGraphSet to
 	 * an OutputStream. Supported RDF serialization languages are
 	 * "TRIX", "TRIG", "RDF/XML", "N-TRIPLE" and "N3".
 	 * <p>
@@ -321,7 +321,7 @@ public interface NamedGraphSet {
 	public void write(OutputStream out, String lang, String baseURI);
 	
 	/** 
-	 * Writes a serialized represention of the NamedGraphSet to
+	 * Writes a serialized representation of the NamedGraphSet to
 	 * a Writer. Supported RDF serialization languages are
 	 * "TRIX", "TRIG", "RDF/XML", "N-TRIPLE" and "N3".
 	 * <p>
