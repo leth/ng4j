@@ -1,9 +1,3 @@
-/*
- * Created on 05-Oct-2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 package de.fuberlin.wiwiss.ng4j.swp.c14n;
 
 /**
@@ -11,6 +5,8 @@ package de.fuberlin.wiwiss.ng4j.swp.c14n;
  * Current implementation works on RDF triples only. Jeremy Carroll thinks that
  * this is still the case for Named Graphs. This implementation is based on the
  * DBin code by Giovanni Tummarello.
+ * 
+ * @since 05-Oct-2004
  */
 import java.io.File;
 import java.io.FileInputStream;
@@ -70,7 +66,7 @@ public class RDFC14NImpl
 
         /**
          * Will create AND immediately canonize the graph
-         * @param rdf the RDF inputstream in RDF/XML
+         * @param rdfStream the RDF inputstream in RDF/XML
          * @param base see Jena model.read() documentation
          */
         
@@ -82,7 +78,7 @@ public class RDFC14NImpl
         
         /**
          * Will create AND immediately canonize the graph
-         * @param rdf the RDF File (must be RDF/XML)
+         * @param rdffile the RDF File (must be RDF/XML)
          * @param base see Jena model.read() documentation
          */
 
@@ -99,16 +95,16 @@ public class RDFC14NImpl
         	doit( model );
         }
         
-        private void doit( Model model ) 
+        private void doit( Model modelIn ) 
         {
-        	this.model = model;
-        	StmtIterator st = model.listStatements();
+        	this.model = modelIn;
+        	StmtIterator st = modelIn.listStatements();
         	ArrayList<Triple> a = new ArrayList<Triple>();
         	while( st.hasNext() ) 
         	{
         		a.add( st.nextStatement().asTriple() );//create an ArrayList of Triples                
         	}
-        	canonical_string=pre_canonicalization( a, model );
+        	canonical_string=pre_canonicalization( a, modelIn );
         }
                 
         /**
@@ -252,10 +248,10 @@ public class RDFC14NImpl
          * ArrayList of the remaining triples.
          * 
          * @param a ArrayList of C14NTtriples 
-         * @param model 
+         * @param modelIn 
          * @return ArrayList of Triples
          */
-        private ArrayList<Triple> removeTripleWithC14N( ArrayList<C14NTriple> a, Model model )
+        private ArrayList<Triple> removeTripleWithC14N( ArrayList<C14NTriple> a, Model modelIn )
         {
                         
         	ArrayList<Statement> statementList = new ArrayList<Statement>();// ArrayList of statements to be removed
@@ -266,14 +262,14 @@ public class RDFC14NImpl
         		C14NTriple t = ( C14NTriple ) a.get( i );
         		if( t.predicate.equals( C14N_TRUE ) )
         		{
-        			Statement st = model.createStatement( model.createResource( t.subjectID.getBlankNodeId() ), 
-        												model.createProperty( C14N, "true" ),
-														model.createLiteral( t.object.toString() ) );
+        			Statement st = modelIn.createStatement( modelIn.createResource( t.subjectID.getBlankNodeId() ), 
+        												modelIn.createProperty( C14N, "true" ),
+														modelIn.createLiteral( t.object.toString() ) );
         			statementList.add(st);
         		}
         	}                
-        	model.remove( statementList );
-        	StmtIterator st=model.listStatements();
+        	modelIn.remove( statementList );
+        	StmtIterator st=modelIn.listStatements();
                         
         	while( st.hasNext() ) 
         	{
@@ -287,10 +283,10 @@ public class RDFC14NImpl
          * Add to model a c14n:true triple and return the resulting ArrayList of the model
          * 
          * @param a ArrayList of C14NTtriples
-         * @param model
+         * @param modelIn
          * @return a ArrayList of Triples
          */
-        private ArrayList<Triple> addTripleWithC14N( ArrayList<C14NTriple> a, Model model )
+        private ArrayList<Triple> addTripleWithC14N( ArrayList<C14NTriple> a, Model modelIn )
         {               
         	ArrayList<Statement> statementList = new ArrayList<Statement>();// Arraylist of statements to be created              
         	ArrayList<Triple> tripleList = new ArrayList<Triple>();// New arraylist of Triple objects
@@ -306,9 +302,9 @@ public class RDFC14NImpl
         			if( !ht.containsKey( t.objectID ) )
         			{ 
         				ht.put( t.objectID, X );// if  not assigned create a new triple                                                                        
-        				Statement st = model.createStatement( model.createResource( t.objectID.getBlankNodeId() ),
-        													model.createProperty( C14N, "true" ),
-															model.createLiteral( Integer.toString(symCount) ) );                                        
+        				Statement st = modelIn.createStatement( modelIn.createResource( t.objectID.getBlankNodeId() ),
+        													modelIn.createProperty( C14N, "true" ),
+															modelIn.createLiteral( Integer.toString(symCount) ) );                                        
         				statementList.add( st );
         				t.objectID = Node.NULL;
         				symCount++;                                        
@@ -319,18 +315,18 @@ public class RDFC14NImpl
         			if( !ht.containsKey( t.subjectID ) )
         			{
         				ht.put( t.subjectID, X );                                        
-        				Statement st = model.createStatement( model.createResource( t.subjectID.getBlankNodeId() ),
-        													model.createProperty( C14N, "true" ),
-															model.createLiteral( Integer.toString(symCount) ));                                        
+        				Statement st = modelIn.createStatement( modelIn.createResource( t.subjectID.getBlankNodeId() ),
+        													modelIn.createProperty( C14N, "true" ),
+															modelIn.createLiteral( Integer.toString(symCount) ));                                        
         				statementList.add( st );                                        
         				t.subjectID = Node.NULL;
         				symCount++;                                        
         			}                                
         		}
         	}
-        	model.setNsPrefix( "c14n", C14N ); 
-        	model.add( statementList );
-        	StmtIterator st = model.listStatements();
+        	modelIn.setNsPrefix( "c14n", C14N ); 
+        	modelIn.add( statementList );
+        	StmtIterator st = modelIn.listStatements();
         	while( st.hasNext() ) 
         	{
         		tripleList.add( st.nextStatement().asTriple() );//create an ArrayList of Triples
@@ -341,13 +337,13 @@ public class RDFC14NImpl
         /**
          * 
          * Algorithm labels all the nodes in C14NTtriple arraylist and returns the canonical list. 
-         * Incidently, this also means the model is canonical.
+         * Incidentally, this also means the model is canonical.
          * 
          * @param a ArrayList of Triples
-         * @param model
+         * @param modelIn
          * @return canonicString ArrayList of strings representing the canonical triple list.
          */
-         private ArrayList<String> pre_canonicalization( ArrayList<Triple> a, Model model )
+         private ArrayList<String> pre_canonicalization( ArrayList<Triple> a, Model modelIn )
          { //return the canonical list as a string
                         
          	ArrayList<String> canonicString = new ArrayList<String>(); //ArrayList of string
@@ -363,9 +359,9 @@ public class RDFC14NImpl
          	}
          	else
          	{   // if it is not canonical
-         		a = removeTripleWithC14N( pre_canonic,model ); // 2) remove triple with C14N:true
+         		a = removeTripleWithC14N( pre_canonic,modelIn ); // 2) remove triple with C14N:true
          		pre_canonic = one_step_algorithm( a );// 3) repeat? alg one_step
-         		a = addTripleWithC14N( pre_canonic, model ); // 4) create table to see which triples to add
+         		a = addTripleWithC14N( pre_canonic, modelIn ); // 4) create table to see which triples to add
          		pre_canonic = one_step_algorithm( a ); // 5) repeat alg: this time label all triples
          		for( int i=0;i<pre_canonic.size();i++ )
          		{
