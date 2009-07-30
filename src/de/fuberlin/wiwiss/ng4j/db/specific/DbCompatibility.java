@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/DbCompatibility.java,v 1.5 2009/02/20 08:09:51 hartig Exp $
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/DbCompatibility.java,v 1.6 2009/07/30 12:46:07 timp Exp $
 package de.fuberlin.wiwiss.ng4j.db.specific;
 
 import java.sql.Connection;
@@ -44,20 +44,21 @@ public abstract class DbCompatibility {
 		DATATYPE_DATATYPE = getDatatype(varcharName, DATATYPE_DATATYPE_LENGTH);
 	}
 
-	/** Initializes the database compatibility mechanism. <br>
+	/** 
+	 * Initializes the database compatibility mechanism. <br>
 	 * 
 	 * This method must be called after instantiating the class,
 	 * before any methods relying on these variables are called.
 	 * 
-	 * @param tablePrefix
-	 * @param graphNamesTableName
-	 * @param quadsTableName
+	 * @param tablePrefixIn
+	 * @param graphNamesTableNameIn
+	 * @param quadsTableNameIn
 	 */
-	public void initialize(String tablePrefix, 
-			String graphNamesTableName, String quadsTableName) {
-		this.tablePrefix = tablePrefix;
-		this.graphNamesTableName = graphNamesTableName;
-		this.quadsTableName = quadsTableName;
+	public void initialize(String tablePrefixIn, 
+			String graphNamesTableNameIn, String quadsTableNameIn) {
+		this.tablePrefix = tablePrefixIn;
+		this.graphNamesTableName = graphNamesTableNameIn;
+		this.quadsTableName = quadsTableNameIn;
 	}
 
 	/** Creates the following 7 required database tables: <br>
