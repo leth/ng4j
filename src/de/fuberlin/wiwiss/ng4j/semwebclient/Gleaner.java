@@ -28,7 +28,9 @@ import com.hp.hpl.jena.rdf.model.Model;
 
 class DoneParsing extends SAXException
 {
-    public DoneParsing() {
+	private static final long serialVersionUID = 8906675784012827671L;
+
+	public DoneParsing() {
         super("Done Parsing");
     }
 }
