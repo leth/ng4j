@@ -2,20 +2,20 @@ package de.fuberlin.wiwiss.ng4j.swp.util;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+//import java.io.InputStream;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.util.Iterator;
 
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPrivateKey;
-import org.bouncycastle.openpgp.PGPPublicKey;
-import org.bouncycastle.openpgp.PGPPublicKeyRing;
-import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
+//import org.bouncycastle.openpgp.PGPPublicKey;
+//import org.bouncycastle.openpgp.PGPPublicKeyRing;
+//import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
 import org.bouncycastle.openpgp.PGPSecretKey;
 import org.bouncycastle.openpgp.PGPSecretKeyRing;
 import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
-import org.bouncycastle.openpgp.PGPUtil;
+//import org.bouncycastle.openpgp.PGPUtil;
 
 public class OpenPGPUtils 
 {
@@ -34,6 +34,9 @@ public class OpenPGPUtils
      * @throws IOException
      * @throws PGPException
      */
+	/*
+	 * Unused private method
+	 * 
 	private static PGPPublicKey readPublicKey( InputStream    in )
 	        throws IOException, PGPException
 	    {
@@ -76,6 +79,7 @@ public class OpenPGPUtils
 	        
 	        return key;
 	    }
+	*/
 	
 	/**
      * Load a secret key ring collection from keyIn and find the secret key corresponding to
@@ -89,6 +93,9 @@ public class OpenPGPUtils
      * @throws PGPException
      * @throws NoSuchProviderException
      */
+	/*
+	 * Unused private method
+	 * 
     private static PGPPrivateKey findSecretKey(
         InputStream keyIn,
         long        keyID,
@@ -107,7 +114,7 @@ public class OpenPGPUtils
         
         return pgpSecKey.extractPrivateKey( pass, "BC" );
     }
-	
+*/	
 	 /**
 	  * A simple routine that opens a key ring file and loads the first available key suitable for
 	  * signature generation.
