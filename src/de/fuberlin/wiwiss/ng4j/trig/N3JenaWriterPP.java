@@ -31,7 +31,7 @@ import com.hp.hpl.jena.vocabulary.RDFS;
  *  Tries to make N3 data look readable - works better on regular data.
  *
  * @author		Andy Seaborne
- * @version 	$Id: N3JenaWriterPP.java,v 1.7 2009/07/30 12:19:25 timp Exp $
+ * @version 	$Id: N3JenaWriterPP.java,v 1.8 2009/07/30 12:56:11 timp Exp $
  */
 
 
@@ -81,7 +81,6 @@ public class N3JenaWriterPP extends N3JenaWriterCommon
 		StmtIterator listTailsIter = model.listStatements(null, RDF.rest, RDF.nil);
 
 		// For every tail of a list
-		tailLoop:
 		for ( ; listTailsIter.hasNext() ; )
 		{
 			// The resource for the current element being considered.
