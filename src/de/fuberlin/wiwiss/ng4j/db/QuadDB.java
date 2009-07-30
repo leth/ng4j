@@ -1,4 +1,4 @@
-// $Id: QuadDB.java,v 1.15 2009/02/20 08:09:51 hartig Exp $
+// $Id: QuadDB.java,v 1.16 2009/07/30 12:53:21 timp Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -158,21 +158,21 @@ public class QuadDB {
 			}
 
 			private Quad makeQuad() {
-				Node object;
+				Node node;
 				try {
 					String dt = results.getString(7);
 					if (results.getString(4) == null) {
-						object = Node.createLiteral(results.getString(5), results.getString(6),
+						node = Node.createLiteral(results.getString(5), results.getString(6),
 								((dt == null) ?
 										null :
 										TypeMapper.getInstance().getSafeTypeByName(dt)));
 					} else {
-						object = toResource(results.getString(4));
+						node = toResource(results.getString(4));
 					}
 					return new Quad(Node.createURI(results.getString(1)),
 							toResource(results.getString(2)),
 							Node.createURI(results.getString(3)),
-							object);
+							node);
 				} catch (SQLException ex) {
 					cleanUp(results);
 					throw new JenaException(ex);
