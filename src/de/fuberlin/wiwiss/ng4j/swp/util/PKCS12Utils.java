@@ -98,7 +98,6 @@ public class PKCS12Utils {
 			*/
 				Enumeration<String> aliasesEnum = ks.aliases();
 		        String alias = null;
-		        @SuppressWarnings("unused")
 				Certificate[] certChain = null;
 		        while ( aliasesEnum.hasMoreElements() ) 
 		        {
@@ -112,33 +111,28 @@ public class PKCS12Utils {
 			} 
             catch ( SWPSignatureException e ) 
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			}
             catch ( SWPCertificateException e ) 
             {
 				log.error( e.getMessage() );
-				throw new SWPSignatureException( e.getMessage() );
+				throw new SWPSignatureException( e.getMessage(), e);
 			}
             catch ( SWPPKCS12Exception e ) 
             {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			} 
             catch ( KeyStoreException e ) 
             {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			} 
             catch ( NoSuchAlgorithmException e ) 
             {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			} 
             catch ( UnrecoverableKeyException e ) 
             {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			}
         
 		return pkey;
@@ -161,23 +155,19 @@ public class PKCS12Utils {
 			} 
 			catch ( SWPSignatureException e ) 
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			}
 			catch ( SWPCertificateException e ) 
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			}
 			catch ( SWPPKCS12Exception e ) 
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			} 
 			catch ( KeyStoreException e ) 
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			}
 			        
 	        return certChain;
