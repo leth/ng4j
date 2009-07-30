@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetImpl.java,v 1.16 2009/04/22 17:18:15 jenpc Exp $
+// $Id: NamedGraphSetImpl.java,v 1.17 2009/07/30 16:21:19 timp Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import java.util.ArrayList;
@@ -323,10 +323,11 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 	 * change the list (add or remove graphs from the NamedGraphSet),
 	 * the member list of the MultiUnion is automatically updated.
 	 * <p>
-	 * Note: This is a hack.
+	 * NOTE This is a hack.
 	 */
 	protected class UnionGraph extends MultiUnion {
-		public UnionGraph (List<NamedGraph> members) {
+	  
+		public UnionGraph (List members) {
 			super();
 			this.m_subGraphs = members;
 		}
