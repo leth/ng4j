@@ -182,7 +182,7 @@ public class FindQuery implements DereferencingListener, URISearchListener {
 		}
 	}
 
-	private void requestDereferencing(String uri, int step, boolean enableURISearch) {
+	private void requestDereferencing(String uri, int step, boolean enableURISearchIn) {
 		if (this.stopped) {
 			return;
 		}
@@ -190,7 +190,7 @@ public class FindQuery implements DereferencingListener, URISearchListener {
 			// Don't try to reference mailto:, file: and other URI schemes
 			return;
 		}
-		if ( enableURISearch ) {
+		if ( enableURISearchIn ) {
 			if ( client.requestDereferencingWithSearch(uri, step, this, this) ) {
 				String derefURI = ( uri.contains("#") ) ? uri.substring( 0, uri.indexOf("#") ) : uri;
 				urisInDerefProcessing.add(derefURI);
@@ -224,10 +224,10 @@ public class FindQuery implements DereferencingListener, URISearchListener {
 	}
 	
 	private class TimeoutThread extends Thread {
-		private SemWebIterator iterator;
+		private SemWebIterator iteratorL;
 		private boolean closeIterator = true;
 		TimeoutThread(SemWebIterator iterator) {
-			this.iterator = iterator;
+			this.iteratorL = iterator;
 			start();
 		}
 		public synchronized void run() {
@@ -242,7 +242,7 @@ public class FindQuery implements DereferencingListener, URISearchListener {
 			if (this.closeIterator) {
 				log.debug("Timeout");
 				stopped = true;
-				this.iterator.close();
+				this.iteratorL.close();
 			}
 		}
 		synchronized void cancel() {
