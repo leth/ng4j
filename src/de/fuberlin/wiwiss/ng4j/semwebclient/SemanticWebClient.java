@@ -24,7 +24,6 @@ import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.graph.TripleMatch;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
-import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
 import de.fuberlin.wiwiss.ng4j.semwebclient.urisearch.URISearchListener;
 import de.fuberlin.wiwiss.ng4j.semwebclient.urisearch.URISearchResult;
@@ -38,7 +37,7 @@ import de.fuberlin.wiwiss.ng4j.semwebclient.urisearch.URISearchTaskQueue;
  * </p>
  * 
  * <p>
- * The Semantic Web is represended as a single, global RDF graph. The library 
+ * The Semantic Web is represented as a single, global RDF graph. The library 
  * enables applications to query this global graph using SPARQL- and find(SPO) 
  * queries. To answer queries, the library dynamically retrieves information 
  * from the Semantic Web.
@@ -156,7 +155,6 @@ public class SemanticWebClient extends de.fuberlin.wiwiss.ng4j.impl.idbased.IdBa
 	* which the triple was retrieved.
 	* 
 	* @param pattern
-	* @return
 	*/
 	public SemWebIterator find(TripleMatch pattern) {
 		return new FindQuery(this, pattern.asTriple(), enableSindiceURISearch).iterator();
@@ -175,7 +173,6 @@ public class SemanticWebClient extends de.fuberlin.wiwiss.ng4j.impl.idbased.IdBa
 	* is finished.
 	* 
 	* @param pattern
-	* @return
 	*/
 	public void find(TripleMatch pattern, TripleListener listener) {
 		TripleFinder finder = new TripleFinder(pattern.asTriple(), this, listener);
@@ -185,8 +182,6 @@ public class SemanticWebClient extends de.fuberlin.wiwiss.ng4j.impl.idbased.IdBa
 	/**
 	* Adds a remote graph to the graphset. The graph is retrieved by
 	* dereferencing the URI.
-	* 
-	* @param seconds
 	*/	
 	public void addRemoteGraph(String uri) {
 		requestDereferencing(uri, 0, null);
@@ -194,8 +189,6 @@ public class SemanticWebClient extends de.fuberlin.wiwiss.ng4j.impl.idbased.IdBa
 
    /**
 	* Reloads a remote graph. The current graph is replaced by the new graph.
-	* 
-	* @param seconds
 	*/
 	public synchronized void reloadRemoteGraph(String uri) {
 		if (containsGraph(uri)) {
