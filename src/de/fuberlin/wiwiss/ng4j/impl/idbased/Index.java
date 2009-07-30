@@ -5,8 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import com.hp.hpl.jena.graph.Triple;
-
 
 /**
  * Indexes encoded triples ({@link EncodedTriple} objects) by node identifiers.
