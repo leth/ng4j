@@ -137,6 +137,8 @@ abstract public class HTTPbasedQueryProcessor implements QueryProcessor {
 
 	protected class QueryExecutionException extends Exception {
 
+		private static final long serialVersionUID = -26200793863185640L;
+
 		public QueryExecutionException ( String msg, Throwable cause ) {
 			super( msg, cause );
 		}
