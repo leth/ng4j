@@ -1,7 +1,3 @@
-/*
- * Created on 24-Nov-2004
- *
- */
 package de.fuberlin.wiwiss.ng4j.swp;
 
 import java.util.ArrayList;
@@ -13,6 +9,7 @@ import de.fuberlin.wiwiss.ng4j.NamedGraph;
 /**
  * @author rowland watkins
  * @author chris bizer
+ * @since 24-Nov-2004
  * 
  */
 public interface SWPNamedGraph extends NamedGraph 
@@ -107,7 +104,7 @@ public interface SWPNamedGraph extends NamedGraph
      * 
      * @param authority
      * @param signatureMethod
-     * @return
+     * @return true if successful
      */
     public boolean assertWithSignature( SWPAuthority authority, Node signatureMethod, ArrayList<Node> listOfAuthorityProperties );
 
@@ -116,7 +113,6 @@ public interface SWPNamedGraph extends NamedGraph
     /**
      * Returns an array of all warrants about the graph.
      * 
-     * @return
      */
     public SWPWarrant[] getWarrants();
     
@@ -136,24 +132,20 @@ public interface SWPNamedGraph extends NamedGraph
      * The content of the verification caching graph is also used to speed the verification
      * process.
      * 
-     * @return
      */
     public SWPWarrant[] getWarrantsWithVerifyableSignature();
     
     /**
-     * @return
      */
     public SWPAuthority[] getAssertingAuthorities();
     
     /**
      * 
-     * @return
      */
     public SWPAuthority[] getQuotingAuthorities();
     
     /**
      * 
-     * @return
      */
     public SWPAuthority[] getAssertingAuthoritiesWithVerifyableSignature();
 
