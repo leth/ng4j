@@ -1,4 +1,4 @@
-// $Id: NamedGraphStatementIterator.java,v 1.3 2009/02/20 08:09:51 hartig Exp $
+// $Id: NamedGraphStatementIterator.java,v 1.4 2009/07/30 16:14:15 timp Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import com.hp.hpl.jena.rdf.model.Statement;
@@ -25,7 +25,7 @@ public class NamedGraphStatementIterator extends StmtIteratorImpl {
 		this.model = model;
 	}
 	    
-	public Object next() {
+	public Statement next() {
 		Statement stmt = (Statement) super.next();
 		if (stmt instanceof NamedGraphStatement) {
 			return stmt;
