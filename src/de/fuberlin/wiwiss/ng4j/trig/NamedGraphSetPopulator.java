@@ -32,9 +32,9 @@ import de.fuberlin.wiwiss.ng4j.trig.parser.TriGAntlrParser;
  * A Handler for TriG parsing events which populates a NamedGraphSet. Based
  * on Jena's N3toRDF class.
  * 
- * @author		Andy Seaborne
+ * @author Andy Seaborne
  * @author Richard Cyganiak (richard@cyganiak.de)
- * @version 	$Id: NamedGraphSetPopulator.java,v 1.14 2009/06/23 14:55:29 hartig Exp $
+ * @version 	$Id: NamedGraphSetPopulator.java,v 1.15 2009/07/30 12:30:06 timp Exp $
  */
 public class NamedGraphSetPopulator implements TriGParserEventHandler
 {
@@ -113,6 +113,7 @@ public class NamedGraphSetPopulator implements TriGParserEventHandler
 		// don't have to do anything
 	}
 	
+	@SuppressWarnings("static-access")
 	public void directive(int line, AST directive, AST[] args)
 	{
 		if ( directive.getType() == TriGParser.AT_PREFIX )
@@ -153,6 +154,7 @@ public class NamedGraphSetPopulator implements TriGParserEventHandler
 	}
 	
 	
+	@SuppressWarnings("static-access")
 	public void quad(int line, AST subj, AST prop, AST obj, AST graphName)
 	{
         // Syntax that reverses subject and object is done in the grammar
@@ -259,6 +261,7 @@ public class NamedGraphSetPopulator implements TriGParserEventHandler
 	
 	private Map<String,Node> bNodeMap = new HashMap<String,Node>() ;
     
+	@SuppressWarnings("static-access")
 	private Node createNode(int line, AST thing) 
 	{
 		//String tokenType = N3AntlrParser._tokenNames[thing.getType()] ;
