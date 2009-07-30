@@ -6,7 +6,7 @@ import com.hp.hpl.jena.graph.Triple;
  * A Thread which starts a retrieval process and reports every found triple to a
  * listener.
  * 
- * @author Tobias Gau�
+ * @author Tobias Gauß
  */
 public class TripleFinder extends Thread {
 	private Triple triple;
