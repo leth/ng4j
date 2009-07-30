@@ -186,7 +186,7 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      *
      * Return true if successful.
      * 
-     * @param listOfGraphnames as Nodes
+     * @param listOfGraphNames as Nodes
      * @param authority
      * @param listOfAuthorityProperties
      * @return true if successful
