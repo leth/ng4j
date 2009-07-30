@@ -90,7 +90,6 @@ public class DereferencerThread extends TaskExecutorBase {
 	 * 
 	 * @param task
 	 *            The task to execute.
-	 * @return
 	 */
 	public synchronized boolean startDereferencingIfAvailable(
 			DereferencingTask task) {
