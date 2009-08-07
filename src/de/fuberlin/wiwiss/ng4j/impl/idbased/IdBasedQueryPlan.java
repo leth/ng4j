@@ -272,7 +272,7 @@ public class IdBasedQueryPlan implements BindingQueryPlan
 	 * Base class for all query iterators that provide encoded solutions
 	 * (see {@link EncodedSolution}).
 	 */
-	static abstract class IdBasedQueryIterator implements Iterator<EncodedSolution>
+	static abstract protected class IdBasedQueryIterator implements Iterator<EncodedSolution>
 	{
 		public void remove () { throw new UnsupportedOperationException(); }
 	}
