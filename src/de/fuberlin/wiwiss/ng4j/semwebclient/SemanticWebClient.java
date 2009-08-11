@@ -77,31 +77,6 @@ import de.fuberlin.wiwiss.ng4j.semwebclient.urisearch.URISearchTaskQueue;
  */
 // public class SemanticWebClient extends NamedGraphSetImpl {
 public class SemanticWebClient extends de.fuberlin.wiwiss.ng4j.impl.idbased.IdBasedNamedGraphSetImpl {
-	public static final String CONFIG_MAXSTEPS = "maxsteps";
-	public static final String CONFIG_MAXTHREADS = "maxthreads";
-	public static final String CONFIG_TIMEOUT = "timeout";
-	public static final String CONFIG_DEREF_CONNECT_TIMEOUT = "derefconnecttimeout";
-	public static final String CONFIG_DEREF_READ_TIMEOUT = "derefreadtimeout";
-	public static final String CONFIG_MAXGRAPHS = "maxgraphs";
-	public static final String CONFIG_MAXFILESIZE = "maxfilesize";
-	public static final String CONFIG_ENABLEGRDDL = "enablegrddl"; // Notice, GRDDL support is deprecated!
-	public static final String CONFIG_ENABLE_SINDICE = "enablesindicesearch"; // enables Sindice-based URI search during query execution
-	
-	private static final int MAXSTEPS_DEFAULT = 3;
-
-	private static final int MAXTHREADS_DEFAULT = 10;
-
-	private static final long TIMEOUT_DEFAULT = 30000;
-	private static final int DEREF_CONNECT_TIMEOUT_DEFAULT = 0; // 0 means no timeout (i.e. infinity)
-	private static final int DEREF_READ_TIMEOUT_DEFAULT = 0;
-	
-	private static final int MAXFILESIZE_DEFAULT = 100000000;
-	
-	private static final boolean ENABLEGRDDL_DEFAULT = false;
-	private static final boolean ENABLE_SINDICE_URI_SEARCH_DEFAULT = false;
-	
-	//private static final long MAXGRAPHS_DEFAULT = 30000;
-
 	private List<String> retrievedUris;
 
 	private Set<String> markedUris = new HashSet<String>();
@@ -117,23 +92,22 @@ public class SemanticWebClient extends de.fuberlin.wiwiss.ng4j.impl.idbased.IdBa
 	protected Set<String> unsuccessfullySearchedURIs;
 
 	private boolean isClosed = false;
-	
-	private long timeout = TIMEOUT_DEFAULT;
-	private int derefConnectTimeout = DEREF_CONNECT_TIMEOUT_DEFAULT;
-	private int derefReadTimeout = DEREF_READ_TIMEOUT_DEFAULT;
-	private int maxsteps = MAXSTEPS_DEFAULT;
-	private int maxthreads = MAXTHREADS_DEFAULT;
-	private int maxfilesize = MAXFILESIZE_DEFAULT;
-	//private long maxgraphs = MAXGRAPHS_DEFAULT;
-        private boolean enablegrddl = ENABLEGRDDL_DEFAULT;
-	private boolean enableSindiceURISearch = ENABLE_SINDICE_URI_SEARCH_DEFAULT;
+
+	final private SemanticWebClientConfig config;
 
 	private Log log = LogFactory.getLog(SemanticWebClient.class);
 
 	/**
-	 * Creates a Semantic Web Client.
+	 * Creates a Semantic Web Client with the default configuration.
 	 */
 	public SemanticWebClient() {
+		this( new SemanticWebClientConfig() );
+	}
+
+	/**
+	 * Creates a Semantic Web Client using the given configuration.
+	 */
+	public SemanticWebClient( SemanticWebClientConfig config ) {
 		super();
 		this.createGraph("http://localhost/provenanceInformation");
 		this.retrievedUris = Collections.synchronizedList(new ArrayList<String>());
@@ -141,6 +115,7 @@ public class SemanticWebClient extends de.fuberlin.wiwiss.ng4j.impl.idbased.IdBa
 		this.redirectedURIs = Collections.synchronizedMap(new HashMap<String,String>());
 		this.successfullySearchedURIs = Collections.synchronizedMap(new HashMap<String,Set<String>>());
 		this.unsuccessfullySearchedURIs = Collections.synchronizedSet(new HashSet<String>());
+		this.config = config;
 	}
 
 	/**
@@ -157,7 +132,7 @@ public class SemanticWebClient extends de.fuberlin.wiwiss.ng4j.impl.idbased.IdBa
 	* @param pattern
 	*/
 	public SemWebIterator find(TripleMatch pattern) {
-		return new FindQuery(this, pattern.asTriple(), enableSindiceURISearch).iterator();
+		return new FindQuery( this, pattern.asTriple(), config.getEnableSindice() ).iterator();
 	}
 
 	/**
@@ -198,122 +173,10 @@ public class SemanticWebClient extends de.fuberlin.wiwiss.ng4j.impl.idbased.IdBa
 	}
 
 	/**
-	 * Sets a configuration option. Possible options are
-	 * "maxsteps" for the maximum retrieval steps ,"timeout"
-	 * for the timeout and "maxthreads" for the maximum of simultaneous
-	 * working DereferencerThreads  .
+	 * Returns the configuration of this Semantic Web client.
 	 */
-	public void setConfig(String option, String value) {
-		if (option.equals(CONFIG_MAXSTEPS)) {
-			int val;
-			try {
-				val = Integer.parseInt(value);
-			} catch (NumberFormatException e) {
-				throw new IllegalArgumentException("value '" + value
-						+ "' for config " + CONFIG_MAXSTEPS
-						+ " is not numeric");
-			}
-			this.maxsteps = val;
-		}
-		else if (option.equals(CONFIG_MAXTHREADS)) {
-			int val;
-			try {
-				val = Integer.parseInt(value);
-			} catch (NumberFormatException e) {
-				throw new IllegalArgumentException("value '" + value
-						+ "' for config " + CONFIG_MAXTHREADS
-						+ " is not numeric");
-			}
-			this.maxthreads = val;
-		}
-		else if (option.equals(CONFIG_MAXFILESIZE)) {
-			int val;
-			try {
-				val = Integer.parseInt(value);
-			} catch (NumberFormatException e) {
-				throw new IllegalArgumentException("value '" + value
-						+ "' for config " + CONFIG_MAXFILESIZE
-						+ " is not numeric");
-			}
-			this.maxfilesize = val;
-		}
-//		if (option.equals(CONFIG_MAXGRAPHS)) {
-//			long val;
-//			try {
-//				val = Long.parseLong(value);
-//			} catch (NumberFormatException e) {
-//				throw new IllegalArgumentException("value '" + value
-//						+ "' for config " + CONFIG_MAXGRAPHS
-//						+ " is not numeric");
-//			}
-//			this.maxgraphs = val;
-//		}
-		else if (option.equals(CONFIG_TIMEOUT)) {
-			long val;
-			try {
-				val = Long.parseLong(value);
-			} catch (NumberFormatException e) {
-				throw new IllegalArgumentException("value '" + value
-						+ "' for config " + CONFIG_TIMEOUT
-						+ " is not numeric");
-			}
-			this.timeout = val;
-		}
-		else if (option.equals(CONFIG_DEREF_CONNECT_TIMEOUT)) {
-			int val;
-			try {
-				val = Integer.parseInt(value);
-			} catch (NumberFormatException e) {
-				throw new IllegalArgumentException("value '" + value
-						+ "' for config " + CONFIG_DEREF_CONNECT_TIMEOUT
-						+ " is not numeric");
-			}
-			this.derefConnectTimeout = val;
-		}
-		else if (option.equals(CONFIG_DEREF_READ_TIMEOUT)) {
-			int val;
-			try {
-				val = Integer.parseInt(value);
-			} catch (NumberFormatException e) {
-				throw new IllegalArgumentException("value '" + value
-						+ "' for config " + CONFIG_DEREF_READ_TIMEOUT
-						+ " is not numeric");
-			}
-			this.derefReadTimeout = val;
-		}
-		else if (option.equals(CONFIG_ENABLEGRDDL)) {
-			this.enablegrddl = "true".equalsIgnoreCase(value)
-					|| "on".equalsIgnoreCase(value) || "1".equals(value);
-		}
-		else if (option.equals(CONFIG_ENABLE_SINDICE)) {
-			this.enableSindiceURISearch = "true".equalsIgnoreCase(value)
-					|| "on".equalsIgnoreCase(value) || "1".equals(value);
-		}
-	}
-
-	/**
-	 * Returns the value of a given configuration option. 
-	 */
-	public String getConfig(String option) {
-		String value = null;
-		if (option.toLowerCase().equals(CONFIG_MAXSTEPS))
-			value = String.valueOf(this.maxsteps);
-		else if (option.toLowerCase().equals(CONFIG_MAXTHREADS))
-			value = String.valueOf(this.maxthreads);
-		else if (option.toLowerCase().equals(CONFIG_TIMEOUT))
-			value = String.valueOf(this.timeout);
-		else if (option.toLowerCase().equals(CONFIG_DEREF_CONNECT_TIMEOUT))
-			value = String.valueOf(this.derefConnectTimeout);
-		else if (option.toLowerCase().equals(CONFIG_DEREF_READ_TIMEOUT))
-			value = String.valueOf(this.derefReadTimeout);
-		else if (option.toLowerCase().equals(CONFIG_MAXFILESIZE))
-			value = String.valueOf(this.maxfilesize);
-		else if (option.toLowerCase().equals(CONFIG_ENABLEGRDDL))
-			value = String.valueOf(this.enablegrddl);
-		else if (option.toLowerCase().equals(CONFIG_ENABLE_SINDICE))
-			value = String.valueOf(this.enableSindiceURISearch);
-
-		return value;
+	public SemanticWebClientConfig getConfig() {
+		return config;
 	}
 
 	/**
@@ -504,7 +367,7 @@ public class SemanticWebClient extends de.fuberlin.wiwiss.ng4j.impl.idbased.IdBa
 				return false;
 			}
 		}
-		if (step > this.maxsteps) {
+		if (step > config.getMaxSteps()) {
 			this.log.debug("Ignored (maxsteps reached): " + uri);
 			return false;
 		}
@@ -551,7 +414,7 @@ public class SemanticWebClient extends de.fuberlin.wiwiss.ng4j.impl.idbased.IdBa
 	 * Initiates a Sindice-based search for the given URI.
 	 */
 	private void startSearching(String uri, final URISearchListener listener, int step) {
-		if ( step > this.maxsteps ) {
+		if ( step > config.getMaxSteps() ) {
 			log.debug( "Ignored (maxsteps reached): " + uri );
 			return;
 		}
@@ -595,7 +458,11 @@ public class SemanticWebClient extends de.fuberlin.wiwiss.ng4j.impl.idbased.IdBa
 
 	private DereferencingTaskQueue getDerefQueue() {
 		if (this.derefQueue == null) {
-		    this.derefQueue = new DereferencingTaskQueue(this.maxthreads,this.maxfilesize, this.enablegrddl, this.derefConnectTimeout, this.derefReadTimeout);
+			this.derefQueue = new DereferencingTaskQueue( config.getMaxThreads(),
+			                                              config.getMaxFileSize(),
+			                                              config.getEnableGRDDL(),
+			                                              config.getDerefConnectTimeout(),
+			                                              config.getDerefReadTimeout() );
 		}
 		return this.derefQueue;
 	}

@@ -215,12 +215,7 @@ public class FindQuery implements DereferencingListener, URISearchListener {
 	}
 	
 	private long getTimeout() {
-		try {
-			return Long.parseLong(
-					this.client.getConfig(SemanticWebClient.CONFIG_TIMEOUT));
-		} catch (NumberFormatException ex) {
-			throw new RuntimeException(ex);
-		}
+		return client.getConfig().getTimeout();
 	}
 	
 	private class TimeoutThread extends Thread {

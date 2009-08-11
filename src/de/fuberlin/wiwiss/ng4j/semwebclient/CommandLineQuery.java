@@ -534,17 +534,17 @@ public class CommandLineQuery {
 
 	private void executeConfigure() {
 		if (this.maxsteps != -1)
-			this.client.setConfig("maxsteps", Integer.toString(this.maxsteps));
+			this.client.getConfig().setValue( SemanticWebClientConfig.MAXSTEPS, Integer.toString(this.maxsteps));
 		if (this.timeout != -1)
-			this.client.setConfig("timeout", Long.toString(this.timeout));
+			this.client.getConfig().setValue( SemanticWebClientConfig.TIMEOUT, Long.toString(this.timeout));
 		if (this.maxthreads != -1)
-			this.client.setConfig("maxthreads", Long.toString(this.maxthreads));
+			this.client.getConfig().setValue( SemanticWebClientConfig.MAXTHREADS, Long.toString(this.maxthreads));
 		if (this.maxfilesize != -1)
-			this.client.setConfig("maxfilesize", Integer.toString(this.maxfilesize));
+			this.client.getConfig().setValue( SemanticWebClientConfig.MAXFILESIZE, Integer.toString(this.maxfilesize));
 		if (this.enablegrddl != false)
-		    this.client.setConfig("enablegrddl", Boolean.toString(this.enablegrddl));
+		    this.client.getConfig().setValue( SemanticWebClientConfig.ENABLEGRDDL, Boolean.toString(this.enablegrddl));
 
-		client.setConfig( SemanticWebClient.CONFIG_ENABLE_SINDICE, Boolean.toString(enableSindiceSearch) );
+		client.getConfig().setValue( SemanticWebClientConfig.ENABLE_SINDICE, Boolean.toString(enableSindiceSearch) );
 	}
 
 	private void executeWriteIntro() {
