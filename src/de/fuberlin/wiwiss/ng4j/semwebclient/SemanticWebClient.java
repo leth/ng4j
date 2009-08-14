@@ -461,6 +461,7 @@ public class SemanticWebClient extends de.fuberlin.wiwiss.ng4j.impl.idbased.IdBa
 			this.derefQueue = new DereferencingTaskQueue( config.getMaxThreads(),
 			                                              config.getMaxFileSize(),
 			                                              config.getEnableGRDDL(),
+			                                              config.getEnableRDFa(),
 			                                              config.getDerefConnectTimeout(),
 			                                              config.getDerefReadTimeout() );
 		}

@@ -63,6 +63,8 @@ public class CommandLineQuery {
 
         private boolean enablegrddl = false;
 
+	private boolean enableRDFa = true;
+
 	private boolean enableSindiceSearch = false;
 
 	private ResultSetFormat resultFormat = null;
@@ -149,6 +151,15 @@ public class CommandLineQuery {
 	 */
 	public void setEnableGrddl(boolean enableGrddl) {
 		this.enablegrddl = enableGrddl;
+	}
+
+	/**
+	 * Enables RDFa parsing. The default is true.
+	 * 
+	 * @param enableRDFa
+	 */
+	public void setEnableRDFa(boolean enableRDFa) {
+		this.enableRDFa = enableRDFa;
 	}
 
 	/**
@@ -544,6 +555,7 @@ public class CommandLineQuery {
 		if (this.enablegrddl != false)
 		    this.client.getConfig().setValue( SemanticWebClientConfig.ENABLEGRDDL, Boolean.toString(this.enablegrddl));
 
+		client.getConfig().setValue( SemanticWebClientConfig.ENABLE_RDFA, Boolean.toString(enableRDFa) );
 		client.getConfig().setValue( SemanticWebClientConfig.ENABLE_SINDICE, Boolean.toString(enableSindiceSearch) );
 	}
 

@@ -98,7 +98,7 @@ space consisting of interlinked RDF data.</p>
 <p>This tendency is carried by the 
 
  
-  revival   of ideas around interlinking data on the Semantic Web: Current W3C efforts stress the fact that URI references should be dereference-able (<a href="http://www.w3.org/TR/swbp-vocab-pub/" target="_blank">W3C working draft on Best Practice Recipes for Publishing RDF Vocabularies</a>). There is a nice memo by Tim Berners-Lee about the role of links on the Semantic Web (<a href="http://www.w3.org/DesignIssues/LinkedData.html" target="_blank">Berners-Lee: Linked Data</a>). There are efforts around <a href="http://swoogle.umbc.edu/">Swoogle</a> to measure the size and characterize the content of the Semantic Web (<a href="http://ebiquity.umbc.edu/paper/html/id/316/Characterizing-the-Semantic-Web-on-the-Web" target="_blank">Ding, Finin: Characterizing the Semantic Web on the Web</a>). The <a href="http://www.w3.org/2005/ajar/About.html" target="_blank">Tabulator</a> browser lets surfers browse interlinked data on the Semantic Web (<a href="http://swui.semanticweb.org/swui06/papers/Berners-Lee/Berners-Lee.pdf">Berners-Lee et al: Tabulator: Exploring and Analyzing linked data on the Semantic Web</a>). Tools like <a href="http://sites.wiwiss.fu-berlin.de/suhl/bizer/d2r-server/">D2R Server</a> make it easy to publish existing data on on the Semantic Web (<a href="http://sites.wiwiss.fu-berlin.de/suhl/bizer/pub/Bizer-Cyganiak-D2R-Server-ISWC2006.pdf">Bizer, Cyganiak: D2R Server � Publishing Relational Databases on the Semantic Web</a>).</p>
+  revival   of ideas around interlinking data on the Semantic Web: Current W3C efforts stress the fact that URI references should be dereference-able (<a href="http://www.w3.org/TR/swbp-vocab-pub/" target="_blank">W3C working draft on Best Practice Recipes for Publishing RDF Vocabularies</a>). There is a nice memo by Tim Berners-Lee about the role of links on the Semantic Web (<a href="http://www.w3.org/DesignIssues/LinkedData.html" target="_blank">Berners-Lee: Linked Data</a>). There are efforts around <a href="http://swoogle.umbc.edu/">Swoogle</a> to measure the size and characterize the content of the Semantic Web (<a href="http://ebiquity.umbc.edu/paper/html/id/316/Characterizing-the-Semantic-Web-on-the-Web" target="_blank">Ding, Finin: Characterizing the Semantic Web on the Web</a>). The <a href="http://www.w3.org/2005/ajar/About.html" target="_blank">Tabulator</a> browser lets surfers browse interlinked data on the Semantic Web (<a href="http://swui.semanticweb.org/swui06/papers/Berners-Lee/Berners-Lee.pdf">Berners-Lee et al: Tabulator: Exploring and Analyzing linked data on the Semantic Web</a>). Tools like <a href="http://sites.wiwiss.fu-berlin.de/suhl/bizer/d2r-server/">D2R Server</a> make it easy to publish existing data on on the Semantic Web (<a href="http://sites.wiwiss.fu-berlin.de/suhl/bizer/pub/Bizer-Cyganiak-D2R-Server-ISWC2006.pdf">Bizer, Cyganiak: D2R Server - Publishing Relational Databases on the Semantic Web</a>).</p>
 <p>All these efforts are based on the assumption that, for being part of the Semantic Web, data should ideally 
 
 
@@ -111,8 +111,8 @@ space consisting of interlinked RDF data.</p>
 real-world objects, and vocabulary terms should be identified by
 URI references.</li>
 <li>URI references should be <a href="http://www.w3.org/TR/2004/REC-webarch-20041215/#dereference-uri">dereference-able</a>, meaning that an application can look up a URI over the HTTP protocol and retrieve RDF data about the identified resource.</li>
-<li>Data should be provided using the <a href="http://www.w3.org/TR/rdf-syntax-grammar/">RDF/XML</a> or <a href="http://www.dajobe.org/2004/01/turtle/">Turtle</a> syntax. If data is embedded inside other Web documents, for instance using <a href="http://microformats.org/" target="_blank">Microformats </a>inside an HTML page, then these documents should include hints
-how to automatically extract RDF data from them, for instance using <a href="http://www.w3.org/TR/2006/WD-grddl-scenarios-20061002/" target="_blank">GRDDL</a>.</li>
+<li>Data should be provided using the <a href="http://www.w3.org/TR/rdf-syntax-grammar/">RDF/XML</a> or <a href="http://www.dajobe.org/2004/01/turtle/">Turtle</a> syntax. If data is embedded inside HTML documents it is highly recommended to use 
+<a href="http://www.w3.org/TR/xhtml-rdfa-primer/" target="_blank">RDFa</a>.</li>
 <li>Data should be interlinked with other data. Thus resource descriptions should contain links to related information in the form of dereference-able URIs within RDF statements and <tt><a href="http://www.w3.org/TR/rdf-schema/#ch_seealso">rdfs:seeAlso</a></tt> links. </li>
 </ol>
 
@@ -154,6 +154,14 @@ how to automatically extract RDF data from them, for instance using <a href="htt
   <li>match the triple pattern against all newly retrieved graphs.</li>
   <li>repeat step 4 and 5 until the maximum number of retrieval steps or the timeout is reached.</li>
 </ol>
+
+<p>
+  The paper
+  <div style="margin:0px 15px 15px 15px; font-style:italic">
+	 Olaf Hartig, Christian Bizer, and Johann-Christoph Freytag: Executing SPARQL Queries over the Web of Linked Data. In Proceedings of the 8th International Semantic Web Conference (ISWC'09), Washington, DC, USA, Oct. 2009
+  </div>
+  provides a detailed description of the query execution approach implemented in the library.
+</p>
 
 <p>The library is multithreaded to allow faster retrieval. For URIs containing the hash character ("#"), the part before the hash will be used for retrieval.</p>
 
@@ -493,6 +501,10 @@ It is invoked using the <tt>semwebquery</tt> command, which is found in the <tt>
     <td>Enables GRDDL support; see <a href="#grddl">below</a>. Notice, GRDDL support is deprecated!</td>
   </tr>
   <tr>
+    <td valign="top"><tt>-NoRDFa</tt><br /></td>
+    <td>Disables RDFa support.</td>
+  </tr>
+  <tr>
     <td valign="top"><tt>-sindice</tt><br /></td>
     <td>Enables Sindice-based URI search during query execution; see <a href="#sindice">below</a>.</td>
   </tr>
@@ -622,9 +634,9 @@ while(iter.hasNext()){
 }
 </pre>
 <h3>5.3 Configuration</h3>
-<p>Several aspects of the retrieval algorithm can be configured using the <tt>SemanticWebClient.setConfig</tt> method.</p>
+<p>Several aspects of the retrieval algorithm can be configured in the <tt>SemanticWebClientConfig</tt> object that is accessible using the <tt>SemantibcWebClient.getConfig</tt> method.</p>
 <pre>SemanticWebClient semWeb = new SemanticWebClient();
-semWeb.setConfig("maxsteps","3");</pre>
+semWeb.getConfig().setValue( SemanticWebClientConfig.MAXSTEPS, "3" );</pre>
 <table border="1" cellpadding="3" cellspacing="0">
   <tr>
     <th>Parameter</th>
@@ -632,27 +644,32 @@ semWeb.setConfig("maxsteps","3");</pre>
     <th>Default</th>
   </tr>
   <tr>
-    <td valign="top"><tt>maxsteps</tt></td>
+    <td valign="top"><tt>SemanticWebClientConfig.MAXSTEPS</tt></td>
     <td>The maximum depth of links followed during a single query. 0 means no links are followed.</td>
     <td valign="top">3</td>
   </tr>
   <tr>
-    <td valign="top"><tt>maxthreads</tt></td>
+    <td valign="top"><tt>SemanticWebClientConfig.MAXTHREADS</tt></td>
     <td>The number of threads to use for URI dereferencing.</td>
     <td valign="top">10</td>
   </tr>
   <tr>
-    <td valign="top"><tt>timeout</tt></td>
+    <td valign="top"><tt>SemanticWebClientConfig.TIMEOUT</tt></td>
     <td>The maximal execution time for a query in milliseconds. A query will finish with the results found up to that point if the timeout is reached.</td>
     <td valign="top">10000</td>
   </tr>
   <tr>
-    <td valign="top"><tt>enablegrddl</tt></td>
+    <td valign="top"><tt>SemanticWebClientConfig.ENABLEGRDDL</tt></td>
     <td>Setting this to <tt>true</tt> enables GRDDL support; see <a href="#grddl">below</a>. Notice, GRDDL support is deprecated!</td>
     <td valign="top">false</td>
   </tr>
   <tr>
-    <td valign="top"><tt>enablesindicesearch</tt></td>
+    <td valign="top"><tt>SemanticWebClientConfig.ENABLE_RDFA</tt></td>
+    <td>Setting this to <tt>true</tt> enables RDFa support.</td>
+    <td valign="top">true</td>
+  </tr>
+  <tr>
+    <td valign="top"><tt>SemanticWebClientConfig.ENABLE_SINDICE</tt></td>
     <td>Setting this to <tt>true</tt> enables Sindice-based URI search during query execution; see <a href="#sindice">below</a>.</td>
     <td valign="top">false</td>
   </tr>
@@ -782,7 +799,7 @@ searching for URIs increases the query execution time significantly.</p>
 <p>Good starting points for playing around with the library is interlinked data published by the Tabulator project (<a href="http://dig.csail.mit.edu/2005/ajar/ajaw/data">http://dig.csail.mit.edu/2005/ajar/ajaw/data</a>) and the D2R demo server running at <a href="http://www3.wiwiss.fu-berlin.de:2020/">http://www3.wiwiss.fu-berlin.de:2020/</a>. If you find other interesting chunks of interlinked data on the Semantic Web that can be queried using the library, please tell us. </p>
 <p><a href="http://sourceforge.net/projects/d2rq-map/"><img src="http://sourceforge.net/sflogo.php?group_id=111002&amp;type=5" alt="SourceForge Logo" /></a></p>
 <div id="footer">
-  <small>$Id: index.html,v 1.14 2009/06/14 05:36:32 hartig Exp $</small>
+  <small>$Id: index.html,v 1.15 2009/08/14 07:23:43 hartig Exp $</small>
 </div>
 </div>
 

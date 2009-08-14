@@ -1,6 +1,10 @@
 package de.fuberlin.wiwiss.ng4j.semwebclient;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
@@ -9,6 +13,13 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import javax.xml.transform.Transformer;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.cyberneko.html.parsers.DOMParser;
+import org.xml.sax.InputSource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -16,6 +27,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.impl.RDFDefaultErrorHandler;
 
+import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphImpl;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
@@ -29,6 +41,7 @@ import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.TaskExecutorBase;
  * 
  * @author Tobias Gauß
  * @author Olaf Hartig
+ * @author Hannes Mühleisen
  */
 public class DereferencerThread extends TaskExecutorBase {
 	private HttpURLConnection connection;
@@ -38,11 +51,13 @@ public class DereferencerThread extends TaskExecutorBase {
 	private int maxfilesize = -1;
 
         private boolean enablegrddl = false;
-
+	private boolean enableRDFa = false;
 	private int connectTimeout = 0;
 	private int readTimeout = 0;
 
 	private URL url;
+
+	private Transformer transformerForRDFa;
 
 	private Log log = LogFactory.getLog(DereferencerThread.class);
 
@@ -234,8 +249,12 @@ public class DereferencerThread extends TaskExecutorBase {
 	 */
 	private DereferencingResult parseRdf(DereferencingTask task, String lang) throws Exception {
 		if (    (lang != null)
-		     && (lang.equals("html") || lang.equals("HTML")) ) {
-		        if (this.enablegrddl) {
+		     && (lang.toUpperCase().equals("HTML")) ) {
+
+			// read input stream into a string, so it can be reused
+			String htmlContent = DereferencerThread.readout(this.connection.getInputStream());
+
+			if (this.enablegrddl) {
 			    com.hp.hpl.jena.grddl.GRDDLReader r = new com.hp.hpl.jena.grddl.GRDDLReader();
 			    /*
 			    Gleaner g = new Gleaner(this.connection.getURL().toString(),
@@ -243,7 +262,7 @@ public class DereferencerThread extends TaskExecutorBase {
 			    g.glean(this.tempNgs);
 			    */
 			    Model m = ModelFactory.createDefaultModel();
-			    r.read(m, this.connection.getInputStream(), this.url.toString());
+			    r.read(m, new ByteArrayInputStream(htmlContent.getBytes()), this.url.toString());
 			    this.tempNgs.addGraph( new NamedGraphImpl(this.url.toString(), 
 								      m.getGraph()) );
 
@@ -251,23 +270,75 @@ public class DereferencerThread extends TaskExecutorBase {
 				return new DereferencingResult(task,
 							       DereferencingResult.STATUS_OK, this.tempNgs, null);
 			}
-			ArrayList<String> l = HtmlLinkFetcher.fetchLinks(this.connection.getInputStream());
-			Iterator<String> iter = l.iterator();
-			ArrayList<String> urilist = new ArrayList<String>();
-			while (iter.hasNext()) {
-				String link = iter.next();
-				link = link.replace( "&amp;", "&" );
-				link = link.replace( "&gt;", ">" );
-				link = link.replace( "&lt;", "<" );
-				try {
-					URL newURL = new URL( url, link );
-					urilist.add( newURL.toString() );
-				} catch ( MalformedURLException e ) {
-					log.debug( "Creating a URL from the link <" + link + "> fetched for <" + url.toString() + "> caused an exception (" + e.getMessage() + ").", e );
+
+			// parse the HTML for references to alternative representations
+			ArrayList<String> l = HtmlLinkFetcher.fetchLinks(htmlContent);
+			if ( ! l.isEmpty() ) {
+				Iterator<String> iter = l.iterator();
+				ArrayList<String> urilist = new ArrayList<String>();
+				while (iter.hasNext()) {
+					String link = iter.next();
+					link = link.replace( "&amp;", "&" );
+					link = link.replace( "&gt;", ">" );
+					link = link.replace( "&lt;", "<" );
+					try {
+						URL newURL = new URL( url, link );
+						urilist.add( newURL.toString() );
+					} catch ( MalformedURLException e ) {
+						log.debug( "Creating a URL from the link <" + link + "> fetched for <" + url.toString() + "> caused an exception (" + e.getMessage() + ").", e );
+					}
+				}
+				return createNewUrisResult(task, DereferencingResult.STATUS_NEW_URIS_FOUND, urilist);
+			}
+
+
+			if ( this.enableRDFa ) {
+				log.debug( "Parsing HTML from <" + url.toString() + "> for RDFa" );
+
+				// RDF/XML output buffer
+				StringWriter rdfxml = new StringWriter();
+
+				// Uses nekoHTML Parser
+				DOMParser parser = new DOMParser();
+				parser.setFeature("http://xml.org/sax/features/namespaces", false);
+				parser.setFeature("http://cyberneko.org/html/features/balance-tags", true);
+				parser.setFeature("http://cyberneko.org/html/features/balance-tags/ignore-outside-content", true);
+
+				// error-tolerant parsing with nekoHTML
+				parser.parse( new InputSource(new StringReader(htmlContent)) );
+
+				// perform XSLT transformation from RDFa into RDF/XML
+				transformerForRDFa.transform( new DOMSource(parser.getDocument(), url.toString()),
+				                              new StreamResult(rdfxml) );
+
+				// parse RDF/XML into triples and return
+				StringReader rdfParserIn = new StringReader(rdfxml.getBuffer().toString());
+				tempNgs.read(rdfParserIn, "RDF/XML", url.toString());
+
+				// Count the number of extracted triples. If there are any we can
+				// return a result. Otherwise we have to proceed below.
+				int triplesCount = 0;
+				Iterator<NamedGraph> graphIt = tempNgs.listGraphs();
+				while (graphIt.hasNext()) {
+					NamedGraph graph = graphIt.next();
+					triplesCount += graph.size();
+				}
+
+				if (triplesCount > 0) {
+					log.debug( "Found RDFa in HTML from <" + url.toString() + ">");
+					return new DereferencingResult( task,
+					                                DereferencingResult.STATUS_OK,
+					                                this.tempNgs,
+					                                null );
+				}
+				else {
+					log.debug( "No RDFa in HTML from <" + url.toString() + ">");
 				}
 			}
-			return createNewUrisResult(task, DereferencingResult.STATUS_NEW_URIS_FOUND, urilist);
-			
+
+			return createNewUrisResult( task,
+			                            DereferencingResult.STATUS_NEW_URIS_FOUND,
+			                            new ArrayList<String>() );
 		}
 			
 		RDFDefaultErrorHandler.silent = true;
@@ -298,8 +369,8 @@ public class DereferencerThread extends TaskExecutorBase {
 				|| type.startsWith("application/x-turtle")
 				|| type.startsWith("text/rdf+n3"))
 			return "N3";
-		if (type.startsWith("text/html"))
-			return "html";
+		if (type.contains("html"))
+			return "HTML";
 
 		return type;
 	}
@@ -312,6 +383,12 @@ public class DereferencerThread extends TaskExecutorBase {
 	}
 	public synchronized void setEnableGrddl(boolean g){
 		this.enablegrddl = g;
+	}
+	public synchronized void setEnableRDFa(boolean r){
+		enableRDFa = r;
+	}
+	public synchronized void setRDFaTransformer(Transformer t){
+		transformerForRDFa = t;
 	}
 	public synchronized void setConnectTimeout(int t){
 		connectTimeout = t;
@@ -334,4 +411,13 @@ public class DereferencerThread extends TaskExecutorBase {
 	 * }catch(Exception e){ System.out.println(e.getLocalizedMessage()); }
 	 *  }
 	 */
+
+	static public String readout ( InputStream in ) throws IOException {
+		StringBuffer out = new StringBuffer();
+		byte[] b = new byte[4096];
+		for (int n; (n = in.read(b)) != -1;) {
+			out.append(new String(b, 0, n));
+		}
+		return out.toString();
+	}
 }

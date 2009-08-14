@@ -3,8 +3,16 @@ package de.fuberlin.wiwiss.ng4j.semwebclient;
 import java.util.HashMap;
 import java.util.Map;
 
-//import org.apache.commons.logging.Log;
-//import org.apache.commons.logging.LogFactory;
+import javax.xml.transform.ErrorListener;
+import javax.xml.transform.Templates;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamSource;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.Task;
 import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.TaskExecutorBase;
@@ -19,34 +27,55 @@ import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.TaskQueueBase;
  * 
  * @author Tobias Gauß
  * @author Olaf Hartig
+ * @author Hannes Mühleisen
  */
 public class DereferencingTaskQueue extends TaskQueueBase
                                     implements DereferencingListener
 {
-//	private Log log = LogFactory.getLog(DereferencingTaskQueue.class);
+	static private Log log = LogFactory.getLog( DereferencingTaskQueue.class );
 	private int maxfilesize;
         private boolean enablegrddl;
+	final private boolean enableRDFa;
 	private int connectTimeout = 0;
 	private int readTimeout = 0;
 	private Map<String,DereferencingTask> currentTasks = new HashMap<String,DereferencingTask> (); // maps task IDs to tasks
 
+	static final private String RDFA_XSLT_URL = "http://www.w3.org/2008/07/rdfa-xslt";
+	final private Templates xsltTemplateForRDFa;
 
 	/**
 	 * Old constructor.
 	 * @deprecated Please use the other constructor instead.
 	 */
         public DereferencingTaskQueue(int maxThreads,int maxfilesize, boolean enablegrddl) {
-		this( maxThreads, maxfilesize, enablegrddl, 0, 0 );
+		this( maxThreads, maxfilesize, enablegrddl, false, 0, 0 );
 	}
 
-	public DereferencingTaskQueue(int maxThreads,int maxfilesize, boolean enablegrddl, int connectTimeout, int readTimeout) {
+	public DereferencingTaskQueue(int maxThreads,int maxfilesize, boolean enablegrddl, boolean enableRDFa, int connectTimeout, int readTimeout) {
 		super( maxThreads );
 		this.maxfilesize = maxfilesize;
 		this.enablegrddl = enablegrddl;
 		this.connectTimeout = connectTimeout;
 		this.readTimeout = readTimeout;
+
+		xsltTemplateForRDFa = enableRDFa ? createRDFaTemplate() : null;
+		this.enableRDFa = ( xsltTemplateForRDFa != null );
+
 		setName("DereferencingTaskQueue");
 		start();
+	}
+
+	static private Templates createRDFaTemplate () {
+		Templates t;
+		try {
+			TransformerFactory factory = TransformerFactory.newInstance();
+			factory.setErrorListener( new XSLTErrorListener() );
+			t = factory.newTemplates( new StreamSource(RDFA_XSLT_URL) );
+		} catch ( TransformerConfigurationException e ) {
+			log.error( "Failed to get and use XSLT template from <" + RDFA_XSLT_URL + "> (" + e.getMessage() + ").", e );
+			t = null;
+		}
+		return t;
 	}
 
 
@@ -58,6 +87,13 @@ public class DereferencingTaskQueue extends TaskQueueBase
 		thread.setEnableGrddl(this.enablegrddl);
 		thread.setConnectTimeout(this.connectTimeout);
 		thread.setReadTimeout(this.readTimeout);
+
+		Transformer t = enableRDFa ? getRDFaTransformer() : null;
+		thread.setEnableRDFa( t != null );
+		if ( t != null ) {
+			thread.setRDFaTransformer( t );
+		}
+
 		return  thread;
 	}
 
@@ -82,6 +118,34 @@ public class DereferencingTaskQueue extends TaskQueueBase
 	 */
 	public synchronized DereferencingTask getTask ( String identifier ) {
 		return currentTasks.get( identifier );
+	}
+
+	private Transformer getRDFaTransformer () {
+		Transformer t;
+		try {
+			t = xsltTemplateForRDFa.newTransformer();
+		} catch ( TransformerConfigurationException e ) {
+			log.debug( "Unexpected " + e.getClass().getName() + " caught: " + e.getMessage(), e );
+			t = null;
+		}
+		return t;
+	}
+
+
+	static class XSLTErrorListener implements ErrorListener {
+		private Log log = LogFactory.getLog( XSLTErrorListener.class );
+
+		public void error ( TransformerException e ) {
+			log.debug( "XSLT warning: " + e.getMessage() + ".", e );
+		}
+
+		public void fatalError ( TransformerException e ) {
+			log.debug( "XSLT fatal: " + e.getMessage() + ".", e );
+		}
+
+		public void warning ( TransformerException e ) {
+			log.debug( "XSLT warning: " + e.getMessage() + "." );
+		}
 	}
 
 }

@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
@@ -11,8 +13,16 @@ import java.util.regex.Pattern;
 
 public class HtmlLinkFetcher {
 	
-	public static ArrayList<String> fetchLinks(InputStream stream){
-		BufferedReader bw = new BufferedReader(new InputStreamReader(stream));
+	public static ArrayList<String> fetchLinks( String s ){
+		return fetchLinks( new StringReader(s) );
+	}
+
+	public static ArrayList<String> fetchLinks( InputStream s ){
+		return fetchLinks( new InputStreamReader(s) );
+	}
+
+	public static ArrayList<String> fetchLinks( Reader reader ){
+		BufferedReader bw = ( reader instanceof BufferedReader) ? (BufferedReader) reader : new BufferedReader(reader);
 		String line = null;
 		String header = "";
 		ArrayList<String> linkList = new ArrayList<String>();

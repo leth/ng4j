@@ -1,3 +1,6 @@
+08/14/09 (Olaf)
+Added RDFa support to the Semantic Web Client Lib.
+
 08/11/09 (Olaf)
 Separated the configuration from the SemanticWebClient class.
 
