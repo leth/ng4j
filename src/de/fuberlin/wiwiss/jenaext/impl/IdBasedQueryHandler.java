@@ -1,4 +1,4 @@
-package de.fuberlin.wiwiss.ng4j.impl.idbased;
+package de.fuberlin.wiwiss.jenaext.impl;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
@@ -8,6 +8,8 @@ import com.hp.hpl.jena.graph.query.Mapping;
 import com.hp.hpl.jena.graph.query.SimpleQueryHandler;
 import com.hp.hpl.jena.graph.query.Stage;
 import com.hp.hpl.jena.graph.query.Query;
+
+import de.fuberlin.wiwiss.jenaext.IdBasedGraph;
 
 
 /**
@@ -70,7 +72,7 @@ public class IdBasedQueryHandler extends SimpleQueryHandler
 }
 
 /*
- * (c) Copyright 2006 - 2009 Christian Bizer (chris@bizer.de)
+ * (c) Copyright 2009 Christian Bizer (chris@bizer.de)
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without

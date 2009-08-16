@@ -1,67 +1,28 @@
-package de.fuberlin.wiwiss.ng4j.impl.idbased;
+package de.fuberlin.wiwiss.jenaext;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.util.iterator.NiceIterator;
 
 
 /**
- * This iterator converts the elements of an iterator over encoded triples to
- * actual triples.
+ * An iterator that provides no elements.
  *
  * @author Olaf Hartig
  */
-public class ConvertingIterator extends NiceIterator
+public class EmptyIterator<E> implements Iterator<E>
 {
-	// members
+	static final public EmptyIterator<Triple> emptyTripleIterator = new EmptyIterator<Triple> ();
+	static final public EmptyIterator<IdBasedTriple> emptyIdBasedTripleIterator = new EmptyIterator<IdBasedTriple> ();
 
-	/** the iterator that is being converted */
-	final private Iterator<EncodedTriple> base;
-
-
-	// initialization
-
-	public ConvertingIterator ( Iterator<EncodedTriple> base )
-	{
-		assert base != null;
-		this.base = base;
-	}
-
-
-	// implementation of the Iterator interface
-
-	/* (non-Javadoc)
-	 * @see com.hp.hpl.jena.util.iterator.NiceIterator#hasNext()
-	 */
-	@Override
-	final public boolean hasNext ()
-	{
-		return base.hasNext();
-	}
-
-	/* (non-Javadoc)
-	 * @see com.hp.hpl.jena.util.iterator.NiceIterator#next()
-	 */
-	@Override
-	final public Triple next ()
-	{
-		return base.next().triple;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.hp.hpl.jena.util.iterator.NiceIterator#remove()
-	 */
-	@Override
-	final public void remove ()
-	{
-		throw new UnsupportedOperationException();
-	}
-
+	public boolean hasNext () { return false; }
+	public E next () { throw new NoSuchElementException(); }
+	public void remove () { throw new UnsupportedOperationException(); }
 }
 
 /*
- * (c) Copyright 2006 - 2009 Christian Bizer (chris@bizer.de)
+ * (c) Copyright 2009 Christian Bizer (chris@bizer.de)
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without

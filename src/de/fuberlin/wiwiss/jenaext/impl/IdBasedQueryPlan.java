@@ -1,4 +1,4 @@
-package de.fuberlin.wiwiss.ng4j.impl.idbased;
+package de.fuberlin.wiwiss.jenaext.impl;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,6 +12,9 @@ import com.hp.hpl.jena.graph.query.Domain;
 import com.hp.hpl.jena.graph.query.Query;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.util.iterator.NiceIterator;
+
+import de.fuberlin.wiwiss.jenaext.IdBasedGraph;
+import de.fuberlin.wiwiss.jenaext.IdBasedTriple;
 
 
 /**
@@ -59,15 +62,15 @@ public class IdBasedQueryPlan implements BindingQueryPlan
 		}
 
 		// create an initial iterator that provides a single empty solution
-		IdBasedQueryIterator it = new IdBasedQItSingleton( new EncodedSolution(variables.length) );
+		IdBasedQueryIterator it = new IdBasedQItSingleton( new IdBasedSolution(variables.length) );
 
 		// create a pipeline of iterators (one for each triple pattern in the BGP query)
 		for ( Object tp : query.getPattern() )
 		{
-			EncodedTriplePattern etp = encode( (Triple) tp, varsDict );
-			if ( etp == null )
+			IdBasedTriplePattern tpIDb = encode( (Triple) tp, varsDict );
+			if ( tpIDb == null )
 			{
-				// etp is null iff at least one of the RDF nodes in the triple
+				// tpIDb is null iff at least one of the RDF nodes in the triple
 				// pattern are not known by the queried RDF graph (i.e. they are
 				// not in the node dictionary of the graph). In this case we won't
 				// find matching triples for this pattern. Hence, we append an
@@ -76,7 +79,7 @@ public class IdBasedQueryPlan implements BindingQueryPlan
 				break;
 			}
 
-			it = new IdBasedTriplePatternMatcher( graph, etp, it );
+			it = new IdBasedTriplePatternMatcher( graph, tpIDb, it );
 		}
 		rootIterator = it;
 	}
@@ -86,7 +89,7 @@ public class IdBasedQueryPlan implements BindingQueryPlan
 
 	public ExtendedIterator executeBindings ()
 	{
-		return new ConvertEncodedSolutionToDomainIterator( rootIterator );
+		return new ConvertIdBasedSolutionToDomainIterator( rootIterator );
 	}
 
 
@@ -95,11 +98,11 @@ public class IdBasedQueryPlan implements BindingQueryPlan
 	/**
 	 * Encodes the given triple pattern by using the node dictionary of the
 	 * queried RDF graph and the given dictionary of query variables.
-	 * This method return null iff at least one of the RDF nodes in the given
+	 * This method returns null iff at least one of the RDF nodes in the given
 	 * triple pattern are not known by the queried RDF graph (i.e. they are not
 	 * not in the node dictionary of the graph).
 	 */
-	final protected EncodedTriplePattern encode ( Triple tp, Map<Node,Integer> varsDict )
+	final protected IdBasedTriplePattern encode ( Triple tp, Map<Node,Integer> varsDict )
 	{
 		boolean sIsVar = ( tp.getSubject().isVariable() );
 		boolean pIsVar = ( tp.getPredicate().isVariable() );
@@ -121,22 +124,22 @@ public class IdBasedQueryPlan implements BindingQueryPlan
 			return null;
 		}
 
-		return new EncodedTriplePattern( sIsVar, (sIsVar) ? varsDict.get(tp.getSubject()).intValue() : graph.getId(tp.getSubject()),
+		return new IdBasedTriplePattern( sIsVar, (sIsVar) ? varsDict.get(tp.getSubject()).intValue() : graph.getId(tp.getSubject()),
 		                                 pIsVar, (pIsVar) ? varsDict.get(tp.getPredicate()).intValue() : graph.getId(tp.getPredicate()),
 		                                 oIsVar, (oIsVar) ? varsDict.get(tp.getObject()).intValue() : graph.getId(tp.getObject()) );
 	}
 
 
 	/**
-	 * Decodes the given encoded solution by using the node dictionary of the
+	 * Decodes the given ID-based solution by using the node dictionary of the
 	 * queried RDF graph.
 	 */
-	final protected Domain decode ( EncodedSolution es )
+	final protected Domain decode ( IdBasedSolution s )
 	{
-		int size = es.size();
+		int size = s.size();
 		Domain d = new Domain( size );
 		for ( int i = 0; i < size; ++i ) {
-			d.setElement( i, graph.getNode(es.getBoundId(i)) );
+			d.setElement( i, graph.getNode(s.getBoundId(i)) );
 		}
 		return d;
 	}
@@ -145,13 +148,13 @@ public class IdBasedQueryPlan implements BindingQueryPlan
 	// helper classes
 
 	/**
-	 * Converts the encoded solutions provided by the input iterator to Domain
+	 * Converts the ID-based solutions provided by the input iterator to Domain
 	 * objects as required by the Jena.
 	 */
-	class ConvertEncodedSolutionToDomainIterator extends NiceIterator
+	class ConvertIdBasedSolutionToDomainIterator extends NiceIterator
 	{
-		final protected Iterator<EncodedSolution> base;
-		public ConvertEncodedSolutionToDomainIterator ( Iterator<EncodedSolution> base ) { this.base = base; }
+		final protected Iterator<IdBasedSolution> base;
+		public ConvertIdBasedSolutionToDomainIterator ( Iterator<IdBasedSolution> base ) { this.base = base; }
 		public boolean hasNext () { return base.hasNext(); }
 		public Domain next () { return decode( base.next() ); }
 	}
@@ -162,7 +165,7 @@ public class IdBasedQueryPlan implements BindingQueryPlan
 	 * the queried graph and by identifiers for the query variables as provided
 	 * to the query plan.
 	 */
-	static public class EncodedTriplePattern
+	static public class IdBasedTriplePattern
 	{
 		/** designates whether the identifier of the subject represents an RDF node or a query variable */
 		final public boolean sIsVar;
@@ -177,7 +180,7 @@ public class IdBasedQueryPlan implements BindingQueryPlan
 		/** the identifier for the object */
 		final public int o;
 
-		public EncodedTriplePattern ( boolean sIsVar, int s, boolean pIsVar, int p, boolean oIsVar, int o ) {
+		public IdBasedTriplePattern ( boolean sIsVar, int s, boolean pIsVar, int p, boolean oIsVar, int o ) {
 			this.sIsVar = sIsVar; this.s = s;
 			this.pIsVar = pIsVar; this.p = p;
 			this.oIsVar = oIsVar; this.o = o;
@@ -185,7 +188,7 @@ public class IdBasedQueryPlan implements BindingQueryPlan
 
 		@Override
 		public String toString () {
-			return "EncodedTriplePattern(" + (sIsVar?"v":"n") + String.valueOf(s) + "," + (pIsVar?"v":"n") + String.valueOf(p) + "," + (oIsVar?"v":"n") + String.valueOf(o) + ")";
+			return "IdBasedTriplePattern(" + (sIsVar?"v":"n") + String.valueOf(s) + "," + (pIsVar?"v":"n") + String.valueOf(p) + "," + (oIsVar?"v":"n") + String.valueOf(o) + ")";
 		}
 	}
 
@@ -194,13 +197,13 @@ public class IdBasedQueryPlan implements BindingQueryPlan
 	 * Represents a solution mapping with identifiers for the RDF nodes bound to
 	 * the query variables.
 	 */
-	static public class EncodedSolution
+	static public class IdBasedSolution
 	{
 		final static protected int UNBOUND = -1;
 		final protected int[] bindings;
 
 		/** Creates an empty solution mapping for the given number of query variables. */
-		public EncodedSolution ( int size )
+		public IdBasedSolution ( int size )
 		{
 			bindings = new int[size];
 			for ( int i = 0; i < size; ++i ) {
@@ -209,7 +212,7 @@ public class IdBasedQueryPlan implements BindingQueryPlan
 		}
 
 		/** Creates a solution mapping that is a copy of the given mapping. */
-		public EncodedSolution ( EncodedSolution template )
+		public IdBasedSolution ( IdBasedSolution template )
 		{
 			int size = template.bindings.length;
 			bindings = new int[size];
@@ -258,7 +261,7 @@ public class IdBasedQueryPlan implements BindingQueryPlan
 		@Override
 		public String toString ()
 		{
-			String result = "EncodedSolution(";
+			String result = "IdBasedSolution(";
 			for ( int i = 0; i < bindings.length; ++i ) {
 				result += " " + String.valueOf(i) + " => " + ( bindings[i]==UNBOUND ? "unbound" : String.valueOf(bindings[i]) );
 			}
@@ -269,38 +272,38 @@ public class IdBasedQueryPlan implements BindingQueryPlan
 
 
 	/**
-	 * Base class for all query iterators that provide encoded solutions
-	 * (see {@link EncodedSolution}).
+	 * Base class for all query iterators that provide ID-based solutions
+	 * (see {@link IdBasedSolution}).
 	 */
-	static abstract protected class IdBasedQueryIterator implements Iterator<EncodedSolution>
+	static abstract protected class IdBasedQueryIterator implements Iterator<IdBasedSolution>
 	{
 		public void remove () { throw new UnsupportedOperationException(); }
 	}
 
 	/**
-	 * A query iterator that provides exactly one encoded solution.
+	 * A query iterator that provides exactly one ID-based solution.
 	 */
 	static class IdBasedQItSingleton extends IdBasedQueryIterator
 	{
-		final protected EncodedSolution singleSolution;
+		final protected IdBasedSolution singleSolution;
 		protected boolean delivered = false;
-		public IdBasedQItSingleton ( EncodedSolution singleSolution ) { this.singleSolution = singleSolution; }
+		public IdBasedQItSingleton ( IdBasedSolution singleSolution ) { this.singleSolution = singleSolution; }
 		public boolean hasNext () { return ! delivered; }
-		public EncodedSolution next () { delivered = true; return singleSolution; }
+		public IdBasedSolution next () { delivered = true; return singleSolution; }
 	}
 
 	/**
-	 * A query iterator that provides no encoded solution.
+	 * A query iterator that provides no ID-based solution.
 	 */
 	static class IdBasedQItEmpty extends IdBasedQueryIterator
 	{
 		public boolean hasNext () { return false; }
-		public EncodedSolution next () { throw new NoSuchElementException(); }
+		public IdBasedSolution next () { throw new NoSuchElementException(); }
 	}
 
 	/**
-	 * Abstract base class for all query iterators the consume encoded solutions
-	 * from an input interator.
+	 * Abstract base class for all query iterators the consume ID-based
+	 * solutions from an input interator.
 	 */
 	static abstract class IdBasedQItInput1 extends IdBasedQueryIterator
 	{
@@ -309,20 +312,21 @@ public class IdBasedQueryPlan implements BindingQueryPlan
 	}
 
 	/**
-	 * A query iterator that provides encoded solutions for a triple pattern and
-	 * that are compatible with the solutions provided by an input operator.
+	 * A query iterator that provides ID-based solutions for a triple pattern
+	 * and that are compatible with the solutions provided by an input
+	 * operator.
 	 * This iterator can be used for a pipelined evaluation of a set of triple
 	 * patterns.
 	 */
 	static class IdBasedTriplePatternMatcher extends IdBasedQItInput1
 	{
 		/** the triple pattern matched by this iterator */
-		final protected EncodedTriplePattern tp;
+		final protected IdBasedTriplePattern tp;
 		/** the queried RDF graph */
 		final protected IdBasedGraph graph;
 
 		/** the solution currently consumed from the input iterator */
-		protected EncodedSolution currentInputSolution = null;
+		protected IdBasedSolution currentInputSolution = null;
 
 		/**
 		 * The current query pattern is the triple pattern of this iterator
@@ -330,15 +334,15 @@ public class IdBasedQueryPlan implements BindingQueryPlan
 		 * current solution consumed from the input iterator (ie by
 		 * {@link #currentInputSolution}).
 		 */
-		protected EncodedTriplePattern currentQueryPattern = null;
+		protected IdBasedTriplePattern currentQueryPattern = null;
 
 		/**
 		 * an iterator over all triples that match the current query pattern
 		 * (see {@link #currentQueryPattern}) in the queried RDF graph
 		 */
-		protected Iterator<EncodedTriple> currentMatches = null;
+		protected Iterator<IdBasedTriple> currentMatches = null;
 
-		public IdBasedTriplePatternMatcher ( IdBasedGraph graph, EncodedTriplePattern tp, IdBasedQueryIterator input )
+		public IdBasedTriplePatternMatcher ( IdBasedGraph graph, IdBasedTriplePattern tp, IdBasedQueryIterator input )
 		{
 			super( input );
 			this.graph = graph;
@@ -363,7 +367,7 @@ public class IdBasedQueryPlan implements BindingQueryPlan
 			return true;
 		}
 
-		public EncodedSolution next ()
+		public IdBasedSolution next ()
 		{
 			if ( ! hasNext() ) {
 				throw new NoSuchElementException();
@@ -373,8 +377,8 @@ public class IdBasedQueryPlan implements BindingQueryPlan
 			// consumed from the input iterator and ii) by binding the query
 			// variables in the copy corresponding to the currently matching
 			// triple.
-			EncodedTriple currentMatch = currentMatches.next();
-			EncodedSolution result = new EncodedSolution( currentInputSolution );
+			IdBasedTriple currentMatch = currentMatches.next();
+			IdBasedSolution result = new IdBasedSolution( currentInputSolution );
 
 			if ( currentQueryPattern.sIsVar ) {
 				result.setBoundId( currentQueryPattern.s, currentMatch.s );
@@ -395,7 +399,7 @@ public class IdBasedQueryPlan implements BindingQueryPlan
 		 * Replaces all query variables in the given triple pattern that have
 		 * bindings in the given solution mapping by these bindings.
 		 */
-		static public EncodedTriplePattern substitute ( EncodedTriplePattern tp, EncodedSolution solution )
+		static public IdBasedTriplePattern substitute ( IdBasedTriplePattern tp, IdBasedSolution solution )
 		{
 			int sNew, pNew, oNew;
 			boolean sIsVarNew, pIsVarNew, oIsVarNew;
@@ -436,7 +440,7 @@ public class IdBasedQueryPlan implements BindingQueryPlan
 				oIsVarNew = false;
 			}
 
-			return new EncodedTriplePattern( sIsVarNew, sNew, pIsVarNew, pNew, oIsVarNew, oNew );
+			return new IdBasedTriplePattern( sIsVarNew, sNew, pIsVarNew, pNew, oIsVarNew, oNew );
 		}
 	}
 

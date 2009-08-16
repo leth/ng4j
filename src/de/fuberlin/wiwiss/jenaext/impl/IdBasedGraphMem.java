@@ -1,4 +1,4 @@
-package de.fuberlin.wiwiss.ng4j.impl.idbased;
+package de.fuberlin.wiwiss.jenaext.impl;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -14,11 +14,18 @@ import com.hp.hpl.jena.shared.ReificationStyle;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.util.iterator.WrappedIterator;
 
+import de.fuberlin.wiwiss.jenaext.DecodingTriplesIterator;
+import de.fuberlin.wiwiss.jenaext.EmptyIterator;
+import de.fuberlin.wiwiss.jenaext.IdBasedGraph;
+import de.fuberlin.wiwiss.jenaext.IdBasedTriple;
+import de.fuberlin.wiwiss.jenaext.NodeDictionary;
+
 
 /**
  * An RDF graph implemented using on six main memory-based indexes (S, P, O,
  * SP, PO, SO).
- * This implementation is optimized for read-only access.
+ * This implementation is optimized for read-only access. Removing triples from
+ * this graph is not supported.
  *
  * @author Olaf Hartig
  */
@@ -95,7 +102,7 @@ public class IdBasedGraphMem extends GraphBase
 	 * @see com.hp.hpl.jena.graph.impl.GraphBase#graphBaseFind(com.hp.hpl.jena.graph.TripleMatch)
 	 */
 	@Override
-	protected ExtendedIterator graphBaseFind ( TripleMatch m )
+	protected ExtendedIterator<Triple> graphBaseFind ( TripleMatch m )
 	{
 		Node matchSubject = m.getMatchSubject();
 		Node matchPredicate = m.getMatchPredicate();
@@ -111,7 +118,7 @@ public class IdBasedGraphMem extends GraphBase
 			return WrappedIterator.create( EmptyIterator.emptyTripleIterator );
 		}
 
-		return new ConvertingIterator( find(sId,pId,oId) );
+		return new DecodingTriplesIterator( find(sId,pId,oId) );
 	}
 
 	/**
@@ -126,21 +133,21 @@ public class IdBasedGraphMem extends GraphBase
 	{
 		assert ( t.isConcrete() );
 
-		EncodedTriple tEnc = new EncodedTriple( t,
+		IdBasedTriple tIDb = new IdBasedTriple( t,
 		                                        nodeDict.createId(t.getSubject()),
 		                                        nodeDict.createId(t.getPredicate()),
 		                                        nodeDict.createId(t.getObject()) );
 
-		indexS.put( tEnc.s, tEnc );
-		indexP.put( tEnc.p, tEnc );
-		indexO.put( tEnc.o, tEnc );
-		indexSP.put( tEnc.s, tEnc.p, tEnc );
-		indexSO.put( tEnc.s, tEnc.o, tEnc );
-		indexPO.put( tEnc.p, tEnc.o, tEnc );
+		indexS.put( tIDb.s, tIDb );
+		indexP.put( tIDb.p, tIDb );
+		indexO.put( tIDb.o, tIDb );
+		indexSP.put( tIDb.s, tIDb.p, tIDb );
+		indexSO.put( tIDb.s, tIDb.o, tIDb );
+		indexPO.put( tIDb.p, tIDb.o, tIDb );
 
-		containedIds.add( tEnc.s );
-		containedIds.add( tEnc.p );
-		containedIds.add( tEnc.o );
+		containedIds.add( tIDb.s );
+		containedIds.add( tIDb.p );
+		containedIds.add( tIDb.o );
 	}
 
 	/**
@@ -183,7 +190,7 @@ public class IdBasedGraphMem extends GraphBase
 	// implementation of the IdBasedGraph interface
 
 	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.semwebclient.graph.IdBasedGraph#getNode(int)
+	 * @see de.fuberlin.wiwiss.jenaext.IdBasedGraph#getNode(int)
 	 */
 	public Node getNode ( int id )
 	{
@@ -191,7 +198,7 @@ public class IdBasedGraphMem extends GraphBase
 	}
 
 	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.semwebclient.graph.IdBasedGraph#getId(com.hp.hpl.jena.graph.Node)
+	 * @see de.fuberlin.wiwiss.jenaext.IdBasedGraph#getId(com.hp.hpl.jena.graph.Node)
 	 */
 	public int getId ( Node n )
 	{
@@ -199,7 +206,7 @@ public class IdBasedGraphMem extends GraphBase
 	}
 
 	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.semwebclient.graph.IdBasedGraph#contains(int, int, int)
+	 * @see de.fuberlin.wiwiss.jenaext.IdBasedGraph#contains(int, int, int)
 	 */
 	public boolean contains ( int sId, int pId, int oId )
 	{
@@ -207,18 +214,18 @@ public class IdBasedGraphMem extends GraphBase
 	}
 
 	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.semwebclient.graph.IdBasedGraph#find(int, int, int)
+	 * @see de.fuberlin.wiwiss.jenaext.IdBasedGraph#find(int, int, int)
 	 */
-	public Iterator<EncodedTriple> find ( int sId, int pId, int oId )
+	public Iterator<IdBasedTriple> find ( int sId, int pId, int oId )
 	{
 		if ( sId != -1 && ! containedIds.contains(sId) ) {
-			return EmptyIterator.emptyEncodedTripleIterator;
+			return EmptyIterator.emptyIdBasedTripleIterator;
 		}
 		if ( pId != -1 && ! containedIds.contains(pId) ) {
-			return EmptyIterator.emptyEncodedTripleIterator;
+			return EmptyIterator.emptyIdBasedTripleIterator;
 		}
 		if ( oId != -1 && ! containedIds.contains(oId) ) {
-			return EmptyIterator.emptyEncodedTripleIterator;
+			return EmptyIterator.emptyIdBasedTripleIterator;
 		}
 
 		if ( sId < 0 )          // PO, P, O, or none
@@ -268,7 +275,7 @@ public class IdBasedGraphMem extends GraphBase
 	 * Executes a triple pattern query without wildcards.
 	 * None of the given identifiers must be -1.
 	 */
-	protected Iterator<EncodedTriple> findOne ( int sId, int pId, int oId )
+	protected Iterator<IdBasedTriple> findOne ( int sId, int pId, int oId )
 	{
 		assert sId >= 0;
 		assert pId >= 0;
@@ -293,11 +300,11 @@ public class IdBasedGraphMem extends GraphBase
 	/**
 	 * Base class for all iterators over one of the indexes.
 	 */
-	static abstract class IteratorIndex1 implements Iterator<EncodedTriple>
+	static abstract class IteratorIndex1 implements Iterator<IdBasedTriple>
 	{
-		final private Iterator<EncodedTriple> base;
+		final private Iterator<IdBasedTriple> base;
 		final protected int reqId;
-		private EncodedTriple nextTriple;
+		private IdBasedTriple nextTriple;
 
 		public IteratorIndex1 ( Index index, int reqId )
 		{
@@ -305,7 +312,7 @@ public class IdBasedGraphMem extends GraphBase
 			this.reqId = reqId;
 		}
 
-		protected IteratorIndex1 ( Iterator<EncodedTriple> base, int reqId )
+		protected IteratorIndex1 ( Iterator<IdBasedTriple> base, int reqId )
 		{
 			this.base = base;
 			this.reqId = reqId;
@@ -320,13 +327,13 @@ public class IdBasedGraphMem extends GraphBase
 				return true;
 			}
 
-			EncodedTriple e;
+			IdBasedTriple t;
 			while ( base.hasNext() )
 			{
-				e = base.next();
-				if ( matches(e) )
+				t = base.next();
+				if ( matches(t) )
 				{
-					nextTriple = e;
+					nextTriple = t;
 					break;
 				}
 			}
@@ -337,13 +344,13 @@ public class IdBasedGraphMem extends GraphBase
 		/* (non-Javadoc)
 		 * @see java.util.Iterator#next()
 		 */
-		final public EncodedTriple next ()
+		final public IdBasedTriple next ()
 		{
 			if ( ! hasNext() ) {
 				throw new NoSuchElementException();
 			}
 
-			EncodedTriple t = this.nextTriple;
+			IdBasedTriple t = this.nextTriple;
 			this.nextTriple = null;
 			return t;
 		}
@@ -353,25 +360,25 @@ public class IdBasedGraphMem extends GraphBase
 		 */
 		final public void remove () { throw new UnsupportedOperationException(); }
 
-		abstract protected boolean matches ( EncodedTriple e );
+		abstract protected boolean matches ( IdBasedTriple t );
 	}
 
 	static class IteratorS extends IteratorIndex1
 	{
 		public IteratorS ( Index index, int reqId ) { super(index,reqId); }
-		final protected boolean matches ( EncodedTriple e ) { return e.s == reqId; }
+		final protected boolean matches ( IdBasedTriple t ) { return t.s == reqId; }
 	}
 
 	static class IteratorP extends IteratorIndex1
 	{
 		public IteratorP ( Index index, int reqId ) { super(index,reqId); }
-		final protected boolean matches ( EncodedTriple e ) { return e.p == reqId; }
+		final protected boolean matches ( IdBasedTriple t ) { return t.p == reqId; }
 	}
 
 	static class IteratorO extends IteratorIndex1
 	{
 		public IteratorO ( Index index, int reqId ) { super(index,reqId); }
-		final protected boolean matches ( EncodedTriple e ) { return e.o == reqId; }
+		final protected boolean matches ( IdBasedTriple t ) { return t.o == reqId; }
 	}
 
 	static abstract class IteratorIndex2 extends IteratorIndex1
@@ -388,19 +395,19 @@ public class IdBasedGraphMem extends GraphBase
 	static class IteratorSP extends IteratorIndex2
 	{
 		public IteratorSP ( Index2 index, int reqId1, int reqId2 ) { super(index,reqId1,reqId2); }
-		final protected boolean matches ( EncodedTriple e ) { return (e.s == reqId) && (e.p == reqId2); }
+		final protected boolean matches ( IdBasedTriple t ) { return (t.s == reqId) && (t.p == reqId2); }
 	}
 
 	static class IteratorSO extends IteratorIndex2
 	{
 		public IteratorSO ( Index2 index, int reqId1, int reqId2 ) { super(index,reqId1,reqId2); }
-		final protected boolean matches ( EncodedTriple e ) { return (e.s == reqId) && (e.o == reqId2); }
+		final protected boolean matches ( IdBasedTriple t ) { return (t.s == reqId) && (t.o == reqId2); }
 	}
 
 	static class IteratorPO extends IteratorIndex2
 	{
 		public IteratorPO ( Index2 index, int reqId1, int reqId2 ) { super(index,reqId1,reqId2); }
-		final protected boolean matches ( EncodedTriple e ) { return (e.p == reqId) && (e.o == reqId2); }
+		final protected boolean matches ( IdBasedTriple t ) { return (t.p == reqId) && (t.o == reqId2); }
 	}
 
 	static class IteratorSPO extends IteratorIndex2
@@ -414,12 +421,12 @@ public class IdBasedGraphMem extends GraphBase
 		}
 
 		/* (non-Javadoc)
-		 * @see de.fuberlin.wiwiss.ng4j.impl.idbased.IdBasedGraphMem.IteratorIndex1#matches(de.fuberlin.wiwiss.ng4j.impl.idbased.EncodedTriple)
+		 * @see de.fuberlin.wiwiss.jenaext.impl.IdBasedGraphMem.IteratorIndex1#matches(de.fuberlin.wiwiss.jenaext.IdBasedTriple)
 		 */
 		@Override
-		final protected boolean matches ( EncodedTriple e )
+		final protected boolean matches ( IdBasedTriple t )
 		{
-			return (e.o == reqId3) && (e.s == reqId) && (e.p == reqId2);
+			return (t.o == reqId3) && (t.s == reqId) && (t.p == reqId2);
 		}
 	}
 

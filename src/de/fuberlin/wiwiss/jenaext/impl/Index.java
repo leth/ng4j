@@ -1,13 +1,16 @@
-package de.fuberlin.wiwiss.ng4j.impl.idbased;
+package de.fuberlin.wiwiss.jenaext.impl;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import de.fuberlin.wiwiss.jenaext.EmptyIterator;
+import de.fuberlin.wiwiss.jenaext.IdBasedTriple;
+
 
 /**
- * Indexes encoded triples ({@link EncodedTriple} objects) by node identifiers.
+ * Indexes ID-based triples ({@link IdBasedTriple} objects) by node identifiers.
  * This class can be used to create S, P, and O indexes of triples.
  *
  * @author Olaf Hartig
@@ -21,7 +24,7 @@ public class Index
 	static final private int INDEXKEYMASK = ( 1 << KEYMASKSIZE ) - 1;
 
 	/** the hash table */
-	final private List<EncodedTriple> [] index = new List [INDEXKEYMASK+1];
+	final private List<IdBasedTriple> [] index = new List [INDEXKEYMASK+1];
 
 
 	// accessors
@@ -29,11 +32,11 @@ public class Index
 	/**
 	 * Indexes the given triple using the given key.
 	 */
-	public void put ( int key, EncodedTriple t )
+	public void put ( int key, IdBasedTriple t )
 	{
 		int indexKey = getIndexKey( key );
 		if ( index[indexKey] == null ) {
-			index[indexKey] = new ArrayList<EncodedTriple> ();
+			index[indexKey] = new ArrayList<IdBasedTriple> ();
 		}
 
 		index[indexKey].add( t );
@@ -43,16 +46,16 @@ public class Index
 	 * Returns all triples indexed with a key from the class of the given key.
 	 * Attention: the given iterator may provide more triples as requested.
 	 */
-	public Iterator<EncodedTriple> get ( int key )
+	public Iterator<IdBasedTriple> get ( int key )
 	{
 		int indexKey = getIndexKey( key );
-		return ( index[indexKey] == null ) ? EmptyIterator.emptyEncodedTripleIterator : index[indexKey].iterator();
+		return ( index[indexKey] == null ) ? EmptyIterator.emptyIdBasedTripleIterator : index[indexKey].iterator();
 	}
 
 	/**
 	 * Returns all triples in this index.
 	 */
-	public Iterator<EncodedTriple> getAll ()
+	public Iterator<IdBasedTriple> getAll ()
 	{
 		return new AllEntriesIterator();
 	}
@@ -88,11 +91,11 @@ public class Index
 	/**
 	 * This iterator provides all triples in this index.
 	 */
-	protected class AllEntriesIterator implements Iterator<EncodedTriple>
+	protected class AllEntriesIterator implements Iterator<IdBasedTriple>
 	{
 		private int curBucketIdx = -1;
-		private Iterator<EncodedTriple> itCurEntry = null;
-		private EncodedTriple curEntry = null;
+		private Iterator<IdBasedTriple> itCurEntry = null;
+		private IdBasedTriple curEntry = null;
 
 		public boolean hasNext ()
 		{
@@ -124,13 +127,13 @@ public class Index
 			return ( curEntry != null );
 		}
 
-		public EncodedTriple next ()
+		public IdBasedTriple next ()
 		{
 			if ( ! hasNext() ) {
 				throw new NoSuchElementException();
 			}
 
-			EncodedTriple t = curEntry;
+			IdBasedTriple t = curEntry;
 			curEntry = null;
 			return t;
 		}
@@ -141,7 +144,7 @@ public class Index
 }
 
 /*
- * (c) Copyright 2006 - 2009 Christian Bizer (chris@bizer.de)
+ * (c) Copyright 2009 Christian Bizer (chris@bizer.de)
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without

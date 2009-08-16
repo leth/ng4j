@@ -1,3 +1,6 @@
+08/16/09 (Olaf)
+Moved everything that is not Named Graphs specific from package 'de.fuberlin.wiwiss.ng4j.impl.idbased' to the packages 'de.fuberlin.wiwiss.jenaext' and 'de.fuberlin.wiwiss.jenaext.impl'.
+
 08/14/09 (Olaf)
 Added RDFa support to the Semantic Web Client Lib.
 

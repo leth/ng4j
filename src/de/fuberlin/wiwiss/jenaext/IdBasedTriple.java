@@ -1,52 +1,73 @@
-package de.fuberlin.wiwiss.ng4j.impl.idbased;
+package de.fuberlin.wiwiss.jenaext;
 
-import java.util.Iterator;
-
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.graph.Triple;
 
 
 /**
- * An RDF graph implementation that uses identifiers for RDF nodes.
+ * An ID-based triple represents a triple with identifiers for the three
+ * components (subject, predicate, and object).
  *
  * @author Olaf Hartig
  */
-public interface IdBasedGraph extends Graph
+public class IdBasedTriple
 {
-	/**
-	 * Returns the node identified by the given identifier (or null).
-	 */
-	public Node getNode ( int id );
+	// members
 
-	/**
-	 * Returns the identifier that identifies the given node (or -1).
-	 */
-	public int getId ( Node n );
+	/** The identifier for the subject node. */
+	final public int s;
 
-	/**
-	 * Answer true iff the graph contains a triple matching the triple pattern
-	 * specified by the given identifiers.
-	 * An identifier of -1 represents a wildcard.
-	 *
-	 * @param sId the identifier for the subject of the triple pattern
-	 * @param pId the identifier for the predicate of the triple pattern
-	 * @param oId the identifier for the object of the triple pattern
-	 */
-	public boolean contains ( int sId, int pId, int oId );
+	/** The identifier for the predicate node. */
+	final public int p;
 
-	/**
-	 * Executes a triple pattern query specified by the given identifiers.
-	 * An identifier of -1 represents a wildcard.
-	 *
-	 * @param sId the identifier for the subject of the triple pattern
-	 * @param pId the identifier for the predicate of the triple pattern
-	 * @param oId the identifier for the object of the triple pattern
-	 */
-	public Iterator<EncodedTriple> find ( int sId, int pId, int oId );
+	/** The identifier for the object node. */
+	final public int o;
+
+	/** The represented triple. */
+	final public Triple triple;
+
+
+	// initialization
+
+	public IdBasedTriple ( Triple triple, int s, int p, int o )
+	{
+		assert triple != null;
+		assert triple.isConcrete();
+		assert s >= 0;
+		assert p >= 0;
+		assert o >= 0;
+
+		this.triple = triple;
+		this.s = s;
+		this.p = p;
+		this.o = o;
+	}
+
+
+	// redefinition of Object methods
+
+	/** ID-based triples are equal if they have the same three identifiers. */
+	@Override
+	public boolean equals ( Object obj )
+	{
+		if ( obj instanceof IdBasedTriple )
+		{
+			IdBasedTriple et = (IdBasedTriple) obj;
+			return ( s == et.s && p == et.p && o == et.o );
+		}
+
+		return false;
+	}
+
+	@Override
+	public String toString ()
+	{
+		return "IdBasedTriple(" + String.valueOf(s) + "," + String.valueOf(p) + "," + String.valueOf(o) + ")";
+	}
+
 }
 
 /*
- * (c) Copyright 2006 - 2009 Christian Bizer (chris@bizer.de)
+ * (c) Copyright 2009 Christian Bizer (chris@bizer.de)
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without

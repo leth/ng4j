@@ -1,73 +1,42 @@
-package de.fuberlin.wiwiss.ng4j.impl.idbased;
+package de.fuberlin.wiwiss.jenaext.impl;
 
-import com.hp.hpl.jena.graph.Triple;
+import java.util.Iterator;
+
+import de.fuberlin.wiwiss.jenaext.IdBasedTriple;
 
 
 /**
- * An encoded triple represents a triple with identifiers for the three
- * components (subject, predicate, and object).
+ * Indexes ID-based triples ({@link IdBasedTriple} objects) by two node
+ * identifiers.
+ * This class can be used to create SP, PO, and SO indexes of triples.
  *
  * @author Olaf Hartig
  */
-public class EncodedTriple
+public class Index2 extends Index
 {
-	// members
+	// accessors
 
-	/** The identifier for the subject node. */
-	final public int s;
-
-	/** The identifier for the predicate node. */
-	final public int p;
-
-	/** The identifier for the object node. */
-	final public int o;
-
-	/** The represented triple. */
-	final public Triple triple;
-
-
-	// initialization
-
-	public EncodedTriple ( Triple triple, int s, int p, int o )
+	/**
+	 * Indexes the given triple using the two given keys.
+	 */
+	public void put ( int key1, int key2, IdBasedTriple t )
 	{
-		assert triple != null;
-		assert triple.isConcrete();
-		assert s >= 0;
-		assert p >= 0;
-		assert o >= 0;
-
-		this.triple = triple;
-		this.s = s;
-		this.p = p;
-		this.o = o;
+		put( key1*key2, t );
 	}
 
-
-	// redefinition of Object methods
-
-	/** Encoded triples are equal if they have the same three identifiers. */
-	@Override
-	public boolean equals ( Object obj )
+	/**
+	 * Returns all triples indexed with keys from the class of the two given
+	 * keys.
+	 * Attention: the given iterator may provide more triples as requested.
+	 */
+	public Iterator<IdBasedTriple> get ( int key1, int key2 )
 	{
-		if ( obj instanceof EncodedTriple )
-		{
-			EncodedTriple et = (EncodedTriple) obj;
-			return ( s == et.s && p == et.p && o == et.o );
-		}
-
-		return false;
+		return get( key1*key2 );
 	}
-
-	@Override
-	public String toString ()
-	{
-		return "EncodedTriple(" + String.valueOf(s) + "," + String.valueOf(p) + "," + String.valueOf(o) + ")";
-	}
-
 }
 
 /*
- * (c) Copyright 2006 - 2009 Christian Bizer (chris@bizer.de)
+ * (c) Copyright 2009 Christian Bizer (chris@bizer.de)
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without

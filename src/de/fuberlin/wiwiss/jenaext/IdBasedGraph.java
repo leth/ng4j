@@ -1,40 +1,52 @@
-package de.fuberlin.wiwiss.ng4j.impl.idbased;
+package de.fuberlin.wiwiss.jenaext;
 
 import java.util.Iterator;
 
+import com.hp.hpl.jena.graph.Graph;
+import com.hp.hpl.jena.graph.Node;
+
 
 /**
- * Indexes encoded triples ({@link EncodedTriple} objects) by two node
- * identifiers.
- * This class can be used to create SP, PO, and SO indexes of triples.
+ * An RDF graph implementation that uses identifiers for RDF nodes.
  *
  * @author Olaf Hartig
  */
-public class Index2 extends Index
+public interface IdBasedGraph extends Graph
 {
-	// accessors
+	/**
+	 * Returns the node identified by the given identifier (or null).
+	 */
+	public Node getNode ( int id );
 
 	/**
-	 * Indexes the given triple using the two given keys.
+	 * Returns the identifier that identifies the given node (or -1).
 	 */
-	public void put ( int key1, int key2, EncodedTriple t )
-	{
-		put( key1*key2, t );
-	}
+	public int getId ( Node n );
 
 	/**
-	 * Returns all triples indexed with keys from the class of the two given
-	 * keys.
-	 * Attention: the given iterator may provide more triples as requested.
+	 * Answer true iff the graph contains a triple matching the triple pattern
+	 * specified by the given identifiers.
+	 * An identifier of -1 represents a wildcard.
+	 *
+	 * @param sId the identifier for the subject of the triple pattern
+	 * @param pId the identifier for the predicate of the triple pattern
+	 * @param oId the identifier for the object of the triple pattern
 	 */
-	public Iterator<EncodedTriple> get ( int key1, int key2 )
-	{
-		return get( key1*key2 );
-	}
+	public boolean contains ( int sId, int pId, int oId );
+
+	/**
+	 * Executes a triple pattern query specified by the given identifiers.
+	 * An identifier of -1 represents a wildcard.
+	 *
+	 * @param sId the identifier for the subject of the triple pattern
+	 * @param pId the identifier for the predicate of the triple pattern
+	 * @param oId the identifier for the object of the triple pattern
+	 */
+	public Iterator<IdBasedTriple> find ( int sId, int pId, int oId );
 }
 
 /*
- * (c) Copyright 2006 - 2009 Christian Bizer (chris@bizer.de)
+ * (c) Copyright 2009 Christian Bizer (chris@bizer.de)
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without

@@ -15,6 +15,16 @@ import com.hp.hpl.jena.util.iterator.WrappedIterator;
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
+import de.fuberlin.wiwiss.jenaext.DecodingTriplesIterator;
+import de.fuberlin.wiwiss.jenaext.EmptyIterator;
+import de.fuberlin.wiwiss.jenaext.IdBasedGraph;
+import de.fuberlin.wiwiss.jenaext.IdBasedTriple;
+import de.fuberlin.wiwiss.jenaext.NodeDictionary;
+import de.fuberlin.wiwiss.jenaext.impl.IdBasedGraphMem;
+import de.fuberlin.wiwiss.jenaext.impl.IdBasedQueryHandler;
+import de.fuberlin.wiwiss.jenaext.impl.Index;
+import de.fuberlin.wiwiss.jenaext.impl.NodeDictionaryImpl;
+
 
 /**
  * Named graph set that is particularily well suited for the Semantic Web
@@ -29,7 +39,7 @@ public class IdBasedNamedGraphSetImpl extends NamedGraphSetImpl
 {
 	// members
 
-	final protected NodeDictionary nodeDict = new NodeDictionary ();
+	final protected NodeDictionary nodeDict = new NodeDictionaryImpl ();
 
 
 	// redefinitions of NamedGraphSetImpl methods
@@ -121,14 +131,14 @@ public class IdBasedNamedGraphSetImpl extends NamedGraphSetImpl
 				return WrappedIterator.create( EmptyIterator.emptyTripleIterator );
 			}
 
-			return new ConvertingIterator( find(sId,pId,oId) );
+			return new DecodingTriplesIterator( find(sId,pId,oId) );
 		}
 
 
 		// implementation of the IdBasedGraph interface
 
 		/* (non-Javadoc)
-		 * @see de.fuberlin.wiwiss.ng4j.impl.idbased.IdBasedGraph#getNode(int)
+		 * @see de.fuberlin.wiwiss.jenaext.IdBasedGraph#getNode(int)
 		 */
 		public Node getNode ( int id )
 		{
@@ -136,7 +146,7 @@ public class IdBasedNamedGraphSetImpl extends NamedGraphSetImpl
 		}
 
 		/* (non-Javadoc)
-		 * @see de.fuberlin.wiwiss.ng4j.impl.idbased.IdBasedGraph#getId(com.hp.hpl.jena.graph.Node)
+		 * @see de.fuberlin.wiwiss.jenaext.IdBasedGraph#getId(com.hp.hpl.jena.graph.Node)
 		 */
 		public int getId ( Node n )
 		{
@@ -144,7 +154,7 @@ public class IdBasedNamedGraphSetImpl extends NamedGraphSetImpl
 		}
 
 		/* (non-Javadoc)
-		 * @see de.fuberlin.wiwiss.ng4j.impl.idbased.IdBasedGraph#contains(int, int, int)
+		 * @see de.fuberlin.wiwiss.jenaext.IdBasedGraph#contains(int, int, int)
 		 */
 		public boolean contains ( int sId, int pId, int oId )
 		{
@@ -160,9 +170,9 @@ public class IdBasedNamedGraphSetImpl extends NamedGraphSetImpl
 		}
 
 		/* (non-Javadoc)
-		 * @see de.fuberlin.wiwiss.ng4j.impl.idbased.IdBasedGraph#find(int, int, int)
+		 * @see de.fuberlin.wiwiss.jenaext.IdBasedGraph#find(int, int, int)
 		 */
-		public Iterator<EncodedTriple> find ( int sId, int pId, int oId )
+		public Iterator<IdBasedTriple> find ( int sId, int pId, int oId )
 		{
 			return new UnionFindIterator( m_subGraphs, sId, pId, oId );
 		}
@@ -174,7 +184,7 @@ public class IdBasedNamedGraphSetImpl extends NamedGraphSetImpl
 	 * Hence, a matching triple that occurs in multiple graphs is returned only
 	 * once.
 	 */
-	static class UnionFindIterator implements Iterator<EncodedTriple>
+	static class UnionFindIterator implements Iterator<IdBasedTriple>
 	{
 		final protected List<Graph> graphs;
 		final protected int sId;
@@ -195,8 +205,8 @@ public class IdBasedNamedGraphSetImpl extends NamedGraphSetImpl
 		final protected byte seenIndexKey;
 
 		protected Iterator<Graph> itCurrentGraph;
-		protected Iterator<EncodedTriple> itCurrentMatch;
-		protected EncodedTriple currentMatch;
+		protected Iterator<IdBasedTriple> itCurrentMatch;
+		protected IdBasedTriple currentMatch;
 
 		/**
 		 * @param graphs the graphs in this list must be instances of the class
@@ -256,14 +266,14 @@ public class IdBasedNamedGraphSetImpl extends NamedGraphSetImpl
 		/* (non-Javadoc)
 		 * @see java.util.Iterator#next()
 		 */
-		public EncodedTriple next ()
+		public IdBasedTriple next ()
 		{
 			if ( ! hasNext() ) {
 				throw new NoSuchElementException();
 			}
 
 			recordAsSeen( currentMatch );
-			EncodedTriple result = currentMatch;
+			IdBasedTriple result = currentMatch;
 			currentMatch = null;
 			return result;
 		}
@@ -273,20 +283,20 @@ public class IdBasedNamedGraphSetImpl extends NamedGraphSetImpl
 		 */
 		public void remove () { throw new UnsupportedOperationException(); }
 
-		protected boolean hasSeen ( EncodedTriple et )
+		protected boolean hasSeen ( IdBasedTriple t )
 		{
-			Iterator<EncodedTriple> itBucket;
+			Iterator<IdBasedTriple> itBucket;
 			if ( seenIndexKey == 1 ) {
-				itBucket = seen.get( et.s );
+				itBucket = seen.get( t.s );
 			} else if ( seenIndexKey == 2 ) {
-				itBucket = seen.get( et.p );
+				itBucket = seen.get( t.p );
 			} else {
-				itBucket = seen.get( et.o );
+				itBucket = seen.get( t.o );
 			}
 
 			while ( itBucket.hasNext() )
 			{
-				if ( itBucket.next().equals(et) ) {
+				if ( itBucket.next().equals(t) ) {
 					return true;
 				}
 			}
@@ -294,14 +304,14 @@ public class IdBasedNamedGraphSetImpl extends NamedGraphSetImpl
 			return false;
 		}
 
-		protected void recordAsSeen ( EncodedTriple et )
+		protected void recordAsSeen ( IdBasedTriple t )
 		{
 			if ( seenIndexKey == 1 ) {
-				seen.put( et.s, et );
+				seen.put( t.s, t );
 			} else if ( seenIndexKey == 2 ) {
-				seen.put( et.p, et );
+				seen.put( t.p, t );
 			} else {
-				seen.put( et.o, et );
+				seen.put( t.o, t );
 			}
 		}
 	}

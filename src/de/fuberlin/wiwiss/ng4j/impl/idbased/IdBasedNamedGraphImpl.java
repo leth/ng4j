@@ -6,6 +6,8 @@ import com.hp.hpl.jena.graph.Node;
 
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphImpl;
 
+import de.fuberlin.wiwiss.jenaext.IdBasedGraph;
+import de.fuberlin.wiwiss.jenaext.IdBasedTriple;
 
 /**
  * A named graph that is based on a main memory implementation of RDF graphs
@@ -18,12 +20,12 @@ public class IdBasedNamedGraphImpl extends NamedGraphImpl
 {
 	// initialization
 
-	public IdBasedNamedGraphImpl ( Node graphName, IdBasedGraphMem graph )
+	public IdBasedNamedGraphImpl ( Node graphName, IdBasedGraph graph )
 	{
 		super( graphName, graph );
 	}
 
-	public IdBasedNamedGraphImpl ( String graphNameURI, IdBasedGraphMem graph )
+	public IdBasedNamedGraphImpl ( String graphNameURI, IdBasedGraph graph )
 	{
 		super( graphNameURI, graph );
 	}
@@ -32,43 +34,43 @@ public class IdBasedNamedGraphImpl extends NamedGraphImpl
 	// implementation of the IdBasedGraph interface
 
 	/**
-	 * Calls the corresponding method of the embedded graph ({@link IdBasedGraphMem#getNode}).
+	 * Calls the corresponding method of the embedded graph ({@link IdBasedGraph#getNode}).
 	 * 
-	 * @see de.fuberlin.wiwiss.ng4j.impl.idbased.IdBasedGraph#getNode(int)
+	 * @see de.fuberlin.wiwiss.jenaext.IdBasedGraph#getNode(int)
 	 */
 	final public Node getNode ( int id )
 	{
-		return ( (IdBasedGraphMem) graph ).getNode( id );
+		return ( (IdBasedGraph) graph ).getNode( id );
 	}
 
 	/**
-	 * Calls the corresponding method of the embedded graph ({@link IdBasedGraphMem#getId}).
+	 * Calls the corresponding method of the embedded graph ({@link IdBasedGraph#getId}).
 	 * 
-	 * @see de.fuberlin.wiwiss.ng4j.impl.idbased.IdBasedGraph#getId(com.hp.hpl.jena.graph.Node)
+	 * @see de.fuberlin.wiwiss.jenaext.IdBasedGraph#getId(com.hp.hpl.jena.graph.Node)
 	 */
 	final public int getId ( Node n )
 	{
-		return ( (IdBasedGraphMem) graph ).getId( n );
+		return ( (IdBasedGraph) graph ).getId( n );
 	}
 
 	/**
-	 * Calls the corresponding method of the embedded graph ({@link IdBasedGraphMem#contains}).
+	 * Calls the corresponding method of the embedded graph ({@link IdBasedGraph#contains}).
 	 * 
-	 * @see de.fuberlin.wiwiss.ng4j.impl.idbased.IdBasedGraph#contains(int, int, int)
+	 * @see de.fuberlin.wiwiss.jenaext.IdBasedGraph#contains(int, int, int)
 	 */
 	final public boolean contains ( int sId, int pId, int oId )
 	{
-		return ( (IdBasedGraphMem) graph ).contains( sId, pId, oId );
+		return ( (IdBasedGraph) graph ).contains( sId, pId, oId );
 	}
 
 	/**
-	 * Calls the corresponding method of the embedded graph ({@link IdBasedGraphMem#find}).
+	 * Calls the corresponding method of the embedded graph ({@link IdBasedGraph#find}).
 	 * 
-	 * @see de.fuberlin.wiwiss.ng4j.impl.idbased.IdBasedGraph#find(int, int, int)
+	 * @see de.fuberlin.wiwiss.jenaext.IdBasedGraph#find(int, int, int)
 	 */
-	final public Iterator<EncodedTriple> find ( int sId, int pId, int oId )
+	final public Iterator<IdBasedTriple> find ( int sId, int pId, int oId )
 	{
-		return ( (IdBasedGraphMem) graph ).find( sId, pId, oId );
+		return ( (IdBasedGraph) graph ).find( sId, pId, oId );
 	}
 
 }

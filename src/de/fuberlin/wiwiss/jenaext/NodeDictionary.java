@@ -1,8 +1,4 @@
-package de.fuberlin.wiwiss.ng4j.impl.idbased;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+package de.fuberlin.wiwiss.jenaext;
 
 import com.hp.hpl.jena.graph.Node;
 
@@ -12,76 +8,28 @@ import com.hp.hpl.jena.graph.Node;
  *
  * @author Olaf Hartig
  */
-public class NodeDictionary
+public interface NodeDictionary
 {
-	// members
+	/**
+	 * Returns the node identified by the given identifier (or null).
+	 */
+	public Node getNode ( int id );
 
-	final protected ArrayList<Node> dictId2Node = new ArrayList<Node> ();
-	final protected Map<String,Integer> dictURINode2Id = new HashMap<String,Integer> ();
-	final protected Map<String,Integer> dictBlankNode2Id = new HashMap<String,Integer> ();
-	final protected Map<String,Integer> dictLitNode2Id = new HashMap<String,Integer> ();
-
-
-	// accessors
-
-	/** Returns the node identified by the given identifier (or null). */
-	final public Node getNode ( int id )
-	{
-		return dictId2Node.get( id );
-	}
-
-	/** Returns the identifier that identifies the given node (or -1). */
-	final public int getId ( Node n )
-	{
-		Integer i;
-		if ( n.isURI() ) {
-			i = dictURINode2Id.get( n.getURI() );
-		} else if ( n.isBlank() ) {
-			i = dictBlankNode2Id.get( n.getBlankNodeId().getLabelString() );
-		} else if ( n.isLiteral() ) {
-			i = dictLitNode2Id.get( n.getLiteral().toString(true) );
-		} else {
-			i = null;
-		}
-
-		return ( i == null ) ? -1 : i.intValue();
-	}
-
-
-	// operations
+	/**
+	 * Returns the identifier that identifies the given node (or -1).
+	 */
+	public int getId ( Node n );
 
 	/**
 	 * Returns an identifier that identifies the given node.
 	 * If there is no identifier for the given node yet this method creates a
 	 * new identifier and adds it to the dictionary.
 	 */
-	final public int createId ( Node n )
-	{
-		int i = getId( n );
-
-		if ( i < 0 )
-		{
-			i = dictId2Node.size();
-			dictId2Node.add( n );
-
-			assert i < Integer.MAX_VALUE;
-
-			if ( n.isURI() ) {
-				dictURINode2Id.put( n.getURI(), Integer.valueOf(i) );
-			} else if ( n.isBlank() ) {
-				dictBlankNode2Id.put( n.getBlankNodeId().getLabelString(), Integer.valueOf(i) );
-			} else { // if ( n.isLiteral() ) {
-				dictLitNode2Id.put( n.getLiteral().toString(true), Integer.valueOf(i) );
-			}
-		}
-
-		return i;
-	}
-
+	public int createId ( Node n );
 }
 
 /*
- * (c) Copyright 2006 - 2009 Christian Bizer (chris@bizer.de)
+ * (c) Copyright 2009 Christian Bizer (chris@bizer.de)
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
