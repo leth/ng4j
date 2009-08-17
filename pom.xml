@@ -257,6 +257,12 @@ http://sourceforge.net/tracker/?group_id=118754
     </dependency>
 
     <dependency>
+      <groupId>nekohtml</groupId>
+      <artifactId>nekohtml</artifactId>
+      <version>0.9.5</version>
+    </dependency>
+
+    <dependency>
      <groupId>org.bouncycastle</groupId>
      <artifactId>bcprov-jdk15</artifactId>
      <version>1.43</version>
