@@ -1,8 +1,25 @@
 Procedure to create a release THIS_RELEASE
+==========================================
+
+
+The release numbere sequence should look something like: 
+
+ng4j-0.9.2-SNAPSHOT
+ng4j-0.9.2-RC1
+ng4j-0.9.2-RC2
+ng4j-0.9.2
+ng4j-0.9.3-SNAPSHOT
+ng4j-0.9.3-RC1
+ng4j-0.9.3-RC2
+ng4j-0.9.3
+ng4j-0.9.4-SNAPSHOT
+ng4j-0.9.4-RC1
+ng4j-0.9.4-RC2
+ng4j-0.9.4
 
 Ensure CHANGES document contains THIS_RELEASE at top 
 
-Update version by one and remove SNAPSHOT modifier in pom.xml 
+Remove SNAPSHOT modifier in pom.xml 
 Commit
 
 Execute:
@@ -11,7 +28,7 @@ mvn clean deploy site site:deploy
 Check that http://paneris.net/ng4j/dependencies.html is reflected in 
 lib/
 
-Update version by one and remove SNAPSHOT modifier in build.xml
+Remove SNAPSHOT modifier in build.xml
 Commit
 
 Execute:
@@ -22,6 +39,8 @@ tag cvs with eg
 
 cvs tag ng4j-2_9_1
 
-Add -SNAPSHOT back to version in pom.xml and build.xml
+Increment version number by one and add -SNAPSHOT back to version in pom.xml and build.xml
 commit
+
+
 
