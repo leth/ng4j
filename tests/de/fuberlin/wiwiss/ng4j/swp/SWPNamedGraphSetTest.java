@@ -1,4 +1,4 @@
-//$Id: SWPNamedGraphSetTest.java,v 1.17 2009/07/29 15:17:33 timp Exp $
+//$Id: SWPNamedGraphSetTest.java,v 1.18 2009/08/17 14:40:13 timp Exp $
 package de.fuberlin.wiwiss.ng4j.swp;
 
 import java.io.StringReader;
@@ -440,7 +440,7 @@ public class SWPNamedGraphSetTest extends TestCase
 		SWPAuthority auth = new SWPAuthorityImpl();
 		auth.setEmail("mailto:rowland@grid.cx");
 		auth.setID(Node.createURI( "http://grid.cx/rowland" ) );
-		Certificate[] chain = PKCS12Utils.getCertChain( keystore, passwordP );
+		Certificate[] chain = PKCS12Utils.getCertChain( keystoreP, passwordP );
 		auth.setCertificate( (X509Certificate)chain[0] );
 		
 		return auth;
