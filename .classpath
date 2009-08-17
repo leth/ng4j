@@ -26,5 +26,6 @@
 	<classpathentry kind="lib" path="lib/tagsoup-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/wstx-asl-3.2.9.jar"/>
 	<classpathentry kind="lib" path="lib/xercesImpl-2.7.1.jar"/>
+	<classpathentry kind="lib" path="lib/nekohtml-0.9.5.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
