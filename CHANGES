@@ -1,3 +1,6 @@
+Release 0.9.2
+-------------
+
 08/16/09 (Olaf)
 Moved everything that is not Named Graphs specific from package 'de.fuberlin.wiwiss.ng4j.impl.idbased' to the packages 'de.fuberlin.wiwiss.jenaext' and 'de.fuberlin.wiwiss.jenaext.impl'.
 
