@@ -3,7 +3,7 @@
 <project name="namedgraphs" default="all" basedir=".">
 
 	<property name="project" value="ng4j"/>
-	<property name="version" value="0.9.2-SNAPSHOT"/>
+	<property name="version" value="0.9.3-SNAPSHOT"/>
 	<property name="project.package" value="de.fuberlin.wiwiss.ng4j"/>
 	<property name="project.path" value="de/fuberlin/wiwiss/ng4j"/>
 	<property name="src" value="src"/>

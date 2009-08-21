@@ -4,7 +4,7 @@
   <artifactId>ng4j</artifactId>
   <!-- FIXME Change the version here.  
   Except for the release, it should be a snapshot, like 0.9.3-SNAPSHOT -->
-  <version>0.9.2</version>
+  <version>0.9.3-SNAPSHOT</version>
   <name>NG4J</name>
   <description>
   NG4J - Named Graphs API for Jena
