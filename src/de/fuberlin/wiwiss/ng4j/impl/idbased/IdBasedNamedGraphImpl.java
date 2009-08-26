@@ -8,6 +8,7 @@ import de.fuberlin.wiwiss.ng4j.impl.NamedGraphImpl;
 
 import de.fuberlin.wiwiss.jenaext.IdBasedGraph;
 import de.fuberlin.wiwiss.jenaext.IdBasedTriple;
+import de.fuberlin.wiwiss.jenaext.NodeDictionary;
 
 /**
  * A named graph that is based on a main memory implementation of RDF graphs
@@ -18,39 +19,36 @@ import de.fuberlin.wiwiss.jenaext.IdBasedTriple;
 public class IdBasedNamedGraphImpl extends NamedGraphImpl
                                    implements IdBasedGraph
 {
+	// members
+
+	final protected IdBasedGraph idGraph;
+
+
 	// initialization
 
 	public IdBasedNamedGraphImpl ( Node graphName, IdBasedGraph graph )
 	{
 		super( graphName, graph );
+		idGraph = graph;
 	}
 
 	public IdBasedNamedGraphImpl ( String graphNameURI, IdBasedGraph graph )
 	{
 		super( graphNameURI, graph );
+		idGraph = graph;
 	}
 
 
 	// implementation of the IdBasedGraph interface
 
 	/**
-	 * Calls the corresponding method of the embedded graph ({@link IdBasedGraph#getNode}).
+	 * Calls the corresponding method of the embedded graph.
 	 * 
-	 * @see de.fuberlin.wiwiss.jenaext.IdBasedGraph#getNode(int)
+	 * @see de.fuberlin.wiwiss.jenaext.IdBasedGraph#getNodeDictionary()
 	 */
-	final public Node getNode ( int id )
+	final public NodeDictionary getNodeDictionary ()
 	{
-		return ( (IdBasedGraph) graph ).getNode( id );
-	}
-
-	/**
-	 * Calls the corresponding method of the embedded graph ({@link IdBasedGraph#getId}).
-	 * 
-	 * @see de.fuberlin.wiwiss.jenaext.IdBasedGraph#getId(com.hp.hpl.jena.graph.Node)
-	 */
-	final public int getId ( Node n )
-	{
-		return ( (IdBasedGraph) graph ).getId( n );
+		return idGraph.getNodeDictionary();
 	}
 
 	/**
@@ -60,7 +58,7 @@ public class IdBasedNamedGraphImpl extends NamedGraphImpl
 	 */
 	final public boolean contains ( int sId, int pId, int oId )
 	{
-		return ( (IdBasedGraph) graph ).contains( sId, pId, oId );
+		return idGraph.contains( sId, pId, oId );
 	}
 
 	/**
@@ -70,7 +68,7 @@ public class IdBasedNamedGraphImpl extends NamedGraphImpl
 	 */
 	final public Iterator<IdBasedTriple> find ( int sId, int pId, int oId )
 	{
-		return ( (IdBasedGraph) graph ).find( sId, pId, oId );
+		return idGraph.find( sId, pId, oId );
 	}
 
 }

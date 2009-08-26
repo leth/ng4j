@@ -59,7 +59,7 @@ public class IdBasedQueryHandler extends SimpleQueryHandler
 	{
 		IdBasedGraph g = (IdBasedGraph) graph;
 
-		int id = g.getId( n );
+		int id = g.getNodeDictionary().getId( n );
 		if ( id < 0 ) {
 			return false;
 		}

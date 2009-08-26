@@ -118,15 +118,15 @@ public class IdBasedQueryPlan implements BindingQueryPlan
 			throw new IllegalArgumentException( "Our dictionary of query variables does not contain the variable " + tp.getObject().toString() + "." );
 		}
 
-		if (    (!sIsVar && graph.getId(tp.getSubject()) == -1)
-		     || (!pIsVar && graph.getId(tp.getPredicate()) == -1)
-		     || (!oIsVar && graph.getId(tp.getObject()) == -1) ) {
+		if (    (!sIsVar && graph.getNodeDictionary().getId(tp.getSubject()) == -1)
+		     || (!pIsVar && graph.getNodeDictionary().getId(tp.getPredicate()) == -1)
+		     || (!oIsVar && graph.getNodeDictionary().getId(tp.getObject()) == -1) ) {
 			return null;
 		}
 
-		return new IdBasedTriplePattern( sIsVar, (sIsVar) ? varsDict.get(tp.getSubject()).intValue() : graph.getId(tp.getSubject()),
-		                                 pIsVar, (pIsVar) ? varsDict.get(tp.getPredicate()).intValue() : graph.getId(tp.getPredicate()),
-		                                 oIsVar, (oIsVar) ? varsDict.get(tp.getObject()).intValue() : graph.getId(tp.getObject()) );
+		return new IdBasedTriplePattern( sIsVar, (sIsVar) ? varsDict.get(tp.getSubject()).intValue() : graph.getNodeDictionary().getId(tp.getSubject()),
+		                                 pIsVar, (pIsVar) ? varsDict.get(tp.getPredicate()).intValue() : graph.getNodeDictionary().getId(tp.getPredicate()),
+		                                 oIsVar, (oIsVar) ? varsDict.get(tp.getObject()).intValue() : graph.getNodeDictionary().getId(tp.getObject()) );
 	}
 
 
@@ -139,7 +139,7 @@ public class IdBasedQueryPlan implements BindingQueryPlan
 		int size = s.size();
 		Domain d = new Domain( size );
 		for ( int i = 0; i < size; ++i ) {
-			d.setElement( i, graph.getNode(s.getBoundId(i)) );
+			d.setElement( i, graph.getNodeDictionary().getNode(s.getBoundId(i)) );
 		}
 		return d;
 	}

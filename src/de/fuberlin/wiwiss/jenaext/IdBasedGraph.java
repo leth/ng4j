@@ -14,14 +14,9 @@ import com.hp.hpl.jena.graph.Node;
 public interface IdBasedGraph extends Graph
 {
 	/**
-	 * Returns the node identified by the given identifier (or null).
+	 * Returns the node dictionary used by this graph.
 	 */
-	public Node getNode ( int id );
-
-	/**
-	 * Returns the identifier that identifies the given node (or -1).
-	 */
-	public int getId ( Node n );
+	public NodeDictionary getNodeDictionary ();
 
 	/**
 	 * Answer true iff the graph contains a triple matching the triple pattern

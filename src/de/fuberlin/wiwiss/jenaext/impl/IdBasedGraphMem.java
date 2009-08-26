@@ -190,19 +190,11 @@ public class IdBasedGraphMem extends GraphBase
 	// implementation of the IdBasedGraph interface
 
 	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.jenaext.IdBasedGraph#getNode(int)
+	 * @see de.fuberlin.wiwiss.jenaext.IdBasedGraph#getNodeDictionary()
 	 */
-	public Node getNode ( int id )
+	public NodeDictionary getNodeDictionary ()
 	{
-		return nodeDict.getNode( id );
-	}
-
-	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.jenaext.IdBasedGraph#getId(com.hp.hpl.jena.graph.Node)
-	 */
-	public int getId ( Node n )
-	{
-		return nodeDict.getId( n );
+		return nodeDict;
 	}
 
 	/* (non-Javadoc)
