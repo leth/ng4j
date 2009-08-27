@@ -1,3 +1,6 @@
+08/27/09 (Olaf)
+Added a SPARQL query engine for the identifier based graph implementation. This was necessary because query processing was changed with the latest version of the ARQ engine so that query execution performance couldn't benefit from our ID-based BGP query evaluation (see commit from 05/24/09). The new engine is as fast as old ARQ with the ID-based BGP evaluation. Furthermore, the new engine enables a true integration of ID-based query evaluation in the Semantic Web Client Library which is impossible with the ID-based BGP evaluation approach due to the way ARQ executes queries.
+
 08/26/09 (Olaf)
 Changed the API of IdBasedGraph (replaced getId and getNode by getNodeDictionary).
 
