@@ -80,11 +80,18 @@ public class IdBasedQueryEngine extends QueryEngineMain
 	public IdBasedQueryEngine ( Op op, DatasetGraph dataset, Binding input, Context context )
 	{
 		super( op, dataset, input, context );
+		registerOpExecutor();
 	}
 
 	public IdBasedQueryEngine( Query query, DatasetGraph dataset, Binding input, Context context )
 	{
 		super( query, dataset, input, context );
+		registerOpExecutor();
+	}
+
+	private void registerOpExecutor ()
+	{
+		QC.setFactory( context, IdBasedOpExecutor.factory );
 	}
 
 
@@ -103,7 +110,7 @@ public class IdBasedQueryEngine extends QueryEngineMain
 		                                                        context,
 		                                                        dsg.getDefaultGraph(),
 		                                                        dsg,
-		                                                        IdBasedOpExecutor.factory ) ;
+		                                                        QC.getFactory(context) ) ;
 		QueryIterator qIter1 = QueryIterRoot.create( input, execCxt );
 		QueryIterator qIter = QC.execute( op, qIter1, execCxt );
 		qIter = QueryIteratorCheck.check(qIter, execCxt); // check for closed iterators
