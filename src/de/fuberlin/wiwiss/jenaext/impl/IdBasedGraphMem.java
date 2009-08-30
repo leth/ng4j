@@ -34,9 +34,9 @@ public class IdBasedGraphMem extends GraphBase
 {
 	// members
 
-	final protected Index indexS = new Index ();
-	final protected Index indexP = new Index ();
-	final protected Index indexO = new Index ();
+	final protected Index<IdBasedTriple> indexS = new Index<IdBasedTriple> ();
+	final protected Index<IdBasedTriple> indexP = new Index<IdBasedTriple> ();
+	final protected Index<IdBasedTriple> indexO = new Index<IdBasedTriple> ();
 	final protected Index2 indexSP = new Index2 ();
 	final protected Index2 indexSO = new Index2 ();
 	final protected Index2 indexPO = new Index2 ();
@@ -298,7 +298,7 @@ public class IdBasedGraphMem extends GraphBase
 		final protected int reqId;
 		private IdBasedTriple nextTriple;
 
-		public IteratorIndex1 ( Index index, int reqId )
+		public IteratorIndex1 ( Index<IdBasedTriple> index, int reqId )
 		{
 			this.base = index.get( reqId );
 			this.reqId = reqId;
@@ -357,19 +357,19 @@ public class IdBasedGraphMem extends GraphBase
 
 	static class IteratorS extends IteratorIndex1
 	{
-		public IteratorS ( Index index, int reqId ) { super(index,reqId); }
+		public IteratorS ( Index<IdBasedTriple> index, int reqId ) { super(index,reqId); }
 		final protected boolean matches ( IdBasedTriple t ) { return t.s == reqId; }
 	}
 
 	static class IteratorP extends IteratorIndex1
 	{
-		public IteratorP ( Index index, int reqId ) { super(index,reqId); }
+		public IteratorP ( Index<IdBasedTriple> index, int reqId ) { super(index,reqId); }
 		final protected boolean matches ( IdBasedTriple t ) { return t.p == reqId; }
 	}
 
 	static class IteratorO extends IteratorIndex1
 	{
-		public IteratorO ( Index index, int reqId ) { super(index,reqId); }
+		public IteratorO ( Index<IdBasedTriple> index, int reqId ) { super(index,reqId); }
 		final protected boolean matches ( IdBasedTriple t ) { return t.o == reqId; }
 	}
 

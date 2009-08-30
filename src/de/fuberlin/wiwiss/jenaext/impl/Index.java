@@ -6,16 +6,18 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import de.fuberlin.wiwiss.jenaext.EmptyIterator;
-import de.fuberlin.wiwiss.jenaext.IdBasedTriple;
 
 
 /**
- * Indexes ID-based triples ({@link IdBasedTriple} objects) by node identifiers.
- * This class can be used to create S, P, and O indexes of triples.
+ * Indexes objects by identifiers.
+ * The main instantiation of this template is an index of identifier-based
+ * triples ({@link IdBasedTriple} objects) where the identifiers are the
+ * node identifiers. This class can be used to create S, P, and O indexes
+ * of triples.
  *
  * @author Olaf Hartig
  */
-public class Index
+public class Index<T>
 {
 	// members
 
@@ -24,38 +26,38 @@ public class Index
 	static final private int INDEXKEYMASK = ( 1 << KEYMASKSIZE ) - 1;
 
 	/** the hash table */
-	final private List<IdBasedTriple> [] index = new List [INDEXKEYMASK+1];
+	final private List<T> [] index = new List [INDEXKEYMASK+1];
 
 
 	// accessors
 
 	/**
-	 * Indexes the given triple using the given key.
+	 * Indexes the given object using the given key.
 	 */
-	public void put ( int key, IdBasedTriple t )
+	public void put ( int key, T t )
 	{
 		int indexKey = getIndexKey( key );
 		if ( index[indexKey] == null ) {
-			index[indexKey] = new ArrayList<IdBasedTriple> ();
+			index[indexKey] = new ArrayList<T> ();
 		}
 
 		index[indexKey].add( t );
 	}
 
 	/**
-	 * Returns all triples indexed with a key from the class of the given key.
-	 * Attention: the given iterator may provide more triples as requested.
+	 * Returns all objects indexed with a key from the class of the given key.
+	 * Attention: the given iterator may provide more object as requested.
 	 */
-	public Iterator<IdBasedTriple> get ( int key )
+	public Iterator<T> get ( int key )
 	{
 		int indexKey = getIndexKey( key );
-		return ( index[indexKey] == null ) ? EmptyIterator.emptyIdBasedTripleIterator : index[indexKey].iterator();
+		return ( index[indexKey] == null ) ? new EmptyIterator<T>() : index[indexKey].iterator();
 	}
 
 	/**
-	 * Returns all triples in this index.
+	 * Returns all objects in this index.
 	 */
-	public Iterator<IdBasedTriple> getAll ()
+	public Iterator<T> getAll ()
 	{
 		return new AllEntriesIterator();
 	}
@@ -89,13 +91,13 @@ public class Index
 
 
 	/**
-	 * This iterator provides all triples in this index.
+	 * This iterator provides all objects in this index.
 	 */
-	protected class AllEntriesIterator implements Iterator<IdBasedTriple>
+	protected class AllEntriesIterator implements Iterator<T>
 	{
 		private int curBucketIdx = -1;
-		private Iterator<IdBasedTriple> itCurEntry = null;
-		private IdBasedTriple curEntry = null;
+		private Iterator<T> itCurEntry = null;
+		private T curEntry = null;
 
 		public boolean hasNext ()
 		{
@@ -127,13 +129,13 @@ public class Index
 			return ( curEntry != null );
 		}
 
-		public IdBasedTriple next ()
+		public T next ()
 		{
 			if ( ! hasNext() ) {
 				throw new NoSuchElementException();
 			}
 
-			IdBasedTriple t = curEntry;
+			T t = curEntry;
 			curEntry = null;
 			return t;
 		}

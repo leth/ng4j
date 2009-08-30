@@ -12,7 +12,7 @@ import de.fuberlin.wiwiss.jenaext.IdBasedTriple;
  *
  * @author Olaf Hartig
  */
-public class Index2 extends Index
+public class Index2 extends Index<IdBasedTriple>
 {
 	// accessors
 
