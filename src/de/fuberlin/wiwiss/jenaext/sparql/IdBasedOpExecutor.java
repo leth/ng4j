@@ -71,7 +71,7 @@ public class IdBasedOpExecutor extends OpExecutor
 			                                         (IdBasedExecutionContext) execCxt );
 		}
 
-		return new DecodeBindingsIterator( qIt, input, (IdBasedExecutionContext) execCxt );
+		return new DecodeBindingsIterator( qIt, (IdBasedExecutionContext) execCxt );
 	}
 
 

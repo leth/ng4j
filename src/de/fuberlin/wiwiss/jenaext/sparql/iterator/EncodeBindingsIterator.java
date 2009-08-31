@@ -2,6 +2,7 @@ package de.fuberlin.wiwiss.jenaext.sparql.iterator;
 
 import java.util.Iterator;
 
+import com.hp.hpl.jena.sparql.core.Closeable;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.engine.QueryIterator;
 import com.hp.hpl.jena.sparql.engine.binding.Binding;
@@ -19,7 +20,7 @@ import de.fuberlin.wiwiss.jenaext.sparql.VarDictionary;
  *
  * @author Olaf Hartig
  */
-public class EncodeBindingsIterator implements Iterator<IdBasedBinding>
+public class EncodeBindingsIterator implements Iterator<IdBasedBinding>, Closeable
 {
 	// members
 
@@ -68,6 +69,14 @@ public class EncodeBindingsIterator implements Iterator<IdBasedBinding>
 	public void remove ()
 	{
 		throw new UnsupportedOperationException();
+	}
+
+
+	// implementation of the Closable interface
+
+	public void close ()
+	{
+		input.close();
 	}
 
 }

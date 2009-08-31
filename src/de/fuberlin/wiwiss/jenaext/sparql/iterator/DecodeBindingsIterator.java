@@ -2,8 +2,8 @@ package de.fuberlin.wiwiss.jenaext.sparql.iterator;
 
 import java.util.Iterator;
 
-import com.hp.hpl.jena.sparql.engine.QueryIterator;
-import com.hp.hpl.jena.sparql.engine.iterator.QueryIter1;
+import com.hp.hpl.jena.sparql.core.Closeable;
+import com.hp.hpl.jena.sparql.engine.iterator.QueryIter;
 import com.hp.hpl.jena.sparql.engine.binding.Binding;
 import com.hp.hpl.jena.sparql.engine.binding.BindingMap;
 
@@ -20,7 +20,7 @@ import de.fuberlin.wiwiss.jenaext.sparql.VarDictionary;
  *
  * @author Olaf Hartig
  */
-public class DecodeBindingsIterator extends QueryIter1
+public class DecodeBindingsIterator extends QueryIter
 {
 	// members
 
@@ -32,9 +32,9 @@ public class DecodeBindingsIterator extends QueryIter1
 
 	// initialization
 
-	public DecodeBindingsIterator ( Iterator<IdBasedBinding> input, QueryIterator toBeClosed, IdBasedExecutionContext execCxt )
+	public DecodeBindingsIterator ( Iterator<IdBasedBinding> input, IdBasedExecutionContext execCxt )
 	{
-		super( toBeClosed, execCxt );
+		super( execCxt );
 
 		this.input = input;
 		this.varDict = execCxt.getVarDictionary();
@@ -65,12 +65,11 @@ public class DecodeBindingsIterator extends QueryIter1
 		return curOutput;
 	}
 
-
-	// implementation of the QueryIter1 abstract methods
-
-	protected void closeSubIterator ()
+	protected void closeIterator ()
 	{
-		// nothing to close here
+		if ( input instanceof Closeable ) {
+			( (Closeable) input ).close();
+		}
 	}
 
 }

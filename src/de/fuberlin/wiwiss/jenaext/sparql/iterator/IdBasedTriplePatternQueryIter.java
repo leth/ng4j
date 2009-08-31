@@ -3,6 +3,8 @@ package de.fuberlin.wiwiss.jenaext.sparql.iterator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import com.hp.hpl.jena.sparql.core.Closeable;
+
 import de.fuberlin.wiwiss.jenaext.IdBasedGraph;
 import de.fuberlin.wiwiss.jenaext.IdBasedTriple;
 import de.fuberlin.wiwiss.jenaext.impl.IdBasedQueryPlan.IdBasedTriplePattern;
@@ -17,7 +19,7 @@ import de.fuberlin.wiwiss.jenaext.sparql.IdBasedExecutionContext;
  *
  * @author Olaf Hartig
  */
-public class IdBasedTriplePatternQueryIter implements Iterator<IdBasedBinding>
+public class IdBasedTriplePatternQueryIter implements Iterator<IdBasedBinding>, Closeable
 {
 	// members
 
@@ -109,6 +111,16 @@ public class IdBasedTriplePatternQueryIter implements Iterator<IdBasedBinding>
 	public void remove ()
 	{
 		throw new UnsupportedOperationException();
+	}
+
+
+	// implementation of the Closable interface
+
+	public void close ()
+	{
+		if ( input instanceof Closeable ) {
+			( (Closeable) input ).close();
+		}
 	}
 
 
