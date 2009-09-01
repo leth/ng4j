@@ -24,6 +24,9 @@ import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.graph.TripleMatch;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
+import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
+import de.fuberlin.wiwiss.ng4j.NamedGraphSetFactory;
+import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
 import de.fuberlin.wiwiss.ng4j.semwebclient.urisearch.URISearchListener;
 import de.fuberlin.wiwiss.ng4j.semwebclient.urisearch.URISearchResult;
@@ -458,7 +461,11 @@ public class SemanticWebClient extends de.fuberlin.wiwiss.ng4j.impl.idbased.IdBa
 
 	private DereferencingTaskQueue getDerefQueue() {
 		if (this.derefQueue == null) {
-			this.derefQueue = new DereferencingTaskQueue( config.getMaxThreads(),
+			NamedGraphSetFactory ngsFactory = new NamedGraphSetFactory() {
+				public NamedGraphSet create () { return new NamedGraphSetImpl(); }
+			};
+			this.derefQueue = new DereferencingTaskQueue( ngsFactory,
+			                                              config.getMaxThreads(),
 			                                              config.getMaxFileSize(),
 			                                              config.getEnableGRDDL(),
 			                                              config.getEnableRDFa(),

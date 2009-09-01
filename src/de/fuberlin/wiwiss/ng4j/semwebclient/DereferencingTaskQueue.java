@@ -14,6 +14,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import de.fuberlin.wiwiss.ng4j.NamedGraphSetFactory;
 import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.Task;
 import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.TaskExecutorBase;
 import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.TaskQueueBase;
@@ -33,6 +34,9 @@ public class DereferencingTaskQueue extends TaskQueueBase
                                     implements DereferencingListener
 {
 	static private Log log = LogFactory.getLog( DereferencingTaskQueue.class );
+
+	final protected NamedGraphSetFactory ngsFactory;
+
 	private int maxfilesize;
         private boolean enablegrddl;
 	final private boolean enableRDFa;
@@ -47,12 +51,13 @@ public class DereferencingTaskQueue extends TaskQueueBase
 	 * Old constructor.
 	 * @deprecated Please use the other constructor instead.
 	 */
-        public DereferencingTaskQueue(int maxThreads,int maxfilesize, boolean enablegrddl) {
-		this( maxThreads, maxfilesize, enablegrddl, false, 0, 0 );
+        public DereferencingTaskQueue(NamedGraphSetFactory ngsFactory, int maxThreads,int maxfilesize, boolean enablegrddl) {
+		this( ngsFactory, maxThreads, maxfilesize, enablegrddl, false, 0, 0 );
 	}
 
-	public DereferencingTaskQueue(int maxThreads,int maxfilesize, boolean enablegrddl, boolean enableRDFa, int connectTimeout, int readTimeout) {
+	public DereferencingTaskQueue(NamedGraphSetFactory ngsFactory, int maxThreads,int maxfilesize, boolean enablegrddl, boolean enableRDFa, int connectTimeout, int readTimeout) {
 		super( maxThreads );
+		this.ngsFactory = ngsFactory;
 		this.maxfilesize = maxfilesize;
 		this.enablegrddl = enablegrddl;
 		this.connectTimeout = connectTimeout;
@@ -82,7 +87,7 @@ public class DereferencingTaskQueue extends TaskQueueBase
 	// implementation of the TaskQueueBase interface
 
 	protected TaskExecutorBase createThread () {
-		DereferencerThread thread = new DereferencerThread();
+		DereferencerThread thread = new DereferencerThread( ngsFactory );
 		thread.setMaxfilesize(this.maxfilesize);
 		thread.setEnableGrddl(this.enablegrddl);
 		thread.setConnectTimeout(this.connectTimeout);

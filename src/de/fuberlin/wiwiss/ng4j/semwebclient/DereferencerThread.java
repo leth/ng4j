@@ -29,6 +29,7 @@ import com.hp.hpl.jena.rdf.model.impl.RDFDefaultErrorHandler;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
+import de.fuberlin.wiwiss.ng4j.NamedGraphSetFactory;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphImpl;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.Task;
@@ -46,6 +47,7 @@ import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.TaskExecutorBase;
 public class DereferencerThread extends TaskExecutorBase {
 	private HttpURLConnection connection;
 
+	final protected NamedGraphSetFactory ngsFactory;
 	private NamedGraphSet tempNgs = null;
 	
 	private int maxfilesize = -1;
@@ -61,7 +63,8 @@ public class DereferencerThread extends TaskExecutorBase {
 
 	private Log log = LogFactory.getLog(DereferencerThread.class);
 
-	public DereferencerThread() {
+	public DereferencerThread( NamedGraphSetFactory ngsFactory ) {
+		this.ngsFactory = ngsFactory;
 		// Lower priority a little bit
 		setPriority(getPriority() - 1);
 	}
@@ -149,7 +152,7 @@ public class DereferencerThread extends TaskExecutorBase {
 
 	private DereferencingResult executeTask(DereferencingTask task) {
 		DereferencingResult result = null;
-		this.tempNgs = new NamedGraphSetImpl();
+		this.tempNgs = ngsFactory.create();
 		try {
 			url = new URL(task.getURI());
 		} catch (MalformedURLException ex) {
