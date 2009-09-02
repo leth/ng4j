@@ -52,6 +52,13 @@ abstract public class TaskExecutorBase extends Thread {
 	}
 
 	/**
+	 * Returns the task currently executed by this thread.
+	 */
+	final protected Task getTask () {
+		return currentTask;
+	}
+
+	/**
 	 * Returns true if this thread has been stopped already.
 	 */
 	final public boolean isStopped () {
