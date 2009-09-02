@@ -3,7 +3,22 @@
   <groupId>de.fuberlin.wiwss.ng4j</groupId>
   <artifactId>ng4j</artifactId>
   <!-- FIXME Change the version here.  
-  Except for the release, it should be a snapshot, like 0.9.3-SNAPSHOT -->
+  Except for the release, it should be a snapshot, like 0.9.3-SNAPSHOT 
+For example: 
+ng4j-0.9.2-SNAPSHOT
+ng4j-0.9.2-RC1
+ng4j-0.9.2-RC2
+ng4j-0.9.2
+ng4j-0.9.3-SNAPSHOT
+ng4j-0.9.3-RC1
+ng4j-0.9.3-RC2
+ng4j-0.9.3
+ng4j-0.9.4-SNAPSHOT
+ng4j-0.9.4-RC1
+ng4j-0.9.4-RC2
+ng4j-0.9.4
+
+  -->
   <version>0.9.3-SNAPSHOT</version>
   <name>NG4J</name>
   <description>
@@ -66,8 +81,19 @@ http://sourceforge.net/tracker/?group_id=118754
       <timezone>0</timezone>
     </developer>
     <developer>
+      <id>jenpc</id>
+      <name>Jen</name>
+      <email>jenpc AT users.sourceforge.net</email>
+      <organization>SF</organization>
+      <url>http://sourceforge.net/users/jenpc/</url>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
       <id>timp</id>
-      <name>tim Pizey</name>
+      <name>Tim Pizey</name>
       <email>timp AT users.sourceforge.net</email>
       <organization>SF</organization>
       <url>http://sourceforge.net/users/timp/</url>
@@ -234,8 +260,10 @@ http://sourceforge.net/tracker/?group_id=118754
    <dependency>
       <groupId>com.hp.hpl.jena</groupId>
       <artifactId>jenatest</artifactId>
+      <!--artifactId>jena</artifactId-->
       <version>2.6.0</version>
-      <!-- scope>test</scope -->
+      <!--classifier>tests</classifier-->
+      <!--scope>test</scope-->
     </dependency>
     
     <dependency>
