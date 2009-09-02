@@ -44,6 +44,20 @@ public class IdBasedNamedGraphSetImpl extends NamedGraphSetImpl
 		this.nodeDict = nodeDict;
 	}
 
+	/**
+	 * Creates a set of identifier-based named graphs by copying the given set.
+	 * This constructor copies the given set but it does not create a new
+	 * {@link IdBasedNamedGraph} object for each named graph. Instead, it
+	 * simply copies the references to the graphs as given in the given set.
+	 */
+	public IdBasedNamedGraphSetImpl ( IdBasedNamedGraphSetImpl template )
+	{
+		nodeDict = template.nodeDict;
+		for ( NamedGraph g : template.graphs) {
+			addGraph( g );
+		}
+	}
+
 
 	// redefinitions of NamedGraphSetImpl methods
 
