@@ -1,4 +1,4 @@
-// $Id: NamedGraphSet.java,v 1.13 2009/07/30 11:37:55 timp Exp $
+// $Id: NamedGraphSet.java,v 1.14 2009/09/04 10:07:30 timp Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.io.InputStream;
@@ -224,7 +224,7 @@ public interface NamedGraphSet {
 	 * <tt>Add</tt> operations on the returned model are all written
 	 * to the default graph.
 	 * <p>
-	 * <tt>Read</tt> and <tt>write</tt> operations one the returned
+	 * <tt>Read</tt> and <tt>write</tt> operations on the returned
 	 * model have the behaviour of {@link #read(String, String)} and
 	 * {@link #write(OutputStream, String, String)}.
 	 * <p>
