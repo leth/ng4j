@@ -482,6 +482,11 @@ public class SemanticWebClient extends de.fuberlin.wiwiss.ng4j.impl.idbased.IdBa
 		}
 		return searchQueue;
 	}
+
+	public String toString ()
+	{
+		return "SemanticWebClient (queried dataset: SemanticWebClient with " + countQuads() + " quads in " + countGraphs() + " graphs)";
+	}
 }
 
 /*
