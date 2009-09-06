@@ -197,6 +197,24 @@ abstract public class TaskQueueBase extends Thread {
 		}
 	}
 
+	public String toString ()
+	{
+		String s = "Task queue '" + getName() + "' (type: " + getClass().getName();
+
+		synchronized ( tasks ) {
+			s += ", # queued tasks: " + String.valueOf( tasks.size() );
+		}
+		synchronized ( busyThreads ) {
+			s += ", # busy threads: " + String.valueOf( busyThreads.size() );
+		}
+
+		synchronized ( freeThreads ) {
+			s += ", # free threads: " + String.valueOf( freeThreads.size() );
+		}
+
+		return s + " )";
+	}
+
 }
 
 /*

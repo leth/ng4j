@@ -97,6 +97,11 @@ public class IdBasedNamedGraphSetImpl extends NamedGraphSetImpl
 		return unionGraph;
 	}
 
+	public String toString ()
+	{
+		return "IdBasedNamedGraphSetImpl with " + countQuads() + " quads in " + countGraphs() + " graphs";
+	}
+
 }
 
 /*
