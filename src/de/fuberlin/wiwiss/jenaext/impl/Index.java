@@ -45,6 +45,16 @@ public class Index<T>
 	}
 
 	/**
+	 * Clears the index completely.
+	 */
+	public void clear ()
+	{
+		for ( int i = index.length - 1; i >= 0; --i ) {
+			index[i] = null;
+		}
+	}
+
+	/**
 	 * Returns all objects indexed with a key from the class of the given key.
 	 * Attention: the given iterator may provide more object as requested.
 	 */
