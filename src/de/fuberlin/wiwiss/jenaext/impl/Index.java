@@ -22,11 +22,25 @@ public class Index<T>
 	// members
 
 	/** Bitmask that selects the bits of identifiers used for hash keys. */
-	static final private int KEYMASKSIZE = 4;
-	static final private int INDEXKEYMASK = ( 1 << KEYMASKSIZE ) - 1;
+	static final private int DEFAULT_KEYMASKSIZE = 4;
+	final private int indexKeyMask;
 
 	/** the hash table */
-	final private List<T> [] index = new List [INDEXKEYMASK+1];
+	final private List<T> [] index;
+
+
+	// initialization
+
+	public Index ()
+	{
+		this( DEFAULT_KEYMASKSIZE );
+	}
+
+	public Index ( int keyMaskSize )
+	{
+		indexKeyMask = ( 1 << keyMaskSize ) - 1;
+		index = new List [indexKeyMask+1];
+	}
 
 
 	// accessors
@@ -94,9 +108,9 @@ public class Index<T>
 	/**
 	 * Calculates the hash key from the given key.
 	 */
-	static protected int getIndexKey ( int key )
+	final protected int getIndexKey ( int key )
 	{
-		return key & INDEXKEYMASK;
+		return key & indexKeyMask;
 	}
 
 
@@ -117,15 +131,15 @@ public class Index<T>
 
 			if ( itCurEntry == null || ! itCurEntry.hasNext() )
 			{
-				if ( curBucketIdx == INDEXKEYMASK ) {
+				if ( curBucketIdx == indexKeyMask ) {
 					return false;
 				}
 
 				do {
 					curBucketIdx++;
-				} while ( curBucketIdx <= INDEXKEYMASK && index[curBucketIdx] == null );
+				} while ( curBucketIdx <= indexKeyMask && index[curBucketIdx] == null );
 
-				if ( curBucketIdx > INDEXKEYMASK ) {
+				if ( curBucketIdx > indexKeyMask ) {
 					return false;
 				}
 
