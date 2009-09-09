@@ -64,9 +64,8 @@ public class IdBasedOpExecutor extends OpExecutor
 		NodeDictionary nodeDict = ( (IdBasedGraph) execCxt.getDataset().getDefaultGraph() ).getNodeDictionary();
 
 		Iterator<IdBasedBinding> qIt = new EncodeBindingsIterator( input, (IdBasedExecutionContext) execCxt );
-		Iterator<Triple> itTriple = opBGP.getPattern().iterator();
-		while ( itTriple.hasNext() ) {
-			qIt = new IdBasedTriplePatternQueryIter( encode(itTriple.next(),varDict,nodeDict),
+		for ( Triple t : opBGP.getPattern().getList() ) {
+			qIt = new IdBasedTriplePatternQueryIter( encode(t,varDict,nodeDict),
 			                                         qIt,
 			                                         (IdBasedExecutionContext) execCxt );
 		}
