@@ -197,12 +197,12 @@ abstract public class TaskQueueBase extends Thread {
 		}
 	}
 
-	public String toString ()
+	public String getStatisticsString ()
 	{
-		String s = "Task queue '" + getName() + "' (type: " + getClass().getName();
+		String s = "";
 
 		synchronized ( tasks ) {
-			s += ", # queued tasks: " + String.valueOf( tasks.size() );
+			s += "# queued tasks: " + String.valueOf( tasks.size() );
 		}
 		synchronized ( busyThreads ) {
 			s += ", # busy threads: " + String.valueOf( busyThreads.size() );
@@ -212,7 +212,12 @@ abstract public class TaskQueueBase extends Thread {
 			s += ", # free threads: " + String.valueOf( freeThreads.size() );
 		}
 
-		return s + " )";
+		return s;
+	}
+
+	public String toString ()
+	{
+		return "Task queue '" + getName() + "' (type: " + getClass().getName() + ", " + getStatisticsString() + " )";
 	}
 
 }
