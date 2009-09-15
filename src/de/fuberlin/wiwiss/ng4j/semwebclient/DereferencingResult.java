@@ -86,4 +86,25 @@ public class DereferencingResult {
 	public String getRedirectURI() {
 		return this.redirectURI;
 	}
+
+	public String toString () {
+		String s = "DereferencingResult for URI <" + task.getURI() + ">: ";
+		if ( resultCode == STATUS_OK ) {
+			s += "STATUS_OK (" + String.valueOf(resultData.countGraphs()) + " graphs)";
+		}
+		else if ( resultCode == STATUS_REDIRECTED ) {
+			s += "STATUS_REDIRECTED (redirection target: " + redirectURI + ")";
+		}
+		else if ( resultCode == STATUS_NEW_URIS_FOUND ) {
+			s += "STATUS_NEW_URIS_FOUND";
+		}
+		else if ( resultCode == STATUS_REDIRECTED ) {
+			s += "failure (result code: " + String.valueOf(resultCode);
+			if ( resultException != null ) {
+				s += ", " + resultException.getClass().getName() + ": " + resultException.getMessage();
+			}
+			s += ")";
+		}
+		return s;
+	}
 }
