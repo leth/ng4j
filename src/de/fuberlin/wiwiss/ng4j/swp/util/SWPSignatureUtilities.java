@@ -60,9 +60,9 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
  * 
  *
  * Last commit info    :   
- * $Author: timp $
- * $Date: 2009/07/30 12:40:14 $
- * $Revision: 1.19 $
+ * $Author: jenpc $
+ * $Date: 2009/09/21 17:51:00 $
+ * $Revision: 1.20 $
  * 
  * 
  * SWPSignatureUtilities
@@ -223,7 +223,7 @@ public class SWPSignatureUtilities
         digest.doFinal( resBuf, 0 );
     
         res = Hex.encode( resBuf );
-        return new String(Base64.encodeBase64Chunked( res )) ;
+        return new String(Base64.encodeBase64( res )) ;
     }
     
     /**
@@ -423,7 +423,7 @@ public class SWPSignatureUtilities
         {
             //BASE64Encoder encoder = new BASE64Encoder();
             //signature = encoder.encodeBuffer( sig.sign() );
-            signature = new String( Base64.encodeBase64Chunked( sig.sign() ) );
+            signature = new String( Base64.encodeBase64( sig.sign() ) );
         } 
         catch ( SignatureException e2 ) 
         {
@@ -469,7 +469,7 @@ public class SWPSignatureUtilities
     	{
     		//BASE64Encoder encoder = new BASE64Encoder();
     		//signature = encoder.encodeBuffer( sig.sign() );
-    		signature = new String( Base64.encodeBase64Chunked( sig.sign() ) );
+    		signature = new String( Base64.encodeBase64( sig.sign() ) );
     	} 
     	catch ( SignatureException e2 ) 
     	{
