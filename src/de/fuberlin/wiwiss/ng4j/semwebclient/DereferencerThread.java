@@ -31,7 +31,6 @@ import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSetFactory;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphImpl;
-import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.Task;
 import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.TaskExecutorBase;
 
@@ -72,7 +71,7 @@ public class DereferencerThread extends TaskExecutorBase {
 
 	// implementation of the TaskExecutorBase interface
 
-	public Class getTaskType () {
+	public Class<?> getTaskType () {
 		return DereferencingTask.class;
 	}
 
