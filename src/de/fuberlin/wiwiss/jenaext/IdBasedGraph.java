@@ -3,7 +3,6 @@ package de.fuberlin.wiwiss.jenaext;
 import java.util.Iterator;
 
 import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
 
 
 /**
