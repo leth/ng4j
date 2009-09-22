@@ -1,4 +1,4 @@
-// $Id: TriGReader.java,v 1.4 2009/02/20 08:09:52 hartig Exp $
+// $Id: TriGReader.java,v 1.5 2009/09/22 16:24:51 timp Exp $
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import java.io.InputStream;
@@ -41,7 +41,8 @@ public class TriGReader implements NamedGraphSetReader {
 			read(namedGraphSet, new InputStreamReader(source, "UTF-8"), baseURI,
 					defaultGraphName);
 		} catch (UnsupportedEncodingException ex) {
-			// UTF-8 is always supported
+			// UTF-8 is always supported - so this should never happen
+		  throw new JenaException(ex);
 		}
 	}
 }
