@@ -1,4 +1,4 @@
-// $Id: NamedGraphSet.java,v 1.14 2009/09/04 10:07:30 timp Exp $
+// $Id: NamedGraphSet.java,v 1.15 2009/10/05 09:34:57 timp Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.io.InputStream;
@@ -38,7 +38,7 @@ import com.hp.hpl.jena.graph.Node;
  * @author Chris Bizer
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
-public interface NamedGraphSet {
+public interface NamedGraphSet extends Iterable<NamedGraph> {
 
 //	=== Graph level methods ========================	
 	

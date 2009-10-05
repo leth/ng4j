@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetIO.java,v 1.6 2009/02/20 08:09:51 hartig Exp $
+// $Id: NamedGraphSetIO.java,v 1.7 2009/10/05 09:34:57 timp Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import java.io.InputStream;
@@ -20,7 +20,7 @@ import de.fuberlin.wiwiss.ng4j.trix.TriXWriter;
  * 
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
-public abstract class NamedGraphSetIO implements NamedGraphSet {
+public abstract class NamedGraphSetIO extends NamedGraphSetIterable implements NamedGraphSet {
 
 	public void read(InputStream source, String lang, String baseURI) {
 		GraphReaderService service = new GraphReaderService();
