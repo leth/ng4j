@@ -1,10 +1,5 @@
 package de.fuberlin.wiwiss.jenaext.sparql;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import com.hp.hpl.jena.graph.Node;
-
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.sparql.algebra.OpVars;
@@ -98,7 +93,7 @@ public class IdBasedQueryEngine extends QueryEngineMain
 	// operations
 
 	@Override
-	public QueryIterator eval ( Op op, DatasetGraph dsg, Binding input, Context context )
+	public QueryIterator eval ( Op op, DatasetGraph dsg, Binding input, Context contextP )
 	{
 		if ( SUBSTITUE && ! input.isEmpty() ) {
 			op = Substitute.substitute( op, input );
@@ -107,10 +102,10 @@ public class IdBasedQueryEngine extends QueryEngineMain
 		VarDictionary varDict = initializeVarDictionary( op );
 
 		ExecutionContext execCxt = new IdBasedExecutionContext( varDict,
-		                                                        context,
+		                                                        contextP,
 		                                                        dsg.getDefaultGraph(),
 		                                                        dsg,
-		                                                        QC.getFactory(context) ) ;
+		                                                        QC.getFactory(contextP) ) ;
 		QueryIterator qIter1 = QueryIterRoot.create( input, execCxt );
 		QueryIterator qIter = QC.execute( op, qIter1, execCxt );
 		qIter = QueryIteratorCheck.check(qIter, execCxt); // check for closed iterators
