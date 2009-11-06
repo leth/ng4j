@@ -1,7 +1,5 @@
 package de.fuberlin.wiwiss.jenaext.sparql;
 
-import java.util.Iterator;
-
 
 /**
  * An identifier based binding is a mapping from query variables that
