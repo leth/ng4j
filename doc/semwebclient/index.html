@@ -595,7 +595,7 @@ import de.fuberlin.wiwiss.ng4j.semwebclient.SemanticWebClient;
 
 // Create a new Semantic Web client.
 SemanticWebClient semweb = new SemanticWebClient(); <br /> 
-// Specify the query.<br />String queryString = <br />"PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt; " + <br />"PREFIX doap: &lt;http://usefulinc.com/ns/doap#&gt; " +   <br />"PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; " + <br />"SELECT DISTINCT ?name ?mbox ?furtherProjects " + <br />"WHERE {&lt;http://dig.csail.mit.edu/2005/ajar/ajaw/data#Tabulator&gt; doap:developer ?dev . " + <br />"?dev foaf:name ?name OPTIONAL {?dev foaf:mbox ?mbox}" + <br />"OPTIONAL {?dev doap:Project ?proj . ?proj foaf:name ?furtherProjects}}"; <br /> 
+// Specify the query.<br />String queryString = <br />"PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt; " + <br />"SELECT DISTINCT ?i WHERE {" + <br />"&lt;http://www.w3.org/People/Berners-Lee/card#i&gt; foaf:knows ?p . " + <br />"?p foaf:interest ?i ." + <br />"}"; <br /> 
 // Execute the query and obtain results. <br />Query query = QueryFactory.create(queryString); 
 QueryExecution qe = QueryExecutionFactory.create(query, semweb.asJenaModel("default")); 
 ResultSet results = qe.execSelect(); <br />
@@ -799,7 +799,7 @@ searching for URIs increases the query execution time significantly.</p>
 <p>Good starting points for playing around with the library is interlinked data published by the Tabulator project (<a href="http://dig.csail.mit.edu/2005/ajar/ajaw/data">http://dig.csail.mit.edu/2005/ajar/ajaw/data</a>) and the D2R demo server running at <a href="http://www3.wiwiss.fu-berlin.de:2020/">http://www3.wiwiss.fu-berlin.de:2020/</a>. If you find other interesting chunks of interlinked data on the Semantic Web that can be queried using the library, please tell us. </p>
 <p><a href="http://sourceforge.net/projects/d2rq-map/"><img src="http://sourceforge.net/sflogo.php?group_id=111002&amp;type=5" alt="SourceForge Logo" /></a></p>
 <div id="footer">
-  <small>$Id: index.html,v 1.15 2009/08/14 07:23:43 hartig Exp $</small>
+  <small>$Id: index.html,v 1.16 2009/11/18 08:32:33 hartig Exp $</small>
 </div>
 </div>
 
