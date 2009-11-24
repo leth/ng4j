@@ -12,6 +12,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
@@ -78,7 +80,6 @@ public class DereferencerThread extends TaskExecutorBase {
 
 	protected void executeTask ( Task task ) {
 		DereferencingResult result = executeTask( (DereferencingTask) task );
-
 		// deliver the result of the task to the listeners
 		synchronized ( this ) {
 			if ( isStopped() )
@@ -131,8 +132,8 @@ public class DereferencerThread extends TaskExecutorBase {
 	 * @return
 	 */
 	private DereferencingResult createErrorResult(DereferencingTask task, int errorCode,
-			Exception exception) {
-		return new DereferencingResult(task, errorCode, null, exception);
+			Exception exception, Map<String,List<String>> headerFields ) {
+		return new DereferencingResult(task, errorCode, null, exception, headerFields );
 	}
 
 	/**
@@ -146,7 +147,7 @@ public class DereferencerThread extends TaskExecutorBase {
 	 * @return
 	 */
 	private DereferencingResult createNewUrisResult(DereferencingTask task, int errorCode, ArrayList<String> urilist) {
-		return new DereferencingResult(task, errorCode, urilist);
+		return new DereferencingResult(task, errorCode, urilist, connection.getHeaderFields());
 	}	
 
 	private DereferencingResult executeTask(DereferencingTask task) {
@@ -155,7 +156,7 @@ public class DereferencerThread extends TaskExecutorBase {
 		try {
 			url = new URL(task.getURI());
 		} catch (MalformedURLException ex) {
-			return createErrorResult( task, DereferencingResult.STATUS_MALFORMED_URL, ex );
+			return createErrorResult( task, DereferencingResult.STATUS_MALFORMED_URL, ex, null );
 		}
 
 		try {
@@ -169,10 +170,14 @@ public class DereferencerThread extends TaskExecutorBase {
 			con.setConnectTimeout( connectTimeout );
 			con.setReadTimeout( readTimeout );
 
+			if ( task.conditional ) {
+				con.setIfModifiedSince( task.ifModifiedSince );
+			}
+
 			connection = (HttpURLConnection) con;
 		} catch ( IOException e ) {
 			log.debug( "Creating a connection to <" + url.toString() + "> caused a " + e.getClass().getName() + ": " + e.getMessage(), e );
-			return createErrorResult( task, DereferencingResult.STATUS_UNABLE_TO_CONNECT, e );
+			return createErrorResult( task, DereferencingResult.STATUS_UNABLE_TO_CONNECT, e, null );
 		}
 
 		connection.setInstanceFollowRedirects(false);
@@ -192,13 +197,13 @@ public class DereferencerThread extends TaskExecutorBase {
 			connection.connect();
 		} catch ( SocketTimeoutException e ) {
 			log.debug( "Connecting to <" + url.toString() + "> caused a " + e.getClass().getName() + ": " + e.getMessage() );
-			return createErrorResult( task, DereferencingResult.STATUS_TIMEOUT, e );
+			return createErrorResult( task, DereferencingResult.STATUS_TIMEOUT, e, null );
 		} catch ( IOException e ) {
 			log.debug( "Connecting to <" + url.toString() + "> caused a " + e.getClass().getName() + ": " + e.getMessage(), e );
-			return createErrorResult( task, DereferencingResult.STATUS_UNABLE_TO_CONNECT, e );
+			return createErrorResult( task, DereferencingResult.STATUS_UNABLE_TO_CONNECT, e, null );
 		} catch ( RuntimeException e ) {
 			log.debug( "Connecting to <" + url.toString() + "> caused a " + e.getClass().getName() + ": " + e.getMessage() );
-			return createErrorResult( task, DereferencingResult.STATUS_UNABLE_TO_CONNECT, e );
+			return createErrorResult( task, DereferencingResult.STATUS_UNABLE_TO_CONNECT, e, null );
 		}
 
 		try {
@@ -209,19 +214,21 @@ public class DereferencerThread extends TaskExecutorBase {
 			     || (this.connection.getResponseCode() == 302)
 			     || (this.connection.getResponseCode() == 303) ) {
 				String redirectURI = this.connection.getHeaderField("Location");
-				return new DereferencingResult(task, DereferencingResult.STATUS_REDIRECTED, redirectURI);
+				return new DereferencingResult(task, DereferencingResult.STATUS_REDIRECTED, redirectURI, connection.getHeaderFields());
 			}
 
 			if ( this.connection.getResponseCode() != 200 ) {
 				return createErrorResult( task,
 				                          DereferencingResult.STATUS_UNABLE_TO_CONNECT,
-				                          new Exception("Unexpected response code ("+connection.getResponseCode()+")") );
+				                          new Exception("Unexpected response code ("+connection.getResponseCode()+")"),
+				                          connection.getHeaderFields() );
 			}
 
 			if ( connection.getContentType() == null ) {
 				return createErrorResult( task,
 				                          DereferencingResult.STATUS_UNABLE_TO_CONNECT,
-				                          new Exception("Unknown content type") );
+				                          new Exception("Unknown content type"),
+				                          connection.getHeaderFields() );
 			}
 
 			String lang = setLang();
@@ -229,17 +236,21 @@ public class DereferencerThread extends TaskExecutorBase {
 				result = this.parseRdf(task, lang);
 			} catch (Exception ex) { // parse error
 				this.log.debug(ex.getMessage());
-				return createErrorResult(
-						task, DereferencingResult.STATUS_PARSING_FAILED, ex);
+				return createErrorResult( task,
+				                          DereferencingResult.STATUS_PARSING_FAILED,
+				                          ex,
+				                          connection.getHeaderFields() );
 			}
 			// }
 		} catch ( SocketTimeoutException e ) {
 			log.debug( "Accessing the connection to <" + url.toString() + "> caused a " + e.getClass().getName() + ": " + e.getMessage() );
-			return createErrorResult( task, DereferencingResult.STATUS_TIMEOUT, e );
+			return createErrorResult( task, DereferencingResult.STATUS_TIMEOUT, e, null );
 		} catch (IOException e) {
 			log.debug( "Accessing the connection to <" + url.toString() + "> caused a " + e.getClass().getName() + ": " + e.getMessage(), e );
-			return createErrorResult(task, DereferencingResult.STATUS_UNABLE_TO_CONNECT,
-					e);
+			return createErrorResult( task,
+			                          DereferencingResult.STATUS_UNABLE_TO_CONNECT,
+			                          e,
+			                          null );
 		}
 		//return new DereferencingResult(this.task,
 		//		DereferencingResult.STATUS_OK, this.tempNgs, null);
@@ -270,7 +281,7 @@ public class DereferencerThread extends TaskExecutorBase {
 
 			    if (this.tempNgs.countGraphs() > 0)
 				return new DereferencingResult(task,
-							       DereferencingResult.STATUS_OK, this.tempNgs, null);
+							       DereferencingResult.STATUS_OK, this.tempNgs, null, connection.getHeaderFields());
 			}
 
 			// parse the HTML for references to alternative representations
@@ -331,7 +342,8 @@ public class DereferencerThread extends TaskExecutorBase {
 					return new DereferencingResult( task,
 					                                DereferencingResult.STATUS_OK,
 					                                this.tempNgs,
-					                                null );
+					                                null,
+					                                connection.getHeaderFields() );
 				}
 				else {
 					log.debug( "No RDFa in HTML from <" + url.toString() + ">");
@@ -347,8 +359,11 @@ public class DereferencerThread extends TaskExecutorBase {
 		LimitedInputStream lis = new LimitedInputStream(this.connection.getInputStream(),this.maxfilesize);
 		this.tempNgs.read(lis, lang, this.url
 				.toString());
-		return new DereferencingResult(task,
-						DereferencingResult.STATUS_OK, this.tempNgs, null);
+		return new DereferencingResult( task,
+		                                DereferencingResult.STATUS_OK,
+		                                this.tempNgs,
+		                                null, // no exception
+		                                connection.getHeaderFields() );
 	}
 
 	/**

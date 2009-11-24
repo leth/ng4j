@@ -17,10 +17,21 @@ public class DereferencingTask implements Task {
 	private List<DereferencingListener> listeners = new Vector<DereferencingListener> ();
 	private String uri;
 	private int step;
+	final public boolean conditional;
+	final public long ifModifiedSince;
 	
 	public DereferencingTask(String uri, int step) {
 		this.step = step;
 		this.uri  = uri;
+		conditional = false;
+		ifModifiedSince = 0L;
+	}
+	
+	public DereferencingTask(String uri, int step, long ifModifiedSince) {
+		this.step = step;
+		this.uri  = uri;
+		this.ifModifiedSince = ifModifiedSince;
+		conditional = ( ifModifiedSince > 0L );
 	}
 
 
@@ -77,6 +88,12 @@ public class DereferencingTask implements Task {
 			it.next().dereferenced( result );
 		}
 		tmp.clear();
+	}
+
+
+	public String toString ()
+	{
+		return super.toString() + " for URI <" + uri + ">";
 	}
 
 }

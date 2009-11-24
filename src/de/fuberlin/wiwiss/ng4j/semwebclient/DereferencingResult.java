@@ -1,6 +1,7 @@
 package de.fuberlin.wiwiss.ng4j.semwebclient;
 
 import java.util.List;
+import java.util.Map;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 
@@ -26,26 +27,31 @@ public class DereferencingResult {
 	private Exception resultException;
 	private List<String> urilist = null;
 	private String redirectURI = null;
+	private Map<String,List<String>> headerFields;
 
 	public DereferencingResult(DereferencingTask task, int resultCode, 
-			NamedGraphSet resultData, Exception resultException) {
+			NamedGraphSet resultData, Exception resultException,
+			Map<String,List<String>> headerFields ) {
 		this.task = task;
 		this.resultCode = resultCode;
 		this.resultData = resultData;
 		this.resultException = resultException;
+		this.headerFields = headerFields;
 	}
 	
-	public DereferencingResult(DereferencingTask task, int resultCode, List<String> urilist) {
+	public DereferencingResult(DereferencingTask task, int resultCode, List<String> urilist, Map<String,List<String>> headerFields) {
 		this.task = task;
 		this.resultCode = resultCode;
 		this.urilist = urilist;
+		this.headerFields = headerFields;
 		
 	}
 	
-	public DereferencingResult(DereferencingTask task, int resultCode, String redirectURI) {
+	public DereferencingResult(DereferencingTask task, int resultCode, String redirectURI, Map<String,List<String>> headerFields) {
 		this.task = task;
 		this.resultCode = resultCode;
 		this.redirectURI = redirectURI;
+		this.headerFields = headerFields;
 	}
 
 	public DereferencingTask getTask() {
@@ -85,6 +91,10 @@ public class DereferencingResult {
 	
 	public String getRedirectURI() {
 		return this.redirectURI;
+	}
+
+	public Map<String,List<String>> getHeaderFields() {
+		return headerFields;
 	}
 
 	public String toString () {
