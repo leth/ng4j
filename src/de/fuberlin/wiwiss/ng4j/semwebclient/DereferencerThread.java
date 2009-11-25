@@ -217,6 +217,14 @@ public class DereferencerThread extends TaskExecutorBase {
 				return new DereferencingResult(task, DereferencingResult.STATUS_REDIRECTED, redirectURI, connection.getHeaderFields());
 			}
 
+			if ( this.connection.getResponseCode() == 304 ) {
+				return new DereferencingResult( task,
+				                                DereferencingResult.STATUS_UNMODIFIED,
+				                                null,
+				                                null,
+				                                connection.getHeaderFields() );
+			}
+
 			if ( this.connection.getResponseCode() != 200 ) {
 				return createErrorResult( task,
 				                          DereferencingResult.STATUS_UNABLE_TO_CONNECT,

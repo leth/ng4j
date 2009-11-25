@@ -20,6 +20,7 @@ public class DereferencingResult {
 	public final static int STATUS_NEW_URIS_FOUND = -4;
 	public final static int STATUS_REDIRECTED = -5;
 	public final static int STATUS_TIMEOUT = -6;
+	public final static int STATUS_UNMODIFIED = 1;
 
 	private DereferencingTask task;
 	private int resultCode;
@@ -82,7 +83,8 @@ public class DereferencingResult {
 	}
 	
 	public boolean isSuccess() {
-		return this.resultCode == DereferencingResult.STATUS_OK;
+		return    (this.resultCode == DereferencingResult.STATUS_OK)
+		       || (this.resultCode == DereferencingResult.STATUS_UNMODIFIED);
 	}
 	
 	public List<String> getUriList(){
@@ -101,6 +103,9 @@ public class DereferencingResult {
 		String s = "DereferencingResult for URI <" + task.getURI() + ">: ";
 		if ( resultCode == STATUS_OK ) {
 			s += "STATUS_OK (" + String.valueOf(resultData.countGraphs()) + " graphs)";
+		}
+		else if ( resultCode == STATUS_UNMODIFIED ) {
+			s += "STATUS_UNMODIFIED";
 		}
 		else if ( resultCode == STATUS_REDIRECTED ) {
 			s += "STATUS_REDIRECTED (redirection target: " + redirectURI + ")";
