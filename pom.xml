@@ -19,7 +19,7 @@ ng4j-0.9.4-RC2
 ng4j-0.9.4
 
   -->
-  <version>0.9.3-SNAPSHOT</version>
+  <version>0.9.3</version>
   <name>NG4J</name>
   <description>
   NG4J - Named Graphs API for Jena
@@ -111,6 +111,7 @@ http://sourceforge.net/tracker/?group_id=118754
   <scm>
     <connection>scm:cvs:ext:anonymous@ng4j.cvs.sourceforge.net:/cvsroot/ng4j:ng4j</connection>
     <url>http://ng4j.cvs.sourceforge.net:80/viewvc/ng4j/</url>
+    <tag>ng4j-0_9_3</tag>
   </scm>
 
 
