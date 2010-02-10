@@ -348,14 +348,14 @@ http://sourceforge.net/tracker/?group_id=118754
   <distributionManagement>
     <repository>
       <id>melati</id>
-      <!-- deployed to http://melati.org/maven2/ -->
+      <!-- deployed to http://paneris.net/maven2/ -->
       <name>melati</name>
-      <url>scp://melati.org/data/www/maven2/</url>
+      <url>scp://paneris.net/data/www/maven2/</url>
     </repository>
     <site>
       <id>melati</id>
       <!-- deployed to http://paneris.net/ng4j/ -->
-      <url>scp://melati.org/data/www/${pom.artifactId}/</url>
+      <url>scp://paneris.net/data/www/${pom.artifactId}/</url>
     </site>
   </distributionManagement>
 
@@ -368,7 +368,7 @@ http://sourceforge.net/tracker/?group_id=118754
       </snapshots>
       <id>melati</id>
       <name>Melati Repository</name>
-      <url>http://melati.org/maven2/</url>
+      <url>http://paneris.net/maven2/</url>
     </repository>
     <repository>
       <releases />
