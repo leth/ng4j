@@ -1,5 +1,5 @@
 /*
- * $Id: TriXReader.java,v 1.6 2009/02/20 08:09:52 hartig Exp $
+ * $Id: TriXReader.java,v 1.7 2010/02/10 09:20:14 timp Exp $
  */
 package de.fuberlin.wiwiss.ng4j.trix;
 
@@ -19,7 +19,9 @@ import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.graph.impl.LiteralLabel;
+import com.hp.hpl.jena.graph.impl.LiteralLabelFactory;
 import com.hp.hpl.jena.rdf.model.AnonId;
+import com.hp.hpl.jena.rdf.model.impl.LiteralImpl;
 import com.hp.hpl.jena.shared.JenaException;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
@@ -159,7 +161,8 @@ public class TriXReader implements ParserCallback, NamedGraphSetReader {
 	 * @see de.fuberlin.wiwiss.ng4j.trix.ParserCallback#objectPlainLiteral(java.lang.String, java.lang.String)
 	 */
 	public void objectPlainLiteral(String value, String lang) {
-		this.object = Node.createLiteral(new LiteralLabel(value, lang));
+		LiteralLabel ll = LiteralLabelFactory.create(value, lang);
+        this.object =  Node.createLiteral(ll);
 		addTriple();
 	}
 
@@ -169,7 +172,8 @@ public class TriXReader implements ParserCallback, NamedGraphSetReader {
 	public void objectTypedLiteral(String value, String datatypeURI) {
 		// No idea what that line does, is copy&paste from ModelCom.createTypedLiteral
 		RDFDatatype dt = TypeMapper.getInstance().getSafeTypeByName(datatypeURI);
-		this.object = Node.createLiteral(new LiteralLabel(value, null, dt));
+		LiteralLabel ll = LiteralLabelFactory.createLiteralLabel( value, "", dt );
+        this.object =  Node.createLiteral(ll);
 		addTriple();
 	}
 	

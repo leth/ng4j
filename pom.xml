@@ -253,19 +253,18 @@ http://sourceforge.net/tracker/?group_id=118754
     <dependency>
       <groupId>com.hp.hpl.jena</groupId>
       <artifactId>jena</artifactId>
-      <version>2.6.0</version>
+      <version>2.6.2</version>
     </dependency>
 
-
+<!--
    <dependency>
       <groupId>com.hp.hpl.jena</groupId>
       <artifactId>jenatest</artifactId>
-      <!--artifactId>jena</artifactId-->
-      <version>2.6.0</version>
-      <!--classifier>tests</classifier-->
-      <!--scope>test</scope-->
+      <version>2.6.2</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
     </dependency>
-    
+-->    
     <dependency>
       <groupId>com.hp.hpl.jena</groupId>
       <artifactId>arq</artifactId>
@@ -378,7 +377,7 @@ http://sourceforge.net/tracker/?group_id=118754
       </snapshots>
       <id>jena</id>
       <name>Jena Repository</name>
-      <url>http://jena.hpl.hp.com/repo-dev/</url>
+      <url>http://openjena.org/repo/</url>
     </repository>
   </repositories>
 

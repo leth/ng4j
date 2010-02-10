@@ -21,6 +21,7 @@ import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.graph.impl.LiteralLabel;
+import com.hp.hpl.jena.graph.impl.LiteralLabelFactory;
 import com.hp.hpl.jena.rdf.model.AnonId;
 import com.hp.hpl.jena.shared.JenaException;
 
@@ -165,7 +166,8 @@ public class TriXReaderWithExtensions implements ParserCallback, NamedGraphSetRe
 	 * @see de.fuberlin.wiwiss.ng4j.trix.ParserCallback#objectPlainLiteral(java.lang.String, java.lang.String)
 	 */
 	public void objectPlainLiteral(String value, String lang) {
-		this.object = Node.createLiteral(new LiteralLabel(value, lang));
+		LiteralLabel ll = LiteralLabelFactory.create(value, lang);
+        this.object =  Node.createLiteral(ll);
 		addTriple();
 	}
 
@@ -175,9 +177,11 @@ public class TriXReaderWithExtensions implements ParserCallback, NamedGraphSetRe
 	public void objectTypedLiteral(String value, String datatypeURI) {
 		// No idea what that line does, is copy&paste from ModelCom.createTypedLiteral
 		RDFDatatype dt = TypeMapper.getInstance().getSafeTypeByName(datatypeURI);
-		this.object = Node.createLiteral(new LiteralLabel(value, null, dt));
+		LiteralLabel ll = LiteralLabelFactory.createLiteralLabel( value, "", dt );
+        this.object =  Node.createLiteral(ll);
 		addTriple();
 	}
+	
 	
 	private void addTriple() {
 		this.currentGraph.add(new Triple(this.subject, this.predicate, this.object));
