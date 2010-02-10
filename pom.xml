@@ -110,7 +110,7 @@ http://sourceforge.net/tracker/?group_id=118754
   </licenses>
   <scm>
     <connection>scm:cvs:pserver:anonymous@ng4j.cvs.sourceforge.net:/cvsroot/ng4j:ng4j</connection>
-    <developerConnection>scm:cvs:pserver:${username}@ng4j.cvs.sourceforge.net:/cvsroot/ng4j:ng4j</developerConnection>
+    <developerConnection>scm:cvs:ext:${username}@ng4j.cvs.sourceforge.net:/cvsroot/ng4j:ng4j</developerConnection>
     <url>http://ng4j.cvs.sourceforge.net:80/viewvc/ng4j/</url>
     <tag>ng4j-0_9_3</tag>
   </scm>
