@@ -256,15 +256,17 @@ http://sourceforge.net/tracker/?group_id=118754
       <version>2.6.2</version>
     </dependency>
 
-<!--
    <dependency>
+<!--
+We need this, so does arc. 
+Thsi is a problem upstream, not ours.
+-->    
       <groupId>com.hp.hpl.jena</groupId>
       <artifactId>jenatest</artifactId>
       <version>2.6.2</version>
       <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
--->    
     <dependency>
       <groupId>com.hp.hpl.jena</groupId>
       <artifactId>arq</artifactId>
