@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><project>
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.fuberlin.wiwss.ng4j</groupId>
   <artifactId>ng4j</artifactId>
@@ -19,7 +19,7 @@ ng4j-0.9.4-RC2
 ng4j-0.9.4
 
   -->
-  <version>0.9.3-SNAPSHOT</version>
+  <version>0.9.3</version>
   <name>NG4J</name>
   <description>
   NG4J - Named Graphs API for Jena
@@ -112,6 +112,7 @@ http://sourceforge.net/tracker/?group_id=118754
     <connection>scm:cvs:pserver:anonymous@ng4j.cvs.sourceforge.net:/cvsroot/ng4j:ng4j</connection>
     <developerConnection>scm:cvs:ext:${username}@ng4j.cvs.sourceforge.net:/cvsroot/ng4j:ng4j</developerConnection>
     <url>http://ng4j.cvs.sourceforge.net:80/viewvc/ng4j/</url>
+    <tag>ng4j-0_9_3</tag>
   </scm>
 
 
