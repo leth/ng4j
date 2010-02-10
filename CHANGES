@@ -1,3 +1,11 @@
+Release 0.9.3
+-------------
+
+02/10/10 (timp)
+Upgrade to Jena 0.6.2
+Ensure pom and build.xml work with Hudson
+disable failing tests
+
 11/24/09 (Olaf)
 Added the possibility for conditional GET requests during dereferencing.
 Added the HTTP response header fields to the DereferencingResult.
