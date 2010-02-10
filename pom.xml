@@ -345,6 +345,8 @@ http://sourceforge.net/tracker/?group_id=118754
     </dependency>
   </dependencies>
 
+  <!-- Resources from PanEris.net -->
+  
   <distributionManagement>
     <repository>
       <id>paneris</id>
@@ -358,8 +360,6 @@ http://sourceforge.net/tracker/?group_id=118754
       <url>scp://paneris.net/data/www/${pom.artifactId}/</url>
     </site>
   </distributionManagement>
-
-
   <repositories>
     <repository>
       <releases />
@@ -380,5 +380,10 @@ http://sourceforge.net/tracker/?group_id=118754
       <url>http://openjena.org/repo/</url>
     </repository>
   </repositories>
+  <ciManagement>
+    <system>Hudson</system>
+    <url>http://hudson.paneris.net/</url>
+  </ciManagement>
+
 
 </project>
