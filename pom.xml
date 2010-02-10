@@ -235,7 +235,6 @@ http://sourceforge.net/tracker/?group_id=118754
         <artifactId>taglist-maven-plugin</artifactId>
         <configuration>
          <tags>
-          <tag>@todo</tag>
           <tag>FIXME</tag>
           <tag>@deprecated</tag>
           <tag>NOTE</tag>
@@ -247,6 +246,13 @@ http://sourceforge.net/tracker/?group_id=118754
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <artifactId>maven-site-plugin</artifactId>
+        <configuration>
+          <outputEncoding>UTF-8</outputEncoding>
+          <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+        </configuration>
       </plugin>
    </plugins>
   </reporting>
