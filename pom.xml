@@ -252,6 +252,7 @@ http://sourceforge.net/tracker/?group_id=118754
         <configuration>
           <outputEncoding>UTF-8</outputEncoding>
           <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+	  <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
         </configuration>
       </plugin>
    </plugins>
