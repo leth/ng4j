@@ -249,8 +249,6 @@ http://sourceforge.net/tracker/?group_id=118754
         <artifactId>maven-site-plugin</artifactId>
         <configuration>
           <outputEncoding>UTF-8</outputEncoding>
-          <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
-	  <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
         </configuration>
       </plugin>
       <plugin>
@@ -270,6 +268,10 @@ http://sourceforge.net/tracker/?group_id=118754
         </reportSet>
        </reportSets>
       </plugin>
+        <configuration> 
+          <dependencyLocationsEnabled>false</dependencyLocationsEnabled> 
+	  <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+        </configuration>       
    </plugins>
   </reporting>
 
