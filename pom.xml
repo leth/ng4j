@@ -259,7 +259,7 @@ http://sourceforge.net/tracker/?group_id=118754
    <dependency>
 <!--
 We need this, so does arc. 
-that this is at the wromng version is a problem upstream, not ours.
+That this is at the wrong version is a problem upstream, not ours.
 -->    
       <groupId>com.hp.hpl.jena</groupId>
       <artifactId>jenatest</artifactId>
