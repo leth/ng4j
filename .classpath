@@ -3,11 +3,7 @@
   <classpathentry kind="src" path="src"/>
   <classpathentry kind="output" path="target/classes"/>
   <classpathentry kind="var" path="M2_REPO/antlr/antlr/2.7.7/antlr-2.7.7.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/hp/hpl/jena/arq/2.8.0/arq-2.8.0.jar" sourcepath="M2_REPO/com/hp/hpl/jena/arq/2.8.0/arq-2.8.0-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/home/timp/.m2/repository/com/hp/hpl/jena/arq/2.8.0/arq-2.8.0-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/com/hp/hpl/jena/arq/2.8.2/arq-2.8.2.jar" sourcepath="M2_REPO/com/hp/hpl/jena/arq/2.8.2/arq-2.8.2-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/axis/axis/1.4/axis-1.4.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/bouncycastle/bcpg-jdk15/1.43/bcpg-jdk15-1.43.jar" sourcepath="M2_REPO/org/bouncycastle/bcpg-jdk15/1.43/bcpg-jdk15-1.43-sources.jar">
     <attributes>
@@ -32,17 +28,13 @@
   <classpathentry kind="var" path="M2_REPO/com/hp/hpl/jena/grddl/0.3/grddl-0.3.jar"/>
   <classpathentry kind="var" path="M2_REPO/hsqldb/hsqldb/1.8.0.7/hsqldb-1.8.0.7.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/ibm/icu/icu4j/3.4.4/icu4j-3.4.4.jar" sourcepath="M2_REPO/com/ibm/icu/icu4j/3.4.4/icu4j-3.4.4-sources.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/hp/hpl/jena/iri/0.7/iri-0.7.jar" sourcepath="M2_REPO/com/hp/hpl/jena/iri/0.7/iri-0.7-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/home/timp/.m2/repository/com/hp/hpl/jena/iri/0.7/iri-0.7-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/com/hp/hpl/jena/iri/0.8/iri-0.8.jar" sourcepath="M2_REPO/com/hp/hpl/jena/iri/0.8/iri-0.8-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/hp/hpl/jena/jena/2.6.2/jena-2.6.2.jar" sourcepath="M2_REPO/com/hp/hpl/jena/jena/2.6.2/jena-2.6.2-sources.jar">
     <attributes>
       <attribute value="jar:file:/home/timp/.m2/repository/com/hp/hpl/jena/jena/2.6.2/jena-2.6.2-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/com/hp/hpl/jena/jenatest/2.6.0/jenatest-2.6.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/hp/hpl/jena/jena/2.6.2/jena-2.6.2-tests.jar" sourcepath="M2_REPO/com/hp/hpl/jena/jena/2.6.2/jena-2.6.2-test-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/junit/junit/3.8.2/junit-3.8.2.jar" sourcepath="M2_REPO/junit/junit/3.8.2/junit-3.8.2-sources.jar">
     <attributes>
       <attribute value="jar:file:/home/timp/.m2/repository/junit/junit/3.8.2/junit-3.8.2-javadoc.jar!/" name="javadoc_location"/>
