@@ -1,33 +1,33 @@
 
 Upgrade?    Library                                     Version                              Source
 
-N1          antlr-2.7.7.jar                             2.7.7 (included with Jena 2.6.0)    
-N1          arq-2.8.0.jar                               2.8.0 (included with Jena 2.6.0)     http://jena.sourceforge.net/ARQ/
+N1          antlr-2.7.7.jar                             2.7.7 (TD on Jena 2.6.2)    
+N1          arq-2.8.2.jar                               2.8.2 (TD on Jena 2.6.2)             http://jena.sourceforge.net/ARQ/
 NL          axis-1.4.jar                                1.4                                  http://ws.apache.org/axis/index.html
 NL          bcpg-jdk15-143.jar                          1.43 for JDK 1.5                     http://www.bouncycastle.org/
 NL          bcprov-jdk15-143.jar                        1.43 for JDK 1.5                     http://www.bouncycastle.org/
 
-N1          commons-logging-1.1.1.jar                   1.1.1 (included with Jena 2.6.0)
+N1          commons-logging-1.1.1.jar                   1.1.1 (TD on Jena 2.6.2)
 N1          commons-codec-1.3.jar                       1.3
        RG   grddl.jar                                   ??                                   http://jena.sourceforge.net/grddl/
                                                                 committed 7 March 2007 so is older than 0.2 (sourceforge date 13 March 2007)
                                                                 also checked differences between it and 0.2 (and 0.3) and neither matched - differences in classes
             hsqldb-1.8.0.7.jar                          1.8.0.7
-N1          icu4j-3.4.4.jar                             3.4.4 (included with Jena 2.6.0)       http://site.icu-project.org/
-N1          iri-0.6.jar                                 0.6 (included with Jena 2.6.0)
+N1          icu4j-3.4.4.jar                             3.4.4 (TD on Jena 2.6.2)             http://site.icu-project.org/
+N1          iri-0.6.jar                                 0.6 (TD on Jena 2.6.2)
 N1          jena-2.6.0.jar                              
-N1     RM   jenatest-2.6.0.jar                          (included with Jena 2.6.0)
-N1          junit-3.8.2.jar                             3.8.2 (included with Jena 2.6.0)     http://www.junit.org/
-N1          log4j-1.2.12.jar                            1.2.12 (included with Jena 2.6.0)    http://logging.apache.org/log4j/
+N1     RM   jenatest-2.6.0.jar                          (TD on Jena 2.6.0)
+N1          junit-3.8.2.jar                             3.8.2 (TD on Jena 2.6.2)             http://www.junit.org/
+N1          log4j-1.2.12.jar                            1.2.12 (TD on Jena 2.6.2)            http://logging.apache.org/log4j/
        RC   mysql-connector-java-3.2.0-alpha-bin.jar    3.2.0-alpha                         
-       RG   nekohtml.jar                                0.9.5  (included with GRDDL 0.3)     http://sourceforge.net/projects/nekohtml
-N1          stax-api-1.0.1.jar                          1.0.1  (included with Jena 2.6.0)    http://stax.codehaus.org/Home
+       RG   nekohtml.jar                                0.9.5  (TD on GRDDL 0.3)             http://sourceforge.net/projects/nekohtml
+N1          stax-api-1.0.1.jar                          1.0.1  (TD on Jena 2.6.2)            http://stax.codehaus.org/Home
             slf4j-api-1.5.6.jar                         1.5.6
             slf4j-log4j12-1.5.6.jar                     1.5.6
         RG  tagsoup-1.2.jar                             1.2                                  http://home.ccil.org/~cowan/XML/tagsoup/
                                                                committed 28 February 2007 in support of GRDDL
-N1          wstx-asl-3.2.9.jar                          3.2.9 (included with Jena 2.6.0)     http://woodstox.codehaus.org/
-N1          xercesImpl-2.7.1.jar                        2.7.1 (included with Jena 2.6.0)     http://xerces.apache.org/xerces2-j/
+N1          wstx-asl-3.2.9.jar                          3.2.9 (TD on Jena 2.6.2)             http://woodstox.codehaus.org/
+N1          xercesImpl-2.7.1.jar                        2.7.1 (TD on Jena 2.6.2)             http://xerces.apache.org/xerces2-j/
 
 
 Transitive dependency, not used: lucene-core-2.3.1.jar 
@@ -36,6 +36,7 @@ Transitive dependency, not used: lucene-core-2.3.1.jar
 
 KEY:
 
+TD - Transitive Dependency
 N1 - No, stay with Jena 2.5.6 for now
 N2 - No, stay with current GRDDL for now
 NL - No, is already latest
