@@ -1,4 +1,4 @@
-//$Id: SWPNamedGraphSetTest.java,v 1.19 2009/09/22 08:49:38 timp Exp $
+//$Id: SWPNamedGraphSetTest.java,v 1.20 2010/02/25 14:38:25 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.swp;
 
 import java.io.StringReader;
@@ -567,7 +567,7 @@ public class SWPNamedGraphSetTest extends TestCase
 }
 
 /*
- * (c) Copyright 2004 - 2009 Rowland Watkins (rowland@grid.cx) All rights
+ * (c) Copyright 2004 - 2010 Rowland Watkins (rowland@grid.cx) All rights
  * reserved.
  * 
  * Redistribution and use in source and binary forms, with or without

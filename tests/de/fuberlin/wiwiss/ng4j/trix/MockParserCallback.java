@@ -1,5 +1,5 @@
 /*
- * $Id: MockParserCallback.java,v 1.3 2009/02/20 08:09:52 hartig Exp $
+ * $Id: MockParserCallback.java,v 1.4 2010/02/25 14:38:25 hartig Exp $
  */
 package de.fuberlin.wiwiss.ng4j.trix;
 
@@ -191,7 +191,7 @@ public class MockParserCallback implements ParserCallback {
 }
 
 /*
- *  (c) Copyright 2004 - 2009 Christian Bizer (chris@bizer.de)
+ *  (c) Copyright 2004 - 2010 Christian Bizer (chris@bizer.de)
  *   All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
