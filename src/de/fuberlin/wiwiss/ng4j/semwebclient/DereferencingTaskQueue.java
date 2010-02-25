@@ -138,7 +138,6 @@ public class DereferencingTaskQueue extends TaskQueueBase
 
 
 	static class XSLTErrorListener implements ErrorListener {
-		@SuppressWarnings("hiding")
 		private Log log = LogFactory.getLog( XSLTErrorListener.class );
 
 		public void error ( TransformerException e ) {
