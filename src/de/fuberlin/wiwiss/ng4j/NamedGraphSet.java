@@ -1,4 +1,4 @@
-// $Id: NamedGraphSet.java,v 1.15 2009/10/05 09:34:57 timp Exp $
+// $Id: NamedGraphSet.java,v 1.16 2010/02/25 14:28:21 hartig Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.io.InputStream;
@@ -343,7 +343,7 @@ public interface NamedGraphSet extends Iterable<NamedGraph> {
 }
 
 /*
- *  (c) Copyright 2004 - 2009 Christian Bizer (chris@bizer.de)
+ *  (c) Copyright 2004 - 2010 Christian Bizer (chris@bizer.de)
  *   All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

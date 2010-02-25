@@ -34,7 +34,7 @@ import de.fuberlin.wiwiss.ng4j.trig.parser.TriGAntlrParser;
  * 
  * @author Andy Seaborne
  * @author Richard Cyganiak (richard@cyganiak.de)
- * @version 	$Id: NamedGraphSetPopulator.java,v 1.15 2009/07/30 12:30:06 timp Exp $
+ * @version 	$Id: NamedGraphSetPopulator.java,v 1.16 2010/02/25 14:28:22 hartig Exp $
  */
 public class NamedGraphSetPopulator implements TriGParserEventHandler
 {
@@ -434,7 +434,7 @@ public class NamedGraphSetPopulator implements TriGParserEventHandler
 }
 
 /*
- *  (c) Copyright 2001 - 2009 Hewlett-Packard Development Company, LP
+ *  (c) Copyright 2001 - 2010 Hewlett-Packard Development Company, LP
  *  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

@@ -303,7 +303,7 @@ public class SWPAuthorityImpl implements SWPAuthority
 }
 
 /*
- *  (c)   Copyright 2004 - 2009 Chris Bizer (chris@bizer.de)
+ *  (c)   Copyright 2004 - 2010 Chris Bizer (chris@bizer.de)
  *   	  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

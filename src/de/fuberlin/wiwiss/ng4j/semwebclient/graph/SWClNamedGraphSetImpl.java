@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/semwebclient/graph/SWClNamedGraphSetImpl.java,v 1.5 2009/06/09 17:18:54 hartig Exp $
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/semwebclient/graph/SWClNamedGraphSetImpl.java,v 1.6 2010/02/25 14:28:21 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.semwebclient.graph;
 
 import de.fuberlin.wiwiss.ng4j.impl.idbased.IdBasedNamedGraphSetImpl;
@@ -19,7 +19,7 @@ public class SWClNamedGraphSetImpl extends IdBasedNamedGraphSetImpl
 }
 
 /*
- * (c) Copyright 2009 Christian Bizer (chris@bizer.de)
+ * (c) Copyright 2009 - 2010 Christian Bizer (chris@bizer.de)
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without

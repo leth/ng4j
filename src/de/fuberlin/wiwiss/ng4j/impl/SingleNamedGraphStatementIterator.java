@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/impl/SingleNamedGraphStatementIterator.java,v 1.2 2009/07/30 16:14:34 timp Exp $
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/impl/SingleNamedGraphStatementIterator.java,v 1.3 2010/02/25 14:28:21 hartig Exp $
 
 package de.fuberlin.wiwiss.ng4j.impl;
 
@@ -42,7 +42,7 @@ public class SingleNamedGraphStatementIterator extends StmtIteratorImpl {
 	}
 
 	/*
-	 *  (c)   Copyright 2009 Christian Bizer (chris@bizer.de)
+	 *  (c)   Copyright 2009 - 2010 Christian Bizer (chris@bizer.de)
 	 *   All rights reserved.
 	 *
 	 * Redistribution and use in source and binary forms, with or without

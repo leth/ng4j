@@ -17,7 +17,7 @@ import de.fuberlin.wiwiss.ng4j.trig.parser.TriGAntlrParserTokenTypes;
  * The formal interface to the TriG parser.  Wraps up the antlr parser and lexer.
  * @author		Andy Seaborne
  * @author Richard Cyganiak (richard@cyganiak.de)
- * @version 	$Id: TriGParser.java,v 1.4 2009/02/20 08:09:52 hartig Exp $
+ * @version 	$Id: TriGParser.java,v 1.5 2010/02/25 14:28:22 hartig Exp $
  */
 public class TriGParser implements TriGAntlrParserTokenTypes {
 	private TriGAntlrLexer lexer = null ;
@@ -44,7 +44,7 @@ public class TriGParser implements TriGAntlrParserTokenTypes {
 }
 
 /*
- *  (c) Copyright 2001 - 2009 Hewlett-Packard Development Company, LP
+ *  (c) Copyright 2001 - 2010 Hewlett-Packard Development Company, LP
  *  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

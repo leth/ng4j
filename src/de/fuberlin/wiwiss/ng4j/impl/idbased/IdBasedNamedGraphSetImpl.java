@@ -105,7 +105,7 @@ public class IdBasedNamedGraphSetImpl extends NamedGraphSetImpl
 }
 
 /*
- * (c) Copyright 2009 Christian Bizer (chris@bizer.de)
+ * (c) Copyright 2009 - 2010 Christian Bizer (chris@bizer.de)
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without

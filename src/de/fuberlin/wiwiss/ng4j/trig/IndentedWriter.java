@@ -11,7 +11,7 @@ import java.io.* ;
  *  Does not cope with tabs or newlines in output strings.
  * 
  * @author		Andy Seaborne
- * @version 	$Id: IndentedWriter.java,v 1.4 2009/02/20 08:09:52 hartig Exp $
+ * @version 	$Id: IndentedWriter.java,v 1.5 2010/02/25 14:28:22 hartig Exp $
  */
 
 // Not robust/complete enough for public use
@@ -97,7 +97,7 @@ import java.io.* ;
 
 
 /*
- *  (c) Copyright 2001 - 2009 Hewlett-Packard Development Company, LP
+ *  (c) Copyright 2001 - 2010 Hewlett-Packard Development Company, LP
  *  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

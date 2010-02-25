@@ -1,4 +1,4 @@
-// $Id: TriGReader.java,v 1.5 2009/09/22 16:24:51 timp Exp $
+// $Id: TriGReader.java,v 1.6 2010/02/25 14:28:22 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import java.io.InputStream;
@@ -48,7 +48,7 @@ public class TriGReader implements NamedGraphSetReader {
 }
 
 /*
- *  (c) Copyright 2004 - 2009 Christian Bizer (chris@bizer.de)
+ *  (c) Copyright 2004 - 2010 Christian Bizer (chris@bizer.de)
  *   All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

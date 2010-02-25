@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetWriter.java,v 1.4 2009/02/20 08:09:51 hartig Exp $
+// $Id: NamedGraphSetWriter.java,v 1.5 2010/02/25 14:28:21 hartig Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.io.OutputStream;
@@ -38,7 +38,7 @@ public interface NamedGraphSetWriter {
 }
 
 /*
- *  (c) Copyright 2004 - 2009 Christian Bizer (chris@bizer.de)
+ *  (c) Copyright 2004 - 2010 Christian Bizer (chris@bizer.de)
  *   All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

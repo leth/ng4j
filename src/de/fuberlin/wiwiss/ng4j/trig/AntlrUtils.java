@@ -14,7 +14,7 @@ import de.fuberlin.wiwiss.ng4j.trig.parser.TriGAntlrParser;
 /** Miscellaneous things in support of Antlr-derived parsers.
  * 
  * @author		Andy Seaborne
- * @version 	$Id: AntlrUtils.java,v 1.5 2009/02/20 08:09:52 hartig Exp $
+ * @version 	$Id: AntlrUtils.java,v 1.6 2010/02/25 14:28:22 hartig Exp $
  */
 
 public class AntlrUtils
@@ -62,7 +62,7 @@ public class AntlrUtils
 	}
 }
 /*
- *  (c) Copyright 2001 - 2009 Hewlett-Packard Development Company, LP
+ *  (c) Copyright 2001 - 2010 Hewlett-Packard Development Company, LP
  *  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

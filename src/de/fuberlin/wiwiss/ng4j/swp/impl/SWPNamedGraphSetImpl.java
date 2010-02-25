@@ -50,9 +50,9 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
 
 /**
  * 
- * Last commit info    :   $Author: timp $
- * $Date: 2009/07/30 12:54:10 $
- * $Revision: 1.31 $
+ * Last commit info    :   $Author: hartig $
+ * $Date: 2010/02/25 14:28:22 $
+ * $Revision: 1.32 $
  * 
  * @author Chris Bizer.
  * @author Rowland Watkins.
@@ -779,7 +779,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 }
 
 /*
- *  (c)   Copyright 2004 - 2009 Chris Bizer (chris@bizer.de) & Rowland Watkins (rowland@grid.cx) 
+ *  (c)   Copyright 2004 - 2010 Chris Bizer (chris@bizer.de) & Rowland Watkins (rowland@grid.cx) 
  *   	  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

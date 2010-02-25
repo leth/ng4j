@@ -1,4 +1,4 @@
-// $Id: Quad.java,v 1.4 2009/04/22 17:03:14 jenpc Exp $
+// $Id: Quad.java,v 1.5 2010/02/25 14:28:21 hartig Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import com.hp.hpl.jena.graph.Node;
@@ -164,7 +164,7 @@ public class Quad {
 }
 
 /*
- *  (c) Copyright 2004 - 2009 Christian Bizer (chris@bizer.de)
+ *  (c) Copyright 2004 - 2010 Christian Bizer (chris@bizer.de)
  *   All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

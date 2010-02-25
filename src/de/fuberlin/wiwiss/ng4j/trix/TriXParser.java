@@ -1,5 +1,5 @@
 /*
- * $Id: TriXParser.java,v 1.5 2009/02/20 08:09:52 hartig Exp $
+ * $Id: TriXParser.java,v 1.6 2010/02/25 14:28:22 hartig Exp $
  */
 package de.fuberlin.wiwiss.ng4j.trix;
 
@@ -102,7 +102,7 @@ public class TriXParser {
 }
 
 /*
- *  (c) Copyright 2004 - 2009 Christian Bizer (chris@bizer.de)
+ *  (c) Copyright 2004 - 2010 Christian Bizer (chris@bizer.de)
  *   All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

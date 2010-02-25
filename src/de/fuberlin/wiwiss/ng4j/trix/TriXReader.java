@@ -1,5 +1,5 @@
 /*
- * $Id: TriXReader.java,v 1.7 2010/02/10 09:20:14 timp Exp $
+ * $Id: TriXReader.java,v 1.8 2010/02/25 14:28:22 hartig Exp $
  */
 package de.fuberlin.wiwiss.ng4j.trix;
 
@@ -183,7 +183,7 @@ public class TriXReader implements ParserCallback, NamedGraphSetReader {
 }
 
 /*
- *  (c) Copyright 2004 - 2009 Christian Bizer (chris@bizer.de)
+ *  (c) Copyright 2004 - 2010 Christian Bizer (chris@bizer.de)
  *   All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

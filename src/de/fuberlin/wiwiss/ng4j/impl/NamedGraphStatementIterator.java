@@ -1,4 +1,4 @@
-// $Id: NamedGraphStatementIterator.java,v 1.4 2009/07/30 16:14:15 timp Exp $
+// $Id: NamedGraphStatementIterator.java,v 1.5 2010/02/25 14:28:21 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import com.hp.hpl.jena.rdf.model.Statement;
@@ -41,7 +41,7 @@ public class NamedGraphStatementIterator extends StmtIteratorImpl {
 }
 
 /*
- *  (c) Copyright 2004 - 2009 Christian Bizer (chris@bizer.de)
+ *  (c) Copyright 2004 - 2010 Christian Bizer (chris@bizer.de)
  *   All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

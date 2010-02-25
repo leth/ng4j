@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/PostgreSQLCompatibility.java,v 1.4 2009/05/27 13:42:30 jenpc Exp $
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/PostgreSQLCompatibility.java,v 1.5 2010/02/25 14:28:21 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.db.specific;
 
 import java.sql.Connection;
@@ -58,7 +58,7 @@ public class PostgreSQLCompatibility extends DbCompatibility {
 	}
 
 	/*
-	 *  (c)   Copyright 2008, 2009 Christian Bizer (chris@bizer.de)
+	 *  (c)   Copyright 2008 - 2010 Christian Bizer (chris@bizer.de)
 	 *   All rights reserved.
 	 *
 	 * Redistribution and use in source and binary forms, with or without

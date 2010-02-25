@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetIO.java,v 1.7 2009/10/05 09:34:57 timp Exp $
+// $Id: NamedGraphSetIO.java,v 1.8 2010/02/25 14:28:21 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import java.io.InputStream;
@@ -69,7 +69,7 @@ public abstract class NamedGraphSetIO extends NamedGraphSetIterable implements N
 }
 
 /*
- *  (c) Copyright 2004 - 2009 Christian Bizer (chris@bizer.de)
+ *  (c) Copyright 2004 - 2010 Christian Bizer (chris@bizer.de)
  *   All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

@@ -22,7 +22,7 @@ import java.text.* ;
 /** Common framework for implementing N3 writers.
  *
  * @author		Andy Seaborne
- * @version 	$Id: N3JenaWriterCommon.java,v 1.5 2009/02/20 08:09:52 hartig Exp $
+ * @version 	$Id: N3JenaWriterCommon.java,v 1.6 2010/02/25 14:28:22 hartig Exp $
  */
 
 public class N3JenaWriterCommon implements RDFWriter
@@ -848,7 +848,7 @@ public class N3JenaWriterCommon implements RDFWriter
 }
 
 /*
- *  (c) Copyright 2001 - 2009 Hewlett-Packard Development Company, LP
+ *  (c) Copyright 2001 - 2010 Hewlett-Packard Development Company, LP
  *  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

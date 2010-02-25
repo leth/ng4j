@@ -1,4 +1,4 @@
-// $Id: NamedGraphModel.java,v 1.9 2009/05/27 14:33:22 jenpc Exp $
+// $Id: NamedGraphModel.java,v 1.10 2010/02/25 14:28:21 hartig Exp $
 package de.fuberlin.wiwiss.ng4j;
 
 import java.io.InputStream;
@@ -299,7 +299,7 @@ public class NamedGraphModel extends ModelCom implements Model {
 }
 
 /*
- *  (c) Copyright 2004 - 2009 Christian Bizer (chris@bizer.de)
+ *  (c) Copyright 2004 - 2010 Christian Bizer (chris@bizer.de)
  *   All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

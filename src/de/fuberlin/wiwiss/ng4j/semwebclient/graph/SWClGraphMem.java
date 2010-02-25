@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/semwebclient/graph/SWClGraphMem.java,v 1.7 2009/08/16 21:04:49 hartig Exp $
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/semwebclient/graph/SWClGraphMem.java,v 1.8 2010/02/25 14:28:21 hartig Exp $
 package de.fuberlin.wiwiss.ng4j.semwebclient.graph;
 
 import com.hp.hpl.jena.shared.ReificationStyle;
@@ -48,7 +48,7 @@ public class SWClGraphMem extends IdBasedGraphMem
 }
 
 /*
- * (c) Copyright 2009 Christian Bizer (chris@bizer.de)
+ * (c) Copyright 2009 - 2010 Christian Bizer (chris@bizer.de)
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without

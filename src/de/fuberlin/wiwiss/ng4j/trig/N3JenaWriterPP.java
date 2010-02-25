@@ -31,7 +31,7 @@ import com.hp.hpl.jena.vocabulary.RDFS;
  *  Tries to make N3 data look readable - works better on regular data.
  *
  * @author		Andy Seaborne
- * @version 	$Id: N3JenaWriterPP.java,v 1.8 2009/07/30 12:56:11 timp Exp $
+ * @version 	$Id: N3JenaWriterPP.java,v 1.9 2010/02/25 14:28:22 hartig Exp $
  */
 
 
@@ -550,7 +550,7 @@ public class N3JenaWriterPP extends N3JenaWriterCommon
 }
 
 /*
- *  (c) Copyright 2001 - 2009 Hewlett-Packard Development Company, LP
+ *  (c) Copyright 2001 - 2010 Hewlett-Packard Development Company, LP
  *  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
