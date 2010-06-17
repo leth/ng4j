@@ -197,12 +197,18 @@ public class DereferencerThread extends TaskExecutorBase {
 			connection.connect();
 		} catch ( SocketTimeoutException e ) {
 			log.debug( "Connecting to <" + url.toString() + "> caused a " + e.getClass().getName() + ": " + e.getMessage() );
+			connection.disconnect();
+			connection = null;
 			return createErrorResult( task, DereferencingResult.STATUS_TIMEOUT, e, null );
 		} catch ( IOException e ) {
 			log.debug( "Connecting to <" + url.toString() + "> caused a " + e.getClass().getName() + ": " + e.getMessage(), e );
+			connection.disconnect();
+			connection = null;
 			return createErrorResult( task, DereferencingResult.STATUS_UNABLE_TO_CONNECT, e, null );
 		} catch ( RuntimeException e ) {
 			log.debug( "Connecting to <" + url.toString() + "> caused a " + e.getClass().getName() + ": " + e.getMessage() );
+			connection.disconnect();
+			connection = null;
 			return createErrorResult( task, DereferencingResult.STATUS_UNABLE_TO_CONNECT, e, null );
 		}
 
@@ -214,29 +220,44 @@ public class DereferencerThread extends TaskExecutorBase {
 			     || (this.connection.getResponseCode() == 302)
 			     || (this.connection.getResponseCode() == 303) ) {
 				String redirectURI = this.connection.getHeaderField("Location");
-				return new DereferencingResult(task, DereferencingResult.STATUS_REDIRECTED, redirectURI, connection.getHeaderFields());
+				DereferencingResult r = new DereferencingResult( task,
+				                                                 DereferencingResult.STATUS_REDIRECTED,
+				                                                 redirectURI,
+				                                                 connection.getHeaderFields() );
+				connection.disconnect();
+				connection = null;
+				return r;
 			}
 
 			if ( this.connection.getResponseCode() == 304 ) {
-				return new DereferencingResult( task,
-				                                DereferencingResult.STATUS_UNMODIFIED,
-				                                null,
-				                                null,
-				                                connection.getHeaderFields() );
+				DereferencingResult r = new DereferencingResult( task,
+				                                                 DereferencingResult.STATUS_UNMODIFIED,
+				                                                 null,
+				                                                 null,
+				                                                 connection.getHeaderFields() );
+				connection.disconnect();
+				connection = null;
+				return r;
 			}
 
 			if ( this.connection.getResponseCode() != 200 ) {
-				return createErrorResult( task,
-				                          DereferencingResult.STATUS_UNABLE_TO_CONNECT,
-				                          new Exception("Unexpected response code ("+connection.getResponseCode()+")"),
-				                          connection.getHeaderFields() );
+				DereferencingResult r = createErrorResult( task,
+				                                           DereferencingResult.STATUS_UNABLE_TO_CONNECT,
+				                                           new Exception("Unexpected response code ("+connection.getResponseCode()+")"),
+				                                           connection.getHeaderFields() );
+				connection.disconnect();
+				connection = null;
+				return r;
 			}
 
 			if ( connection.getContentType() == null ) {
-				return createErrorResult( task,
-				                          DereferencingResult.STATUS_UNABLE_TO_CONNECT,
-				                          new Exception("Unknown content type"),
-				                          connection.getHeaderFields() );
+				DereferencingResult r = createErrorResult( task,
+				                                           DereferencingResult.STATUS_UNABLE_TO_CONNECT,
+				                                           new Exception("Unknown content type"),
+				                                           connection.getHeaderFields() );
+				connection.disconnect();
+				connection = null;
+				return r;
 			}
 
 			String lang = setLang();
@@ -244,24 +265,38 @@ public class DereferencerThread extends TaskExecutorBase {
 				result = this.parseRdf(task, lang);
 			} catch (Exception ex) { // parse error
 				this.log.debug(ex.getMessage());
-				return createErrorResult( task,
-				                          DereferencingResult.STATUS_PARSING_FAILED,
-				                          ex,
-				                          connection.getHeaderFields() );
+				DereferencingResult r = createErrorResult( task,
+				                                           DereferencingResult.STATUS_PARSING_FAILED,
+				                                           ex,
+				                                           connection.getHeaderFields() );
+				connection.disconnect();
+				connection = null;
+				return r;
 			}
 			// }
 		} catch ( SocketTimeoutException e ) {
 			log.debug( "Accessing the connection to <" + url.toString() + "> caused a " + e.getClass().getName() + ": " + e.getMessage() );
-			return createErrorResult( task, DereferencingResult.STATUS_TIMEOUT, e, null );
+			DereferencingResult r = createErrorResult( task,
+			                                           DereferencingResult.STATUS_TIMEOUT,
+			                                           e,
+			                                           null );
+			connection.disconnect();
+			connection = null;
+			return r;
 		} catch (IOException e) {
 			log.debug( "Accessing the connection to <" + url.toString() + "> caused a " + e.getClass().getName() + ": " + e.getMessage(), e );
-			return createErrorResult( task,
-			                          DereferencingResult.STATUS_UNABLE_TO_CONNECT,
-			                          e,
-			                          null );
+			DereferencingResult r = createErrorResult( task,
+			                                           DereferencingResult.STATUS_UNABLE_TO_CONNECT,
+			                                           e,
+			                                           null );
+			connection.disconnect();
+			connection = null;
+			return r;
 		}
 		//return new DereferencingResult(this.task,
 		//		DereferencingResult.STATUS_OK, this.tempNgs, null);
+		connection.disconnect();
+		connection = null;
 		return result;
 	}
 
