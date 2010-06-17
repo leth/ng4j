@@ -45,7 +45,7 @@ public class DereferencingTaskQueue extends TaskQueueBase
 	private Map<String,DereferencingTask> currentTasks = new HashMap<String,DereferencingTask> (); // maps task IDs to tasks
 
 	static final private String RDFA_XSLT_URL = "http://www.w3.org/2008/07/rdfa-xslt";
-	final private Templates xsltTemplateForRDFa;
+	static private Templates xsltTemplateForRDFa = null;
 
 	/**
 	 * Old constructor.
@@ -63,7 +63,10 @@ public class DereferencingTaskQueue extends TaskQueueBase
 		this.connectTimeout = connectTimeout;
 		this.readTimeout = readTimeout;
 
-		xsltTemplateForRDFa = enableRDFa ? createRDFaTemplate() : null;
+		if ( enableRDFa && xsltTemplateForRDFa == null ) {
+			xsltTemplateForRDFa = createRDFaTemplate();
+		}
+
 		this.enableRDFa = ( xsltTemplateForRDFa != null );
 
 		setName("DereferencingTaskQueue");
