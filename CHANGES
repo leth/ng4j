@@ -1,3 +1,8 @@
+
+09/14/10 (Jennifer)
+Changed the .classpath file to the "regular" type (rather than maven-esque) so it refers only to the libraries included in the project.
+Maven users can overwrite it in their local workspace by using the command "mvn eclipse:clean eclipse:eclipse" (thanks to Tim for that info!).
+
 Release 0.9.3
 -------------
 
