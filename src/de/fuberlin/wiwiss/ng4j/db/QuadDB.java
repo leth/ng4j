@@ -1,7 +1,8 @@
-// $Id: QuadDB.java,v 1.17 2010/02/25 14:28:21 hartig Exp $
+// $Id: QuadDB.java,v 1.18 2010/09/16 13:05:18 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -48,6 +49,7 @@ public class QuadDB {
 	
 	private final String graphNamesTableName;
 	private final String quadsTableName;
+	private String insertStatementSql;
 	
 	private DbCompatibility dbCompatibility;
 
@@ -61,25 +63,50 @@ public class QuadDB {
 		dbCompatibility.initialize(tablePrefix, graphNamesTableName, quadsTableName);
 	}
 	
+	private PreparedStatement getInsertStatement() {
+		if (this.insertStatementSql == null) {
+			this.insertStatementSql = "INSERT INTO " + quadsTableName +
+			" (graph, subject, predicate, object, literal, lang, datatype) VALUES (" +
+			"  ?,     ?,       ?,         ?,      ?,       ?,    ?)";
+		}
+		
+		PreparedStatement ret;
+			try {
+				ret = this.dbCompatibility.getConnection().prepareStatement(this.insertStatementSql);
+			} catch (SQLException e) {
+				throw new JenaException(e);
+			}
+		
+		return ret;
+	}
+	
 	public void insert(Node graph, Node subject, Node predicate, Node object) {
 		if (find(graph, subject, predicate, object).hasNext()) {
 			return;
 		}
-		String sql = "INSERT INTO " + quadsTableName +
-				" (graph, subject, predicate, object, literal, lang, datatype) VALUES (" +
-				"'" + escape(graph.getURI()) + "', " +
-				"'" + escapeResource(subject) + "', " +
-				"'" + escape(predicate.getURI()) + "', " +
-				getObjectColumn(object) + ", " +
-				getLiteralColumn(object) + ", " +
-				getLangColumn(object) + ", " +
-				getDatatypeColumn(object) + ")";
-		dbCompatibility.execute(sql);
+		
+		PreparedStatement insert = getInsertStatement();
+		try {
+			insert.setString(1, graph.getURI());
+			insert.setString(2, resourceAsSqlString(subject));
+			insert.setString(3, predicate.getURI());
+			
+			// Now let helper methods set the prepared query's data for object, literal, lang, and datatype
+			setObjectColumn(insert, object);
+			setLiteralColumn(insert, object);
+			setLangColumn(insert, object);
+			setDatatypeColumn(insert, object);
+		} catch (SQLException e) {
+			throw new JenaException(e);
+		}
+		
+		// and execute the statement
+		dbCompatibility.execute(insert);
 	}
 	
 	public void delete(Node graph, Node subject, Node predicate, Node object) {
-		String sql = "DELETE FROM " + quadsTableName + " " +
-				getWhereClause(graph, subject, predicate, object);
+		String prefix = "DELETE FROM " + quadsTableName + " ";
+		PreparedStatement sql = getWhereClause(prefix, graph, subject, predicate, object);
 		dbCompatibility.execute(sql);
 	}
 	
@@ -102,9 +129,10 @@ public class QuadDB {
 			List<Quad> quadsList = Collections.emptyList();
 			return quadsList.iterator();
 		}
-		String sql = "SELECT graph, subject, predicate, object, literal, lang, datatype " +
-				"FROM " + quadsTableName + " " +
-				getWhereClause(graph, subject, predicate, object);
+		String prefix = "SELECT graph, subject, predicate, object, literal, lang, datatype " +
+				"FROM " + quadsTableName + " ";
+		PreparedStatement sql = getWhereClause(prefix, graph, subject, predicate, object);
+		
 		final ResultSet results = executeQuery(sql);
 		return new Iterator<Quad>() {
 			private boolean hasReadNext = false;
@@ -330,11 +358,11 @@ public class QuadDB {
 				replaceAll(this.escapeReplacement);
 	}
 
-	private String escapeResource(Node resource) {
+	private String resourceAsSqlString(Node resource) {
 		if (resource.isURI()) {
-			return escape(resource.getURI());
+			return resource.getURI();
 		}
-		return "_:" + escape(resource.getBlankNodeId().toString());
+		return "_:" + resource.getBlankNodeId().toString();
 	}
 
 	private ResultSet executeQuery(String sql) {
@@ -355,67 +383,133 @@ public class QuadDB {
 		}
 	}
 	
-	private String getObjectColumn(Node object) {
+	private ResultSet executeQuery(PreparedStatement stmt) {
+		try {
+			return stmt.executeQuery();
+		} catch (SQLException ex) {
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException ex2) {
+					throw new JenaException(ex);
+				}
+			}
+			throw new JenaException(ex);
+		}
+	}
+	
+	private String getObjectColumnRaw(Node object) {
 		if (object.isLiteral()) {
-			return "NULL";
+			return null;
 		}
-		return "'" + escapeResource(object) + "'";
+		return resourceAsSqlString(object);
 	}
 	
-	private String getLiteralColumn(Node object) {
+	private void setColumn(PreparedStatement statement, int index, String value) {
+		try {
+			if (value == null) {
+				statement.setNull(index, java.sql.Types.VARCHAR); // a null string, not a null something else
+			} else {
+				statement.setString(index, value);
+			}
+		} catch (SQLException e) {
+			throw new JenaException(e);
+		}
+	}
+	
+	private void setObjectColumn(PreparedStatement statement, Node object) {
+		final int OBJECT_INDEX = 4;
+		this.setColumn(statement, OBJECT_INDEX, getObjectColumnRaw(object));
+	}
+	
+	private void setLiteralColumn(PreparedStatement statement, Node object) {
+		final int LITERAL_INDEX = 5;
+		
+		String literal;
 		if (!object.isLiteral()) {
-			return "NULL";
+				literal = null;
+			} else {
+				literal = object.getLiteral().getLexicalForm();
 		}
-		return "'" + escape(object.getLiteral().getLexicalForm()) + "'";
+		this.setColumn(statement, LITERAL_INDEX, literal);	
 	}
 	
-	private String getLangColumn(Node object) {
+	private void setLangColumn(PreparedStatement statement, Node object) {
+		final int LANG_INDEX = 6;
+		
+		String languageValue;
 		if (!object.isLiteral() || object.getLiteral().language() == null || "".equals(object.getLiteral().language())) {
-			return "NULL";
+				languageValue = null;
+			} else {
+				languageValue = object.getLiteral().language();
 		}
-		return "'" + escape(object.getLiteral().language()) + "'";
+		this.setColumn(statement, LANG_INDEX, languageValue);
 	}
 	
-	private String getDatatypeColumn(Node object) {
+	private void  setDatatypeColumn(PreparedStatement statement, Node object) {
+		final int DATATYPE_INDEX = 7;
+	
+		String datatypeValue;
 		if (!object.isLiteral() || object.getLiteral().getDatatypeURI() == null) {
-			return "NULL";
+				datatypeValue = null;
+			} else {
+				datatypeValue = object.getLiteral().getDatatypeURI();
 		}
-		return "'" + escape(object.getLiteral().getDatatypeURI()) + "'";
+		this.setColumn(statement, DATATYPE_INDEX, datatypeValue);
 	}
 
-	private String getWhereClause(Node graph, Node subject, Node predicate, Node object) {
-		List<String> clauses = new ArrayList<String>();
+	private PreparedStatement getWhereClause(String prefix, Node graph, Node subject, Node predicate, Node object) {
+		/* Calculate keys and values for use in a prepared query. */
+		List<String> queryClauses = new ArrayList<String>();
+		List<String> dataClauses = new ArrayList<String>();
+
 		if (!Node.ANY.equals(graph)) {
-			clauses.add("graph='" + escape(graph.getURI()) + "'");
+			queryClauses.add("graph = ?");
+			dataClauses.add(graph.getURI());
 		}
 		if (!Node.ANY.equals(subject)) {
-			clauses.add("subject='" + escapeResource(subject) + "'");
+			queryClauses.add("subject = ?");
+			dataClauses.add(resourceAsSqlString(subject));
 		}
 		if (!Node.ANY.equals(predicate)) {
-			clauses.add("predicate='" + escape(predicate.getURI()) + "'");
+			queryClauses.add("predicate = ?");
+			dataClauses.add(predicate.getURI());
 		}
 		if (!Node.ANY.equals(object)) {
 			if (object.isLiteral()) {
-				clauses.add("literal='" + escape(object.getLiteral().getLexicalForm()) + "'");
+				queryClauses.add("literal = ?");
+				dataClauses.add(object.getLiteral().getLexicalForm());
 				if (object.getLiteral().language() == null || "".equals(object.getLiteral().language())) {
-					clauses.add("lang IS NULL");
+					queryClauses.add("lang IS NULL");
 				} else {
-					clauses.add("lang='" + escape(object.getLiteral().language()) + "'");
+					queryClauses.add("lang = ?");
+					dataClauses.add(object.getLiteral().language());
+
 				}
 				if (object.getLiteral().getDatatypeURI() == null) {
-					clauses.add("datatype IS NULL");
+					queryClauses.add("datatype IS NULL");
 				} else {
-					clauses.add("datatype='" + escape(object.getLiteral().getDatatypeURI()) + "'");
+					queryClauses.add("datatype = ?");
+					dataClauses.add(object.getLiteral().getDatatypeURI());
+
 				}
 			} else {
-				clauses.add("object='" + escapeResource(object) + "'");
+				queryClauses.add("object = ?");
+				dataClauses.add(resourceAsSqlString(object));
 			}
 		}
-		if (clauses.isEmpty()) {
-			return "";
-		}
+		
+		// if the prepared query would be empty, simply do not add a WHERE clause.
+		if (queryClauses.isEmpty()) {
+			try {
+				return this.dbCompatibility.getConnection().prepareStatement(prefix);
+			} catch (SQLException e) {
+				throw new JenaException(e);
+			}
+ 		}
+		
 		String result = "";
-		Iterator<String> it = clauses.iterator();
+		Iterator<String> it = queryClauses.iterator();
 		while (it.hasNext()) {
 			String clause = (String) it.next();
 			if (!"".equals(result)) {
@@ -423,7 +517,34 @@ public class QuadDB {
 			}
 			result += clause;
 		}
-		return "WHERE " + result;
+		
+		String sql = prefix + " WHERE " + result;
+		
+		// Now we have a complete SQL string with question marks for
+		// the data. We create a PreparedStatement...
+		PreparedStatement prepared = null;
+		try {
+			prepared = this.dbCompatibility.getConnection().prepareStatement(sql);
+		} catch (SQLException e) {
+			throw new JenaException(e);
+		}
+		// and we loop over the data clauses to slide our data in,
+		// allowing the database backend to replace the question marks and otherwise
+		// properly escape our values.
+		for (int i = 0 ; i < dataClauses.size(); i++) {
+			String thisOne = dataClauses.get(i);
+			if (thisOne == null) {
+				continue; // this data clause is already filled in
+			} else {
+				try {
+					prepared.setString(i + 1, thisOne);
+				} catch (SQLException e) {
+					throw new JenaException(e);
+				}
+			}
+		}
+		
+		return prepared;
 	}
 	
 	private void setDBtype(Connection connection){
