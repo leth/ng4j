@@ -14,6 +14,7 @@ abstract public class TaskExecutorBase extends Thread {
 	// members
 
 	private boolean stopped = false;
+	private Boolean abortCurrentTask = Boolean.FALSE;
 	private Task currentTask;
 
 	private Log log = LogFactory.getLog( TaskExecutorBase.class );
@@ -59,6 +60,33 @@ abstract public class TaskExecutorBase extends Thread {
 	}
 
 	/**
+	 * Sets a flag that signalizes the thread to abort the execution of the
+	 * current task.
+	 * Notice, setting this flag is not a guarantee for an abortion. However,
+	 * implementations of task executor threads that are specializations of
+	 * this abstract class are encouraged to abort the current execution as
+	 * soon as possible.
+	 */
+	final public void setAbortCurrentTaskFlag ()
+	{
+		synchronized ( abortCurrentTask ) {
+			abortCurrentTask = Boolean.TRUE;
+		}
+	}
+
+	/**
+	 * Return the flag that signalizes the thread to abort the execution of the
+	 * current task.
+	 * Notice, setting this flag is not a guarantee for an abortion.
+	 */
+	final public boolean isAbortCurrentTaskFlagSet ()
+	{
+		synchronized ( abortCurrentTask ) {
+			return abortCurrentTask.booleanValue();
+		}
+	}
+
+	/**
 	 * Returns true if this thread has been stopped already.
 	 */
 	final public boolean isStopped () {
@@ -96,9 +124,13 @@ abstract public class TaskExecutorBase extends Thread {
 				if ( log.isDebugEnabled() )
 					startTime = System.currentTimeMillis();
 
+				synchronized ( abortCurrentTask ) {
+					abortCurrentTask = Boolean.FALSE;
+				}
+
 				try {
 					executeTask( currentTask );
-				} catch ( RuntimeException e ) {
+				} catch ( Throwable e ) {
 					log.error( "Executing the task '" + currentTask.getIdentifier() + "' for thread '" + getName() + "' (type: " + getClass().getName() + ") caused an " + e.getClass().getName() + " (" + e.getMessage() + ").", e );
 				}
 
@@ -129,12 +161,21 @@ abstract public class TaskExecutorBase extends Thread {
 	 * Stops this thread.
 	 * Sets the stop status of this thread and interrupts the execution.
 	 */
-	final synchronized public void stopThread () {
+	final public void stopThread () {
 		log.debug( "Stopping thread '" + getName() + "' (type: " + getClass().getName() + ")." );
 		stopped = true;
 		interrupt();
 	}
 
+
+	public String toString ()
+	{
+		if ( currentTask != null ) {
+			return "'" + getName() + "' (type: " + getClass().getName() + ", current task: " + currentTask.toString() + ").";
+		} else {
+			return "'" + getName() + "' (type: " + getClass().getName() + ").";
+		}
+	}
 }
 
 /*
