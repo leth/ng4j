@@ -1,7 +1,8 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/MySQLCompatibility.java,v 1.5 2010/02/25 14:28:21 hartig Exp $
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/MySQLCompatibility.java,v 1.6 2010/09/21 15:34:03 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db.specific;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import com.hp.hpl.jena.shared.JenaException;
@@ -53,6 +54,37 @@ public class MySQLCompatibility extends DbCompatibility {
 	@Override
 	public String getVarcharName() {
 		return VARCHAR_NAME;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.db.specific.DbCompatibility#execute(java.lang.String)
+	 */
+	@Override
+	public void execute(String sql) {
+		// TODO Remove this method when the method from the parent class is removed
+		try {
+			executeNoErrorHandling(sql);
+		} catch (SQLException ex) {
+			// In MySQL, ignore duplicates that are not because of the primary key
+			if (ex.getErrorCode() != 1062) {
+				throw new JenaException(ex);
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.db.specific.DbCompatibility#execute(java.sql.PreparedStatement)
+	 */
+	@Override
+	public void execute(PreparedStatement sql) {
+		try {
+			sql.execute();
+		} catch (SQLException ex) {
+			// In MySQL, ignore duplicates that are not because of the primary key
+			if (ex.getErrorCode() != 1062) {
+				throw new JenaException(ex);
+			}
+		}
 	}
 
 	/*

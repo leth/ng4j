@@ -1,4 +1,7 @@
 
+09/21/10 (Jennifer)
+Moved database-specific error handling from DbCompatibility to subclass MySQLCompatibility.
+
 09/16/10 (Jennifer)
 Applied patch submitted by Asheesh Laroia, modifying QuadD and DbCompatibility to support SQL PreparedStatement's.
 

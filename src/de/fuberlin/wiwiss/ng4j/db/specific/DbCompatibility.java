@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/DbCompatibility.java,v 1.8 2010/09/16 13:05:18 jenpc Exp $
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/DbCompatibility.java,v 1.9 2010/09/21 15:34:03 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db.specific;
 
 import java.sql.Connection;
@@ -194,10 +194,7 @@ public abstract class DbCompatibility {
 		try {
 			executeNoErrorHandling(sql);
 		} catch (SQLException ex) {
-			// In MySQL, ignore duplicates that are not because of the primary key
-			if (ex.getErrorCode() != 1062) {
-				throw new JenaException(ex);
-			}
+			throw new JenaException(ex);
 		}
 	}
 	
@@ -210,14 +207,11 @@ public abstract class DbCompatibility {
 			// TODO Consider using sql.executeUpdate for INSERT, DELETE, and UPDATE and executeQuery for SELECT statements.
 			// These offer more detailed results, rather than the boolean returned by execute.
 			// And also consider taking a look at the results and/or returning them.
+			// QuadDB contains private method executeQuery, so if that is needed by anything here
+			// then could move to here (and make public static)
 			sql.execute();
 		} catch (SQLException ex) {
-			// In MySQL, ignore duplicates that are not because of the primary key
-			// TODO: Remove the MySQL-specific check from here and instead override in MySQLCompatibility.
-			// (See also 1062 above and do the same there.)
-			if (ex.getErrorCode() != 1062) {
-				throw new JenaException(ex);
-			}
+			throw new JenaException(ex);
 		}
 	}
 
