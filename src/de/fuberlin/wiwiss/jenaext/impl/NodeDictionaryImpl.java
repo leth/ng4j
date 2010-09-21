@@ -26,12 +26,12 @@ public class NodeDictionaryImpl implements NodeDictionary
 
 	// implementation of the NodeDictionary interface
 
-	final public Node getNode ( int id )
+	synchronized final public Node getNode ( int id )
 	{
 		return dictId2Node.get( id );
 	}
 
-	final public int getId ( Node n )
+	synchronized final public int getId ( Node n )
 	{
 		Integer i;
 		if ( n.isURI() ) {
@@ -47,7 +47,7 @@ public class NodeDictionaryImpl implements NodeDictionary
 		return ( i == null ) ? -1 : i.intValue();
 	}
 
-	final public int createId ( Node n )
+	synchronized final public int createId ( Node n )
 	{
 		int i = getId( n );
 
