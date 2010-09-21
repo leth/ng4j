@@ -64,6 +64,10 @@ public class Index<T>
 	public void clear ()
 	{
 		for ( int i = index.length - 1; i >= 0; --i ) {
+			if ( index[i] != null ) {
+				index[i].clear();
+			}
+
 			index[i] = null;
 		}
 	}
