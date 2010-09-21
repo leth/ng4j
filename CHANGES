@@ -1,5 +1,9 @@
 
 09/21/10 (Jennifer)
+Moved call to initializePreparedStatements from NamedGraphSetDB to QuadDB.
+(Previously there were situations in which this method was never called.)
+
+09/21/10 (Jennifer)
 Moved database-specific error handling from DbCompatibility to subclass MySQLCompatibility.
 
 09/16/10 (Jennifer)

@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetDB.java,v 1.10 2010/02/25 14:28:21 hartig Exp $
+// $Id: NamedGraphSetDB.java,v 1.11 2010/09/21 16:39:08 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -38,7 +38,7 @@ public class NamedGraphSetDB extends NamedGraphSetIO implements NamedGraphSet {
 			this.db.createTables();
 		}
 		// initialize the SQL statements to be used repeatedly with this database
-		db.initializePreparedStatements();
+		//db.initializePreparedStatements(); // now done in QuadDB
 	}
 
 	/**
