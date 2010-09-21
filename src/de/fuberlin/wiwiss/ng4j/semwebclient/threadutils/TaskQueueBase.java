@@ -66,24 +66,41 @@ abstract public class TaskQueueBase extends Thread {
 	/**
 	 * Adds the given task to the queue.
 	 */
-	public void addTask ( Task task ) {
+	synchronized public void addTask ( Task task ) {
 		if ( closed )
 			throw new IllegalStateException( "This queue '" + getName() + "' (type: " + getClass().getName() + ") has been closed." );
 
-		synchronized ( tasks ) {
-			tasks.offer ( task );
-		}
+		tasks.offer ( task );
 		log.debug( "Enqueued task '" + task.getIdentifier() + "' in queue '" + getName() + "' (type: " + getClass().getName() + ") - " + tasks.size() + " tasks in queue." );
-		synchronized ( this ) {
-			notify();
-		}
+		notify();
+
+	}
+
+	/**
+	 * Removes all tasks from this queue that are not being assigned to an
+	 * executing thread yet.
+	 */
+	synchronized public void clearQueuedTasks () {
+			tasks.clear();
 	}
 
 	/**
 	 * Returns true if the queue is empty and none of the threads is busy.
 	 */
-	final public boolean isIdle () {
+	synchronized final public boolean isIdle () {
 		return ( tasks.isEmpty() && busyThreads.isEmpty() );
+	}
+
+	/**
+	 * Sets a flag on all busy threads that signalizes these threads to abort
+	 * the execution of their current tasks.
+	 * Notice, setting this flag is not a guarantee for an abortion.
+	 * @see {@link TaskExecutorBase#setAbortCurrentTaskFlag}
+	 */
+	synchronized final public void setAbortCurrentTaskFlags () {
+		for ( TaskExecutorBase t : busyThreads ) {
+			t.setAbortCurrentTaskFlag();
+		}
 	}
 
 	/**
@@ -105,38 +122,38 @@ abstract public class TaskQueueBase extends Thread {
 		while ( ! closed ) {
 			// move threads that finished their task to the pool of free threads
 			tmp.clear();
-			Iterator<TaskExecutorBase> it = busyThreads.iterator();
-			while ( it.hasNext() ) {
-				TaskExecutorBase t = it.next();
-				if ( ! t.hasTask() )
-					tmp.add( t );
-			}
-			busyThreads.removeAll( tmp );
-			freeThreads.addAll( tmp );
-
-			// assign queued tasks to free threads
-			while ( true ) {
-				if ( freeThreads.isEmpty() ) {
-					break;
+			synchronized ( this ) {
+				Iterator<TaskExecutorBase> it = busyThreads.iterator();
+				while ( it.hasNext() ) {
+					TaskExecutorBase t = it.next();
+					if ( ! t.hasTask() )
+						tmp.add( t );
 				}
+				busyThreads.removeAll( tmp );
+				freeThreads.addAll( tmp );
 
-				TaskExecutorBase thread = null;
-				Task task = null;
-				synchronized ( tasks ) {
+				// assign queued tasks to free threads
+				while ( true ) {
+					if ( freeThreads.isEmpty() ) {
+						break;
+					}
+
+					TaskExecutorBase thread = null;
+					Task task = null;
 					if ( ! tasks.isEmpty() ) {
 						thread = freeThreads.remove();
 						task = tasks.remove();
 					}
+
+					if ( task == null ) {
+						break;
+					}
+
+					thread.startTask( task );
+					busyThreads.add( thread );
+
+					log.debug( "Dequeued task '" + task.getIdentifier() + "' in queue '" + getName() + "' (type: " + getClass().getName() + ") - still " + tasks.size() + " tasks in queue." );
 				}
-
-				if ( task == null ) {
-					break;
-				}
-
-				thread.startTask( task );
-				busyThreads.add( thread );
-
-				log.debug( "Dequeued task '" + task.getIdentifier() + "' in queue '" + getName() + "' (type: " + getClass().getName() + ") - still " + tasks.size() + " tasks in queue." );
 			}
 
 			if ( log.isDebugEnabled() && ! tasks.isEmpty() )
@@ -160,6 +177,8 @@ abstract public class TaskQueueBase extends Thread {
 
 		closed = true;
 
+		tasks.clear();
+
 		while ( ! freeThreads.isEmpty() ) {
 			TaskExecutorBase t = freeThreads.remove();
 			t.stopThread();
@@ -175,7 +194,6 @@ abstract public class TaskQueueBase extends Thread {
 
 		freeThreads.addAll( busyThreads );
 		busyThreads.clear();
-		tasks.clear();
 
 		notify();
 
@@ -197,21 +215,12 @@ abstract public class TaskQueueBase extends Thread {
 		}
 	}
 
-	public String getStatisticsString ()
+	synchronized public String getStatisticsString ()
 	{
 		String s = "";
-
-		synchronized ( tasks ) {
-			s += "# queued tasks: " + String.valueOf( tasks.size() );
-		}
-		synchronized ( busyThreads ) {
-			s += ", # busy threads: " + String.valueOf( busyThreads.size() );
-		}
-
-		synchronized ( freeThreads ) {
-			s += ", # free threads: " + String.valueOf( freeThreads.size() );
-		}
-
+		s += "# queued tasks: " + String.valueOf( tasks.size() );
+		s += ", # busy threads: " + String.valueOf( busyThreads.size() );
+		s += ", # free threads: " + String.valueOf( freeThreads.size() );
 		return s;
 	}
 
