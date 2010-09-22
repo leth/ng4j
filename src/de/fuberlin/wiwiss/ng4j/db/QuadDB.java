@@ -1,4 +1,4 @@
-// $Id: QuadDB.java,v 1.20 2010/09/21 17:15:11 jenpc Exp $
+// $Id: QuadDB.java,v 1.21 2010/09/22 21:15:10 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -173,6 +173,8 @@ public class QuadDB {
 				if (!hasNext()) {
 					throw new NoSuchElementException();
 				}
+				// calling hasNext put the next quad in this.next,
+				// so now make that the current one and reset the other entries
 				this.current = this.next;
 				this.next = null;
 				this.hasReadNext = false;
@@ -343,8 +345,7 @@ public class QuadDB {
 	}
 	
 	public void deleteTables() {
-		dbCompatibility.execute("DROP TABLE " + graphNamesTableName);
-		dbCompatibility.execute("DROP TABLE " + quadsTableName);
+		dbCompatibility.deleteTables();
 	}
 	
 	public boolean tablesExist() {
