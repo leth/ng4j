@@ -32,6 +32,9 @@ public class SPARQLTest extends TestCase {
 //	private Map expectedBinding;
 	ResultSetRewindable results;
 	
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#setUp()
+	 */
 	public void setUp() throws Exception {
 		this.set = createNamedGraphSet();
 		this.localDS = new NamedGraphDataset( set );
@@ -46,6 +49,9 @@ public class SPARQLTest extends TestCase {
 		return new NamedGraphSetImpl();
 	}
 
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#tearDown()
+	 */
 	public void tearDown() throws Exception {
 		this.set.close();
 	}
