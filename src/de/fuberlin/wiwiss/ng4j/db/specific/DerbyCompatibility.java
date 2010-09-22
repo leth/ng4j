@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/DerbyCompatibility.java,v 1.4 2010/02/25 14:28:21 hartig Exp $ 
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/DerbyCompatibility.java,v 1.5 2010/09/22 19:01:45 jenpc Exp $ 
 package de.fuberlin.wiwiss.ng4j.db.specific;
 
 import java.sql.Connection;
@@ -21,6 +21,48 @@ public class DerbyCompatibility extends DbCompatibility {
 
 	public DerbyCompatibility(Connection connection) {
 		super(connection);
+		
+		// If a schema for the username does not exist yet, then that user can't create prepared statements.
+		// Specifically, when try to create a prepared statement, get error 
+		//     Schema 'USERNAME' does not exist
+		// (Where USERNAME is the name of the user.)
+		// So this happens if even a single statement is prepared in DbCompatibilty 
+		// method initializePreparedStatements and a schema does not yet exist for the username.
+		
+		// Per http://db.apache.org/derby/faq.html#schema_exist
+		//
+		// 5.3. Why do I get the error 'schema does not exist'?
+		// The current schema for any connection defaults to a schema corresponding to the user name. 
+		// If no user name is supplied then the user name (and hence current schema) defaults to APP.
+		//
+		// However even though the current schema is set to the user name, that schema may not exist. 
+		// A schema is only created by CREATE SCHEMA or creating an object (table etc.) in that schema (this is implicit schema creation). 
+		
+		// Ideally we would create the schema for the username directly, as follows:
+		// 	String username;
+		// 	try {
+		// 		username = connection.getClientInfo("ClientUser");
+		// 	} catch (SQLException ex) {
+		// 		throw new RuntimeException("Unable to get the username of the connection to Derby database: " + ex.getLocalizedMessage());
+		// 	}
+		// 	if ( username == null ) {
+		//		throw new RuntimeException("Username for Derby database connection is null.");
+		// 	}
+		//	execute("CREATE SCHEMA " + username);
+		
+		// HOWEVER
+		// Per http://db.apache.org/derby/javadoc/engine/org/apache/derby/client/am/LogicalConnection40.html#getClientInfo%28java.lang.String%29
+		// getClientInfo forwards to physicalConnection_. Always returns a null String since Derby does not support ClientInfoProperties. 
+		// This means that we can't get the username in the proper way (see commented code above).
+		
+		// Therefore (per the apache FAQ above) the alternative is to create an object.
+		// Thus we create and delete an object just so the PreparedStatement creation will work.
+		// This is not ideal.
+		
+		// TODO Find better way to create schema for user.  See above explaining why creating indirectly by creating another object.
+		String dummyTablename = "tempgarbagegook";
+		execute("CREATE TABLE " + dummyTablename + " (name " + URI_DATATYPE + " , PRIMARY KEY(name)) ");
+		execute("DROP TABLE " + dummyTablename);
 	}
 
 	/* (non-Javadoc)
