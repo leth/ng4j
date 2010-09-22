@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/DbCompatibility.java,v 1.9 2010/09/21 15:34:03 jenpc Exp $
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/DbCompatibility.java,v 1.10 2010/09/22 19:22:34 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db.specific;
 
 import java.sql.Connection;
@@ -232,6 +232,14 @@ public abstract class DbCompatibility {
 		return connection;
 	}
 
+	/** Deletes the database tables created by method
+	 * createTables().
+	 */
+	public void deleteTables() {
+		execute("DROP TABLE " + graphNamesTableName);
+		execute("DROP TABLE " + quadsTableName);
+	}
+	
 	public void initializePreparedStatements() throws SQLException {
 		// TODO Implement
 		
