@@ -1,4 +1,11 @@
 
+09/22/10 (Jennifer)
+Improved DBConnectionHelper test code - added defaults for all 5 supported databases and simplified database selection.
+Added method deleteTables to class DbCompatibility so can call from there and QuadDB, and now do.
+In preparation for using PreparedStatements more, modified DerbyCompatibility to work-around some specific issues, i.e., 
+  to permit user-created statements by first creating a schema for the username, and
+  to permit the creation of prepared statements about tables that may not exist yet otherwise.
+
 09/21/10 (Jennifer)
 Moved call to initializePreparedStatements from NamedGraphSetDB to QuadDB.
 (Previously there were situations in which this method was never called.)
