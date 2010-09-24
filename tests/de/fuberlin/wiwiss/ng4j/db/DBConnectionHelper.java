@@ -1,4 +1,4 @@
-// $Id: DBConnectionHelper.java,v 1.5 2010/09/22 18:37:04 jenpc Exp $
+// $Id: DBConnectionHelper.java,v 1.6 2010/09/24 17:19:17 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -73,7 +73,8 @@ public class DBConnectionHelper {
 	private static final String PW_FOR_MYSQL = "";
 	
 	// Settings for Oracle
-	private static final String URL_FOR_ORACLE = "jdbc:oracle:thin:@localhost:1521:xe";
+	// Note that Oracle 10g Express is not supported - Express is buggy.  Errors when run tests against it.
+	private static final String URL_FOR_ORACLE = "jdbc:oracle:thin:@localhost:1521:orcl";
 	private static final String DRIVER_FOR_ORACLE = "oracle.jdbc.driver.OracleDriver";
 	private static final String USER_FOR_ORACLE = "sa";
 	private static final String PW_FOR_ORACLE = "";
