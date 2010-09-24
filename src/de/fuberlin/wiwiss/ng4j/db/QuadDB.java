@@ -1,4 +1,4 @@
-// $Id: QuadDB.java,v 1.21 2010/09/22 21:15:10 jenpc Exp $
+// $Id: QuadDB.java,v 1.22 2010/09/24 21:03:25 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -17,6 +17,7 @@ import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.rdf.model.AnonId;
 import com.hp.hpl.jena.shared.JenaException;
+import com.sun.rowset.CachedRowSetImpl;
 
 import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.db.specific.DbCompatibility;
@@ -42,6 +43,18 @@ import de.fuberlin.wiwiss.ng4j.db.specific.PostgreSQLCompatibility;
  */
 public class QuadDB {
 
+	/* TODO REVISIT this use of com.sun.rowset.CachedRowSetImpl because it is a sun library
+	 * Not a problem to depend on java libraries, but don't want to depend on a particular java implementation.
+	 * The reason it has been added for now is to fix a memory leak that was reported to occur.
+	 * The fix may not yet be complete.  However, in working to replace more
+	 * SQL statements with PreparedStatements, Jennifer Cormier found that when 
+	 * using Derby in-memory mode to run the JUnit tests there were errors of the type:
+	 *   com.hp.hpl.jena.shared.JenaException: java.sql.SQLException: 
+	 *   Operation 'DROP INDEX' cannot be performed on object 'SQL100924163324050' 
+	 *   because there is an open ResultSet dependent on that object.
+	 * And this fix prevents those errors from occurring.
+	 */
+	
 	private Pattern escapePattern = null;
 	private String escapeReplacement = null;
 	
@@ -140,6 +153,19 @@ public class QuadDB {
 		PreparedStatement sql = getWhereClause(prefix, graph, subject, predicate, object);
 		
 		final ResultSet results = executeQuery(sql);
+		
+		// Use a CachedRowSet so we can clean-up the ResultSet
+		// http://onjava.com/pub/a/onjava/2004/06/23/cachedrowset.html
+		final CachedRowSetImpl crs;
+		try {
+			crs = new CachedRowSetImpl();
+			crs.populate(results);
+		} catch (SQLException e) {
+			throw new JenaException(e);
+		} finally {
+			cleanUp(results);
+		}
+		
 		return new Iterator<Quad>() {
 			private boolean hasReadNext = false;
 			private Quad current = null;
@@ -151,14 +177,14 @@ public class QuadDB {
 			public boolean hasNext() {
 				if (!this.hasReadNext) {
 					try {
-						if (results.next()) {
+						if (crs.next()) {
 							this.next = makeQuad();
 						} else {
 							this.next = null;
-							cleanUp(results);
+							//cleanUp(results);
 						}
 					} catch (SQLException ex) {
-						cleanUp(results);
+						//cleanUp(results);
 						throw new JenaException(ex);
 					}
 					this.hasReadNext = true;
@@ -196,21 +222,21 @@ public class QuadDB {
 			private Quad makeQuad() {
 				Node node;
 				try {
-					String dt = results.getString(7);
-					if (results.getString(4) == null) {
-						node = Node.createLiteral(results.getString(5), results.getString(6),
+					String dt = crs.getString(7);
+					if (crs.getString(4) == null) {
+						node = Node.createLiteral(crs.getString(5), crs.getString(6),
 								((dt == null) ?
 										null :
 										TypeMapper.getInstance().getSafeTypeByName(dt)));
 					} else {
-						node = toResource(results.getString(4));
+						node = toResource(crs.getString(4));
 					}
-					return new Quad(Node.createURI(results.getString(1)),
-							toResource(results.getString(2)),
-							Node.createURI(results.getString(3)),
+					return new Quad(Node.createURI(crs.getString(1)),
+							toResource(crs.getString(2)),
+							Node.createURI(crs.getString(3)),
 							node);
 				} catch (SQLException ex) {
-					cleanUp(results);
+					//cleanUp(results);
 					throw new JenaException(ex);
 				}
 			}
@@ -271,6 +297,18 @@ public class QuadDB {
 		String sql = "SELECT name FROM " + graphNamesTableName;
 		final ResultSet results = executeQuery(sql);
 
+		// Use a CachedRowSet so we can clean-up the ResultSet
+		// http://onjava.com/pub/a/onjava/2004/06/23/cachedrowset.html
+		final CachedRowSetImpl crs;
+		try {
+			crs = new CachedRowSetImpl();
+			crs.populate(results);
+		} catch (SQLException e) {
+			throw new JenaException(e);
+		} finally {
+			cleanUp(results);
+		}
+		
 		return new Iterator<Node>() {
 			private boolean isOnNext = false;
 			private boolean hasNext;
@@ -281,12 +319,12 @@ public class QuadDB {
 			public boolean hasNext() {
 				if (!this.isOnNext) {
 					try {
-						this.hasNext = results.next();
-						if (!this.hasNext) {
-							cleanUp(results);
-						}
+						this.hasNext = crs.next();
+						//if (!this.hasNext) {
+						//	cleanUp(results);
+						//}
 					} catch (SQLException ex) {
-						cleanUp(results);
+						//cleanUp(results);
 						throw new JenaException(ex);
 					}
 					this.isOnNext = true;
@@ -303,9 +341,9 @@ public class QuadDB {
 				}
 				this.isOnNext = false;
 				try {
-					return Node.createURI(results.getString(1));
+					return Node.createURI(crs.getString(1));
 				} catch (SQLException ex) {
-					cleanUp(results);
+					//cleanUp(results);
 					throw new JenaException(ex);
 				}
 			}
