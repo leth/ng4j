@@ -1,4 +1,11 @@
 
+09/24/10 (Jennifer)
+Changed QuadDB to utilize com.sun.rowset.CachedRowSetImpl so that each ResultSet opened can be closed to prevent a memory leak that was occurring.
+Created new method, preparedStatementsRequireTablesToExist, in DbCompatibility because more than 1 database falls in this category.
+  Modified DbCompatibility.initializePreparedStatements() to check the above method and create tables if needed.
+  Modified the subclasses for Derby and HSQLDB to override the new method.
+  The latter means we can (and do) move what was thought to be a Derby-specific work-around up a level because it also applies to HSQLDB.  
+
 09/22/10 (Jennifer)
 Improved DBConnectionHelper test code - added defaults for all 5 supported databases and simplified database selection.
 Added method deleteTables to class DbCompatibility so can call from there and QuadDB, and now do.
