@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/DerbyCompatibility.java,v 1.6 2010/09/22 19:26:25 jenpc Exp $ 
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/DerbyCompatibility.java,v 1.7 2010/09/24 21:17:10 jenpc Exp $ 
 package de.fuberlin.wiwiss.ng4j.db.specific;
 
 import java.sql.Connection;
@@ -115,38 +115,16 @@ public class DerbyCompatibility extends DbCompatibility {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.fuberlin.wiwiss.ng4j.db.specific.DbCompatibility#initializePreparedStatements()
+	 * @see de.fuberlin.wiwiss.ng4j.db.specific.DbCompatibility#preparedStatementsRequireTablesToExist()
 	 */
 	@Override
-	public void initializePreparedStatements() throws SQLException {
-		
-		// When preparing a PreparedStatement, Apache Derby
-		// appears to try to check the statement when it is created.
-		// The error for creating dropGraphnamesTableStmt, for example, is:
-		//   'DROP TABLE' cannot be performed on 'NG4J_TEST_GRAPHS' because it does not exist.
-		
-		// This work-around creates the tables if they don't already exist,
-		// and then after creating the prepared statements, deletes the tables if they didn't exist previously.
-		
-		boolean tablesAlreadyExist = true;
-		if ( ! tablesExist() ) {
-			// Tables don't already exist; create them so Derby won't 
-			// complain when creating statements referring to these tables.
-			tablesAlreadyExist = false;
-			createTables();
-		}
-		
-		super.initializePreparedStatements();
-		
-		if ( ! tablesAlreadyExist ) {
-			// Now that initialization is complete,
-			// since the tables did not exist previously, delete them.
-//			try {
-				deleteTables();
-//			} catch (SQLException ex) {
-//				throw new JenaException(ex);
-//			}
-		}
+	public boolean preparedStatementsRequireTablesToExist() {
+		// For both in-memory and standard mode, there are errors if 
+		// this is not done, such as 
+		//java.lang.RuntimeException: Unable to initialize prepared statements 
+		// for database de.fuberlin.wiwiss.ng4j.db.specific.DerbyCompatibility.  
+		// Error code = -1: Table/View 'NG4J_TEST_GRAPHS' does not exist.
+		return true;
 	}
 }
 

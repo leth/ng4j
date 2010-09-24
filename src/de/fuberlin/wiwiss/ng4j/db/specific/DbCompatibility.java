@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/DbCompatibility.java,v 1.10 2010/09/22 19:22:34 jenpc Exp $
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/DbCompatibility.java,v 1.11 2010/09/24 21:17:10 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db.specific;
 
 import java.sql.Connection;
@@ -239,9 +239,54 @@ public abstract class DbCompatibility {
 		execute("DROP TABLE " + graphNamesTableName);
 		execute("DROP TABLE " + quadsTableName);
 	}
-	
+
+	/** Subclasses should override if the particular database
+	 * requires that any items mentioned in a PreparedStatement
+	 * exist before the statement is created.
+	 * 
+	 * @return whether the creation of a PreparedStatement requires items, such as tables, mentioned in the statement to already exist.
+	 */
+	public boolean preparedStatementsRequireTablesToExist() {
+		return false;
+	}
+
+	/** Initializes the SQL statements to be used repeatedly with this database.
+	 * 
+	 */
 	public void initializePreparedStatements() throws SQLException {
-		// TODO Implement
+		
+		// When preparing a PreparedStatement, certain databases, 
+		// particularly when used in in-memory mode
+		// appear to try to check the statement when it is created.
+		// If a table mentioned in the statement does not yet exist, 
+		// then an error occurs.
+		
+		// This work-around creates the tables if they don't already exist,
+		// and then after creating the prepared statements, deletes the tables if they didn't exist previously.
+		
+		boolean tablesAlreadyExist = true;
+		if ( preparedStatementsRequireTablesToExist() && ( ! tablesExist() ) ) {
+			// Tables don't already exist; create them so certain databases won't 
+			// complain when creating statements referring to these tables.
+			tablesAlreadyExist = false;
+			createTables();
+		}
+		
+		try {
+			// TODO Finish implementing
+			
+		} finally {
+			
+			if ( ! tablesAlreadyExist ) {
+				// Now that initialization is complete,
+				// since the tables did not exist previously, delete them.
+//				try {
+					deleteTables();
+//				} catch (SQLException ex) {
+//					throw new JenaException(ex);
+//				}
+			}
+		}
 		
 	}
 

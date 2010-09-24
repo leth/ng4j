@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/HSQLCompatibility.java,v 1.4 2010/02/25 14:28:21 hartig Exp $
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/HSQLCompatibility.java,v 1.5 2010/09/24 21:17:10 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db.specific;
 
 import java.sql.Connection;
@@ -74,6 +74,20 @@ public class HSQLCompatibility extends DbCompatibility {
 	@Override
 	public String getVarcharName() {
 		return VARCHAR_NAME;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.db.specific.DbCompatibility#preparedStatementsRequireTablesToExist()
+	 */
+	@Override
+	public boolean preparedStatementsRequireTablesToExist() {
+		// Instead use the version that creates the tables because
+		// HSQLDB, at least in in-memory mode, has this problem otherwise:
+		// java.lang.RuntimeException: Unable to initialize prepared statements for database 
+		// de.fuberlin.wiwiss.ng4j.db.specific.HSQLCompatibility.  
+		// Error code = -22: Table not found in statement [SELECT COUNT(*) FROM ng4j_test_graphs]
+		
+		return true;
 	}
 
 	/*
