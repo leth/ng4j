@@ -1,4 +1,7 @@
 
+09/27/10 (Jennifer)
+Changed most of the code in QuadDB and DbCompatibility to use PreparedStatements instead of escaped strings.
+
 09/24/10 (Jennifer)
 Changed QuadDB to utilize com.sun.rowset.CachedRowSetImpl so that each ResultSet opened can be closed to prevent a memory leak that was occurring.
 Created new method, preparedStatementsRequireTablesToExist, in DbCompatibility because more than 1 database falls in this category.
