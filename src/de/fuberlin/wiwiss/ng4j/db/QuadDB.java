@@ -1,4 +1,4 @@
-// $Id: QuadDB.java,v 1.22 2010/09/24 21:03:25 jenpc Exp $
+// $Id: QuadDB.java,v 1.23 2010/09/27 19:13:57 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -62,7 +62,6 @@ public class QuadDB {
 	
 	private final String graphNamesTableName;
 	private final String quadsTableName;
-	private String insertStatementSql;
 	
 	private DbCompatibility dbCompatibility;
 
@@ -74,43 +73,26 @@ public class QuadDB {
 		this.quadsTableName = this.tablePrefix + "_quads";
 		
 		dbCompatibility.initialize(tablePrefix, graphNamesTableName, quadsTableName);
-		try {
+//		try {
 			// initialize the SQL statements to be used repeatedly with this database
 			dbCompatibility.initializePreparedStatements();
-		} catch (SQLException e) {
-			throw new RuntimeException("Unable to initialize prepared statements for database: " + dbCompatibility.getClass().getName());
-		}
-	}
-	
-	private PreparedStatement getInsertStatement() {
-		if (this.insertStatementSql == null) {
-			this.insertStatementSql = "INSERT INTO " + quadsTableName +
-			" (graph, subject, predicate, object, literal, lang, datatype) VALUES (" +
-			"  ?,     ?,       ?,         ?,      ?,       ?,    ?)";
-		}
-		
-		PreparedStatement ret;
-			try {
-				ret = this.dbCompatibility.getConnection().prepareStatement(this.insertStatementSql);
-			} catch (SQLException e) {
-				throw new JenaException(e);
-			}
-		
-		return ret;
+//		} catch (SQLException e) {
+//			throw new RuntimeException("Unable to initialize prepared statements for database: " + dbCompatibility.getClass().getName());
+//		}
 	}
 	
 	public void insert(Node graph, Node subject, Node predicate, Node object) {
 		if (find(graph, subject, predicate, object).hasNext()) {
+			// don't attempt the insert if the statement already exists in the graph
 			return;
 		}
 		
-		PreparedStatement insert = getInsertStatement();
+		PreparedStatement insert = dbCompatibility.getInsertQuadsTableStmt(); //getInsertStatement();
 		try {
-			insert.setString(1, graph.getURI());
-			insert.setString(2, resourceAsSqlString(subject));
-			insert.setString(3, predicate.getURI());
-			
-			// Now let helper methods set the prepared query's data for object, literal, lang, and datatype
+			// let helper methods set the prepared query's data
+			setGraphnameColumn(insert, graph);
+			setSubjectColumn(insert, subject);
+			setPredicateColumn(insert, predicate);
 			setObjectColumn(insert, object);
 			setLiteralColumn(insert, object);
 			setLangColumn(insert, object);
@@ -124,6 +106,9 @@ public class QuadDB {
 	}
 	
 	public void delete(Node graph, Node subject, Node predicate, Node object) {
+		// TODO change to use PreparedStatement instead - a bit more complex
+		// need to have multiple prepared statements - see getWhereClause -
+		// because the end may or may not be added depending
 		String prefix = "DELETE FROM " + quadsTableName + " ";
 		PreparedStatement sql = getWhereClause(prefix, graph, subject, predicate, object);
 		dbCompatibility.execute(sql);
@@ -148,11 +133,14 @@ public class QuadDB {
 			List<Quad> quadsList = Collections.emptyList();
 			return quadsList.iterator();
 		}
+		// TODO change to use PreparedStatement instead - a bit more complex
+		// need to have multiple prepared statements - see getWhereClause -
+		// because the end may or may not be added depending
 		String prefix = "SELECT graph, subject, predicate, object, literal, lang, datatype " +
 				"FROM " + quadsTableName + " ";
 		PreparedStatement sql = getWhereClause(prefix, graph, subject, predicate, object);
 		
-		final ResultSet results = executeQuery(sql);
+		final ResultSet results = dbCompatibility.executeQuery(sql);
 		
 		// Use a CachedRowSet so we can clean-up the ResultSet
 		// http://onjava.com/pub/a/onjava/2004/06/23/cachedrowset.html
@@ -251,8 +239,7 @@ public class QuadDB {
 	}
 	
 	public int count() {
-		String sql = "SELECT COUNT(*) FROM " + quadsTableName;
-		ResultSet results = executeQuery(sql);
+		ResultSet results = dbCompatibility.executeQuery(dbCompatibility.getContainsAnyQuadStmt());
 		try {
 			results.next();
 			return results.getInt(1);
@@ -264,25 +251,42 @@ public class QuadDB {
 	}
 	
 	public void insertGraphName(Node graphName) {
-		String sql = "INSERT INTO " + graphNamesTableName +
-				" VALUES ('" + escape(graphName.getURI()) + "')";
-		dbCompatibility.execute(sql);
+		PreparedStatement insertGraphNameStmt;
+		try {
+			insertGraphNameStmt = dbCompatibility.getInsertGraphNameStmt(graphName);
+		} catch (SQLException ex) {
+			throw new JenaException(ex);
+		}
+		dbCompatibility.execute(insertGraphNameStmt);
 	}
 	
 	public void deleteGraphName(Node graphName) {
-		String sql = "DELETE FROM " + graphNamesTableName;
+		PreparedStatement deleteGraphStmt;
 		if (!Node.ANY.equals(graphName)) {
-			sql += " WHERE name='" + escape(graphName.getURI()) + "'";
+			try {
+				deleteGraphStmt = dbCompatibility.getDeleteGraphStmt(graphName);
+			} catch (SQLException ex) {
+				throw new JenaException(ex);
+			}
+		} else {
+			deleteGraphStmt = dbCompatibility.getDeleteAllGraphsStmt();
 		}
-		dbCompatibility.execute(sql);
+		dbCompatibility.execute(deleteGraphStmt);
 	}
 	
 	public boolean containsGraphName(Node graphName) {
-		String sql = "SELECT COUNT(*) FROM " + graphNamesTableName;
+		PreparedStatement containsGraphStmt;
 		if (!Node.ANY.equals(graphName)) {
-			sql += " WHERE name='" + escape(graphName.getURI()) + "'";
+			try {
+				containsGraphStmt = dbCompatibility.getContainsGraphNameStmt(graphName);
+			} catch (SQLException ex) {
+				throw new JenaException(ex);
+			}
+		} else {
+			containsGraphStmt = dbCompatibility.getContainsAnyGraphStmt();
 		}
-		ResultSet results = executeQuery(sql);
+		
+		ResultSet results = dbCompatibility.executeQuery(containsGraphStmt);
 		try {
 			results.next();
 			return results.getInt(1) > 0;
@@ -294,8 +298,7 @@ public class QuadDB {
 	}
 	
 	public Iterator<Node> listGraphNames() {
-		String sql = "SELECT name FROM " + graphNamesTableName;
-		final ResultSet results = executeQuery(sql);
+		ResultSet results = dbCompatibility.executeQuery(dbCompatibility.getListGraphNamesStmt());
 
 		// Use a CachedRowSet so we can clean-up the ResultSet
 		// http://onjava.com/pub/a/onjava/2004/06/23/cachedrowset.html
@@ -358,8 +361,7 @@ public class QuadDB {
 	}
 	
 	public int countGraphNames() {
-		String sql = "SELECT COUNT(*) FROM " + graphNamesTableName;
-		ResultSet results = executeQuery(sql);
+		ResultSet results = dbCompatibility.executeQuery(dbCompatibility.getContainsAnyGraphStmt());
 		try {
 			results.next();
 			return results.getInt(1);
@@ -370,9 +372,27 @@ public class QuadDB {
 		}
 	}
 
+	/** Closes the ResultSet so that it can be disposed of.
+	 * Also closes the statement used to create the ResultSet, 
+	 * unless it is a PreparedStatement that should be saved.
+	 * 
+	 * @param results The ResultSet to close.
+	 */
 	private void cleanUp(ResultSet results) {
 		try {
-			results.getStatement().close();
+			// Typically should not close PreparedStatement's since intent is to re-use them.
+			// So instead test here to see if the statement is a PreparedStatement
+			Statement stmt = results.getStatement();
+			if ( ( stmt instanceof PreparedStatement ) 
+					&& dbCompatibility.shouldBeSaved((PreparedStatement)stmt) ) {
+				// The statement is a PreparedStatement and it should be saved. 
+				// close the result set but not the PreparedStatement.
+				results.close();
+			} else {
+				// This Statement is not a PreparedStatement.  It can safely be closed.
+				// This has the side effect of closing the ResultSet.
+				results.getStatement().close();
+			}
 		} catch (SQLException ex) {
 			throw new JenaException("Cannot close result set", ex);
 		}
@@ -410,38 +430,23 @@ public class QuadDB {
 		return "_:" + resource.getBlankNodeId().toString();
 	}
 
-	private ResultSet executeQuery(String sql) {
-		Statement stmt = null;
-		try {
-			stmt = dbCompatibility.getConnection().createStatement();
-			dbCompatibility.setSchema(stmt);
-			return stmt.executeQuery(sql);
-		} catch (SQLException ex) {
-			if (stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException ex2) {
-					throw new JenaException(ex);
-				}
-			}
-			throw new JenaException(ex);
-		}
-	}
-	
-	private ResultSet executeQuery(PreparedStatement stmt) {
-		try {
-			return stmt.executeQuery();
-		} catch (SQLException ex) {
-			if (stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException ex2) {
-					throw new JenaException(ex);
-				}
-			}
-			throw new JenaException(ex);
-		}
-	}
+//	private ResultSet executeQuery(String sql) {
+//		Statement stmt = null;
+//		try {
+//			stmt = dbCompatibility.getConnection().createStatement();
+//			dbCompatibility.setSchema(stmt);
+//			return stmt.executeQuery(sql);
+//		} catch (SQLException ex) {
+//			if (stmt != null) {
+//				try {
+//					stmt.close();
+//				} catch (SQLException ex2) {
+//					throw new JenaException(ex);
+//				}
+//			}
+//			throw new JenaException(ex);
+//		}
+//	}
 	
 	private String getObjectColumnRaw(Node object) {
 		if (object.isLiteral()) {
@@ -450,24 +455,43 @@ public class QuadDB {
 		return resourceAsSqlString(object);
 	}
 	
-	private void setColumn(PreparedStatement statement, int index, String value) {
-		try {
+	private void setColumn(PreparedStatement statement, int index, String value) 
+	throws SQLException {
+//		try {
 			if (value == null) {
 				statement.setNull(index, java.sql.Types.VARCHAR); // a null string, not a null something else
 			} else {
 				statement.setString(index, value);
 			}
-		} catch (SQLException e) {
-			throw new JenaException(e);
-		}
+//		} catch (SQLException e) {
+//			throw new JenaException(e);
+//		}
+	}
+
+	private void setGraphnameColumn(PreparedStatement statement, Node graph) throws SQLException {
+		final int GRAPHNAME_INDEX = 1;
+		// null value is not allowed so do not call method setColumn
+		statement.setString(GRAPHNAME_INDEX, graph.getURI());
+	}
+
+	private void setSubjectColumn(PreparedStatement statement, Node subject) throws SQLException {
+		final int SUBJECT_INDEX = 2;
+		// null value is not allowed so do not call method setColumn
+		statement.setString(SUBJECT_INDEX, resourceAsSqlString(subject));
 	}
 	
-	private void setObjectColumn(PreparedStatement statement, Node object) {
+	private void setPredicateColumn(PreparedStatement statement, Node predicate) throws SQLException {
+		final int PREDICATE_INDEX = 3;
+		// null value is not allowed so do not call method setColumn
+		statement.setString(PREDICATE_INDEX, predicate.getURI());
+	}
+
+	private void setObjectColumn(PreparedStatement statement, Node object) throws SQLException {
 		final int OBJECT_INDEX = 4;
 		this.setColumn(statement, OBJECT_INDEX, getObjectColumnRaw(object));
 	}
 	
-	private void setLiteralColumn(PreparedStatement statement, Node object) {
+	private void setLiteralColumn(PreparedStatement statement, Node object) throws SQLException {
 		final int LITERAL_INDEX = 5;
 		
 		String literal;
@@ -479,7 +503,7 @@ public class QuadDB {
 		this.setColumn(statement, LITERAL_INDEX, literal);	
 	}
 	
-	private void setLangColumn(PreparedStatement statement, Node object) {
+	private void setLangColumn(PreparedStatement statement, Node object) throws SQLException {
 		final int LANG_INDEX = 6;
 		
 		String languageValue;
@@ -491,7 +515,7 @@ public class QuadDB {
 		this.setColumn(statement, LANG_INDEX, languageValue);
 	}
 	
-	private void  setDatatypeColumn(PreparedStatement statement, Node object) {
+	private void  setDatatypeColumn(PreparedStatement statement, Node object) throws SQLException {
 		final int DATATYPE_INDEX = 7;
 	
 		String datatypeValue;
@@ -523,7 +547,9 @@ public class QuadDB {
 		if (!Node.ANY.equals(object)) {
 			if (object.isLiteral()) {
 				queryClauses.add("literal = ?");
-				dataClauses.add(object.getLiteral().getLexicalForm());
+				dataClauses.add(object.getLiteral().getLexicalForm()); // THIS IS THE PROBLEM LINE
+				//Caused by: java.lang.IncompatibleClassChangeError: Found class com.hp.hpl.jena.graph.impl.LiteralLabel, but interface was expected
+				//at de.fuberlin.wiwiss.ng4j.db.QuadDB.getWhereClause(QuadDB.java:550)
 				if (object.getLiteral().language() == null || "".equals(object.getLiteral().language())) {
 					queryClauses.add("lang IS NULL");
 				} else {
@@ -592,6 +618,11 @@ public class QuadDB {
 		return prepared;
 	}
 	
+	/** Examines the connection to find the database type and
+	 * then creates the appropriate subclass of DbCompatibility.
+	 * 
+	 * @param connection
+	 */
 	private void setDBtype(Connection connection){
 		String name = null;
 		try {
