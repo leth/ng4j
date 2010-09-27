@@ -1,4 +1,4 @@
-// $Id: QuadDB.java,v 1.23 2010/09/27 19:13:57 jenpc Exp $
+// $Id: QuadDB.java,v 1.24 2010/09/27 23:36:41 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -547,9 +547,7 @@ public class QuadDB {
 		if (!Node.ANY.equals(object)) {
 			if (object.isLiteral()) {
 				queryClauses.add("literal = ?");
-				dataClauses.add(object.getLiteral().getLexicalForm()); // THIS IS THE PROBLEM LINE
-				//Caused by: java.lang.IncompatibleClassChangeError: Found class com.hp.hpl.jena.graph.impl.LiteralLabel, but interface was expected
-				//at de.fuberlin.wiwiss.ng4j.db.QuadDB.getWhereClause(QuadDB.java:550)
+				dataClauses.add(object.getLiteral().getLexicalForm());
 				if (object.getLiteral().language() == null || "".equals(object.getLiteral().language())) {
 					queryClauses.add("lang IS NULL");
 				} else {
