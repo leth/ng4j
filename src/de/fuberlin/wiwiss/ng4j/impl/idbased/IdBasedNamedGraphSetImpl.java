@@ -59,6 +59,17 @@ public class IdBasedNamedGraphSetImpl extends NamedGraphSetImpl
 	}
 
 
+	// accessor methods
+
+	/**
+	 * Returns the node dictionary used by this graph set.
+	 */
+	public NodeDictionary getNodeDictionary ()
+	{
+		return nodeDict;
+	}
+
+
 	// redefinitions of NamedGraphSetImpl methods
 
 	/**
