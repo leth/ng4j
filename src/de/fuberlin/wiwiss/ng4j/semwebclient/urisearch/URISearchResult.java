@@ -76,6 +76,17 @@ public class URISearchResult {
 		return exception;
 	}
 
+	@Override
+	public String toString () {
+		String tmp = "URISearchResult ";
+		if ( isSuccess() ) {
+			tmp += "(" + getMentioningDocs().size() + " results)";
+		} else {
+			tmp += "(failed: " + getException().getMessage() + ")";
+		}
+		return tmp;
+	}
+
 }
 
 /*

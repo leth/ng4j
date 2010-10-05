@@ -1,5 +1,8 @@
 package de.fuberlin.wiwiss.ng4j.semwebclient.urisearch;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.Task;
 import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.TaskExecutorBase;
 
@@ -12,6 +15,8 @@ import de.fuberlin.wiwiss.ng4j.semwebclient.threadutils.TaskExecutorBase;
 public class URISearchThread extends TaskExecutorBase {
 
 	// members
+
+	final private Logger logger = LoggerFactory.getLogger( URISearchThread.class );
 
 	protected QueryProcessor proc = new QueryProcessorSindice();
 
@@ -43,7 +48,10 @@ public class URISearchThread extends TaskExecutorBase {
 	 */
 	protected URISearchResult executeTask ( URISearchTask task ) {
 		try {
-			return new URISearchResult( task, proc.process(task.getURI()) );
+			logger.trace( "Starting URI search for <{}>.", task.uri );
+			URISearchResult result = new URISearchResult( task, proc.process(task.getURI()) );
+			logger.debug( "Finished URI search for <{}> with result: {}.", task.uri, result.toString() );
+			return result;
 		} catch ( QueryProcessingException e ) {
 			return new URISearchResult( task, e );
 		} catch ( RuntimeException e ) {
