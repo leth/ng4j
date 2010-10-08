@@ -18,6 +18,7 @@ import java.util.Map;
 
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.util.FileUtils;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -310,7 +311,11 @@ public class CommandLineQuery {
 			URL url = null;
 			HttpURLConnection connection = null;
 			url = new URL(graphuri);
-			if (url != null) {
+			if ( url != null && url.getProtocol().equals("file") ) {
+				client.read( url.openStream(), FileUtils.guessLang(url.toString()), url.toString() );
+				System.out.println( "Successfully added: " + graphuri );
+			}
+			else if (url != null) {
 				connection = (HttpURLConnection) url.openConnection();
 			connection
 			.addRequestProperty(
