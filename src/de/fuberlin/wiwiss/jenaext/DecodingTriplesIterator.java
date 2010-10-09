@@ -55,7 +55,7 @@ public class DecodingTriplesIterator extends NiceIterator<Triple>
 	@Override
 	final public void remove ()
 	{
-		throw new UnsupportedOperationException();
+		base.remove();
 	}
 
 }

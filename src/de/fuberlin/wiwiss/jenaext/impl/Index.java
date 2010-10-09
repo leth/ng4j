@@ -59,6 +59,20 @@ public class Index<T>
 	}
 
 	/**
+	 * Removes the given object with the given key.
+	 *
+	 * @return true if this index contained the given object
+	 */
+	public boolean remove ( int key, T t )
+	{
+		int indexKey = getIndexKey( key );
+		if ( index[indexKey] != null ) {
+			return index[indexKey].remove( t );
+		}
+		return false;
+	}
+
+	/**
 	 * Clears the index completely.
 	 */
 	public void clear ()

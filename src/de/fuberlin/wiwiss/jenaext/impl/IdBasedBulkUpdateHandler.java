@@ -1,48 +1,56 @@
 package de.fuberlin.wiwiss.jenaext.impl;
 
 import java.util.Iterator;
+import java.util.HashSet;
+import java.util.Set;
 
+import com.hp.hpl.jena.graph.GraphEvents;
+import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.graph.Triple;
+import com.hp.hpl.jena.graph.impl.SimpleBulkUpdateHandler;
+
+import de.fuberlin.wiwiss.jenaext.IdBasedGraph;
 import de.fuberlin.wiwiss.jenaext.IdBasedTriple;
 
 
 /**
- * Indexes ID-based triples ({@link IdBasedTriple} objects) by two node
- * identifiers.
- * This class can be used to create SP, PO, and SO indexes of triples.
+ * A bulk update handler for RDF graph implementations that use identifiers
+ *  for RDF nodes (ie for {@link IdBasedGraph} implementations).
  *
  * @author Olaf Hartig
  */
-public class Index2 extends Index<IdBasedTriple>
+public class IdBasedBulkUpdateHandler extends SimpleBulkUpdateHandler
 {
-	// accessors
+	// initialization
 
-	/**
-	 * Indexes the given triple using the two given keys.
-	 */
-	public void put ( int key1, int key2, IdBasedTriple t )
+	public IdBasedBulkUpdateHandler( IdBasedGraphMem graph )
 	{
-		put( key1*key2, t );
+		super( graph );
 	}
 
-	/**
-	 * Indexes the given triple using the two given keys.
-	 *
-	 * @return true if this index contained the given triple
+
+	// overridden base class methods
+
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.impl.SimpleBulkUpdateHandler#remove(com.hp.hpl.jena.graph.Node,com.hp.hpl.jena.graph.Node,com.hp.hpl.jena.graph.Node)
 	 */
-	public boolean remove ( int key1, int key2, IdBasedTriple t )
+	@Override
+	public void remove ( Node s, Node p, Node o )
 	{
-		return remove( key1*key2, t );
+		IdBasedGraphMem g = (IdBasedGraphMem) graph;
+		Set<IdBasedTriple> tmp = new HashSet<IdBasedTriple> ();
+		Iterator<IdBasedTriple> it = g.findIdBased( s, p, o );
+		while ( it.hasNext() ) {
+			tmp.add( it.next() );
+		}
+
+		for ( IdBasedTriple t : tmp ) {
+			g.delete( t );
+		}
+
+		manager.notifyEvent( graph, GraphEvents.remove(s,p,o) );
 	}
 
-	/**
-	 * Returns all triples indexed with keys from the class of the two given
-	 * keys.
-	 * Attention: the given iterator may provide more triples as requested.
-	 */
-	public Iterator<IdBasedTriple> get ( int key1, int key2 )
-	{
-		return get( key1*key2 );
-	}
 }
 
 /*

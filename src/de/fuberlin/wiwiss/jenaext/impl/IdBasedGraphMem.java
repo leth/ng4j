@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import com.hp.hpl.jena.graph.BulkUpdateHandler;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.graph.TripleMatch;
@@ -104,21 +105,7 @@ public class IdBasedGraphMem extends GraphBase
 	@Override
 	protected ExtendedIterator<Triple> graphBaseFind ( TripleMatch m )
 	{
-		Node matchSubject = m.getMatchSubject();
-		Node matchPredicate = m.getMatchPredicate();
-		Node matchObject = m.getMatchObject();
-
-		int sId = ( matchSubject == null ) ? -1 : nodeDict.getId( matchSubject );
-		int pId = ( matchPredicate == null ) ? -1 : nodeDict.getId( matchPredicate );
-		int oId = ( matchObject == null ) ? -1 : nodeDict.getId( matchObject );
-
-		if (    ( matchSubject != null && sId < 0 )
-		     || ( matchPredicate != null && pId < 0 )
-		     || ( matchObject != null && oId < 0 ) ) {
-			return WrappedIterator.create( EmptyIterator.emptyTripleIterator );
-		}
-
-		return new DecodingTriplesIterator( find(sId,pId,oId) );
+		return new DecodingTriplesIterator( findIdBased(m) );
 	}
 
 	/**
@@ -132,6 +119,7 @@ public class IdBasedGraphMem extends GraphBase
 	public void performAdd ( Triple t )
 	{
 		assert ( t.isConcrete() );
+		checkOpen();
 
 		IdBasedTriple tIDb = new IdBasedTriple( t,
 		                                        nodeDict.createId(t.getSubject()),
@@ -151,14 +139,27 @@ public class IdBasedGraphMem extends GraphBase
 	}
 
 	/**
-	 * Deleting triples from this graph is not supported.
+	 * Deletes the given triple from this graph.
+	 * Attention: This method is very inefficient. This {@link IdBasedGraph}
+	 *            implementation is optimized for read-only access.
 	 * 
 	 * @see com.hp.hpl.jena.graph.impl.GraphBase#performDelete(com.hp.hpl.jena.graph.Triple)
 	 */
 	@Override
 	public void performDelete ( Triple t )
 	{
-		throw new UnsupportedOperationException();
+		assert ( t.isConcrete() );
+
+		Iterator<IdBasedTriple> it = findIdBased( t );
+		if ( it.hasNext() ) {
+			IdBasedTriple tIDb = it.next();
+			indexS.remove( tIDb.s, tIDb );
+			indexP.remove( tIDb.p, tIDb );
+			indexO.remove( tIDb.o, tIDb );
+			indexSP.remove( tIDb.s, tIDb.p, tIDb );
+			indexSO.remove( tIDb.s, tIDb.o, tIDb );
+			indexPO.remove( tIDb.p, tIDb.o, tIDb );
+		}
 	}
 
 	/**
@@ -175,6 +176,17 @@ public class IdBasedGraphMem extends GraphBase
 			queryHandler = new IdBasedQueryHandler( this );
 		}
 		return queryHandler;
+	}
+
+	/**
+	 * @see com.hp.hpl.jena.graph.impl.GraphBase#getBulkUpdateHandler()
+	 */
+	public BulkUpdateHandler getBulkUpdateHandler ()
+	{ 
+		if ( bulkHandler == null ) {
+			bulkHandler = new IdBasedBulkUpdateHandler( this ); 
+		}
+		return bulkHandler;
 	}
 
 	/* (non-Javadoc)
@@ -210,6 +222,8 @@ public class IdBasedGraphMem extends GraphBase
 	 */
 	public Iterator<IdBasedTriple> find ( int sId, int pId, int oId )
 	{
+		checkOpen();
+
 		if ( sId != -1 && ! containedIds.contains(sId) ) {
 			return EmptyIterator.emptyIdBasedTripleIterator;
 		}
@@ -262,6 +276,48 @@ public class IdBasedGraphMem extends GraphBase
 
 
 	// helpers
+
+	/**
+	 * Executes a triple pattern query and {@link IdBasedTriple}s that encode
+	 * matching triples.
+	 */
+	public Iterator<IdBasedTriple> findIdBased ( TripleMatch m )
+	{
+		Node matchSubject = m.getMatchSubject();
+		Node matchPredicate = m.getMatchPredicate();
+		Node matchObject = m.getMatchObject();
+
+		int sId = ( matchSubject == null ) ? -1 : nodeDict.getId( matchSubject );
+		int pId = ( matchPredicate == null ) ? -1 : nodeDict.getId( matchPredicate );
+		int oId = ( matchObject == null ) ? -1 : nodeDict.getId( matchObject );
+
+		if (    ( matchSubject != null && sId < 0 )
+		     || ( matchPredicate != null && pId < 0 )
+		     || ( matchObject != null && oId < 0 ) ) {
+			return EmptyIterator.emptyIdBasedTripleIterator;
+		}
+
+		return find( sId, pId, oId );
+	}
+
+	/**
+	 * Executes a triple pattern query and {@link IdBasedTriple}s that encode
+	 * matching triples.
+	 */
+	public Iterator<IdBasedTriple> findIdBased ( Node s, Node p, Node o )
+	{
+		return findIdBased( Triple.createMatch(s,p,o) );
+	}
+
+	void delete ( IdBasedTriple t )
+	{
+		indexS.remove( t.s, t );
+		indexP.remove( t.p, t );
+		indexO.remove( t.o, t );
+		indexSP.remove( t.s, t.p, t );
+		indexSO.remove( t.s, t.o, t );
+		indexPO.remove( t.p, t.o, t );
+	}
 
 	/**
 	 * Executes a triple pattern query without wildcards.

@@ -1,6 +1,7 @@
 10/09/10 (Olaf)
 Upgrade to Jena 2.6.3 and ARQ 2.8.5
 Implemented support for LET clauses in the ID-based query engine.
+Added the possibility to remove triples from ID-based graphs (even if that is inefficent because the ID-based graph implementation is optimized for read-only access).
 
 09/27/10 (Jennifer)
 Changed most of the code in QuadDB and DbCompatibility to use PreparedStatements instead of escaped strings.
