@@ -3,7 +3,7 @@ package de.fuberlin.wiwiss.jenaext.sparql.iterator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import com.hp.hpl.jena.sparql.core.Closeable;
+import org.openjena.atlas.lib.Closeable;
 
 import de.fuberlin.wiwiss.jenaext.IdBasedGraph;
 import de.fuberlin.wiwiss.jenaext.IdBasedTriple;

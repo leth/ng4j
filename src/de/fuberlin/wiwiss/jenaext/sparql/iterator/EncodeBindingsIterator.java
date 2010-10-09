@@ -2,7 +2,7 @@ package de.fuberlin.wiwiss.jenaext.sparql.iterator;
 
 import java.util.Iterator;
 
-import com.hp.hpl.jena.sparql.core.Closeable;
+import org.openjena.atlas.lib.Closeable;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.engine.QueryIterator;
 import com.hp.hpl.jena.sparql.engine.binding.Binding;
