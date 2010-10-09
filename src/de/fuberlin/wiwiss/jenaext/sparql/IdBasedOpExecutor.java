@@ -4,10 +4,12 @@ import java.util.Iterator;
 
 import com.hp.hpl.jena.graph.Triple;
 
+import com.hp.hpl.jena.sparql.algebra.op.OpAssign;
 import com.hp.hpl.jena.sparql.algebra.op.OpBGP;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.engine.ExecutionContext;
 import com.hp.hpl.jena.sparql.engine.QueryIterator;
+import com.hp.hpl.jena.sparql.engine.iterator.QueryIterAssign;
 import com.hp.hpl.jena.sparql.engine.main.OpExecutor;
 import com.hp.hpl.jena.sparql.engine.main.OpExecutorFactory;
 
@@ -17,6 +19,7 @@ import de.fuberlin.wiwiss.jenaext.impl.IdBasedQueryPlan.IdBasedTriplePattern;
 import de.fuberlin.wiwiss.jenaext.sparql.iterator.DecodeBindingsIterator;
 import de.fuberlin.wiwiss.jenaext.sparql.iterator.EncodeBindingsIterator;
 import de.fuberlin.wiwiss.jenaext.sparql.iterator.IdBasedTriplePatternQueryIter;
+import de.fuberlin.wiwiss.jenaext.sparql.iterator.QueryIterAssignWrapper;
 
 
 /**
@@ -73,6 +76,12 @@ public class IdBasedOpExecutor extends OpExecutor
 		return new DecodeBindingsIterator( qIt, (IdBasedExecutionContext) execCxt );
 	}
 
+	@Override
+	protected QueryIterator execute ( OpAssign opAssign, QueryIterator input )
+	{
+		QueryIterAssign in = (QueryIterAssign) super.execute( opAssign, input );
+		return new QueryIterAssignWrapper( in, (IdBasedExecutionContext) execCxt );
+	}
 
 	// helper methods
 
