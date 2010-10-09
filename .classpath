@@ -3,7 +3,7 @@
   <classpathentry kind="src" path="src"/>
   <classpathentry kind="output" path="target/classes"/>
   <classpathentry kind="lib" path="lib/antlr-2.7.7.jar"/>
-  <classpathentry kind="lib" path="lib/arq-2.8.2.jar"/>
+  <classpathentry kind="lib" path="lib/arq-2.8.5.jar"/>
   <classpathentry kind="lib" path="lib/axis-1.4.jar"/>
   <classpathentry kind="lib" path="lib/bcpg-jdk15-143.jar"/>
   <classpathentry kind="lib" path="lib/bcprov-jdk15-143.jar"/>
@@ -12,15 +12,15 @@
   <classpathentry kind="lib" path="lib/grddl.jar"/>
   <classpathentry kind="lib" path="lib/hsqldb-1.8.0.7.jar"/>
   <classpathentry kind="lib" path="lib/icu4j-3.4.4.jar"/>
-  <classpathentry kind="lib" path="lib/iri-0.7.jar"/>
-  <classpathentry kind="lib" path="lib/jena-2.6.2.jar"/>
-  <classpathentry kind="lib" path="lib/jena-2.6.2-tests.jar"/>
+  <classpathentry kind="lib" path="lib/iri-0.8.jar"/>
+  <classpathentry kind="lib" path="lib/jena-2.6.3.jar"/>
+  <classpathentry kind="lib" path="lib/jena-2.6.3-tests.jar"/>
   <classpathentry kind="lib" path="lib/junit-3.8.2.jar"/>
-  <classpathentry kind="lib" path="lib/log4j-1.2.12.jar"/>
+  <classpathentry kind="lib" path="lib/log4j-1.2.14.jar"/>
   <classpathentry kind="lib" path="lib/lucene-core-2.3.1.jar"/>
   <classpathentry kind="lib" path="lib/nekohtml-0.9.5.jar"/>
-  <classpathentry kind="lib" path="lib/slf4j-api-1.5.6.jar"/>
-  <classpathentry kind="lib" path="lib/slf4j-log4j12-1.5.6.jar"/>
+  <classpathentry kind="lib" path="lib/slf4j-api-1.5.8.jar"/>
+  <classpathentry kind="lib" path="lib/slf4j-log4j12-1.5.8.jar"/>
   <classpathentry kind="lib" path="lib/stax-api-1.0.1.jar"/>
   <classpathentry kind="lib" path="lib/tagsoup-1.2.jar"/>
   <classpathentry kind="lib" path="lib/wstx-asl-3.2.9.jar"/>
