@@ -1,3 +1,6 @@
+10/29/10 (Olaf)
+Upgrade to SL4J 1.6.1
+
 10/09/10 (Olaf)
 Upgrade to Jena 2.6.3 and ARQ 2.8.5
 Implemented support for LET clauses in the ID-based query engine.

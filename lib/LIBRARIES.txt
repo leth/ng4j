@@ -23,8 +23,8 @@ N1          log4j-1.2.14.jar                            1.2.14 (TD on ARQ 2.8.5)
        RC   mysql-connector-java-3.2.0-alpha-bin.jar    3.2.0-alpha                         
        RG   nekohtml.jar                                0.9.5  (TD on GRDDL 0.3)             http://sourceforge.net/projects/nekohtml
 N1          stax-api-1.0.1.jar                          1.0.1  (TD on Jena 2.6.2)            http://stax.codehaus.org/Home
-            slf4j-api-1.5.8.jar                         1.5.8
-            slf4j-log4j12-1.5.8.jar                     1.5.8
+            slf4j-api-1.6.1.jar                         1.6.1
+            slf4j-log4j12-1.6.1.jar                     1.6.1
         RG  tagsoup-1.2.jar                             1.2                                  http://home.ccil.org/~cowan/XML/tagsoup/
                                                                committed 28 February 2007 in support of GRDDL
 N1          wstx-asl-3.2.9.jar                          3.2.9 (TD on Jena 2.6.2)             http://woodstox.codehaus.org/
