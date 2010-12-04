@@ -198,6 +198,14 @@ public class NamedGraphDataset implements Dataset, DatasetGraph {
 	}
 
 	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.sparql.core.DatasetGraph#find()
+	 */
+	public Iterator<Quad> find()
+	{
+		return find( Node.ANY, Node.ANY, Node.ANY, Node.ANY );
+	}
+
+	/* (non-Javadoc)
 	 * @see com.hp.hpl.jena.sparql.core.DatasetGraph#find(com.hp.hpl.jena.sparql.core.Quad)
 	 */
 	public Iterator<Quad> find(Quad quad)
