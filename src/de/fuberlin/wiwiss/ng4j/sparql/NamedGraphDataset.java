@@ -226,6 +226,14 @@ public class NamedGraphDataset implements Dataset, DatasetGraph {
 	}
 
 	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.sparql.core.DatasetGraph#findNG(com.hp.hpl.jena.graph.Node,com.hp.hpl.jena.graph.Node,com.hp.hpl.jena.graph.Node,com.hp.hpl.jena.graph.Node)
+	 */
+	public Iterator<Quad> findNG(Node g, Node s, Node p , Node o)
+	{
+		return find( g, s, p, o );
+	}
+
+	/* (non-Javadoc)
 	 * @see com.hp.hpl.jena.sparql.core.DatasetGraph#contains(com.hp.hpl.jena.graph.Node,com.hp.hpl.jena.graph.Node,com.hp.hpl.jena.graph.Node,com.hp.hpl.jena.graph.Node)
 	 */
 	public boolean contains(Node g, Node s, Node p , Node o)
