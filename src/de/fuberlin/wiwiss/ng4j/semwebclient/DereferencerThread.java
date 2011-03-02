@@ -150,7 +150,7 @@ public class DereferencerThread extends TaskExecutorBase {
 		return new DereferencingResult(task, errorCode, urilist, connection.getHeaderFields());
 	}	
 
-	private DereferencingResult executeTask(DereferencingTask task) {
+	public DereferencingResult executeTask(DereferencingTask task) {
 		DereferencingResult result = null;
 		this.tempNgs = ngsFactory.create();
 		try {
