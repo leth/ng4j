@@ -78,8 +78,8 @@ import de.fuberlin.wiwiss.ng4j.semwebclient.urisearch.URISearchTaskQueue;
  * @author Tobias Gauß (tobias.gauss@web.de)
  * @author Olaf Hartig (hartig@informatik.hu-berlin.de)
  */
-// public class SemanticWebClient extends NamedGraphSetImpl {
-public class SemanticWebClient extends de.fuberlin.wiwiss.ng4j.impl.idbased.IdBasedNamedGraphSetImpl {
+public class SemanticWebClient extends NamedGraphSetImpl {
+// public class SemanticWebClient extends de.fuberlin.wiwiss.ng4j.impl.idbased.IdBasedNamedGraphSetImpl {
 	private List<String> retrievedUris;
 
 	private Set<String> markedUris = new HashSet<String>();
