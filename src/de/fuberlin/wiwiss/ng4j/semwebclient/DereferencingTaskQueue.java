@@ -73,7 +73,7 @@ public class DereferencingTaskQueue extends TaskQueueBase
 		start();
 	}
 
-	static private Templates createRDFaTemplate () {
+	static public Templates createRDFaTemplate () {
 		Templates t;
 		try {
 			TransformerFactory factory = TransformerFactory.newInstance();
