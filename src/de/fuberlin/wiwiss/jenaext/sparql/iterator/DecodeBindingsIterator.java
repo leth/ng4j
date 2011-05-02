@@ -65,6 +65,12 @@ public class DecodeBindingsIterator extends QueryIter
 		return curOutput;
 	}
 
+	protected void requestCancel ()
+	{
+		// do nothing
+		// May be we have to cancel the (chain of) input iterator(s) ?
+	}
+
 	protected void closeIterator ()
 	{
 		if ( input instanceof Closeable ) {
