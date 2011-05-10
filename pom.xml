@@ -218,6 +218,17 @@ http://sourceforge.net/tracker/?group_id=118754
        </execution>
      </executions>
     </plugin>
+    <plugin>
+     <artifactId>maven-deploy-plugin</artifactId>
+     <version>2.5</version>
+     <dependencies>
+       <dependency>
+         <groupId>org.apache.maven.wagon</groupId>
+         <artifactId>wagon-ssh</artifactId>
+         <version>1.0-beta-7</version>
+       </dependency>
+     </dependencies>
+    </plugin>
    </plugins>
   </build>
   <reporting>
