@@ -389,7 +389,7 @@ http://sourceforge.net/tracker/?group_id=118754
     <site>
       <id>paneris</id>
       <!-- deployed to http://paneris.net/ng4j/ -->
-      <url>scp://paneris.net/data/www/${pom.artifactId}/</url>
+      <url>file:/data/www/${pom.artifactId}/</url>
     </site>
   </distributionManagement>
   <repositories>
