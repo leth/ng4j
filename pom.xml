@@ -113,6 +113,9 @@ http://sourceforge.net/tracker/?group_id=118754
     <url>http://ng4j.cvs.sourceforge.net:80/viewvc/ng4j/</url>
   </scm>
 
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
 
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -151,6 +154,14 @@ http://sourceforge.net/tracker/?group_id=118754
         <target>1.5</target>
        </configuration>
       </plugin>
+     <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.5</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
+        </configuration>
+    </plugin>
     <plugin>
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-jar-plugin</artifactId>
@@ -293,10 +304,6 @@ http://sourceforge.net/tracker/?group_id=118754
          <grammars>trig.g</grammars>
         </configuration>
       </plugin>
-      <!--plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>jdepend-maven-plugin</artifactId>
-      </plugin-->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>taglist-maven-plugin</artifactId>
@@ -335,12 +342,14 @@ http://sourceforge.net/tracker/?group_id=118754
       <version>2.6.4</version>
     </dependency>
 
-   <dependency>
+    <!-- It would be good to remove this as a dependency -->
+    <dependency>
       <groupId>com.hp.hpl.jena</groupId>
       <artifactId>jena</artifactId>
       <version>2.6.4</version>
       <classifier>tests</classifier>
     </dependency>
+
     <dependency>
       <groupId>com.hp.hpl.jena</groupId>
       <artifactId>arq</artifactId>
