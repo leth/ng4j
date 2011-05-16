@@ -363,12 +363,6 @@ http://sourceforge.net/tracker/?group_id=118754
     </dependency>
 
     <dependency>
-      <groupId>com.hp.hpl.jena</groupId>
-      <artifactId>grddl</artifactId>
-      <version>0.3</version>
-    </dependency>
-
-    <dependency>
       <groupId>nekohtml</groupId>
       <artifactId>nekohtml</artifactId>
       <version>0.9.5</version>
@@ -402,13 +396,6 @@ http://sourceforge.net/tracker/?group_id=118754
       <version>1.2.14</version>
     </dependency>
 
-
-    
-    <dependency>
-      <groupId>org.ccil.cowan.tagsoup</groupId>
-      <artifactId>tagsoup</artifactId>
-      <version>1.2</version>
-    </dependency>
     <dependency>
       <groupId>org.apache.axis</groupId>
       <artifactId>axis</artifactId>
