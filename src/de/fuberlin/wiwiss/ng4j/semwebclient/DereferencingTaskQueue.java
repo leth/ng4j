@@ -38,7 +38,6 @@ public class DereferencingTaskQueue extends TaskQueueBase
 	final protected NamedGraphSetFactory ngsFactory;
 
 	private int maxfilesize;
-        private boolean enablegrddl;
 	final private boolean enableRDFa;
 	private int connectTimeout = 0;
 	private int readTimeout = 0;
@@ -51,15 +50,14 @@ public class DereferencingTaskQueue extends TaskQueueBase
 	 * Old constructor.
 	 * @deprecated Please use the other constructor instead.
 	 */
-        public DereferencingTaskQueue(NamedGraphSetFactory ngsFactory, int maxThreads,int maxfilesize, boolean enablegrddl) {
-		this( ngsFactory, maxThreads, maxfilesize, enablegrddl, false, 0, 0 );
+        public DereferencingTaskQueue(NamedGraphSetFactory ngsFactory, int maxThreads,int maxfilesize) {
+		this( ngsFactory, maxThreads, maxfilesize, false, 0, 0 );
 	}
 
-	public DereferencingTaskQueue(NamedGraphSetFactory ngsFactory, int maxThreads,int maxfilesize, boolean enablegrddl, boolean enableRDFa, int connectTimeout, int readTimeout) {
+	public DereferencingTaskQueue(NamedGraphSetFactory ngsFactory, int maxThreads,int maxfilesize, boolean enableRDFa, int connectTimeout, int readTimeout) {
 		super( maxThreads );
 		this.ngsFactory = ngsFactory;
 		this.maxfilesize = maxfilesize;
-		this.enablegrddl = enablegrddl;
 		this.connectTimeout = connectTimeout;
 		this.readTimeout = readTimeout;
 
@@ -92,7 +90,6 @@ public class DereferencingTaskQueue extends TaskQueueBase
 	protected TaskExecutorBase createThread () {
 		DereferencerThread thread = new DereferencerThread( ngsFactory );
 		thread.setMaxfilesize(this.maxfilesize);
-		thread.setEnableGrddl(this.enablegrddl);
 		thread.setConnectTimeout(this.connectTimeout);
 		thread.setReadTimeout(this.readTimeout);
 

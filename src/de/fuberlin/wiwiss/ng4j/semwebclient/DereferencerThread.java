@@ -53,7 +53,6 @@ public class DereferencerThread extends TaskExecutorBase {
 	
 	private int maxfilesize = -1;
 
-        private boolean enablegrddl = false;
 	private boolean enableRDFa = false;
 	private int connectTimeout = 0;
 	private int readTimeout = 0;
@@ -310,22 +309,24 @@ public class DereferencerThread extends TaskExecutorBase {
 			// read input stream into a string, so it can be reused
 			String htmlContent = DereferencerThread.readout(this.connection.getInputStream());
 
-			if (this.enablegrddl) {
-			    com.hp.hpl.jena.grddl.GRDDLReader r = new com.hp.hpl.jena.grddl.GRDDLReader();
-			    /*
-			    Gleaner g = new Gleaner(this.connection.getURL().toString(),
-						    this.connection.getInputStream());
-			    g.glean(this.tempNgs);
-			    */
-			    Model m = ModelFactory.createDefaultModel();
-			    r.read(m, new ByteArrayInputStream(htmlContent.getBytes()), this.url.toString());
-			    this.tempNgs.addGraph( new NamedGraphImpl(this.url.toString(), 
-								      m.getGraph()) );
-
-			    if (this.tempNgs.countGraphs() > 0)
-				return new DereferencingResult(task,
-							       DereferencingResult.STATUS_OK, this.tempNgs, null, connection.getHeaderFields());
-			}
+// removed GRDDL support - it was deprecated with NG4J v.0.9.1
+//                                  Olaf, May 16, 2011
+// 			if (this.enablegrddl) {
+// 			    com.hp.hpl.jena.grddl.GRDDLReader r = new com.hp.hpl.jena.grddl.GRDDLReader();
+// 			    /*
+// 			    Gleaner g = new Gleaner(this.connection.getURL().toString(),
+// 						    this.connection.getInputStream());
+// 			    g.glean(this.tempNgs);
+// 			    */
+// 			    Model m = ModelFactory.createDefaultModel();
+// 			    r.read(m, new ByteArrayInputStream(htmlContent.getBytes()), this.url.toString());
+// 			    this.tempNgs.addGraph( new NamedGraphImpl(this.url.toString(), 
+// 								      m.getGraph()) );
+// 
+// 			    if (this.tempNgs.countGraphs() > 0)
+// 				return new DereferencingResult(task,
+// 							       DereferencingResult.STATUS_OK, this.tempNgs, null, connection.getHeaderFields());
+// 			}
 
 			// parse the HTML for references to alternative representations
 			ArrayList<String> l = HtmlLinkFetcher.fetchLinks(htmlContent);
@@ -440,9 +441,6 @@ public class DereferencerThread extends TaskExecutorBase {
 
 	public synchronized void setMaxfilesize(int size){
 		this.maxfilesize = size;
-	}
-	public synchronized void setEnableGrddl(boolean g){
-		this.enablegrddl = g;
 	}
 	public synchronized void setEnableRDFa(boolean r){
 		enableRDFa = r;

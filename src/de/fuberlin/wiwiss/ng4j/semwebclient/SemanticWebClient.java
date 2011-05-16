@@ -467,7 +467,6 @@ public class SemanticWebClient extends NamedGraphSetImpl {
 			this.derefQueue = new DereferencingTaskQueue( ngsFactory,
 			                                              config.getMaxThreads(),
 			                                              config.getMaxFileSize(),
-			                                              config.getEnableGRDDL(),
 			                                              config.getEnableRDFa(),
 			                                              config.getDerefConnectTimeout(),
 			                                              config.getDerefReadTimeout() );

@@ -16,7 +16,6 @@ public class SemanticWebClientConfig
 	public static final String DEREF_CONNECT_TIMEOUT = "derefconnecttimeout";
 	public static final String DEREF_READ_TIMEOUT = "derefreadtimeout";
 	public static final String MAXFILESIZE = "maxfilesize";
-	public static final String ENABLEGRDDL = "enablegrddl"; // Notice, GRDDL support is deprecated!
 	public static final String ENABLE_RDFA = "enablerdfa";
 	public static final String ENABLE_SINDICE = "enablesindicesearch"; // enables Sindice-based URI search during query execution
 
@@ -28,7 +27,6 @@ public class SemanticWebClientConfig
 	private static final int DEREF_CONNECT_TIMEOUT_DEFAULT = 0; // 0 means no timeout (i.e. infinity)
 	private static final int DEREF_READ_TIMEOUT_DEFAULT = 0;
 	private static final int MAXFILESIZE_DEFAULT = 100000000;
-	private static final boolean ENABLEGRDDL_DEFAULT = false;
 	private static final boolean ENABLE_RDFA_DEFAULT = true;
 	private static final boolean ENABLE_SINDICE_DEFAULT = false;
 
@@ -40,7 +38,6 @@ public class SemanticWebClientConfig
 	private int derefConnectTimeout = DEREF_CONNECT_TIMEOUT_DEFAULT;
 	private int derefReadTimeout = DEREF_READ_TIMEOUT_DEFAULT;
 	private int maxfilesize = MAXFILESIZE_DEFAULT;
-	private boolean enablegrddl = ENABLEGRDDL_DEFAULT;
 	private boolean enableRDFa = ENABLE_RDFA_DEFAULT;
 	private boolean enableSindice = ENABLE_SINDICE_DEFAULT;
 
@@ -104,10 +101,6 @@ public class SemanticWebClientConfig
 				throw new IllegalArgumentException( "value '" + value + "' for config " + MAXFILESIZE + " is not numeric", e );
 			}
 		}
-		else if ( option.equalsIgnoreCase(ENABLEGRDDL) )
-		{
-			enablegrddl = "true".equalsIgnoreCase(value) || "on".equalsIgnoreCase(value) || "1".equals(value);
-		}
 		else if ( option.equalsIgnoreCase(ENABLE_RDFA) )
 		{
 			enableRDFa= "true".equalsIgnoreCase(value) || "on".equalsIgnoreCase(value) || "1".equals(value);
@@ -151,9 +144,6 @@ public class SemanticWebClientConfig
 		else if ( option.equalsIgnoreCase(MAXFILESIZE) ) {
 			value = String.valueOf( maxfilesize );
 		}
-		else if ( option.equalsIgnoreCase(ENABLEGRDDL) ) {
-			value = String.valueOf( enablegrddl );
-		}
 		else if ( option.equalsIgnoreCase(ENABLE_RDFA) ) {
 			value = String.valueOf( enableRDFa );
 		}
@@ -175,7 +165,6 @@ public class SemanticWebClientConfig
 	final public int getDerefConnectTimeout () { return derefConnectTimeout; }
 	final public int getDerefReadTimeout () { return derefReadTimeout; }
 	final public int getMaxFileSize () { return maxfilesize; }
-	final public boolean getEnableGRDDL () { return enablegrddl; }
 	final public boolean getEnableRDFa () { return enableRDFa; }
 	final public boolean getEnableSindice () { return enableSindice; }
 }

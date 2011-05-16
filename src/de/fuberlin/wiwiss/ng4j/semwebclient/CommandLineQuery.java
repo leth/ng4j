@@ -62,8 +62,6 @@ public class CommandLineQuery {
 	
 	private int maxfilesize = -1;
 
-        private boolean enablegrddl = false;
-
 	private boolean enableRDFa = true;
 
 	private boolean enableSindiceSearch = false;
@@ -142,16 +140,6 @@ public class CommandLineQuery {
 	 */
 	public void setMaxThreads(int maxThreads) {
 		this.maxthreads = maxThreads;
-	}
-
-	/**
-	 * Enables the GRDDL transformations. The
-	 * default is false.
-	 * 
-	 * @param enableGrddl
-	 */
-	public void setEnableGrddl(boolean enableGrddl) {
-		this.enablegrddl = enableGrddl;
 	}
 
 	/**
@@ -557,8 +545,6 @@ public class CommandLineQuery {
 			this.client.getConfig().setValue( SemanticWebClientConfig.MAXTHREADS, Long.toString(this.maxthreads));
 		if (this.maxfilesize != -1)
 			this.client.getConfig().setValue( SemanticWebClientConfig.MAXFILESIZE, Integer.toString(this.maxfilesize));
-		if (this.enablegrddl != false)
-		    this.client.getConfig().setValue( SemanticWebClientConfig.ENABLEGRDDL, Boolean.toString(this.enablegrddl));
 
 		client.getConfig().setValue( SemanticWebClientConfig.ENABLE_RDFA, Boolean.toString(enableRDFa) );
 		client.getConfig().setValue( SemanticWebClientConfig.ENABLE_SINDICE, Boolean.toString(enableSindiceSearch) );

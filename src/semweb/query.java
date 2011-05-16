@@ -25,7 +25,7 @@ import de.fuberlin.wiwiss.ng4j.semwebclient.CommandLineQuery;
  *       RDF/XML, N3, N-Triple, SPARQL XML results, SPARQL JSON results, CSV, ...
  * 
  * @author Richard Cyganiak (richard@cyganiak.de)
- * @version $Id: query.java,v 1.11 2009/08/14 07:23:43 hartig Exp $
+ * @version $Id: query.java,v 1.12 2011/05/16 10:49:45 hartig Exp $
  */
 public class query {
 	private static boolean verbose = false;
@@ -46,7 +46,6 @@ public class query {
 		cmd.add(false, "faileduris");
 		cmd.add(false, "redirecteduris");
 		cmd.add(false, "verbose");
-		cmd.add(false, "grddl");
 		cmd.add(false, "NoRDFa");
 		cmd.add(false, "sindice");
 		cmd.add(true, "resultfmt");
@@ -106,9 +105,6 @@ public class query {
 		} else {
 			client.setTimeout(60000);
 		}
-		if (cmd.hasArg("grddl")) {
-			client.setEnableGrddl(true);
-		}
 		if (cmd.hasArg("NoRDFa")) {
 			client.setEnableRDFa(false);
 		}
@@ -160,7 +156,6 @@ public class query {
 		System.out.println("    -maxthreads <threads>  Set number of threads for loading URIs. Default: 10");
 		System.out.println("    -timeout <seconds>     Set query timeout. Default: 60 seconds");
 		System.out.println("    -load <URL>            Load seed graph from the Web");
-		System.out.println("    -grddl                 Perform GRDDL transformations (Notice, GRDDL support is deprecated!!)");
 		System.out.println("    -NoRDFa                Disables RDFa support");
 		System.out.println("    -sindice               Enables Sindice-based URI search during query execution");
 		System.out.println("    -loadtrig <file>       Load seed graphs from a TriG file before starting");
