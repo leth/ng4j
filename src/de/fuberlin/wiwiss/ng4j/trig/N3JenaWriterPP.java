@@ -31,7 +31,7 @@ import com.hp.hpl.jena.vocabulary.RDFS;
  *  Tries to make N3 data look readable - works better on regular data.
  *
  * @author		Andy Seaborne
- * @version 	$Id: N3JenaWriterPP.java,v 1.9 2010/02/25 14:28:22 hartig Exp $
+ * @version 	$Id: N3JenaWriterPP.java,v 1.10 2011/07/15 23:01:09 jenpc Exp $
  */
 
 
@@ -62,6 +62,10 @@ public class N3JenaWriterPP extends N3JenaWriterCommon
     // ----------------------------------------------------
     // Prepatation stage
 
+	/* (non-Javadoc)
+	 * @see de.fuberlin.wiwiss.ng4j.trig.N3JenaWriterCommon#prepare(com.hp.hpl.jena.rdf.model.Model)
+	 */
+	@Override
 	protected void prepare(Model model)
 	{
 		prepareLists(model) ;
@@ -254,7 +258,11 @@ public class N3JenaWriterPP extends N3JenaWriterCommon
         return eIter ;
     }
     
-    protected boolean skipThisSubject(Resource subj)
+    /* (non-Javadoc)
+     * @see de.fuberlin.wiwiss.ng4j.trig.N3JenaWriterCommon#skipThisSubject(com.hp.hpl.jena.rdf.model.Resource)
+     */
+    @Override
+	protected boolean skipThisSubject(Resource subj)
     {
         return rdfListsAll.contains(subj)   ||
                oneRefObjects.contains(subj)  ;
@@ -268,7 +276,11 @@ public class N3JenaWriterPP extends N3JenaWriterCommon
 
     // Before ... 
 
-    protected void startWriting()
+    /* (non-Javadoc)
+     * @see de.fuberlin.wiwiss.ng4j.trig.N3JenaWriterCommon#startWriting()
+     */
+    @Override
+	protected void startWriting()
     {
         allocateDatastructures() ;
     }
@@ -279,7 +291,11 @@ public class N3JenaWriterPP extends N3JenaWriterCommon
     //     However loops of "one ref" are possible.
     // 2 - Lists
 
-    protected void finishWriting()
+    /* (non-Javadoc)
+     * @see de.fuberlin.wiwiss.ng4j.trig.N3JenaWriterCommon#finishWriting()
+     */
+    @Override
+	protected void finishWriting()
     {
         oneRefObjects.removeAll(oneRefDone);
 
@@ -296,7 +312,7 @@ public class N3JenaWriterPP extends N3JenaWriterCommon
         // We missed these earlier (assumed all DAML lists are values of some statement)
         for (Iterator<Resource> leftOverIter = rdfLists.iterator(); leftOverIter.hasNext();)
         {
-            Resource r = (Resource) leftOverIter.next();
+            Resource r = leftOverIter.next();
             if (rdfListsDone.contains(r))
                 continue;
             out.println();
@@ -322,7 +338,11 @@ public class N3JenaWriterPP extends N3JenaWriterCommon
 	// Need to decide between one line or many.
     // Very hard to do a pretty thing here because the objects may be large or small or a mix.
 
-    protected void writeObjectList(Resource resource, Property property)
+    /* (non-Javadoc)
+     * @see de.fuberlin.wiwiss.ng4j.trig.N3JenaWriterCommon#writeObjectList(com.hp.hpl.jena.rdf.model.Resource, com.hp.hpl.jena.rdf.model.Property)
+     */
+    @Override
+	protected void writeObjectList(Resource resource, Property property)
     {
 //        if ( ! doObjectListsAsLists )
 //        {
@@ -464,7 +484,11 @@ public class N3JenaWriterPP extends N3JenaWriterCommon
         return true ;
     }
 
-    protected void writeObject(RDFNode node)
+    /* (non-Javadoc)
+     * @see de.fuberlin.wiwiss.ng4j.trig.N3JenaWriterCommon#writeObject(com.hp.hpl.jena.rdf.model.RDFNode)
+     */
+    @Override
+	protected void writeObject(RDFNode node)
 	{
 		if (node instanceof Literal)
 		{
@@ -519,7 +543,7 @@ public class N3JenaWriterPP extends N3JenaWriterCommon
 			if (!listFirst)
 				out.print( " ");
 			listFirst = false;
-			RDFNode n = (RDFNode) iter.next();
+			RDFNode n = iter.next();
 			writeObject(n) ;
 		}
 		out.print( ")");

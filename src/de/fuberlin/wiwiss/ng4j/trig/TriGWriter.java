@@ -1,5 +1,5 @@
 /*
- * $Id: TriGWriter.java,v 1.11 2010/02/25 14:28:22 hartig Exp $
+ * $Id: TriGWriter.java,v 1.12 2011/07/15 23:01:09 jenpc Exp $
  */
 package de.fuberlin.wiwiss.ng4j.trig;
 
@@ -62,9 +62,9 @@ public class TriGWriter implements NamedGraphSetWriter {
 		Graph allTriples = new GraphMem();
 		Iterator<NamedGraph> graphIt = set.listGraphs();
 		while ( graphIt.hasNext() ) {
-			Iterator tripleIt = graphIt.next().find( Node.ANY, Node.ANY, Node.ANY );
+			Iterator<Triple> tripleIt = graphIt.next().find( Node.ANY, Node.ANY, Node.ANY );
 			while ( tripleIt.hasNext() ) {
-				allTriples.add( (Triple) tripleIt.next() );
+				allTriples.add( tripleIt.next() );
 			}
 		}
 		this.prefixMaker = new PrettyNamespacePrefixMaker(allTriples);
@@ -85,8 +85,8 @@ public class TriGWriter implements NamedGraphSetWriter {
 		this.prefixMaker.addDefaultNamespace("rdfg", "http://www.w3.org/2004/03/trix/rdfg-1/");
 		Iterator<String> it = this.customPrefixes.keySet().iterator();
 		while (it.hasNext()) {
-			String prefix = (String) it.next();
-			String uri = (String) this.customPrefixes.get(prefix);
+			String prefix = it.next();
+			String uri = this.customPrefixes.get(prefix);
 			this.prefixMaker.addNamespace(prefix, uri);
 		}
 		Model namespaceModel = ModelFactory.createDefaultModel();
@@ -94,7 +94,7 @@ public class TriGWriter implements NamedGraphSetWriter {
 		new N3JenaWriterOnlyNamespaces().write(namespaceModel, out, baseURI);
 		it = getSortedGraphNames(set).iterator();
 		while (it.hasNext()) {
-			String graphName = (String) it.next();
+			String graphName = it.next();
 			this.currentGraph = set.getGraph(graphName);
 			Model aModel = new ModelCom(this.currentGraph);
 			Set tmp = new HashSet( aModel.getNsPrefixMap().keySet() );
@@ -151,9 +151,19 @@ public class TriGWriter implements NamedGraphSetWriter {
 	}
 
 	private class N3JenaWriterOnlyNamespaces extends N3JenaWriterCommon {
+		
+		/* (non-Javadoc)
+		 * @see de.fuberlin.wiwiss.ng4j.trig.N3JenaWriterCommon#writeHeader(com.hp.hpl.jena.rdf.model.Model)
+		 */
+		@Override
 		protected void writeHeader(Model model) {
 			// don't write out the base URI
 		}
+		
+		/* (non-Javadoc)
+		 * @see de.fuberlin.wiwiss.ng4j.trig.N3JenaWriterCommon#writeModel(com.hp.hpl.jena.rdf.model.Model)
+		 */
+		@Override
 		protected void writeModel(Model model) {
 			// don't write body
 		}
@@ -162,7 +172,11 @@ public class TriGWriter implements NamedGraphSetWriter {
 	private class N3JenaWriterOnlyStatements extends N3JenaWriterPP {
 
 		// we override this only to remove that one println()
-	    protected void processModel(Model baseModel)
+	    /* (non-Javadoc)
+	     * @see de.fuberlin.wiwiss.ng4j.trig.N3JenaWriterCommon#processModel(com.hp.hpl.jena.rdf.model.Model)
+	     */
+	    @Override
+		protected void processModel(Model baseModel)
 	    {
 	        prefixMap = baseModel.getNsPrefixMap() ;
 	        Model model = ModelFactory.withHiddenStatements( baseModel );
@@ -170,7 +184,7 @@ public class TriGWriter implements NamedGraphSetWriter {
 
 	        // If no base defined for the model, but one given to writer,
 	        // then use this.
-	        String base2 = (String)prefixMap.get("") ;
+	        String base2 = prefixMap.get("") ;
 	        
 	        if ( base2 == null && baseURIrefHash != null )
 	            prefixMap.put("", baseURIrefHash) ;
@@ -200,6 +214,10 @@ public class TriGWriter implements NamedGraphSetWriter {
 	        bNodesMap = null ;
 	    }
 
+		/* (non-Javadoc)
+		 * @see de.fuberlin.wiwiss.ng4j.trig.N3JenaWriterPP#startWriting()
+		 */
+		@Override
 		protected void startWriting() {
 			if (TriGWriter.this.currentGraphIsEmpty()) {
 				this.out.println(formatURI(getCurrentGraphURI()) + " { }");
@@ -215,6 +233,10 @@ public class TriGWriter implements NamedGraphSetWriter {
 			super.startWriting();
 		}
 
+		/* (non-Javadoc)
+		 * @see de.fuberlin.wiwiss.ng4j.trig.N3JenaWriterPP#finishWriting()
+		 */
+		@Override
 		protected void finishWriting() {
 			super.finishWriting();
 
@@ -229,10 +251,18 @@ public class TriGWriter implements NamedGraphSetWriter {
 			this.out.println();
 		}
 
+		/* (non-Javadoc)
+		 * @see de.fuberlin.wiwiss.ng4j.trig.N3JenaWriterCommon#writeHeader(com.hp.hpl.jena.rdf.model.Model)
+		 */
+		@Override
 		protected void writeHeader(Model model) {
 			// don't write header
 		}
 
+		/* (non-Javadoc)
+		 * @see de.fuberlin.wiwiss.ng4j.trig.N3JenaWriterCommon#writePrefixes(com.hp.hpl.jena.rdf.model.Model)
+		 */
+		@Override
 		protected void writePrefixes(Model model) {
 			// don't write prefixes
 		}

@@ -10,7 +10,7 @@ package de.fuberlin.wiwiss.ng4j.trig;
  *   
  * @author		Andy Seaborne
  * @author Richard Cyganiak (richard@cyganiak.de)
- * @version 	$Id: TriGException.java,v 1.6 2010/02/25 14:28:22 hartig Exp $
+ * @version 	$Id: TriGException.java,v 1.7 2011/07/15 23:01:09 jenpc Exp $
  */
 
 import com.hp.hpl.jena.shared.SyntaxError;
@@ -26,7 +26,11 @@ public class TriGException extends SyntaxError
     	this.message = message;
     }
     
-    public String getMessage() { return message ; }
+    /* (non-Javadoc)
+     * @see java.lang.Throwable#getMessage()
+     */
+    @Override
+	public String getMessage() { return message ; }
 }
 
 

@@ -22,7 +22,7 @@ import java.text.* ;
 /** Common framework for implementing N3 writers.
  *
  * @author		Andy Seaborne
- * @version 	$Id: N3JenaWriterCommon.java,v 1.6 2010/02/25 14:28:22 hartig Exp $
+ * @version 	$Id: N3JenaWriterCommon.java,v 1.7 2011/07/15 23:01:09 jenpc Exp $
  */
 
 public class N3JenaWriterCommon implements RDFWriter
@@ -205,7 +205,7 @@ public class N3JenaWriterCommon implements RDFWriter
 
         // If no base defined for the model, but one given to writer,
         // then use this.
-        String base2 = (String)prefixMap.get("") ;
+        String base2 = prefixMap.get("") ;
         
         if ( base2 == null && baseURIrefHash != null )
             prefixMap.put("", baseURIrefHash) ;
@@ -329,7 +329,7 @@ public class N3JenaWriterCommon implements RDFWriter
         for (Iterator<String> pIter = prefixMap.keySet().iterator(); pIter.hasNext();)
         {
             String p = pIter.next();
-            String u = (String) prefixMap.get(p);
+            String u = prefixMap.get(p);
 
             // Special cases: N3 handling of base names.
             if (doAbbreviatedBaseURIref && p.equals(""))
@@ -466,7 +466,7 @@ public class N3JenaWriterCommon implements RDFWriter
             }
 			if ( ! bNodesMap.containsKey(r) )
 				bNodesMap.put(r, "_:b"+(++bNodeCounter)) ;
-			return (String)bNodesMap.get(r) ;
+			return bNodesMap.get(r) ;
 
 		}
 
@@ -553,7 +553,7 @@ public class N3JenaWriterCommon implements RDFWriter
     {
         String prop = p.getURI() ;
         if ( this.useWellKnownPropertySymbols && wellKnownPropsMap.containsKey(prop) )
-            return (String)wellKnownPropsMap.get(prop);
+            return wellKnownPropsMap.get(prop);
 
         return formatURI(prop) ;
     }

@@ -1,4 +1,4 @@
-// $Id: PrettyNamespacePrefixMaker.java,v 1.7 2010/02/25 14:28:22 hartig Exp $
+// $Id: PrettyNamespacePrefixMaker.java,v 1.8 2011/07/15 23:01:09 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.trig;
 
 import java.util.HashMap;
@@ -62,9 +62,9 @@ public class PrettyNamespacePrefixMaker {
 	}
 
 	private void analyzeGraph() {
-		ExtendedIterator it = this.graph.find(Node.ANY, Node.ANY, Node.ANY);
+		ExtendedIterator<Triple> it = this.graph.find(Node.ANY, Node.ANY, Node.ANY);
 		while (it.hasNext()) {
-			Triple triple = (Triple) it.next();
+			Triple triple = it.next();
 			analyzeURI(triple.getPredicate().getURI());
 		}
 		this.hasAnalyzed = true;
