@@ -6,6 +6,8 @@ Create replacement keystore because the old one had an expired certificate.
 Upgraded to BouncyCastle 1.46 libraries.
 Removed mysql-connector-java-3.2.0-alpha-bin.jar; very old.
   MySQL users should download the latest library and include it instead.
+Code cleanup: Remove unnecessary imports and type casts; Add override statements.
+Add settings for HSQLDB file version.  Still default to in-memory for tests.
 
 05/16/11 (Olaf)
 Removed GRDDL support (it was deprecated with NG4J v.0.9.1)
