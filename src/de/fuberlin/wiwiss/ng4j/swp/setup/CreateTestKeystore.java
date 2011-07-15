@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/swp/setup/CreateTestKeystore.java,v 1.6 2009/07/29 14:49:57 timp Exp $
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/swp/setup/CreateTestKeystore.java,v 1.7 2011/07/15 22:23:01 jenpc Exp $
 
 package de.fuberlin.wiwiss.ng4j.swp.setup;
 
@@ -77,6 +77,21 @@ import de.fuberlin.wiwiss.ng4j.swp.util.SWPSignatureUtilities;
  * <p>
  *  It appeared that originally the keystore was created manually.
  *  This class is my attempt to provide an automated way to create the keystore and its contents.
+ * <p>
+ *  WARNING: Although there is no need to re-create the keystore very regularly,
+ *  it would be best to re-create it: <p>
+ *    1) Whenever there is a new release
+ *    		So that it doesn't expire too soon after a release. <p>
+ *    2) Whenever this code is changed
+ *    		Otherwise the code change may cause a problem that won't be discovered
+ *    		until the keystore needs to be re-created for another reason, and make 
+ *    		it much more difficult to track down the cause of the problem and fix things. <p>
+ *    3) Whenever dependent libraries are updated, e.g. bouncycastle libraries.
+ *    		This is equivalent to a code change and could cause a problem. <p>
+ *  REVISIT: It probably would be best to make this part of the automated build/test cycle.  
+ *  The reason that it's not is that whenever the keystore is re-created the tests
+ *  need to be manually changed.  Perhaps if there was a way to automate that.
+ *  E.g. if the "expected values" that need to be re-entered could be read from a flat file instead.
  *  
  * @author Jennifer Cormier, Architecture Technology Corporation
  */
@@ -364,8 +379,10 @@ public class CreateTestKeystore {
 //        Signature sig = new JDKDigestSignature.SHA224WithRSAEncryption();
 //        clientCert.getSignature()
         
-        System.out.println("SHA1/RSA signature of digest is '" + 
-        		new String( Base64.encodeBase64( clientSignature ) ) + "'");
+        String sigForTests;
+        
+        sigForTests = new String(Base64.encodeBase64( clientSignature ) );
+        System.out.println("SHA1/RSA signature of digest is '" + sigForTests + "'");
         
         //Signature sig = Signature.getInstance(sigOID.getId());
         //Signature sig = new JDKDigestSignature.SHA1WithRSAEncryption();
@@ -376,8 +393,8 @@ public class CreateTestKeystore {
         sig.update(bOutForClient.toByteArray());
         byte[] signatureForTests = sig.sign();
         
-        System.out.println("SHA224/RSA signature of digest is '" + 
-        		new String( Base64.encodeBase64( signatureForTests ) ) + "'");
+        sigForTests = new String(Base64.encodeBase64( signatureForTests ) );
+        System.out.println("SHA224/RSA signature of digest is '" + sigForTests + "'");
         
         return store;
         
