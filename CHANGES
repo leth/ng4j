@@ -2,6 +2,7 @@
 Updated .classpath to reflect prior changes:
   Removed grddl.jar and tagsoup-1.2.jar
   Upgraded to ARQ 2.8.8 and Jena 2.6.4
+Create replacement keystore because the old one had an expired certificate.
 
 05/16/11 (Olaf)
 Removed GRDDL support (it was deprecated with NG4J v.0.9.1)
