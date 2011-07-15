@@ -138,7 +138,7 @@ public class RDFC14NImpl
 
         	for( int i=0;i<a.size();i++ )
         	{
-        		C14NTriple t = ( C14NTriple ) a.get( i );
+        		C14NTriple t = a.get( i );
         		//Condition if arraylist has only one triple
         		if ( a.size() == 1 )
         		{ 
@@ -199,7 +199,7 @@ public class RDFC14NImpl
         	}
         	for( int i=0;i<af.size();i++ )
         	{
-        		C14NTriple t = ( C14NTriple ) a.get( i );
+        		C14NTriple t = a.get( i );
         		t.setTildeObject( ht );
         		t.setTildeSubject( ht );                        
         	}
@@ -259,7 +259,7 @@ public class RDFC14NImpl
         	//Create an arraylist of C14N statements to remove
         	for( int i=0;i<a.size();i++ )
         	{   
-        		C14NTriple t = ( C14NTriple ) a.get( i );
+        		C14NTriple t = a.get( i );
         		if( t.predicate.equals( C14N_TRUE ) )
         		{
         			Statement st = modelIn.createStatement( modelIn.createResource( t.subjectID.getBlankNodeId() ), 
@@ -295,7 +295,7 @@ public class RDFC14NImpl
         	//Create a new set of statements and place them in arraylist
         	for( int i=0;i<a.size();i++ )
         	{   
-        		C14NTriple t = ( C14NTriple ) a.get( i );
+        		C14NTriple t = a.get( i );
         		if( t.object.equals( TILDE ) )
         		{
         			//if ID object already is assigned in ht we'll ignore
