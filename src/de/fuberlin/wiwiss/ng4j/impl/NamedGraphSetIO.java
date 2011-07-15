@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetIO.java,v 1.8 2010/02/25 14:28:21 hartig Exp $
+// $Id: NamedGraphSetIO.java,v 1.9 2011/07/15 23:02:16 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import java.io.InputStream;
@@ -50,7 +50,7 @@ public abstract class NamedGraphSetIO extends NamedGraphSetIterable implements N
 			new TriGWriter().write(this, out, baseURI);
 		} else {
 			// can fail if no graph in set
-			NamedGraph firstGraph = (NamedGraph) listGraphs().next();
+			NamedGraph firstGraph = listGraphs().next();
 			asJenaModel(firstGraph.getGraphName().toString()).write(out, lang, baseURI);
 		}
 	}
@@ -62,7 +62,7 @@ public abstract class NamedGraphSetIO extends NamedGraphSetIterable implements N
 			new TriGWriter().write(this, out, baseURI);
 		} else {
 			// can fail if no graph in set
-			NamedGraph firstGraph = (NamedGraph) listGraphs().next();
+			NamedGraph firstGraph = listGraphs().next();
 			asJenaModel(firstGraph.getGraphName().toString()).write(out, lang, baseURI);
 		}
 	}

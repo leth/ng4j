@@ -1,4 +1,4 @@
-// $Id: NamedGraphImpl.java,v 1.9 2010/02/25 14:28:21 hartig Exp $
+// $Id: NamedGraphImpl.java,v 1.10 2011/07/15 23:02:16 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.impl;
 
 import com.hp.hpl.jena.graph.BulkUpdateHandler;
@@ -135,14 +135,14 @@ public class NamedGraphImpl implements NamedGraph {
 	/* (non-Javadoc)
 	 * @see com.hp.hpl.jena.graph.Graph#find(com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node)
 	 */
-	public ExtendedIterator find(Node s, Node p, Node o) {
+	public ExtendedIterator<Triple> find(Node s, Node p, Node o) {
 		return this.graph.find(s, p, o);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.hp.hpl.jena.graph.Graph#find(com.hp.hpl.jena.graph.TripleMatch)
 	 */
-	public ExtendedIterator find(TripleMatch m) {
+	public ExtendedIterator<Triple> find(TripleMatch m) {
 		return this.graph.find(m);
 	}
 	

@@ -26,18 +26,20 @@ public class NamedGraphResourceImpl extends ResourceImpl implements NamedGraphRe
         this.model = model;
     }
 
-    /**
+    /* (non-Javadoc)
      * @see com.hp.hpl.jena.rdf.model.impl.ResourceImpl#listProperties()
      */
-    public StmtIterator listProperties() {
+    @Override
+	public StmtIterator listProperties() {
         return new NamedGraphStatementIterator(super.listProperties(),
             this.model);
     }
 
-    /**
+    /* (non-Javadoc)
      * @see com.hp.hpl.jena.rdf.model.impl.ResourceImpl#listProperties(com.hp.hpl.jena.rdf.model.Property)
      */
-    public StmtIterator listProperties(final Property p) {
+    @Override
+	public StmtIterator listProperties(final Property p) {
         return new NamedGraphStatementIterator(super.listProperties(p),
             this.model);
     }
