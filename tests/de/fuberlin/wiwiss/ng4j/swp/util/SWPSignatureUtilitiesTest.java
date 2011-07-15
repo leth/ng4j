@@ -211,9 +211,10 @@ public class SWPSignatureUtilitiesTest extends TestCase
 	SWPAlgorithmNotSupportedException, 
 	SWPCertificateException 
 	{
-		assertEquals( "IXtrbfK+a8DIDuon/WEKrUmEJzgT1nz3RVP+LLVK2TR0ncGSlDRucdYPMHpE3BPFx5548UkUlprb" +  
-                     "/9tTsrKVYVkFk6VqxylUTXpsKjKmjdbW3fGolM3RrXMRbwkPudSsyj7yS1LgMAmRexgBw2l+GHkq" +   
-                     "0nIY5Qzr6xVYEN8XcgY=" ,  stripLineEnds(SWPSignatureUtilities.calculateSignature( g1, 
+		// REVISIT Need to replace this value when the keystore is re-created
+		assertEquals( "D212ca8NnqCnBoV5S0o72LgBf630LDyKi3FRiryu1pgI88/GQ1npTBT/hb4p9fLeFRG+6PzNg+7Z" +  
+                     "lfKOGIOWDZaoCVhhBdi0yunAh55OM9goFwzh4e6RwT7TQuqbu2M9bNu2a8gwPfZvo5aX9E07DctK" +   
+                     "TlgTsTIyPldI/1Zfetk=" ,  stripLineEnds(SWPSignatureUtilities.calculateSignature( g1, 
 															SWP.JjcRdfC14N_rsa_sha224, 
 															PKCS12Utils.decryptPrivateKey( keystore, password ) ) ) );
 	}
@@ -230,9 +231,10 @@ public class SWPSignatureUtilitiesTest extends TestCase
 	SWPNoSuchAlgorithmException, 
 	SWPValidationException 
 	{
-		assertEquals( "dj0rKtKf9qyxj3Ci/PcXKUbEKMozrPHQ85HB2uhuH9gW8gI0OsVk8N4ubXctadvTthaCSslFYUxs" +  
-					  "MtUtZYkP9Nx0KMWiKDpIqMTf4Bl1+NAxkogSfu39BRLzers9RmZuuXCZ0tFuF0e09vE9KIBkcFZ/" + 
-					  "Dw3itkJ3T7TnqKk1/hc=" ,  stripLineEnds( SWPSignatureUtilities.calculateSignature( this.set, 
+		// REVISIT Need to replace this value when the keystore is re-created
+		assertEquals( "MLIqfJHNjut70siwNssDzdy81Y3S696hiW2P+qQLSDq04kWWwJvxeNEPqB1QYB0olXf3rmdxSxGN" +  
+					  "LzHQSgRkDrh291A1D0E+z5uHN+gmjwebTsOAICEzWFp5vbzgJtY0iItuH5+0xyjn/oOnekUbiOcg" + 
+					  "VLpAlzRIJUdGtBzKpD0=" ,  stripLineEnds( SWPSignatureUtilities.calculateSignature( this.set, 
 															SWP.JjcRdfC14N_rsa_sha1, 
 															PKCS12Utils.decryptPrivateKey( keystore, password ) ) ) );
 	}
@@ -363,6 +365,9 @@ public class SWPSignatureUtilitiesTest extends TestCase
 		Certificate[] certs = PKCS12Utils.getCertChain( keystore, password );
 		ArrayList<X509Certificate> list = new ArrayList<X509Certificate>();
 		list.add(( X509Certificate )certs[1]);
+		// REVISIT If this test fails, it may be a CertificateExpiredException.
+		// If so, create a new test keystore (ng4jtest.p12) and update the test code
+		// to reflect the new expected values.  See directions in ng4jtest.txt.
 		SWPSignatureUtilities.verifyCertificate( ( X509Certificate )certs[0], list );
 	}
 	

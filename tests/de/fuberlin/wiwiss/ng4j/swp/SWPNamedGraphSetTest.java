@@ -1,4 +1,4 @@
-//$Id: SWPNamedGraphSetTest.java,v 1.20 2010/02/25 14:38:25 hartig Exp $
+//$Id: SWPNamedGraphSetTest.java,v 1.21 2011/07/15 22:21:22 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.swp;
 
 import java.io.StringReader;
@@ -46,9 +46,10 @@ public class SWPNamedGraphSetTest extends TestCase
 	protected ArrayList<Node> list = new ArrayList<Node>();
 	protected SWPAuthority authority;
 	
-	/*
-	 * @see TestCase#setUp()
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception 
 	{
 		this.set = createSWPNamedGraphSet();
@@ -65,9 +66,10 @@ public class SWPNamedGraphSetTest extends TestCase
 		authority = getAuthority( keystore, password );
 	}
 
-	/*
-	 * @see TestCase#tearDown()
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception 
 	{
 		this.set.close();
@@ -90,18 +92,22 @@ public class SWPNamedGraphSetTest extends TestCase
     	listOfAuthorityProperties.add(SWP.X509Certificate);
 		authority.addDescriptionToGraph(set.getGraph(uri1), listOfAuthorityProperties);
 		// NOTE Sun Base64Encoder formats with line ends.
+		// REVISIT  Comparison failure after re-creating keystore
+		// What needs to be done to find the correct value with which to replace?
+		// Did by copying the expected value as shown by the error output of the test.
 		assertEquals("http://example.org/graph1 {http://example.org/graph1 " + 
 				"@http://www.w3.org/2004/03/trix/swp-2/authority http://grid.cx/rowland; http://grid.cx/rowland @http://www.w3.org/2004/03/trix/swp-2/X509Certificate " + 
-				 "\"MIICEzCCAXygAwIBAgIGARwpavvgMA0GCSqGSIb3DQEBBQUAMEgxGDAWBgNVBAMMD0NOPU5HNEog" + 
+				 "\"MIICEzCCAXygAwIBAgIGA" +
+				 	"TEu1tWgMA0GCSqGSIb3DQEBBQUAMEgxGDAWBgNVBAMMD0NOPU5HNEog" + 
 					"dGVzdCBDQTESMBAGA1UECgwJTkc0SiB0ZXN0MQswCQYDVQQIDAJTSDELMAkGA1UEBhMCREUwHhcN" + 
-					"MDgwOTAzMTgxMzA5WhcNMTEwNTMxMTgxMzA5WjBUMRUwEwYDVQQDDAxDTj1ORzRKIHRlc3QxEjAQ" +  
+					"MTEwNzE1MTcyNzM2WhcNMTQwNDEwMTcyNzM2WjBUMRUwEwYDVQQDDAxDTj1ORzRKIHRlc3QxEjAQ" +  
 					"BgNVBAoMCU5HNEogdGVzdDENMAsGA1UEBwwES2llbDELMAkGA1UECAwCU0gxCzAJBgNVBAYTAkRF" + 
-					"MIGdMA0GCSqGSIb3DQEBAQUAA4GLADCBhwKBgQCHPAef4ch/XZtsJ6uAJWgDv4SPCGLUvp4FnM0I" + 
-					"Qp82fkQ80O/VHTqVsoVDo28a1isub0zxf82M5h626NBdOoflCNMgaJ3cW8LPbOXSH9F8VHqjbg9e" + 
-					"vWNCESB8y56zZCMsqA58ODBZ+6I2k56uAPLklHlERLNJ6g8Tt66BuU9dqwIBAzANBgkqhkiG9w0B" + 
-					"AQUFAAOBgQBlJZbiz3cA3D41nOAaFOrNZdUP6bGRkpR8HeRslRpLZ+V8Q1V7am6cwW/nEvH6nMLI" + 
-					"ZrF9UPLUl0opxYqeecGv4rDFgftAP3hnN0ckjnKwzKvfeBrsspyANM15MwWIi8VmcmWZZl/AK36H" + 
-					"f5bjmuuOMsSFbj4Yfg+5blSwaS8gaQ==" + 
+					"MIGdMA0GCSqGSIb3DQEBAQUAA4GLADCBhwKBgQCe9DoT7WPK7+MxnLCg81cKD46/3Goxp5fO4oc8" + 
+					"LO4DZA6JsPunSJ9rGC5LEM5HrPP11D22hbrVYILej0MM7bn0jHVNIERUyg4cek9m6JQJJWaVOK+M" + 
+					"M8mFKqiQilCf5XvSKog1ECqNM/4adzoVPLoupJDdo8jGnS2TBqJRaxqAJQIBAzANBgkqhkiG9w0B" + 
+					"AQUFAAOBgQCYsJWJgZcobaAUJOe6hd3cz/5jCUt6YyZ5JiNLYroZaku8MNyPrkFHILMWMEFZSAJ4" + 
+					"dRnS+mG7T4oSmPDr0opBDtISXim1ro8ulDBcYyFN2FIABwDvKhljhRvWogAQYGcYcFpgW6+ZBrbh" + 
+					"YTiIPoMe6doxDONBYWtqLLMtRS9yaA==" + 
 					"\"^^http://www.w3.org/2001/XMLSchema#base64Binary; " + 
 					"http://example.org/#foo @http://example.org/#bar http://example.org/#baz}",
 					set.getGraph(uri1).toString());
