@@ -1,4 +1,4 @@
-// $Id: DBConnectionHelper.java,v 1.6 2010/09/24 17:19:17 jenpc Exp $
+// $Id: DBConnectionHelper.java,v 1.7 2011/07/15 23:04:35 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -61,10 +61,14 @@ public class DBConnectionHelper {
 	private static final String PW_FOR_DERBY = "";
 	
 	// Settings for HSQLDB (in-memory)
-	private static final String URL_FOR_HSQLDB = "jdbc:hsqldb:mem:ng4j";
+	private static final String URL_FOR_HSQLDB_LOCAL = "jdbc:hsqldb:file:ng4j";
+	private static final String URL_FOR_HSQLDB_MEMORY = "jdbc:hsqldb:mem:ng4j";
+	private static final String URL_FOR_HSQLDB = URL_FOR_HSQLDB_MEMORY;
 	private static final String DRIVER_FOR_HSQLDB = "org.hsqldb.jdbcDriver";
 	private static final String USER_FOR_HSQLDB = "sa";
 	private static final String PW_FOR_HSQLDB = "";
+	// See also http://jena.sourceforge.net/DB/hsql-howto.html
+	// which explains that unlike Derby, HSQLDB uses the same driver but different URLs for in-memory vs. file
 	
 	// Settings for MySQL
 	private static final String URL_FOR_MYSQL = "jdbc:mysql://localhost/ng4j";
