@@ -60,9 +60,9 @@ import de.fuberlin.wiwiss.ng4j.swp.vocabulary.SWP_V;
  * 
  *
  * Last commit info    :   
- * $Author: hartig $
- * $Date: 2010/02/25 14:28:22 $
- * $Revision: 1.21 $
+ * $Author: jenpc $
+ * $Date: 2011/07/15 23:01:30 $
+ * $Revision: 1.22 $
  * 
  * 
  * SWPSignatureUtilities
@@ -173,7 +173,7 @@ public class SWPSignatureUtilities
 		Iterator<NamedGraph> itr = set.listGraphs();
 		while ( itr.hasNext() )
 		{
-			NamedGraph grph = ( NamedGraph )itr.next();
+			NamedGraph grph = itr.next();
 			result.add( grph.getGraphName().toString() );
 		}
 		Collections.sort( result );
@@ -783,7 +783,7 @@ public class SWPSignatureUtilities
         {
             while ( itr.hasNext() )
             {
-                X509Certificate trustedCert = ( X509Certificate ) itr.next();
+                X509Certificate trustedCert = itr.next();
                 
                 try 
                 {
