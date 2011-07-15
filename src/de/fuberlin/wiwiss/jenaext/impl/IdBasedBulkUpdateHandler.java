@@ -6,7 +6,6 @@ import java.util.Set;
 
 import com.hp.hpl.jena.graph.GraphEvents;
 import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.graph.impl.SimpleBulkUpdateHandler;
 
 import de.fuberlin.wiwiss.jenaext.IdBasedGraph;

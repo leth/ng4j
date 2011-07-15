@@ -87,6 +87,9 @@ public class IdBasedQueryPlan implements BindingQueryPlan
 
 	// implementation of the BindingQueryPlan interface
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.graph.query.BindingQueryPlan#executeBindings()
+	 */
 	public ExtendedIterator executeBindings ()
 	{
 		return new ConvertIdBasedSolutionToDomainIterator( rootIterator );

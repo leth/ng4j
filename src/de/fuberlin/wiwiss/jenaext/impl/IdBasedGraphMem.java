@@ -13,7 +13,6 @@ import com.hp.hpl.jena.graph.impl.GraphBase;
 import com.hp.hpl.jena.graph.query.QueryHandler;
 import com.hp.hpl.jena.shared.ReificationStyle;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
-import com.hp.hpl.jena.util.iterator.WrappedIterator;
 
 import de.fuberlin.wiwiss.jenaext.DecodingTriplesIterator;
 import de.fuberlin.wiwiss.jenaext.EmptyIterator;
@@ -178,9 +177,10 @@ public class IdBasedGraphMem extends GraphBase
 		return queryHandler;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see com.hp.hpl.jena.graph.impl.GraphBase#getBulkUpdateHandler()
 	 */
+	@Override
 	public BulkUpdateHandler getBulkUpdateHandler ()
 	{ 
 		if ( bulkHandler == null ) {
