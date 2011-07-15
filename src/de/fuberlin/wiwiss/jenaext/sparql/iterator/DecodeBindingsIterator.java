@@ -42,11 +42,19 @@ public class DecodeBindingsIterator extends QueryIter
 
 	// implementation of the QueryIteratorBase abstract methods
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.sparql.engine.iterator.QueryIteratorBase#hasNextBinding()
+	 */
+	@Override
 	protected boolean hasNextBinding ()
 	{
 		return input.hasNext();
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.sparql.engine.iterator.QueryIteratorBase#moveToNextBinding()
+	 */
+	@Override
 	protected Binding moveToNextBinding ()
 	{
 		IdBasedBinding curInput = input.next();
@@ -65,12 +73,20 @@ public class DecodeBindingsIterator extends QueryIter
 		return curOutput;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.sparql.engine.iterator.QueryIteratorBase#requestCancel()
+	 */
+	@Override
 	protected void requestCancel ()
 	{
 		// do nothing
 		// May be we have to cancel the (chain of) input iterator(s) ?
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.sparql.engine.iterator.QueryIteratorBase#closeIterator()
+	 */
+	@Override
 	protected void closeIterator ()
 	{
 		if ( input instanceof Closeable ) {
