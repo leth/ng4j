@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/HSQLCompatibility.java,v 1.5 2010/09/24 21:17:10 jenpc Exp $
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/HSQLCompatibility.java,v 1.6 2011/07/15 23:40:53 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db.specific;
 
 import java.sql.Connection;
@@ -13,6 +13,8 @@ import com.hp.hpl.jena.shared.JenaException;
  */
 public class HSQLCompatibility extends DbCompatibility {
 
+	private static final String DEFAULT_NULL_ASSIGNMENT = "DEFAULT NULL";
+	
 	public static final Pattern HSQLDB_ESCAPE_PATTERN = Pattern.compile("([\\'])");
 	public static final String HSQLDB_ESCAPE_REPLACEMENT = "$1$1";
 
@@ -27,17 +29,26 @@ public class HSQLCompatibility extends DbCompatibility {
 	 */
 	@Override
 	public void createTables() {
-		execute("CREATE TABLE " + graphNamesTableName + " (name VARCHAR , PRIMARY KEY(name)) ");
+		execute("CREATE TABLE " + graphNamesTableName + 
+				//" (name VARCHAR , PRIMARY KEY(name)) ");
+				"(name " + URI_DATATYPE + " NOT NULL" + /*" " + DEFAULT_STRING_ASSIGNMENT +*/ " PRIMARY KEY)");
 		try {
 			executeNoErrorHandling(
 					"CREATE TABLE " + quadsTableName + " (" +
-					"graph VARCHAR NOT NULL," +
-					"subject VARCHAR NOT NULL," +
-					"predicate VARCHAR NOT NULL," +
-					"object VARCHAR," +
-					"literal LONGVARCHAR," +
-					"lang VARCHAR," +
-					"datatype VARCHAR )");
+					//"graph VARCHAR NOT NULL," +
+					"graph " + URI_DATATYPE + " NOT NULL"  + /*" " + DEFAULT_STRING_ASSIGNMENT +*/ "," +
+					//"subject VARCHAR NOT NULL," +
+					"subject " +  URI_DATATYPE + " NOT NULL"  + /*" " + DEFAULT_STRING_ASSIGNMENT +*/ "," +
+					//"predicate VARCHAR NOT NULL," +
+					"predicate " + URI_DATATYPE + " NOT NULL"  + /*" " + DEFAULT_STRING_ASSIGNMENT +*/ "," +
+					//"object VARCHAR," +
+					"object " +  URI_DATATYPE + " " + DEFAULT_NULL_ASSIGNMENT + "," +
+					//"literal LONGVARCHAR," +
+					"literal " + LITERAL_DATATYPE + " " + DEFAULT_NULL_ASSIGNMENT + "," +
+					//"lang VARCHAR," +
+					"lang " + LANGUAGE_DATATYPE + " " + DEFAULT_NULL_ASSIGNMENT + "," +
+					//"datatype VARCHAR )");
+					"datatype " + DATATYPE_DATATYPE + " " + DEFAULT_NULL_ASSIGNMENT +")");
 		} catch (SQLException ex) {
 			execute("DROP TABLE " + graphNamesTableName);
 			throw new JenaException(ex);
