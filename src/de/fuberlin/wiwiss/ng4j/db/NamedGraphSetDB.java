@@ -1,4 +1,4 @@
-// $Id: NamedGraphSetDB.java,v 1.11 2010/09/21 16:39:08 jenpc Exp $
+// $Id: NamedGraphSetDB.java,v 1.12 2011/07/15 23:02:43 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -88,9 +88,9 @@ public class NamedGraphSetDB extends NamedGraphSetIO implements NamedGraphSet {
 	 */
 	public void addGraph(NamedGraph graph) {
 		createGraph(graph.getGraphName());
-		ExtendedIterator it = graph.find(Node.ANY, Node.ANY, Node.ANY);
+		ExtendedIterator<Triple> it = graph.find(Node.ANY, Node.ANY, Node.ANY);
 		while (it.hasNext()) {
-			Triple triple = (Triple) it.next();
+			Triple triple = it.next();
 			this.db.insert(graph.getGraphName(), triple.getSubject(), triple.getPredicate(), triple.getObject());
 		}
 	}
@@ -177,7 +177,7 @@ public class NamedGraphSetDB extends NamedGraphSetIO implements NamedGraphSet {
 				return graphNames.hasNext();
 			}
 			public NamedGraph next() {
-				this.current = (Node) graphNames.next();
+				this.current = graphNames.next();
 				return new NamedGraphDB(getDB(), this.current);
 			}
 			public void remove() {
@@ -279,6 +279,11 @@ public class NamedGraphSetDB extends NamedGraphSetIO implements NamedGraphSet {
 			createGraph(defaultGraphForAdding);
 		}
 		return new NamedGraphDB(this.db, Node.ANY) {
+			
+			/* (non-Javadoc)
+			 * @see de.fuberlin.wiwiss.ng4j.db.NamedGraphDB#performAdd(com.hp.hpl.jena.graph.Triple)
+			 */
+			@Override
 			public void performAdd(Triple t) {
 				getDB().insert(defaultGraphForAdding,
 						t.getSubject(), t.getPredicate(), t.getObject());

@@ -1,4 +1,4 @@
-// $Id: QuadDB.java,v 1.24 2010/09/27 23:36:41 jenpc Exp $
+// $Id: QuadDB.java,v 1.25 2011/07/15 23:02:43 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db;
 
 import java.sql.Connection;
@@ -580,7 +580,7 @@ public class QuadDB {
 		String result = "";
 		Iterator<String> it = queryClauses.iterator();
 		while (it.hasNext()) {
-			String clause = (String) it.next();
+			String clause = it.next();
 			if (!"".equals(result)) {
 				result += " AND ";
 			}
