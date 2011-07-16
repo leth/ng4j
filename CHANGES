@@ -2,6 +2,8 @@
 Fixed a couple of Javadoc warnings (in Index and in IdBasedNamedGraphSetImpl).
 Fixed a type mismatch warning/error that was caused by DecodingTriplesIterator not implementing ExtendedIterator.
 Changed MySQLCompatibility to work with newer versions of MySQL.
+In NamedGraphDataset, change getContext to return an empty Context instead of null 
+  to see whether that will fix the 20 test run errors in the ng4j_ant build. 
 
 07/15/11 (Jennifer)
 Updated .classpath to reflect prior changes:

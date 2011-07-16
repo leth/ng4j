@@ -267,7 +267,7 @@ public class NamedGraphDataset implements Dataset, DatasetGraph {
 	public Iterator<Node> listGraphNodes() {
 		Set<Node> graphNodes = new HashSet<Node>();
 		for ( Iterator<NamedGraph> it = set.listGraphs(); it.hasNext(); ) {
-			NamedGraph ng = (NamedGraph) it.next();
+			NamedGraph ng = it.next();
 			graphNodes.add(ng.getGraphName());
 		}
 		return graphNodes.iterator();
@@ -282,9 +282,14 @@ public class NamedGraphDataset implements Dataset, DatasetGraph {
 		return graphNum;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.hp.hpl.jena.sparql.core.DatasetGraph#getContext()
+	 */
 	public Context getContext ()
 	{
-		return null;
+		// The Javadoc says that null can be returned, but ng4j_ant build test run has an AbstractMethodError citing this method
+		return new Context();
+		//return null;
 	}
 
 	/**
@@ -298,10 +303,10 @@ public class NamedGraphDataset implements Dataset, DatasetGraph {
 
 	class ConvertingIterator implements Iterator<Quad>
 	{
-		final protected Iterator base;
-		public ConvertingIterator ( Iterator base ) { this.base = base; }
+		final protected Iterator<de.fuberlin.wiwiss.ng4j.Quad> base;
+		public ConvertingIterator ( Iterator<de.fuberlin.wiwiss.ng4j.Quad> base ) { this.base = base; }
 		public boolean hasNext () { return base.hasNext(); }
-		public Quad next () { return convert( (de.fuberlin.wiwiss.ng4j.Quad) base.next() ); }
+		public Quad next () { return convert( base.next() ); }
 		public void remove () { base.remove(); }
 	}
 
