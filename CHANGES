@@ -1,6 +1,7 @@
 07/16/11 (Jennifer)
 Fixed a couple of Javadoc warnings (in Index and in IdBasedNamedGraphSetImpl).
 Fixed a type mismatch warning/error that was caused by DecodingTriplesIterator not implementing ExtendedIterator.
+Changed MySQLCompatibility to work with newer versions of MySQL.
 
 07/15/11 (Jennifer)
 Updated .classpath to reflect prior changes:
