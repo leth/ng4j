@@ -47,7 +47,8 @@ public class IdBasedNamedGraphSetImpl extends NamedGraphSetImpl
 	/**
 	 * Creates a set of identifier-based named graphs by copying the given set.
 	 * This constructor copies the given set but it does not create a new
-	 * {@link IdBasedNamedGraph} object for each named graph. Instead, it
+	 * {@link de.fuberlin.wiwiss.ng4j.impl.idbased.IdBasedNamedGraphImpl} 
+	 * object for each named graph. Instead, it
 	 * simply copies the references to the graphs as given in the given set.
 	 */
 	public IdBasedNamedGraphSetImpl ( IdBasedNamedGraphSetImpl template )
@@ -108,6 +109,10 @@ public class IdBasedNamedGraphSetImpl extends NamedGraphSetImpl
 		return unionGraph;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
 	public String toString ()
 	{
 		return "IdBasedNamedGraphSetImpl with " + countQuads() + " quads in " + countGraphs() + " graphs";

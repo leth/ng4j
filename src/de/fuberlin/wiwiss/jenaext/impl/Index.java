@@ -11,7 +11,7 @@ import de.fuberlin.wiwiss.jenaext.EmptyIterator;
 /**
  * Indexes objects by identifiers.
  * The main instantiation of this template is an index of identifier-based
- * triples ({@link IdBasedTriple} objects) where the identifiers are the
+ * triples ({@link de.fuberlin.wiwiss.jenaext.IdBasedTriple} objects) where the identifiers are the
  * node identifiers. This class can be used to create S, P, and O indexes
  * of triples.
  *
