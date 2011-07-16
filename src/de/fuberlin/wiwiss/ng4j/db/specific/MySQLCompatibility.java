@@ -1,4 +1,4 @@
-// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/MySQLCompatibility.java,v 1.6 2010/09/21 15:34:03 jenpc Exp $
+// $Header: /cvsroot/ng4j/ng4j/src/de/fuberlin/wiwiss/ng4j/db/specific/MySQLCompatibility.java,v 1.7 2011/07/16 13:21:02 jenpc Exp $
 package de.fuberlin.wiwiss.ng4j.db.specific;
 
 import java.sql.Connection;
@@ -19,6 +19,15 @@ public class MySQLCompatibility extends DbCompatibility {
 		super(connection);
 	}
 
+	/* REVISIT database type - consider using INNODB instead
+	// Transactional Database Only:     INNODB
+	// Non-Transactional Database Only: MYISAM
+	// This article has a comparison: http://www.kavoir.com/2009/09/mysql-engines-innodb-vs-myisam-a-comparison-of-pros-and-cons.html
+	
+	// INNODB existed in MySQL 5 and starting in 5.5 is the default database
+	// http://dev.mysql.com/doc/refman/5.5/en/innodb-storage-engine.html
+	*/
+	
 	/* (non-Javadoc)
 	 * @see de.fuberlin.wiwiss.ng4j.db.specific.DbCompatibility#createTables()
 	 */
@@ -26,7 +35,9 @@ public class MySQLCompatibility extends DbCompatibility {
 	public void createTables() {
 		execute("CREATE TABLE " + graphNamesTableName + " (" +
 				"name " + URI_DATATYPE + " NOT NULL default '', " +
-				"PRIMARY KEY  (`name`)) TYPE=MyISAM");
+				"PRIMARY KEY  (`name`))");
+			//	"PRIMARY KEY  (`name`)) ENGINE=MyISAM DEFAULT CHARSET=utf8"); // equivalent to TYPE=MyISAM but use INNODB instead
+			//	"PRIMARY KEY  (`name`)) TYPE=MyISAM"); // TYPE deprecated as of MySQL 5.
 		try {
 			executeNoErrorHandling(
 					"CREATE TABLE " + quadsTableName + " (" +
@@ -41,7 +52,9 @@ public class MySQLCompatibility extends DbCompatibility {
 					"KEY subject (`subject`)," +
 					"KEY predicate (`predicate`)," +
 					"KEY object (`object`)" +
-					") TYPE=MyISAM;");
+					")");
+				//	") ENGINE=MyISAM DEFAULT CHARSET=utf8;"); // equivalent to TYPE=MyISAM but use INNODB instead
+				//	") TYPE=MyISAM;"); // TYPE deprecated as of MySQL 5.
 		} catch (SQLException ex) {
 			execute("DROP TABLE " + graphNamesTableName);
 			throw new JenaException(ex);
