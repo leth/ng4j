@@ -3,6 +3,7 @@ package de.fuberlin.wiwiss.jenaext;
 import java.util.Iterator;
 
 import com.hp.hpl.jena.graph.Triple;
+import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.util.iterator.NiceIterator;
 
 
@@ -12,7 +13,7 @@ import com.hp.hpl.jena.util.iterator.NiceIterator;
  *
  * @author Olaf Hartig
  */
-public class DecodingTriplesIterator extends NiceIterator<Triple>
+public class DecodingTriplesIterator extends NiceIterator<Triple> implements ExtendedIterator<Triple>
 {
 	// members
 
