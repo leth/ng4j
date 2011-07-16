@@ -1,3 +1,7 @@
+07/16/11 (Jennifer)
+Fixed a couple of Javadoc warnings (in Index and in IdBasedNamedGraphSetImpl).
+Fixed a type mismatch warning/error that was caused by DecodingTriplesIterator not implementing ExtendedIterator.
+
 07/15/11 (Jennifer)
 Updated .classpath to reflect prior changes:
   Removed grddl.jar and tagsoup-1.2.jar
@@ -7,7 +11,8 @@ Upgraded to BouncyCastle 1.46 libraries.
 Removed mysql-connector-java-3.2.0-alpha-bin.jar; very old.
   MySQL users should download the latest library and include it instead.
 Code cleanup: Remove unnecessary imports and type casts; Add override statements.
-Add settings for HSQLDB file version.  Still default to in-memory for tests.
+In test code, add settings for HSQLDB file version.  Still default to in-memory for tests.
+Use variable names when creating tables in HSQLCompatibility.
 
 05/16/11 (Olaf)
 Removed GRDDL support (it was deprecated with NG4J v.0.9.1)
