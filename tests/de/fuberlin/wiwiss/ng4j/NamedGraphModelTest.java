@@ -78,7 +78,7 @@ public class NamedGraphModelTest extends TestCase {
 	}
 	
 	public void testAddStatementArray() {
-		this.model.add((Statement[]) twoStatementsList().toArray(new Statement[]{}));
+		this.model.add(twoStatementsList().toArray(new Statement[]{}));
 		assertTwoStatementsAdded();
 	}
 	
@@ -129,7 +129,7 @@ public class NamedGraphModelTest extends TestCase {
 	private Collection<Statement> toCollection(StmtIterator it) {
 		Collection<Statement> result = new ArrayList<Statement>();
 		while (it.hasNext()) {
-			result.add((Statement)it.next());
+			result.add(it.next());
 		}
 		return result;
 	}

@@ -45,7 +45,7 @@ public class JenaRDFWriter implements RDFWriter {
 			write("  <graph>\n");
 			StmtIterator it = model.listStatements();
 			while (it.hasNext()) {
-				Statement stmt = (Statement) it.next();
+				Statement stmt = it.next();
 				writeTriple(stmt);
 			}
 			write("  </graph>\n");

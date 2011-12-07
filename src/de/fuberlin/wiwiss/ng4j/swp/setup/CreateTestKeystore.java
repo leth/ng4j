@@ -195,7 +195,7 @@ public class CreateTestKeystore {
 		
 		// Instead of the following, get the algorithm directly so we don't need X509Util
 		//DERObjectIdentifier sigOID = X509Util.getAlgorithmOID("SHA1WithRSAEncryption");
-		DERObjectIdentifier sigOID = (DERObjectIdentifier) PKCSObjectIdentifiers.sha1WithRSAEncryption;
+		DERObjectIdentifier sigOID = PKCSObjectIdentifiers.sha1WithRSAEncryption;
 		
 		AlgorithmIdentifier sigAlgId = new AlgorithmIdentifier(sigOID, new DERNull());
 		caCertGen.setSignature(sigAlgId);

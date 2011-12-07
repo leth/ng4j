@@ -67,7 +67,7 @@ public class SyntacticExtensionProcessor {
 	public void process(Result target) throws TransformerException {
 		Iterator<String> it = getTransforms().iterator();
 		while (it.hasNext()) {
-			String stylesheetURI = (String) it.next();
+			String stylesheetURI = it.next();
 			try {
 				Document transformed = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 				TransformerFactory.newInstance().newTransformer(new StreamSource(stylesheetURI)).transform(new DOMSource(this.doc), new DOMResult(transformed));

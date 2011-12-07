@@ -295,7 +295,7 @@ public class CommandLineQuery {
 		// TODO same code as in dereferencing thread (accept) ?
 		Iterator<String> it = this.graphsToAdd.iterator();
 		while (it.hasNext()) {
-			String graphuri = (String) it.next();
+			String graphuri = it.next();
 			URL url = null;
 			HttpURLConnection connection = null;
 			url = new URL(graphuri);
@@ -415,7 +415,7 @@ public class CommandLineQuery {
 			if ( verbose ) {
 				int i = 0;
 				while (iter.hasNext()) {
-					SemWebTriple triple = (SemWebTriple) iter.next();
+					SemWebTriple triple = iter.next();
 					System.out.println( triple.toString() +
 					                    " (result#: " + String.valueOf(++i) +
 					                    " succ.URIs: " + String.valueOf(client.successfullyDereferencedURIs().size()) +
@@ -424,7 +424,7 @@ public class CommandLineQuery {
 			}
 			else  {
 				while (iter.hasNext()) {
-					SemWebTriple triple = (SemWebTriple) iter.next();
+					SemWebTriple triple = iter.next();
 					System.out.println(triple.toString());
 				}
 			}
@@ -476,7 +476,7 @@ public class CommandLineQuery {
 						reasons.put( reasonType, Integer.valueOf(1) );
 					}
 					else {
-						int i = ((Integer) reasons.get(reasonType)).intValue() + 1;
+						int i = (reasons.get(reasonType)).intValue() + 1;
 						reasons.put( reasonType, Integer.valueOf(i) );
 					}
 

@@ -575,7 +575,7 @@ public class N3JenaWriterCommon implements RDFWriter
 		for ( Iterator<String> pIter = prefixMap.keySet().iterator() ; pIter.hasNext() ; )
 		{
 			String p = pIter.next() ;
-			String u = (String)prefixMap.get(p) ;
+			String u = prefixMap.get(p) ;
 			if ( uriStr.startsWith(u) )
 				if ( matchURI.length() < u.length() )
 				{

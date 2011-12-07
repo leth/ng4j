@@ -153,7 +153,7 @@ public class MockParserCallback implements ParserCallback {
 			call.append(":");
 		}
 		while (it.hasNext()) {
-			String uri = (String) it.next();
+			String uri = it.next();
 			call.append(" <");
 			call.append(uri + ">");
 		}

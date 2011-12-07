@@ -48,12 +48,12 @@ public class MyResultSet implements ResultSet {
   public QuerySolution next() {                                                                                 
 		ensureIteratorInitialized();
 		this.rowNumber++;
-    Binding b = (Binding) this.bindingIterator.next();
+    Binding b = this.bindingIterator.next();
     return new ResultBinding(this.model, b);          
 	}
 
 	public QuerySolution nextSolution() {
-		return (QuerySolution) next();
+		return next();
 	}
 
 	public int getRowNumber() {
@@ -95,6 +95,6 @@ public class MyResultSet implements ResultSet {
 	 * @see com.hp.hpl.jena.query.ResultSet#nextBinding()
 	 */
 	public Binding nextBinding() {
-		return (Binding) bindingIterator.next();
+		return bindingIterator.next();
 	}
 }

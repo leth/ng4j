@@ -33,7 +33,7 @@ public class PrettyNamespacePrefixMakerTest extends TestCase {
 		this.actualPrefixes = this.maker.getPrefixMap();
 		Iterator<String> it = this.expectedPrefixes.keySet().iterator();
 		while (it.hasNext()) {
-			String expectedPrefix = (String) it.next();
+			String expectedPrefix = it.next();
 			assertTrue("Expected prefix: '" + expectedPrefix + "'",
 					this.actualPrefixes.containsKey(expectedPrefix));
 			assertEquals("Namespace URI for prefix '" + expectedPrefix + "':",
@@ -42,7 +42,7 @@ public class PrettyNamespacePrefixMakerTest extends TestCase {
 		}
 		it = this.actualPrefixes.keySet().iterator();
 		while (it.hasNext()) {
-			String actualPrefix = (String) it.next();
+			String actualPrefix = it.next();
 			assertTrue("Unexpected prefix: '" + actualPrefix + "'",
 					this.expectedPrefixes.containsKey(actualPrefix));
 		}

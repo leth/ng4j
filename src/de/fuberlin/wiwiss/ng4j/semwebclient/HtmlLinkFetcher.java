@@ -49,7 +49,7 @@ public class HtmlLinkFetcher {
 		    for (int i = 0; i < linkLinkedList.size (); i++) {
 		      String linkElmt = linkLinkedList.get(i);
 		      if ( typePattern.matcher(linkElmt).matches() ) {
-		        CharSequence cs = prePattern.split ((CharSequence)linkLinkedList.get(i))[1];
+		        CharSequence cs = prePattern.split (linkLinkedList.get(i))[1];
 		        linkList.add(postPattern.split (cs)[0]);
 		      }
 		    }

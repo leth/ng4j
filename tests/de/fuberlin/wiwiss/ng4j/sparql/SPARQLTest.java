@@ -129,7 +129,7 @@ public class SPARQLTest extends TestCase {
 		assertExpectedBindingCount(1);
 		
 		Binding binding = results.nextBinding();
-		Node node = binding.get((Var)binding.vars().next());
+		Node node = binding.get(binding.vars().next());
 		assertEquals(node, bURI);
 	}
 
@@ -153,7 +153,7 @@ public class SPARQLTest extends TestCase {
 		assertExpectedBindingCount(1);
 		
 		Binding binding = results.nextBinding();
-		Node node = binding.get((Var)binding.vars().next());
+		Node node = binding.get(binding.vars().next());
 		assertEquals(node, aURI);
 	}
 

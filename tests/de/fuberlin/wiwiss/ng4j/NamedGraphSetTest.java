@@ -196,14 +196,14 @@ public class NamedGraphSetTest extends TestCase {
 		assertFalse(this.set.listGraphs().hasNext());
 		this.set.createGraph(uri1);
 		assertTrue(this.set.listGraphs().hasNext());
-		assertEquals(node1, ((NamedGraph) this.set.listGraphs().next()).getGraphName());
+		assertEquals(node1, (this.set.listGraphs().next()).getGraphName());
 		Collection<Node> graphs = new ArrayList<Node>();
 		this.set.createGraph(uri2);
 		Iterator<NamedGraph> it = this.set.listGraphs();
 		assertTrue(it.hasNext());
-		graphs.add(((NamedGraph) it.next()).getGraphName());
+		graphs.add((it.next()).getGraphName());
 		assertTrue(it.hasNext());
-		graphs.add(((NamedGraph) it.next()).getGraphName());
+		graphs.add((it.next()).getGraphName());
 		assertFalse(it.hasNext());
 		assertTrue(graphs.contains(node1));
 		assertTrue(graphs.contains(node2));

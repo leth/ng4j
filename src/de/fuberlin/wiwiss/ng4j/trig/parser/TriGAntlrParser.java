@@ -198,7 +198,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		case URIREF:
 		{
 			graphLabel();
-			label_AST = (AST)returnAST;
+			label_AST = returnAST;
 			{
 			switch ( LA(1)) {
 			case NAME_OP:
@@ -246,9 +246,9 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		d_AST = astFactory.create(d);
 		match(AT_PREFIX);
 		nsprefix();
-		ns_AST = (AST)returnAST;
+		ns_AST = returnAST;
 		uriref();
-		u_AST = (AST)returnAST;
+		u_AST = returnAST;
 		if ( inputState.guessing==0 ) {
 			directive(d_AST, ns_AST, u_AST);
 		}
@@ -270,7 +270,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 			match(QNAME);
 			if (!( ns.getText().endsWith(":") ))
 			  throw new SemanticException(" ns.getText().endsWith(\":\") ");
-			nsprefix_AST = (AST)currentAST.root;
+			nsprefix_AST = currentAST.root;
 		}
 		catch (SemanticException ex) {
 			if (inputState.guessing==0) {
@@ -297,7 +297,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		tmp4_AST = astFactory.create(LT(1));
 		astFactory.addASTChild(currentAST, tmp4_AST);
 		match(URIREF);
-		uriref_AST = (AST)currentAST.root;
+		uriref_AST = currentAST.root;
 		returnAST = uriref_AST;
 	}
 	
@@ -313,9 +313,9 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		case QNAME:
 		{
 			qname();
-			q_AST = (AST)returnAST;
+			q_AST = returnAST;
 			if ( inputState.guessing==0 ) {
-				graphLabel_AST = (AST)currentAST.root;
+				graphLabel_AST = currentAST.root;
 				graphLabel_AST=q_AST;
 				currentAST.root = graphLabel_AST;
 				currentAST.child = graphLabel_AST!=null &&graphLabel_AST.getFirstChild()!=null ?
@@ -327,9 +327,9 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		case URIREF:
 		{
 			uriref();
-			u_AST = (AST)returnAST;
+			u_AST = returnAST;
 			if ( inputState.guessing==0 ) {
-				graphLabel_AST = (AST)currentAST.root;
+				graphLabel_AST = currentAST.root;
 				graphLabel_AST=u_AST;
 				currentAST.root = graphLabel_AST;
 				currentAST.child = graphLabel_AST!=null &&graphLabel_AST.getFirstChild()!=null ?
@@ -356,7 +356,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		
 		match(LCURLY);
 		if ( inputState.guessing==0 ) {
-			graph_AST = (AST)currentAST.root;
+			graph_AST = currentAST.root;
 			
 						currentGraphName = label;
 						startGraph(label);
@@ -376,7 +376,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 					
 		}
 		match(RCURLY);
-		graph_AST = (AST)currentAST.root;
+		graph_AST = currentAST.root;
 		returnAST = graph_AST;
 	}
 	
@@ -390,7 +390,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		tmp7_AST = astFactory.create(LT(1));
 		astFactory.addASTChild(currentAST, tmp7_AST);
 		match(QNAME);
-		qname_AST = (AST)currentAST.root;
+		qname_AST = currentAST.root;
 		returnAST = qname_AST;
 	}
 	
@@ -472,7 +472,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		AST subj_AST = null;
 		
 		subject();
-		subj_AST = (AST)returnAST;
+		subj_AST = returnAST;
 		propertyList(subj_AST);
 		returnAST = statement_AST;
 	}
@@ -485,7 +485,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		
 		item();
 		astFactory.addASTChild(currentAST, returnAST);
-		subject_AST = (AST)currentAST.root;
+		subject_AST = currentAST.root;
 		returnAST = subject_AST;
 	}
 	
@@ -563,7 +563,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		AST n2_AST = null;
 		
 		node();
-		n_AST = (AST)returnAST;
+		n_AST = returnAST;
 		astFactory.addASTChild(currentAST, returnAST);
 		{
 		_loop26:
@@ -573,11 +573,11 @@ public TriGAntlrParser(ParserSharedInputState state) {
 			{
 				match(PATH);
 				node();
-				n1_AST = (AST)returnAST;
+				n1_AST = returnAST;
 				astFactory.addASTChild(currentAST, returnAST);
 				if ( inputState.guessing==0 ) {
 					
-								AST a1 = (AST)astFactory.make( (new ASTArray(1)).add(astFactory.create(ANON,genAnonId()))) ;
+								AST a1 = astFactory.make( (new ASTArray(1)).add(astFactory.create(ANON,genAnonId()))) ;
 								emitQuad(n_AST, n1_AST, a1) ;
 								n_AST = a1 ;
 							
@@ -588,11 +588,11 @@ public TriGAntlrParser(ParserSharedInputState state) {
 			{
 				match(RPATH);
 				node();
-				n2_AST = (AST)returnAST;
+				n2_AST = returnAST;
 				astFactory.addASTChild(currentAST, returnAST);
 				if ( inputState.guessing==0 ) {
 					
-								AST a2 = (AST)astFactory.make( (new ASTArray(1)).add(astFactory.create(ANON,genAnonId()))) ;
+								AST a2 = astFactory.make( (new ASTArray(1)).add(astFactory.create(ANON,genAnonId()))) ;
 								emitQuad(a2, n2_AST, n_AST) ;
 								n_AST = a2 ;
 							
@@ -607,14 +607,14 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		} while (true);
 		}
 		if ( inputState.guessing==0 ) {
-			item_AST = (AST)currentAST.root;
+			item_AST = currentAST.root;
 			item_AST = n_AST ;
 			currentAST.root = item_AST;
 			currentAST.child = item_AST!=null &&item_AST.getFirstChild()!=null ?
 				item_AST.getFirstChild() : item_AST;
 			currentAST.advanceChildToEnd();
 		}
-		item_AST = (AST)currentAST.root;
+		item_AST = currentAST.root;
 		returnAST = item_AST;
 	}
 	
@@ -645,21 +645,21 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		case UVAR:
 		{
 			verb();
-			v1_AST = (AST)returnAST;
+			v1_AST = returnAST;
 			astFactory.addASTChild(currentAST, returnAST);
 			objectList(subj, v1_AST);
 			astFactory.addASTChild(currentAST, returnAST);
-			propValue_AST = (AST)currentAST.root;
+			propValue_AST = currentAST.root;
 			break;
 		}
 		case KW_IS:
 		{
 			verbReverse();
-			v2_AST = (AST)returnAST;
+			v2_AST = returnAST;
 			astFactory.addASTChild(currentAST, returnAST);
 			subjectList(subj, v2_AST);
 			astFactory.addASTChild(currentAST, returnAST);
-			propValue_AST = (AST)currentAST.root;
+			propValue_AST = currentAST.root;
 			break;
 		}
 		default:
@@ -688,14 +688,14 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		{
 			item();
 			astFactory.addASTChild(currentAST, returnAST);
-			verb_AST = (AST)currentAST.root;
+			verb_AST = currentAST.root;
 			break;
 		}
 		case KW_A:
 		{
 			kwA();
 			astFactory.addASTChild(currentAST, returnAST);
-			verb_AST = (AST)currentAST.root;
+			verb_AST = currentAST.root;
 			break;
 		}
 		case EQUAL:
@@ -704,7 +704,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 			tmp12_AST = astFactory.create(LT(1));
 			astFactory.addASTChild(currentAST, tmp12_AST);
 			match(EQUAL);
-			verb_AST = (AST)currentAST.root;
+			verb_AST = currentAST.root;
 			break;
 		}
 		case ARROW_R:
@@ -713,7 +713,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 			tmp13_AST = astFactory.create(LT(1));
 			astFactory.addASTChild(currentAST, tmp13_AST);
 			match(ARROW_R);
-			verb_AST = (AST)currentAST.root;
+			verb_AST = currentAST.root;
 			break;
 		}
 		case ARROW_L:
@@ -722,7 +722,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 			tmp14_AST = astFactory.create(LT(1));
 			astFactory.addASTChild(currentAST, tmp14_AST);
 			match(ARROW_L);
-			verb_AST = (AST)currentAST.root;
+			verb_AST = currentAST.root;
 			break;
 		}
 		case ARROW_PATH_L:
@@ -731,7 +731,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 			node();
 			astFactory.addASTChild(currentAST, returnAST);
 			match(ARROW_PATH_R);
-			verb_AST = (AST)currentAST.root;
+			verb_AST = currentAST.root;
 			break;
 		}
 		case KW_HAS:
@@ -739,7 +739,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 			kwHAS();
 			item();
 			astFactory.addASTChild(currentAST, returnAST);
-			verb_AST = (AST)currentAST.root;
+			verb_AST = currentAST.root;
 			break;
 		}
 		default:
@@ -770,7 +770,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		case UVAR:
 		{
 			item();
-			obj_AST = (AST)returnAST;
+			obj_AST = returnAST;
 			if ( inputState.guessing==0 ) {
 				emitQuad(subj,prop,obj_AST) ;
 			}
@@ -823,10 +823,10 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		
 		kwIS();
 		node();
-		n_AST = (AST)returnAST;
+		n_AST = returnAST;
 		astFactory.addASTChild(currentAST, returnAST);
 		kwOF();
-		verbReverse_AST = (AST)currentAST.root;
+		verbReverse_AST = currentAST.root;
 		returnAST = verbReverse_AST;
 	}
 	
@@ -840,7 +840,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		AST obj_AST = null;
 		
 		item();
-		obj_AST = (AST)returnAST;
+		obj_AST = returnAST;
 		if ( inputState.guessing==0 ) {
 			emitQuad(obj_AST, prop, oldSub) ;
 		}
@@ -881,14 +881,14 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		{
 			qname();
 			astFactory.addASTChild(currentAST, returnAST);
-			node_AST = (AST)currentAST.root;
+			node_AST = currentAST.root;
 			break;
 		}
 		case URIREF:
 		{
 			uriref();
 			astFactory.addASTChild(currentAST, returnAST);
-			node_AST = (AST)currentAST.root;
+			node_AST = currentAST.root;
 			break;
 		}
 		case LBRACK:
@@ -896,7 +896,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		{
 			anonnode(null);
 			astFactory.addASTChild(currentAST, returnAST);
-			node_AST = (AST)currentAST.root;
+			node_AST = currentAST.root;
 			break;
 		}
 		case STRING:
@@ -904,21 +904,21 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		{
 			literal();
 			astFactory.addASTChild(currentAST, returnAST);
-			node_AST = (AST)currentAST.root;
+			node_AST = currentAST.root;
 			break;
 		}
 		case KW_THIS:
 		{
 			kwTHIS();
 			astFactory.addASTChild(currentAST, returnAST);
-			node_AST = (AST)currentAST.root;
+			node_AST = currentAST.root;
 			break;
 		}
 		case UVAR:
 		{
 			variableDT();
 			astFactory.addASTChild(currentAST, returnAST);
-			node_AST = (AST)currentAST.root;
+			node_AST = currentAST.root;
 			break;
 		}
 		default:
@@ -937,7 +937,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		AST v_AST = null;
 		
 		verb();
-		v_AST = (AST)returnAST;
+		v_AST = returnAST;
 		if ( inputState.guessing==0 ) {
 			AntlrUtils.ast(System.out, v_AST) ;
 		}
@@ -958,9 +958,9 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		{
 			match(LBRACK);
 			if ( inputState.guessing==0 ) {
-				anonnode_AST = (AST)currentAST.root;
+				anonnode_AST = currentAST.root;
 				if ( label == null )
-					          label = (AST)astFactory.make( (new ASTArray(1)).add(astFactory.create(ANON,genAnonId()))) ;
+					          label = astFactory.make( (new ASTArray(1)).add(astFactory.create(ANON,genAnonId()))) ;
 						  anonnode_AST = label ;
 						
 				currentAST.root = anonnode_AST;
@@ -971,7 +971,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 			propertyList(label);
 			astFactory.addASTChild(currentAST, returnAST);
 			match(RBRACK);
-			anonnode_AST = (AST)currentAST.root;
+			anonnode_AST = currentAST.root;
 			break;
 		}
 		case LPAREN:
@@ -980,7 +980,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 			list(label);
 			astFactory.addASTChild(currentAST, returnAST);
 			match(RPAREN);
-			anonnode_AST = (AST)currentAST.root;
+			anonnode_AST = currentAST.root;
 			break;
 		}
 		default:
@@ -1008,7 +1008,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 			n_AST = astFactory.create(n);
 			astFactory.addASTChild(currentAST, n_AST);
 			match(NUMBER);
-			literal_AST = (AST)currentAST.root;
+			literal_AST = currentAST.root;
 			break;
 		}
 		case STRING:
@@ -1020,10 +1020,10 @@ public TriGAntlrParser(ParserSharedInputState state) {
 			literalModifier();
 			astFactory.addASTChild(currentAST, returnAST);
 			if ( inputState.guessing==0 ) {
-				literal_AST = (AST)currentAST.root;
+				literal_AST = currentAST.root;
 				literal_AST.setType(LITERAL) ;
 			}
-			literal_AST = (AST)currentAST.root;
+			literal_AST = currentAST.root;
 			break;
 		}
 		default:
@@ -1044,7 +1044,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		tmp23_AST = astFactory.create(LT(1));
 		astFactory.addASTChild(currentAST, tmp23_AST);
 		match(KW_THIS);
-		kwTHIS_AST = (AST)currentAST.root;
+		kwTHIS_AST = currentAST.root;
 		returnAST = kwTHIS_AST;
 	}
 	
@@ -1070,7 +1070,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 			astFactory.addASTChild(currentAST, tmp24_AST);
 			match(DATATYPE);
 			datatype();
-			dt_AST = (AST)returnAST;
+			dt_AST = returnAST;
 			astFactory.addASTChild(currentAST, returnAST);
 			break;
 		}
@@ -1110,14 +1110,14 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		}
 		}
 		if ( inputState.guessing==0 ) {
-			variableDT_AST = (AST)currentAST.root;
-			variableDT_AST = (AST)astFactory.make( (new ASTArray(2)).add(astFactory.create(UVAR,v.getText())).add(dt_AST)) ;
+			variableDT_AST = currentAST.root;
+			variableDT_AST = astFactory.make( (new ASTArray(2)).add(astFactory.create(UVAR,v.getText())).add(dt_AST)) ;
 			currentAST.root = variableDT_AST;
 			currentAST.child = variableDT_AST!=null &&variableDT_AST.getFirstChild()!=null ?
 				variableDT_AST.getFirstChild() : variableDT_AST;
 			currentAST.advanceChildToEnd();
 		}
-		variableDT_AST = (AST)currentAST.root;
+		variableDT_AST = currentAST.root;
 		returnAST = variableDT_AST;
 	}
 	
@@ -1155,7 +1155,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		tmp27_AST = astFactory.create(LT(1));
 		astFactory.addASTChild(currentAST, tmp27_AST);
 		match(KW_A);
-		kwA_AST = (AST)currentAST.root;
+		kwA_AST = currentAST.root;
 		returnAST = kwA_AST;
 	}
 	
@@ -1192,13 +1192,13 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		case UVAR:
 		{
 			item();
-			i_AST = (AST)returnAST;
+			i_AST = returnAST;
 			astFactory.addASTChild(currentAST, returnAST);
 			if ( inputState.guessing==0 ) {
-				list_AST = (AST)currentAST.root;
+				list_AST = currentAST.root;
 				
 					  	if ( label == null )
-					          label = (AST)astFactory.make( (new ASTArray(1)).add(astFactory.create(ANON,genAnonId()))) ;
+					          label = astFactory.make( (new ASTArray(1)).add(astFactory.create(ANON,genAnonId()))) ;
 						list_AST = label ;
 					
 				currentAST.root = list_AST;
@@ -1207,30 +1207,30 @@ public TriGAntlrParser(ParserSharedInputState state) {
 				currentAST.advanceChildToEnd();
 			}
 			list(null);
-			n_AST = (AST)returnAST;
+			n_AST = returnAST;
 			astFactory.addASTChild(currentAST, returnAST);
 			if ( inputState.guessing==0 ) {
 				
 					  	if ( emitListTypeQuad )
-					  	    emitQuad(label, (AST)astFactory.make( (new ASTArray(1)).add(astFactory.create(KW_A,"list"))), (AST)astFactory.make( (new ASTArray(1)).add(astFactory.create(TK_LIST,"List"))) );
-					    emitQuad(label,  (AST)astFactory.make( (new ASTArray(1)).add(astFactory.create(TK_LIST_FIRST,"first"))),   i_AST);
-						emitQuad(label,  (AST)astFactory.make( (new ASTArray(1)).add(astFactory.create(TK_LIST_REST,"rest"))),     n_AST) ;
+					  	    emitQuad(label, astFactory.make( (new ASTArray(1)).add(astFactory.create(KW_A,"list"))), astFactory.make( (new ASTArray(1)).add(astFactory.create(TK_LIST,"List"))) );
+					    emitQuad(label,  astFactory.make( (new ASTArray(1)).add(astFactory.create(TK_LIST_FIRST,"first"))),   i_AST);
+						emitQuad(label,  astFactory.make( (new ASTArray(1)).add(astFactory.create(TK_LIST_REST,"rest"))),     n_AST) ;
 					
 			}
-			list_AST = (AST)currentAST.root;
+			list_AST = currentAST.root;
 			break;
 		}
 		case RPAREN:
 		{
 			if ( inputState.guessing==0 ) {
-				list_AST = (AST)currentAST.root;
-				list_AST = (AST)astFactory.make( (new ASTArray(1)).add(astFactory.create(TK_LIST_NIL,"nil")));
+				list_AST = currentAST.root;
+				list_AST = astFactory.make( (new ASTArray(1)).add(astFactory.create(TK_LIST_NIL,"nil")));
 				currentAST.root = list_AST;
 				currentAST.child = list_AST!=null &&list_AST.getFirstChild()!=null ?
 					list_AST.getFirstChild() : list_AST;
 				currentAST.advanceChildToEnd();
 			}
-			list_AST = (AST)currentAST.root;
+			list_AST = currentAST.root;
 			break;
 		}
 		default:
@@ -1251,7 +1251,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		astFactory.addASTChild(currentAST, returnAST);
 		literalModifier1();
 		astFactory.addASTChild(currentAST, returnAST);
-		literalModifier_AST = (AST)currentAST.root;
+		literalModifier_AST = currentAST.root;
 		returnAST = literalModifier_AST;
 	}
 	
@@ -1283,7 +1283,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 			tmp29_AST = astFactory.create(LT(1));
 			astFactory.addASTChild(currentAST, tmp29_AST);
 			match(AT_LANG);
-			literalModifier1_AST = (AST)currentAST.root;
+			literalModifier1_AST = currentAST.root;
 		}
 		else {
 			boolean synPredMatched44 = false;
@@ -1308,20 +1308,20 @@ public TriGAntlrParser(ParserSharedInputState state) {
 				astFactory.addASTChild(currentAST, tmp30_AST);
 				match(DATATYPE);
 				datatype();
-				dt_AST = (AST)returnAST;
+				dt_AST = returnAST;
 				astFactory.addASTChild(currentAST, returnAST);
 				if ( inputState.guessing==0 ) {
-					literalModifier1_AST = (AST)currentAST.root;
-					literalModifier1_AST = (AST)astFactory.make( (new ASTArray(2)).add(astFactory.create(tmp30_AST)).add(dt_AST)) ;
+					literalModifier1_AST = currentAST.root;
+					literalModifier1_AST = astFactory.make( (new ASTArray(2)).add(astFactory.create(tmp30_AST)).add(dt_AST)) ;
 					currentAST.root = literalModifier1_AST;
 					currentAST.child = literalModifier1_AST!=null &&literalModifier1_AST.getFirstChild()!=null ?
 						literalModifier1_AST.getFirstChild() : literalModifier1_AST;
 					currentAST.advanceChildToEnd();
 				}
-				literalModifier1_AST = (AST)currentAST.root;
+				literalModifier1_AST = currentAST.root;
 			}
 			else if ((_tokenSet_0.member(LA(1)))) {
-				literalModifier1_AST = (AST)currentAST.root;
+				literalModifier1_AST = currentAST.root;
 			}
 			else {
 				throw new NoViableAltException(LT(1), getFilename());
@@ -1341,7 +1341,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		{
 			qname();
 			astFactory.addASTChild(currentAST, returnAST);
-			datatype_AST = (AST)currentAST.root;
+			datatype_AST = currentAST.root;
 			break;
 		}
 		case URIREF:

@@ -67,7 +67,7 @@ public class SemWebIterator implements Iterator<SemWebTriple> {
 				return createSemWebTriple((Triple) this.currentIterator.next());
 			}
 			if (!this.graphQueue.isEmpty()) {
-				NamedGraph graph = (NamedGraph) this.graphQueue.removeFirst();
+				NamedGraph graph = this.graphQueue.removeFirst();
 				this.currentIterator = graph.find(this.pattern);
 				this.currentGraphName = graph.getGraphName();
 				this.log.debug("Searching <" + this.currentGraphName + ">");
