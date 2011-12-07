@@ -90,7 +90,7 @@ public class IdBasedQueryPlan implements BindingQueryPlan
 	/* (non-Javadoc)
 	 * @see com.hp.hpl.jena.graph.query.BindingQueryPlan#executeBindings()
 	 */
-	public ExtendedIterator executeBindings ()
+	public ExtendedIterator<Domain> executeBindings ()
 	{
 		return new ConvertIdBasedSolutionToDomainIterator( rootIterator );
 	}
@@ -154,7 +154,7 @@ public class IdBasedQueryPlan implements BindingQueryPlan
 	 * Converts the ID-based solutions provided by the input iterator to Domain
 	 * objects as required by the Jena.
 	 */
-	class ConvertIdBasedSolutionToDomainIterator extends NiceIterator
+	class ConvertIdBasedSolutionToDomainIterator extends NiceIterator<Domain>
 	{
 		final protected Iterator<IdBasedSolution> base;
 		public ConvertIdBasedSolutionToDomainIterator ( Iterator<IdBasedSolution> base ) { this.base = base; }

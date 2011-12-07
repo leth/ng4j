@@ -110,7 +110,7 @@ public class NamedGraphModelTest extends TestCase {
 	public void testListStatementsAll() {
 		this.model.add(twoStatementsList());
 		assertAllNamedGraphStatements(this.model.listStatements());
-		Set stmts = this.model.listStatements().toSet();
+		Set<Statement> stmts = this.model.listStatements().toSet();
 		//Collection stmts = toCollection(this.model.listStatements());
 		assertTrue(stmts.contains(new NamedGraphStatement(foo, bar, baz, this.model)));
 		assertTrue(stmts.contains(new NamedGraphStatement(baz, bar, foo, this.model)));

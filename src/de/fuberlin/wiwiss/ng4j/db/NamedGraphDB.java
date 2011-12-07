@@ -50,13 +50,13 @@ public class NamedGraphDB extends GraphBase implements NamedGraph {
 	 * @see com.hp.hpl.jena.graph.impl.GraphBase#graphBaseFind(com.hp.hpl.jena.graph.TripleMatch)
 	 */
 	@Override
-	public ExtendedIterator graphBaseFind(TripleMatch m) {
+	public ExtendedIterator<Triple> graphBaseFind(TripleMatch m) {
 		final Iterator<Quad> quadIt = this.db.find(
 				this.graphName,
 				m.getMatchSubject(),
 				m.getMatchPredicate(),
 				m.getMatchObject());
-		return new NiceIterator() {
+		return new NiceIterator<Triple>() {
 			
 			/* (non-Javadoc)
 			 * @see com.hp.hpl.jena.util.iterator.NiceIterator#hasNext()
@@ -70,7 +70,7 @@ public class NamedGraphDB extends GraphBase implements NamedGraph {
 			 * @see com.hp.hpl.jena.util.iterator.NiceIterator#next()
 			 */
 			@Override
-			public Object next() {
+			public Triple next() {
 				return ( quadIt.next()).getTriple();
 			}
 			

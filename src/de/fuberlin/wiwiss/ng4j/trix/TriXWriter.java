@@ -69,9 +69,9 @@ public class TriXWriter implements NamedGraphSetWriter {
 		String graphName = graph.getGraphName().getURI();
 		write("  <graph>\n");
 		write("    <uri>" + escape(graphName) + "</uri>\n");
-		ExtendedIterator it = graph.find(Node.ANY, Node.ANY, Node.ANY);
+		ExtendedIterator<Triple> it = graph.find(Node.ANY, Node.ANY, Node.ANY);
 		while (it.hasNext()) {
-			Triple triple = (Triple) it.next();
+			Triple triple = it.next();
 			writeTriple(triple);
 		}
 		write("  </graph>\n");

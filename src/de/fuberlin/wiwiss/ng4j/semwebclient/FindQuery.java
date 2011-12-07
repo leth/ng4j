@@ -146,11 +146,11 @@ public class FindQuery implements DereferencingListener, URISearchListener {
 	 */
 	private void inspectNgs(NamedGraphSet ngs, Triple pattern, int step) {
 		synchronized (ngs) {
-			Iterator iter = ngs.findQuads(Node.ANY, pattern.getSubject(),
+			Iterator<Quad> iter = ngs.findQuads(Node.ANY, pattern.getSubject(),
 					pattern.getPredicate(), pattern.getObject());
 
 			while (iter.hasNext()) {
-				Quad q = (Quad) iter.next();
+				Quad q = iter.next();
 				Triple t = q.getTriple();
 				inspectTriple(ngs, t, step);
 			}
@@ -170,10 +170,10 @@ public class FindQuery implements DereferencingListener, URISearchListener {
 	 */
 	private void checkSeeAlso(NamedGraphSet ngs, Node n, int step) {
 		synchronized (ngs) {
-			Iterator iter = ngs.findQuads(Node.ANY, n, RDFS.seeAlso.asNode(),
+			Iterator<Quad> iter = ngs.findQuads(Node.ANY, n, RDFS.seeAlso.asNode(),
 					Node.ANY);
 			while (iter.hasNext()) {
-				Quad quad = (Quad) iter.next();
+				Quad quad = iter.next();
 				Node obj = quad.getObject();
 				if (obj.isURI()) {
 					requestDereferencing(obj.getURI(), step + 1, enableURISearch);

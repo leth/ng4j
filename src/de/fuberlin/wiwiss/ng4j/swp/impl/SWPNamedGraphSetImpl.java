@@ -96,7 +96,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 		SWPNamedGraph warrantGraph = createNewWarrantGraph();
 		
 		// Assert or quote all graphs in the graphset or in the list provided. 
-		Iterator graphNameIterator;
+		Iterator<?> graphNameIterator;
 		if ( listOfGraphNames != null ) 
 		{
 			graphNameIterator = listOfGraphNames.iterator();
@@ -222,7 +222,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
         }
 		
 		// Assert all graphs in the graphset or all graphs in the list.
-		Iterator graphIterator;
+		Iterator<?> graphIterator;
 		if ( listOfGraphURIs != null )
 		{
 			graphIterator = listOfGraphURIs.iterator();
@@ -444,7 +444,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     /* (non-Javadoc)
      * @see de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraphSet#getAllWarrants(de.fuberlin.wiwiss.ng4j.swp.SWPAuthority)
      */
-    public ExtendedIterator getAllWarrants( SWPAuthority authority ) 
+    public ExtendedIterator<SWPWarrant> getAllWarrants( SWPAuthority authority ) 
     {
 //		String warrantQuery = "SELECT * WHERE ?warrant (?warrant swp:assertedBy ?warrant) (?warrant swp:authority <"+authority.getID()+">) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
 		String warrantQuery = "SELECT ?warrant" + NL
@@ -456,7 +456,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 		QueryExecution qe = QueryExecutionFactory.create( warrantQuery, thisAsDS );
 		final ResultSet results = ResultSetFactory.copyResults( qe.execSelect() );
 		
-        return new NiceIterator()
+        return new NiceIterator<SWPWarrant>()
         {
 			
 			/* (non-Javadoc)
@@ -472,7 +472,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 			 * @see com.hp.hpl.jena.util.iterator.NiceIterator#next()
 			 */
 			@Override
-			public Object next() 
+			public SWPWarrant next() 
 			{
 				QuerySolution s = results.nextSolution();
 				Node graphURI = s.get( "?warrant" ).asNode();
@@ -485,7 +485,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     /* (non-Javadoc)
      * @see de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraphSet#getAllAssertedGraphs(de.fuberlin.wiwiss.ng4j.swp.SWPAuthority)
      */
-    public ExtendedIterator getAllAssertedGraphs( SWPAuthority authority ) 
+    public ExtendedIterator<NamedGraph> getAllAssertedGraphs( SWPAuthority authority ) 
 	{
     	return this.getGraphsWithProperty(authority, SWP.assertedBy);
     }
@@ -493,12 +493,12 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     /* (non-Javadoc)
      * @see de.fuberlin.wiwiss.ng4j.swp.SWPNamedGraphSet#getAllQuotedGraphs(de.fuberlin.wiwiss.ng4j.swp.SWPAuthority)
      */
-    public ExtendedIterator getAllQuotedGraphs( SWPAuthority authority ) 
+    public ExtendedIterator<NamedGraph> getAllQuotedGraphs( SWPAuthority authority ) 
 	{
     	return this.getGraphsWithProperty(authority, SWP.quotedBy);
     }
 
-    protected ExtendedIterator getGraphsWithProperty( SWPAuthority authority, Node property ) {
+    protected ExtendedIterator<NamedGraph> getGraphsWithProperty( SWPAuthority authority, Node property ) {
     	String queryString = "SELECT ?graph" + NL
 			+ "WHERE { GRAPH ?warrant {" + NL
 			+ "?graph <" + property.getURI() + "> ?warrant ." + NL
@@ -510,7 +510,7 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
 //    			"graph");
     }
 
-    protected ExtendedIterator getGraphsByQuery(String query, String resultVariable) {
+    protected ExtendedIterator<NamedGraph> getGraphsByQuery(String query, String resultVariable) {
     	Collection<NamedGraph> namedGraphs = new ArrayList<NamedGraph>();
     	Set<Node> names = new HashSet<Node>();
     	QueryExecution qe = QueryExecutionFactory.create( query, thisAsDS );
@@ -555,11 +555,11 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
     		Quad quad = null;
     		NamedGraph ng = ngsIt.next();
         	
-    		Iterator it = findQuads( Node.ANY, Node.ANY, SWP.assertedBy, ng.getGraphName() );
+    		Iterator<Quad> it = findQuads( Node.ANY, Node.ANY, SWP.assertedBy, ng.getGraphName() );
 			
     		if ( it.hasNext() )
     		{	
-    			quad = (Quad) it.next();
+    			quad = it.next();
     			String ngName = ng.getGraphName().toString();
 //    			String warrantQuery = "SELECT * WHERE <"+ng.getGraphName().toString()+"> (<"+ng.getGraphName().toString()+"> swp:signature ?signature . <"+ng.getGraphName().toString()+"> swp:signatureMethod ?smethod . <"+ng.getGraphName().toString()+"> swp:authority ?authority . ?authority swp:X509Certificate ?certificate) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
 	            String warrantQuery = "SELECT ?signature ?smethod ?certificate" + NL
@@ -592,11 +592,11 @@ public class SWPNamedGraphSetImpl extends NamedGraphSetImpl implements SWPNamedG
             	            					certificate + "\n-----END CERTIFICATE-----";
         	                try 
         	                {
-        	                	ExtendedIterator exit = ng.find( ng.getGraphName(), SWP.signature, Node.ANY );
+        	                	ExtendedIterator<Triple> exit = ng.find( ng.getGraphName(), SWP.signature, Node.ANY );
         	                	ArrayList<Triple> li = new ArrayList<Triple>();
         	                	while ( exit.hasNext() )
         	                	{
-        	                		li.add( ( Triple )exit.next() );
+        	                		li.add( exit.next() );
         	                	}
         	                	for ( Iterator<Triple> i = li.iterator(); i.hasNext(); )
         	                	{

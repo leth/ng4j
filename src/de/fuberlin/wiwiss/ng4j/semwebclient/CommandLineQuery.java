@@ -462,7 +462,7 @@ public class CommandLineQuery {
 		if (this.outputFailedURIs) {
 			System.out.println("Unsuccessfully dereferenced URIs: \n");
 
-			Map<Class,Integer> reasons = new HashMap<Class,Integer> ();
+			Map<Class<? extends Exception>,Integer> reasons = new HashMap<Class<? extends Exception>,Integer> ();
 			int count = 0;
 
 			Iterator<String> it = this.client.unsuccessfullyDereferencedURIs().iterator();
@@ -471,7 +471,7 @@ public class CommandLineQuery {
 				if ( verbose ) {
 					++count;
 					Exception reason = client.getReasonForFailedDereferencing( uri );
-					Class reasonType = reason.getClass();
+					Class<? extends Exception> reasonType = reason.getClass();
 					if ( ! reasons.containsKey(reasonType) ) {
 						reasons.put( reasonType, Integer.valueOf(1) );
 					}
@@ -490,9 +490,9 @@ public class CommandLineQuery {
 			if ( verbose && (count > 0) ) {
 				System.out.println( " Count: " + String.valueOf(count) );
 				System.out.println(" Reason statistics: " + String.valueOf(count) + " unsuccessfully dereferenced URIs");
-				Iterator<Map.Entry<Class,Integer>> itR = reasons.entrySet().iterator();
+				Iterator<Map.Entry<Class<? extends Exception>,Integer>> itR = reasons.entrySet().iterator();
 				while ( itR.hasNext() ) {
-					Map.Entry<Class,Integer> r = itR.next();
+					Map.Entry<Class<? extends Exception>,Integer> r = itR.next();
 					int percent = ( r.getValue().intValue() * 100 ) / count;
 					System.out.println(" - " + String.valueOf(percent) + "% " + Utils.classShortName(r.getKey()) );
 				}

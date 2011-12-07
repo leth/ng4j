@@ -32,7 +32,7 @@ abstract public class TaskExecutorBase extends Thread {
 	 * Returns the type of the tasks executed by this kind of task execution
 	 * threads.
 	 */
-	abstract public Class getTaskType ();
+	abstract public Class<? extends Task> getTaskType ();
 
 	/**
 	 * Executes the given task (which is guaranteed to be of the type specified

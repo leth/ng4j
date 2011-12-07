@@ -82,7 +82,7 @@ public class NamedGraphStatement extends StatementImpl {
 
 	public NamedGraph getGraph() {
 
-		Iterator it = this.namedGraphSet.findQuads(
+		Iterator<Quad> it = this.namedGraphSet.findQuads(
 
 				Node.ANY,
 
@@ -98,7 +98,7 @@ public class NamedGraphStatement extends StatementImpl {
 
 		}
 
-		return this.namedGraphSet.getGraph(((Quad) it.next()).getGraphName());
+		return this.namedGraphSet.getGraph((it.next()).getGraphName());
 
 	}
 
@@ -142,7 +142,7 @@ public class NamedGraphStatement extends StatementImpl {
 
 		List<NamedGraph> graphs = new ArrayList<NamedGraph>();
 
-		Iterator it = this.namedGraphSet.findQuads(
+		Iterator<Quad> it = this.namedGraphSet.findQuads(
 
 				Node.ANY,
 
@@ -154,7 +154,7 @@ public class NamedGraphStatement extends StatementImpl {
 
 		while (it.hasNext()) {
 
-			Quad quad = (Quad) it.next();
+			Quad quad = it.next();
 
 			graphs.add(this.namedGraphSet.getGraph(quad.getGraphName()));
 
@@ -184,7 +184,7 @@ public class NamedGraphStatement extends StatementImpl {
 
 		List<Resource> graphs = new ArrayList<Resource>();
 
-		Iterator it = this.namedGraphSet.findQuads(
+		Iterator<Quad> it = this.namedGraphSet.findQuads(
 
 				Node.ANY,
 
@@ -196,7 +196,7 @@ public class NamedGraphStatement extends StatementImpl {
 
 		while (it.hasNext()) {
 
-			Quad quad = (Quad) it.next();
+			Quad quad = it.next();
 
 			NamedGraph graph = this.namedGraphSet.getGraph(quad.getGraphName());
 
@@ -220,7 +220,7 @@ public class NamedGraphStatement extends StatementImpl {
 
 	 */
 
-	public Iterator listQuads() {
+	public Iterator<Quad> listQuads() {
 
 		return this.namedGraphSet.findQuads(
 

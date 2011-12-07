@@ -1,5 +1,6 @@
 package de.fuberlin.wiwiss.ng4j.swp;
 
+import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPBadDigestException;
 import de.fuberlin.wiwiss.ng4j.swp.exceptions.SWPBadSignatureException;
@@ -258,20 +259,20 @@ public interface SWPNamedGraphSet extends NamedGraphSet
      * Returns an iterator over all SWPWarrants for a given authority.
      * 
      */
-    public ExtendedIterator getAllWarrants( SWPAuthority authority );
+    public ExtendedIterator<SWPWarrant> getAllWarrants( SWPAuthority authority );
     
 	/**
      * 
      * Returns an iterator over all named graphs asserted by a given authority.
      * 
      */
-    public ExtendedIterator getAllAssertedGraphs( SWPAuthority authority );
+    public ExtendedIterator<NamedGraph> getAllAssertedGraphs( SWPAuthority authority );
 	/**
      * 
      * Returns an iterator over all named graphs quoted by a given authority.
      * 
      */
-    public ExtendedIterator getAllQuotedGraphs( SWPAuthority authority );
+    public ExtendedIterator<NamedGraph> getAllQuotedGraphs( SWPAuthority authority );
    
 
 }

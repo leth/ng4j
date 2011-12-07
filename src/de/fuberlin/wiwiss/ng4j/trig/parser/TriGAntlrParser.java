@@ -1348,14 +1348,14 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		{
 			uriref();
 			astFactory.addASTChild(currentAST, returnAST);
-			datatype_AST = (AST)currentAST.root;
+			datatype_AST = currentAST.root;
 			break;
 		}
 		case UVAR:
 		{
 			variableNoDT();
 			astFactory.addASTChild(currentAST, returnAST);
-			datatype_AST = (AST)currentAST.root;
+			datatype_AST = currentAST.root;
 			break;
 		}
 		case STRING:
@@ -1363,7 +1363,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		{
 			literal();
 			astFactory.addASTChild(currentAST, returnAST);
-			datatype_AST = (AST)currentAST.root;
+			datatype_AST = currentAST.root;
 			break;
 		}
 		default:
@@ -1386,7 +1386,7 @@ public TriGAntlrParser(ParserSharedInputState state) {
 		v_AST = astFactory.create(v);
 		astFactory.addASTChild(currentAST, v_AST);
 		match(UVAR);
-		variableNoDT_AST = (AST)currentAST.root;
+		variableNoDT_AST = currentAST.root;
 		returnAST = variableNoDT_AST;
 	}
 	

@@ -112,9 +112,9 @@ public class query {
 			client.setEnableSindiceSearch(true);
 		}
 		if (cmd.hasArg("load")) {
-			Iterator it = cmd.getValues("load").iterator();
+			Iterator<String> it = cmd.getValues("load").iterator();
 			while (it.hasNext()) {
-				String value = (String) it.next();
+				String value = it.next();
 				client.addSourceURI(value);
 			}
 		}

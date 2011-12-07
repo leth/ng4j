@@ -185,7 +185,7 @@ public interface NamedGraphSet extends Iterable<NamedGraph> {
 	 * @param pattern A quad or quad pattern
 	 * @return An iterator over all {@link Quad}s that match the pattern
 	 */
-	public Iterator findQuads(Quad pattern);
+	public Iterator<Quad> findQuads(Quad pattern);
 
 	/**
 	 * Finds Quads that match a pattern. All arguments may be
@@ -196,7 +196,7 @@ public interface NamedGraphSet extends Iterable<NamedGraph> {
 	 * @param object The object to be matched
 	 * @return An iterator over all {@link Quad}s that match the pattern
 	 */
-	public Iterator findQuads(Node graphName, Node subject, Node predicate, Node object);	
+	public Iterator<Quad> findQuads(Node graphName, Node subject, Node predicate, Node object);	
 	
 //	=== Views on the Graph Set ========================		
 	

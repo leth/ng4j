@@ -46,7 +46,7 @@ public class SWPWarrantImpl implements SWPWarrant
 		localDS = new NamedGraphDataset( local );
 	}
 	
-	public class NiceGraphIterator extends NiceIterator {
+	public class NiceGraphIterator extends NiceIterator<String> {
 
 		final ResultSet results;
 
@@ -68,7 +68,7 @@ public class SWPWarrantImpl implements SWPWarrant
 		 * @see com.hp.hpl.jena.util.iterator.NiceIterator#next()
 		 */
 		@Override
-		public Object next() 
+		public String next() 
 		{
 			QuerySolution solution = results.nextSolution();
 			Resource graphURI = solution.getResource( "?graph" );
@@ -76,7 +76,7 @@ public class SWPWarrantImpl implements SWPWarrant
 		}
 	}
 	
-	public ExtendedIterator getGraphs() 
+	public ExtendedIterator<String> getGraphs() 
 	{
 		//String warrantQuery = "SELECT * WHERE ?warrant (?graph ?p ?warrant) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
 		String warrantQuery = "SELECT ?graph" + NL
@@ -88,7 +88,7 @@ public class SWPWarrantImpl implements SWPWarrant
         return new NiceGraphIterator(results);
 	}
 
-	public ExtendedIterator getAssertedGraphs() 
+	public ExtendedIterator<String> getAssertedGraphs() 
 	{
 		//String warrantQuery = "SELECT * WHERE ?warrant (?graph swp:assertedBy ?warrant) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
         String warrantQuery = "SELECT ?graph" + NL
@@ -100,7 +100,7 @@ public class SWPWarrantImpl implements SWPWarrant
         return new NiceGraphIterator(results);
 	}
 
-	public ExtendedIterator getQuotedGraphs() 
+	public ExtendedIterator<String> getQuotedGraphs() 
 	{
 		//String warrantQuery = "SELECT * WHERE ?warrant (?graph swp:quotedBy ?warrant) USING swp FOR <http://www.w3.org/2004/03/trix/swp-2/>";
 		String warrantQuery = "SELECT ?graph" + NL

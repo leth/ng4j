@@ -48,14 +48,14 @@ public class NamedGraphExample {
 		graphset.addQuad(quad);
 
 		// Find information about Richard across all graphs in the graphset
-		Iterator it = graphset.findQuads( 
+		Iterator<Quad> quads = graphset.findQuads( 
 				Node.ANY, 
 				Node.createURI("http://richard.cyganiak.de/foaf.rdf#RichardCyganiak"),
 				Node.ANY,
 				Node.ANY);
 
-		while (it.hasNext()) {
-			Quad q = (Quad) it.next();
+		while (quads.hasNext()) {
+			Quad q = quads.next();
 			System.out.println("Source: " + q.getGraphName());
 			System.out.println("Statement: " + q.getTriple());
 			// (This will output the two statements created above)
@@ -86,11 +86,11 @@ public class NamedGraphExample {
 				richard.getProperty(model.getProperty("http://xmlns.com/foaf/0.1/mbox")));
 
 		// Get an iterator over all graphs which contain the statement.
-		it = mboxStmt.listGraphNames();
+		Iterator<Resource> it = mboxStmt.listGraphNames();
 
 		// So who has published my email address all over the Web??!?
 		while (it.hasNext()) {
-			Resource g = (Resource) it.next();
+			Resource g = it.next();
 			System.out.println();
 			System.out.println("GraphName: " + g.toString());
 			System.out.println("Author: " + 

@@ -97,10 +97,10 @@ public class TriGWriter implements NamedGraphSetWriter {
 			String graphName = it.next();
 			this.currentGraph = set.getGraph(graphName);
 			Model aModel = new ModelCom(this.currentGraph);
-			Set tmp = new HashSet( aModel.getNsPrefixMap().keySet() );
-			for ( Object p : tmp ) {               // Remove all prefixes because
-				aModel.removeNsPrefix( (String) p); // some of them could be un-
-			}                                      // known to prefixMaker.  Olaf
+			Set<String> tmp = new HashSet<String>( aModel.getNsPrefixMap().keySet() );
+			for ( String p : tmp ) {      // Remove all prefixes because
+				aModel.removeNsPrefix(p); // some of them could be un-
+			}                             // known to prefixMaker.  Olaf
 			aModel.setNsPrefixes(this.prefixMaker.getPrefixMap());
 			new N3JenaWriterOnlyStatements().write(
 					aModel, out, baseURI);

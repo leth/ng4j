@@ -145,10 +145,10 @@ public class SWPExample {
 		// 2. Test to see if warrant is signed
 		// 3. Get the warrant's SWPAuthority
 		// 4. List all graphs asserted by this warrant
-		ExtendedIterator it = graphset2.getAllWarrants( rowland );
+		ExtendedIterator<SWPWarrant> it = graphset2.getAllWarrants( rowland );
 		while ( it.hasNext() )
 		{
-			SWPWarrant warrant = ( SWPWarrant ) it.next();
+			SWPWarrant warrant = it.next();
 			// Let's see if this warrant is signed:
 			if ( warrant.isSigned() )
 			{
@@ -167,7 +167,7 @@ public class SWPExample {
 			// Chris, Richard: I assume this should be the case?
 			System.out.println( "Asserted Graphs in Warrant:" );
 			System.out.println();
-			ExtendedIterator itr = warrant.getAssertedGraphs();
+			ExtendedIterator<String> itr = warrant.getAssertedGraphs();
 			while ( itr.hasNext() )
 			{
 				System.out.println( itr.next() );

@@ -276,11 +276,11 @@ public class N3JenaWriterCommon implements RDFWriter
 
     protected void writePropertiesForSubject(Resource subj)
     {
-        ClosableIterator iter = preparePropertiesForSubject(subj);
+        ClosableIterator<Property> iter = preparePropertiesForSubject(subj);
         // For each property.
         for (; iter.hasNext();)
         {
-            Property property = (Property) iter.next();
+            Property property = iter.next();
 
             // Object list
             writeObjectList(subj, property);
@@ -427,7 +427,7 @@ public class N3JenaWriterCommon implements RDFWriter
         out.print(formatLiteral(literal)) ;
     }
     
-    protected ClosableIterator preparePropertiesForSubject(Resource r)
+    protected ClosableIterator<Property> preparePropertiesForSubject(Resource r)
     {
         // Properties to do.
         Set<Property> properties = new HashSet<Property>() ;

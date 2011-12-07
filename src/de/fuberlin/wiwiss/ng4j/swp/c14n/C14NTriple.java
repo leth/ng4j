@@ -22,7 +22,7 @@ import com.hp.hpl.jena.graph.test.NodeCreateUtils;
  * 
  */
 
-public class C14NTriple extends Object implements Comparable
+public class C14NTriple extends Object implements Comparable<C14NTriple>
 {
 	static final Log log = LogFactory.getLog( C14NTriple.class );
 	public Node subject;
@@ -144,13 +144,12 @@ public class C14NTriple extends Object implements Comparable
 	/* (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
-	public int compareTo( Object arg ) 
+	public int compareTo( C14NTriple cs ) 
 			throws ClassCastException 
 	{
 		String current = subject.toString() 
 						+ predicate.toString() 
 						+ object.toString();                                        
-		C14NTriple cs = ( C14NTriple )arg;
 		String ext = cs.subject.toString() 
 					+ cs.predicate.toString() 
 					+ cs.object.toString();                 

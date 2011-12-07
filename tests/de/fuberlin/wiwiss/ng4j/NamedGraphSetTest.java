@@ -339,7 +339,7 @@ public class NamedGraphSetTest extends TestCase {
 
 	public void testFindQuadsAny() {
 		addSomeQuads();
-		Collection quads = toCollection(
+		Collection<Quad> quads = toCollection(
 				this.set.findQuads(Node.ANY, Node.ANY, Node.ANY, Node.ANY));
 		assertTrue(quads.contains(new Quad(node1, foo, bar, baz)));
 		assertTrue(quads.contains(new Quad(node1, foo, foo, foo)));
@@ -350,7 +350,7 @@ public class NamedGraphSetTest extends TestCase {
 
 	public void testFindQuadsOneGraph() {
 		addSomeQuads();
-		Collection quads = toCollection(
+		Collection<Quad> quads = toCollection(
 				this.set.findQuads(node1, Node.ANY, Node.ANY, Node.ANY));
 		assertTrue(quads.contains(new Quad(node1, foo, bar, baz)));
 		assertTrue(quads.contains(new Quad(node1, foo, foo, foo)));
@@ -359,7 +359,7 @@ public class NamedGraphSetTest extends TestCase {
 
 	public void testFindQuadsOneTriple() {
 		addSomeQuads();
-		Collection quads = toCollection(
+		Collection<Quad> quads = toCollection(
 				this.set.findQuads(Node.ANY, foo, bar, Node.ANY));
 		assertTrue(quads.contains(new Quad(node1, foo, bar, baz)));
 		assertTrue(quads.contains(new Quad(node2, foo, bar, baz)));
@@ -368,14 +368,14 @@ public class NamedGraphSetTest extends TestCase {
 
 	public void testFindQuadsSpecific() {
 		addSomeQuads();
-		Collection quads = toCollection(
+		Collection<Quad> quads = toCollection(
 				this.set.findQuads(node1, foo, bar, baz));
 		assertTrue(quads.contains(new Quad(node1, foo, bar, baz)));
 		assertEquals(1, quads.size());
 	}
 
 	public void testFindQuadsEmptySet() {
-		Iterator it = this.set.findQuads(Node.ANY, Node.ANY, Node.ANY, Node.ANY);
+		Iterator<Quad> it = this.set.findQuads(Node.ANY, Node.ANY, Node.ANY, Node.ANY);
 		assertFalse(it.hasNext());
 	}
 
@@ -434,8 +434,8 @@ public class NamedGraphSetTest extends TestCase {
 		this.set.addQuad(new Quad(node2, foo, foo, foo));
 	}
 	
-	private Collection toCollection(Iterator it) {
-		Collection result = new ArrayList();
+	private Collection<Quad> toCollection(Iterator<Quad> it) {
+		Collection<Quad> result = new ArrayList<Quad>();
 		while (it.hasNext()) {
 			result.add(it.next());
 		}

@@ -26,17 +26,17 @@ public interface SWPWarrant
     /**
      * Returns an iterator over all named graphs which are asserted or quoted by this warrant.
      */
-    public ExtendedIterator getGraphs();
+    public ExtendedIterator<String> getGraphs();
 
     /**
      * Returns an iterator over all named graphs which are asserted by this warrant.
      */
-    public ExtendedIterator getAssertedGraphs();
+    public ExtendedIterator<String> getAssertedGraphs();
 
     /**
      * Returns an iterator over all named graphs which are quoted by this warrant.
      */    
-    public ExtendedIterator getQuotedGraphs();
+    public ExtendedIterator<String> getQuotedGraphs();
 
     /**
      * Returns the authority of this warrant.

@@ -48,7 +48,7 @@ public class UnionGraphTest extends TestCase {
 	public void testRemoveDuplicateTriples() {
 		this.set.addQuad(new Quad(node1, foo, bar, baz));
 		this.set.addQuad(new Quad(node2, foo, bar, baz));
-		ExtendedIterator it = this.graph.find(Node.ANY, Node.ANY, Node.ANY);
+		ExtendedIterator<Triple> it = this.graph.find(Node.ANY, Node.ANY, Node.ANY);
 		assertTrue(it.hasNext());
 		assertEquals(new Triple(foo, bar, baz), it.next());
 		assertFalse(it.hasNext());

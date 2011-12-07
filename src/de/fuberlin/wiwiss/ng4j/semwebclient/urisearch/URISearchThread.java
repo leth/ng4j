@@ -23,7 +23,7 @@ public class URISearchThread extends TaskExecutorBase {
 
 	// implementation of the TaskExecutorBase interface
 
-	public Class getTaskType () {
+	public Class<? extends Task> getTaskType () {
 		return URISearchTask.class;
 	}
 

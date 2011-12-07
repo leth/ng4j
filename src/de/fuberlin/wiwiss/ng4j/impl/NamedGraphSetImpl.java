@@ -205,7 +205,7 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 	/* (non-Javadoc)
 	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#findQuads(com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node, com.hp.hpl.jena.graph.Node)
 	 */
-	public Iterator findQuads(Node graphName, Node subject,
+	public Iterator<Quad> findQuads(Node graphName, Node subject,
 			Node predicate, Node object) {
 		return findQuads(new Quad(graphName, subject, predicate, object));
 	}
@@ -213,7 +213,7 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 	/* (non-Javadoc)
 	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#findQuads(de.fuberlin.wiwiss.ng4j.Quad)
 	 */
-	public Iterator findQuads(Quad pattern) {
+	public Iterator<Quad> findQuads(Quad pattern) {
 		if (!containsGraph(pattern.getGraphName())) {
 			List<Quad> quadsList = Collections.emptyList();
 			return quadsList.iterator();
@@ -230,16 +230,16 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 	 * @see de.fuberlin.wiwiss.ng4j.NamedGraphSet#removeQuad(de.fuberlin.wiwiss.ng4j.Quad)
 	 */
 	public void removeQuad(Quad pattern) {
-		Iterator it = findQuads(pattern);
+		Iterator<Quad> it = findQuads(pattern);
 		// Read the entire iterator into a collection first to avoid
 		// ConcurrentModificationException
 		Collection<Quad> quadsToDelete = new ArrayList<Quad>();
 		while (it.hasNext()) {
-			quadsToDelete.add((Quad)it.next());
+			quadsToDelete.add(it.next());
 		}
 		it = quadsToDelete.iterator();
 		while (it.hasNext()) {
-			Quad quad = (Quad) it.next();
+			Quad quad = it.next();
 			getGraph(quad.getGraphName()).delete(quad.getTriple());
 		}
 	}
@@ -283,10 +283,10 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 		return new NamedGraphImpl(graphName, Factory.createGraphMem(ReificationStyle.Standard));
 	}
 	
-	private ExtendedIterator getQuadIteratorOverGraph(
+	private ExtendedIterator<Quad> getQuadIteratorOverGraph(
 			final NamedGraph graph, Triple triple) {
-		final ExtendedIterator triples = graph.find(triple);
-		return new NiceIterator() {
+		final ExtendedIterator<Triple> triples = graph.find(triple);
+		return new NiceIterator<Quad>() {
 
 			/* (non-Javadoc)
 			 * @see com.hp.hpl.jena.util.iterator.NiceIterator#hasNext()
@@ -302,9 +302,9 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 			 * @see com.hp.hpl.jena.util.iterator.NiceIterator#next()
 			 */
 			@Override
-			public Object next() {
+			public Quad next() {
 
-				Triple t = (Triple) triples.next();
+				Triple t = triples.next();
 
 				return new Quad(graph.getGraphName(), t);
 
@@ -313,7 +313,7 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 		};
 	}
 	
-	private ExtendedIterator getQuadIteratorOverAllGraphs(Triple triple) {
+	private ExtendedIterator<Quad> getQuadIteratorOverAllGraphs(Triple triple) {
 	    return new FindQuadsIterator(triple);
 	}
 
@@ -363,16 +363,16 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
         }
 	}
 
-	private class FindQuadsIterator extends NiceIterator {
+	private class FindQuadsIterator extends NiceIterator<Quad> {
 	    private Iterator<NamedGraph> graphIt;
-	    private ExtendedIterator currentIt; // Triple
+	    private ExtendedIterator<Triple> currentIt;
 	    private Triple findMe;
 	    private Node currentGraphName;
 	    
 	    FindQuadsIterator(Triple findMe) {
 	        this.findMe = findMe;
 	        this.graphIt = listGraphs();
-	        this.currentIt = new NullIterator();
+	        this.currentIt = new NullIterator<Triple>();
 	    }
 
 	    /* (non-Javadoc)
@@ -395,11 +395,11 @@ public class NamedGraphSetImpl extends NamedGraphSetIO implements NamedGraphSet 
 	     * @see com.hp.hpl.jena.util.iterator.NiceIterator#next()
 	     */
 	    @Override
-		public Object next() {
+		public Quad next() {
 	        if (!hasNext()) {
 	            throw new NoSuchElementException();
 	        }
-	        Triple found = (Triple) this.currentIt.next();
+	        Triple found = this.currentIt.next();
 	        return new Quad(this.currentGraphName, found);
 	    }
 

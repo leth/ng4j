@@ -24,7 +24,7 @@ import de.fuberlin.wiwiss.ng4j.NamedGraph;
  */
 public class SemWebIterator implements Iterator<SemWebTriple> {
 	private LinkedList<NamedGraph> graphQueue = new LinkedList<NamedGraph>();
-	private Iterator currentIterator = null;
+	private Iterator<Triple> currentIterator = null;
 	private Node currentGraphName = null;
 	private Triple pattern;
 	private SemWebTriple nextTriple = null;
@@ -64,7 +64,7 @@ public class SemWebIterator implements Iterator<SemWebTriple> {
 	private synchronized SemWebTriple tryFetchNextTriple() {
 		while (true) {
 			if (this.currentIterator != null && this.currentIterator.hasNext()) {
-				return createSemWebTriple((Triple) this.currentIterator.next());
+				return createSemWebTriple(this.currentIterator.next());
 			}
 			if (!this.graphQueue.isEmpty()) {
 				NamedGraph graph = this.graphQueue.removeFirst();

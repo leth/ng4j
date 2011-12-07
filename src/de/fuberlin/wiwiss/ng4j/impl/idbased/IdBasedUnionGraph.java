@@ -80,7 +80,7 @@ public class IdBasedUnionGraph extends MultiUnion
 	 * @see com.hp.hpl.jena.graph.compose.MultiUnion#graphBaseFind(com.hp.hpl.jena.graph.TripleMatch)
 	 */
 	@Override
-	public ExtendedIterator graphBaseFind ( TripleMatch m )
+	public ExtendedIterator<Triple> graphBaseFind ( TripleMatch m )
 	{
 		Node matchSubject = m.getMatchSubject();
 		Node matchPredicate = m.getMatchPredicate();
@@ -124,7 +124,7 @@ public class IdBasedUnionGraph extends MultiUnion
 	 */
 	public boolean contains ( int sId, int pId, int oId )
 	{
-		Iterator itGraph = m_subGraphs.iterator();
+		Iterator<Graph> itGraph = m_subGraphs.iterator();
 		while ( itGraph.hasNext() )
 		{
 			IdBasedNamedGraphImpl ng = (IdBasedNamedGraphImpl) itGraph.next();
