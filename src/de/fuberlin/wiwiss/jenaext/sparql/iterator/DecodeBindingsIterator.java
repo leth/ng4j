@@ -5,6 +5,7 @@ import java.util.Iterator;
 import org.openjena.atlas.lib.Closeable;
 import com.hp.hpl.jena.sparql.engine.iterator.QueryIter;
 import com.hp.hpl.jena.sparql.engine.binding.Binding;
+import com.hp.hpl.jena.sparql.engine.binding.BindingHashMap;
 import com.hp.hpl.jena.sparql.engine.binding.BindingMap;
 
 import de.fuberlin.wiwiss.jenaext.IdBasedGraph;
@@ -61,7 +62,7 @@ public class DecodeBindingsIterator extends QueryIter
 
 		NodeDictionary nodeDict = ( (IdBasedGraph) getExecContext().getActiveGraph() ).getNodeDictionary();
 
-		Binding curOutput = new BindingMap();
+		BindingMap curOutput = new BindingHashMap();
 		for ( int i = curInput.size() - 1; i >= 0; i-- )
 		{
 			if ( curInput.contains(i) ) {

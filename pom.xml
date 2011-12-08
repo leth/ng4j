@@ -336,25 +336,9 @@ http://sourceforge.net/tracker/?group_id=118754
   </reporting>
 
   <dependencies>
-    <dependency>
-      <groupId>com.hp.hpl.jena</groupId>
-      <artifactId>jena</artifactId>
-      <version>2.6.4</version>
-    </dependency>
 
     <!-- It would be good to remove this as a dependency -->
-    <dependency>
-      <groupId>com.hp.hpl.jena</groupId>
-      <artifactId>jena</artifactId>
-      <version>2.6.4</version>
-      <classifier>tests</classifier>
-    </dependency>
 
-    <dependency>
-      <groupId>com.hp.hpl.jena</groupId>
-      <artifactId>arq</artifactId>
-      <version>2.8.8</version>
-    </dependency>
 
     <dependency>
       <groupId>antlr</groupId>
@@ -414,6 +398,20 @@ http://sourceforge.net/tracker/?group_id=118754
       <artifactId>junit</artifactId>
       <version>3.8.2</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.jena</groupId>
+    	<artifactId>jena-core</artifactId>
+    	<version>2.6.5-incubating-SNAPSHOT</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.jena</groupId>
+    	<artifactId>jena-arq</artifactId>
+    	<version>2.8.9-incubating-SNAPSHOT</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
     </dependency>
   </dependencies>
 

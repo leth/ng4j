@@ -7,6 +7,8 @@ import java.util.Set;
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.Dataset;
+import com.hp.hpl.jena.query.LabelExistsException;
+import com.hp.hpl.jena.query.ReadWrite;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.impl.ModelCom;
 import com.hp.hpl.jena.shared.Lock;
@@ -324,5 +326,70 @@ public class NamedGraphDataset implements Dataset, DatasetGraph {
 		                 ng4jQuad.getSubject(),
 		                 ng4jQuad.getPredicate(),
 		                 ng4jQuad.getObject() );
+	}
+
+	public void add(Node g, Node s, Node p, Node o)
+	{
+		this.add(new Quad(g, s, p, o));
+	}
+
+	public void delete(Node g, Node s, Node p, Node o)
+	{
+		this.delete(new Quad(g, s, p, o));
+	}
+
+	public void setDefaultModel(Model model)
+	{
+		// TODO not sure how this should be implemented
+		throw new UnsupportedOperationException();
+	}
+
+	public void addNamedModel(String uri, Model model)
+			throws LabelExistsException
+	{
+		set.addGraph(new NamedGraphImpl(uri, model.getGraph()));
+	}
+
+	public void removeNamedModel(String uri)
+	{
+		set.removeGraph(uri);
+	}
+
+	public void replaceNamedModel(String uri, Model model)
+	{
+		this.removeNamedModel(uri);
+		this.addNamedModel(uri, model);
+	}
+
+	public boolean supportsTransactions()
+	{
+		// TODO Support Transactions
+		return false;
+	}
+
+	public void begin(ReadWrite readWrite)
+	{
+		// TODO Support Transactions
+	}
+
+	public void commit()
+	{
+		// TODO Support Transactions
+	}
+
+	public void abort()
+	{
+		// TODO Support Transactions
+	}
+
+	public boolean isInTransaction()
+	{
+		// TODO Support Transactions
+		return false;
+	}
+
+	public void end()
+	{
+		// TODO Support Transactions
 	}
 }

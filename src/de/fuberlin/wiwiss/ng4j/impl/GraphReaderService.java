@@ -63,15 +63,15 @@ import de.fuberlin.wiwiss.ng4j.trix.TriXReaderWithExtensions;
  * @author Richard Cyganiak (richard@cyganiak.de)
  */
 public class GraphReaderService {
-	private Reader reader = null;
-	private InputStream inputStream = null;
-	private String url = null;
-	private String sourceString = null;
-	private String baseURI = null;
-	private String lang = null;
-	private Map<String,String> mimeTypes = new HashMap<String,String>();
-	private Map<String,String> fileExtensions = new HashMap<String,String>();
-	private RDFReaderF readerFactory = new RDFReaderFImpl();
+	protected Reader reader = null;
+	protected InputStream inputStream = null;
+	protected String url = null;
+	protected String sourceString = null;
+	protected String baseURI = null;
+	protected String lang = null;
+	protected Map<String,String> mimeTypes = new HashMap<String,String>();
+	protected Map<String,String> fileExtensions = new HashMap<String,String>();
+	protected RDFReaderF readerFactory = new RDFReaderFImpl();
 
 	public GraphReaderService() {
 		// TODO: Replace this by some kind of extensible registry

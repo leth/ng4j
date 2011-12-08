@@ -25,7 +25,7 @@ import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
-import com.hp.hpl.jena.sparql.resultset.ResultSetFormat;
+import com.hp.hpl.jena.sparql.resultset.ResultsFormat;
 import com.hp.hpl.jena.sparql.util.Utils;
 
 public class CommandLineQuery {
@@ -66,7 +66,7 @@ public class CommandLineQuery {
 
 	private boolean enableSindiceSearch = false;
 
-	private ResultSetFormat resultFormat = null;
+	private ResultsFormat resultFormat = null;
 
 	private boolean verbose = false;
 
@@ -168,25 +168,25 @@ public class CommandLineQuery {
 	public void setResultFormat ( String resFmtStr ) {
 		String resFmtStrUC = resFmtStr.toUpperCase();
 		if ( resFmtStrUC.equals("TXT") ) {
-			resultFormat = ResultSetFormat.syntaxText;
+			resultFormat = ResultsFormat.FMT_TEXT;
 		}
 		else if ( resFmtStrUC.equals("XML") ) {
-			resultFormat = ResultSetFormat.syntaxXML;
+			resultFormat = ResultsFormat.FMT_RS_XML;
 		}
 		else if ( resFmtStrUC.equals("JSON") ) {
-			resultFormat = ResultSetFormat.syntaxJSON;
+			resultFormat = ResultsFormat.FMT_RS_JSON;
 		}
 		else if ( resFmtStrUC.equals("RDF/XML") ) {
-			resultFormat = ResultSetFormat.syntaxRDF_XML;
+			resultFormat = ResultsFormat.FMT_RDF_XML;
 		}
 		else if ( resFmtStrUC.equals("N-TRIPLE") ) {
-			resultFormat = ResultSetFormat.syntaxRDF_NT;
+			resultFormat = ResultsFormat.FMT_RDF_NT;
 		}
 		else if ( resFmtStrUC.equals("TURTLE") ) {
-			resultFormat = ResultSetFormat.syntaxRDF_TURTLE;
+			resultFormat = ResultsFormat.FMT_RDF_TURTLE;
 		}
 		else if ( resFmtStrUC.equals("N3") ) {
-			resultFormat = ResultSetFormat.syntaxRDF_N3;
+			resultFormat = ResultsFormat.FMT_RDF_N3;
 		}
 		else {
 			throw new IllegalArgumentException( "Unsupported result format specified. For SELECT and ASK queries use TXT, XML, or JSON. For CONSTRUCT or DESCRIBE queries use RDF/XML, N-TRIPLE, TURTLE, or N3." );
@@ -349,7 +349,7 @@ public class CommandLineQuery {
 			query = QueryFactory.create(this.sparqlQuery);
 			if (    verbose
 			     && ( query.isSelectType() || query.isAskType() )
-			     && ( (resultFormat == null) || resultFormat.equals(ResultSetFormat.syntaxText) ) ) {
+			     && ( (resultFormat == null) || resultFormat.equals(ResultsFormat.FMT_TEXT) ) ) {
 				System.out.println("\nExecuting SPARQL query: \n");
 				System.out.println(this.sparqlQuery);
 			}
@@ -358,18 +358,18 @@ public class CommandLineQuery {
 			OutputStream out = System.out;
 			if ( query.isSelectType() ) {
 				ResultSet results = qe.execSelect();
-				ResultSetFormat resFmt = ( resultFormat == null ) ? ResultSetFormat.syntaxText : resultFormat;
+				ResultsFormat resFmt = ( resultFormat == null ) ? ResultsFormat.FMT_TEXT : resultFormat;
 				ResultSetFormatter.output( out, results, resFmt );
 			}
 			else if ( query.isAskType() ) {
 				boolean result = qe.execAsk();
-				if ( (resultFormat == null) || resultFormat.equals(ResultSetFormat.syntaxText) ) {
+				if ( (resultFormat == null) || resultFormat.equals(ResultsFormat.FMT_TEXT) ) {
 					ResultSetFormatter.out( out, result );
 				}
-				else if ( resultFormat.equals(ResultSetFormat.syntaxJSON) ) {
+				else if ( resultFormat.equals(ResultsFormat.FMT_RS_JSON) ) {
 					ResultSetFormatter.outputAsJSON( out, result );
 				}
-				else if ( resultFormat.equals(ResultSetFormat.syntaxXML) ) {
+				else if ( resultFormat.equals(ResultsFormat.FMT_RS_XML) ) {
 					ResultSetFormatter.outputAsXML( out, result );
 				}
 				else {
@@ -385,16 +385,16 @@ public class CommandLineQuery {
 					result = qe.execConstruct();
 				}
 				String lang;
-				if ( (resultFormat==null) || resultFormat.equals(ResultSetFormat.syntaxRDF_XML) ) {
+				if ( (resultFormat==null) || resultFormat.equals(ResultsFormat.FMT_RDF_XML) ) {
 					lang = "RDF/XML-ABBREV";
 				}
-				else if ( resultFormat.equals(ResultSetFormat.syntaxRDF_NT) ) {
+				else if ( resultFormat.equals(ResultsFormat.FMT_RDF_NT) ) {
 					lang = "N-TRIPLE";
 				}
-				else if ( resultFormat.equals(ResultSetFormat.syntaxRDF_TURTLE) ) {
+				else if ( resultFormat.equals(ResultsFormat.FMT_RDF_TURTLE) ) {
 					lang = "TURTLE";
 				}
-				else if ( resultFormat.equals(ResultSetFormat.syntaxRDF_N3) ) {
+				else if ( resultFormat.equals(ResultsFormat.FMT_RDF_N3) ) {
 					lang = "N3";
 				}
 				else {

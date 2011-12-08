@@ -11,6 +11,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.sparql.core.ResultBinding;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.engine.binding.Binding;
+import com.hp.hpl.jena.sparql.engine.binding.BindingHashMap;
 import com.hp.hpl.jena.sparql.engine.binding.BindingMap;
 
 
@@ -18,7 +19,7 @@ public class MyResultSet implements ResultSet {
 	private Model model;
 	private List<String> resultVars = new ArrayList<String>();
 	private List<Binding> bindings = new ArrayList<Binding>();
-	private Binding currentBinding = new BindingMap();
+	private BindingMap currentBinding = new BindingHashMap();
 	private Iterator<Binding> bindingIterator = null;
 	private int rowNumber = 0;
 	
@@ -37,7 +38,7 @@ public class MyResultSet implements ResultSet {
 
 	public void addSolution() {
 		this.bindings.add(this.currentBinding);
-		this.currentBinding = new BindingMap();
+		this.currentBinding = new BindingHashMap();
 	}
 	
 	public boolean hasNext() {
